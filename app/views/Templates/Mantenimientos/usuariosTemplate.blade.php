@@ -32,6 +32,7 @@
 	<script src="{{asset('assets/jquery.easy-pie-chart/jquery.easypiechart.min.js')}}"></script>
 	<script src="{{asset('assets/chartist/js/chartist.min.js')}}"></script>
 	<script src="{{asset('assets/js/klorofil-common.js')}}"></script>
+	<script src="{{asset('assets/bootstrap/js/locale-es.js')}}"></script>
 	<script src="{{asset('/js/user.js')}}"></script>
 </head>
 

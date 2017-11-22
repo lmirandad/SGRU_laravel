@@ -2,6 +2,8 @@ $( document ).ready(function(){
 	
 	$("#datetimepicker1").datetimepicker({
 		ignoreReadonly:true,
+		format:'DD-MM-YYYY',
+		locale:'es',
 	});
 
 
@@ -53,7 +55,6 @@ $( document ).ready(function(){
                 $(".loader_container").hide();
             },
             success: function(response){
-            	alert(response);
                 if(response.success){
                 	if(response["usuario"] != null)
 	                    dialog = BootstrapDialog.show({
