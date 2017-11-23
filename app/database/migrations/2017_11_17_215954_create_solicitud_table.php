@@ -15,6 +15,7 @@ class CreateSolicitudTable extends Migration {
 		Schema::create('solicitud', function(Blueprint $table)
 		{
 			$table->integer('idsolicitud', true);
+			$table->string('codigo_solicitud',100);
 			$table->string('asunto', 300);
 			$table->integer('idtipo_solicitud')->index('fk_solicitud_tipo_solicitud1_idx');
 			$table->integer('idestado_solicitud')->index('fk_solicitud_estado_solicitud1_idx');
