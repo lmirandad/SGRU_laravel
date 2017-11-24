@@ -47,7 +47,7 @@
 												{{$herramienta->nombre}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{$herramienta->nombre_tipo_herramienta}}
+												{{$herramienta->nombre_denominacion}}
 											</td>
 											<td class="text-nowrap">
 												<div style="margin-left:37%">
@@ -106,7 +106,7 @@
 			</div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" id="btnAgregarHerramientaSubmit" data-dismiss="modal">Agregar</button>
+          <button type="button" class="btn btn-info" id="btnAgregarHerramientaSubmit" data-dismiss="modal"><i class="fa fa-floppy-o "></i>&nbsp&nbspAgregar</button>
         </div>
       </div>      
     </div>

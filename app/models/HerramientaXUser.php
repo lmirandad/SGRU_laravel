@@ -28,10 +28,10 @@ class HerramientaXUser extends Eloquent implements UserInterface, RemindableInte
 	{
 		$query->join('herramienta','herramienta.idherramienta','=','herramientaxusers.idherramienta')		
 			  ->join('users','users.id','=','herramientaxusers.iduser')		
-			  ->join('tipo_herramienta','tipo_herramienta.idtipo_herramienta','=','herramienta.idtipo_herramienta')
+			  ->join('denominacion_herramienta','denominacion_herramienta.iddenominacion_herramienta','=','herramienta.iddenominacion_herramienta')
 			  ->where('herramientaxusers.iduser','=',$search_criteria);
 
-		$query->select('tipo_herramienta.nombre as nombre_tipo_herramienta','herramienta.*','herramientaxusers.idherramientaxusers');
+		$query->select('denominacion_herramienta.nombre as nombre_denominacion','herramienta.*','herramientaxusers.idherramientaxusers');
 		
 		return $query;
 	}

@@ -25,21 +25,18 @@
 					</div>
 					<div class="header">
 						<div class="logo text-center"><img src="{{asset('assets/img/telefonica-logo.jpg')}}" alt="Klorofil Logo" width="50%" height="50%"></div>
-						<p class="lead">LOGIN</p>
+						<p class="lead"><strong>LOGIN</strong></p>
 					</div>
 					{{ Form::open(array('url'=>'login', 'role'=>'form', 'class'=>'form-auth-small')) }}
 					<div class="form-group">
 							<label class="control-label sr-only">Nombre de Usuario</label>
 							{{ Form::text('usuario',Input::old('usuario'),array('class'=>'form-control','placeholder'=>'Ingrese nombre de usuario')) }}
-						</div>
-						<div class="form-group">
-							<label for="signin-password" class="control-label sr-only">Contraseña</label>
-							{{ Form::password('password',array('class'=>'form-control','placeholder'=>'Ingrese contraseña','id'=>'signin-password')) }}
-						</div>														
-						{{ Form::submit('ACCEDER',array('id'=>'submit-login', 'class'=>'btn btn-lg btn-info btn-block')) }}
-						<div class="bottom">
-							<span class="helper-text"><i class="fa fa-lock"></i> <a href="#">¿Olvidaste tu contraseña?</a></span>
-						</div>
+					</div>
+					<div class="form-group">
+						<label for="signin-password" class="control-label sr-only">Contraseña</label>
+						{{ Form::password('password',array('class'=>'form-control','placeholder'=>'Ingrese contraseña','id'=>'signin-password')) }}
+					</div>														
+					{{ Form::submit('ACCEDER',array('id'=>'submit-login', 'class'=>'btn btn-lg btn-info btn-block')) }}
 					{{ Form::close() }}
 				</div>
 			</div>

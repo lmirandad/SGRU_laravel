@@ -176,7 +176,7 @@
 														{{$herramienta->nombre}}
 													</td>
 													<td class="text-nowrap text-center">
-														{{$herramienta->nombre_tipo_herramienta}}
+														{{$herramienta->nombre_denominacion}}
 													</td>
 												</tr>
 												@endforeach

@@ -24,7 +24,7 @@ Route::group(array('before'=>'auth'),function(){
 	Route::get('/principal','MenuPrincipalController@home');
 });
 
-/* Users */
+/* USUARIOS DEL SISTEMA */
 Route::group(array('prefix'=>'usuarios', 'before'=>'auth'),function(){
 	Route::get('/listar_usuarios','UserController@listar_usuarios');
 	Route::get('/buscar_usuarios','UserController@buscar_usuarios');
@@ -43,13 +43,23 @@ Route::group(array('prefix'=>'usuarios', 'before'=>'auth'),function(){
 	
 });
 
+/*HERRAMIENTAS*/
 Route::group(array('prefix'=>'herramientas', 'before'=>'auth'),function(){
 	Route::post('/listar_herramientas_disponibles','HerramientaController@listar_herramientas_disponibles');
 	Route::post('/submit_agregar_herramientas','HerramientaController@submit_agregar_herramientas_usuario');
 	Route::post('/submit_eliminar_herramienta_usuario','HerramientaController@submit_eliminar_herramienta_usuario');
+	Route::get('/listar_herramientas','HerramientaController@listar_herramientas');
+	Route::get('/buscar_herramientas','HerramientaController@buscar_herramientas');
 });
 
+/*ENTIDADES CANALES SECTORES*/
+Route::group(array('prefix'=>'entidades_canales_sectores', 'before'=>'auth'),function(){
+	Route::get('/listar/{flag_seleccion}','SectorCanalEntidadController@listar_sectores_canales_entidades');
+});
+
+/*SOLICITUDES*/
 Route::group(array('prefix'=>'solicitudes', 'before'=>'auth'),function(){
 	Route::get('/cargar_solicitudes','SolicitudController@cargar_solicitudes');
+	Route::get('/listar_solicitudes','SolicitudController@listar_solicitudes');
 });
 

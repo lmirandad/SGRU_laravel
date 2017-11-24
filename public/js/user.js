@@ -60,7 +60,7 @@ $( document ).ready(function(){
 	                    dialog = BootstrapDialog.show({
 	                            title: 'Mensaje',
 	                            type: BootstrapDialog.TYPE_SUCCESS,
-	                            message: 'Se ha reestablecido la contraseña del usuario'+response["usuario"].nombre,
+	                            message: 'Se ha reestablecido la contraseña del usuario '+response["usuario"].nombre+' '+response["usuario"].apellido_paterno+' '+response["usuario"].apellido_materno,
 	                            closable: false,
 	                            buttons: [{
 	                                label: 'Aceptar',
@@ -214,7 +214,7 @@ function mostrar_herramientas_disponibles(){
                 $(".loader_container").hide();
             },
             success: function(response){
-                if(response.success){
+                if(response.success){                
                 	arr_herramientas = response["herramientas"];
                 	tamano_arr_herramientas = arr_herramientas.length;
                 	contador = 0;
@@ -224,7 +224,7 @@ function mostrar_herramientas_disponibles(){
 				                +"<td class=\"text-nowrap text-center\">"+(contador+1)+"</td>"
 				                +"<td class=\"text-nowrap text-center\" style=\"display:none\" id=\"idherramienta"+contador+"\">"+arr_herramientas[i].idherramienta+"</td>"
 				                +"<td class=\"text-nowrap text-center\">"+arr_herramientas[i].nombre+"</td>"
-				                +"<td class=\"text-nowrap text-center\">"+arr_herramientas[i].nombre_tipo_herramienta+"</td>"
+				                +"<td class=\"text-nowrap text-center\">"+arr_herramientas[i].nombre_denominacion+"</td>"
 				                +"<td class=\"text-nowrap text-center\"><div class=\"form-check\"><label class=\"form-check-label\"><input id=\"checkbox"+contador+"\" type=\"checkbox\" class=\"form-check-input\"><label></div></td></tr>");
                 			contador++;
                 		}                		
@@ -294,7 +294,7 @@ function agregarNuevasHerramientas(){
 			            message: 'Se agregaron las herramientas al usuario',
 			            type : BootstrapDialog.TYPE_SUCCESS,
 			            buttons: [{
-			                label: 'Aceptar',
+			                label: 'Entendido',
 			                action: function(dialog) {
 			                    var url = inside_url + "usuarios/mostrar_herramientas_usuario/"+usuario_id;
                                 window.location = url;
@@ -342,7 +342,7 @@ function eliminar_herramienta(e,id){
 				            message: 'Se eliminó la herramienta '+response["nombre_herramienta"]+ ' del usuario',
 				            type : BootstrapDialog.TYPE_SUCCESS,
 				            buttons: [{
-				                label: 'Aceptar',
+				                label: 'Entendido',
 				                action: function(dialog) {
 				                    var url = inside_url + "usuarios/mostrar_herramientas_usuario/"+usuario_id;
 									window.location = url;
