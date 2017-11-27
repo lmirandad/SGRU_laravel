@@ -38,8 +38,11 @@ Route::group(array('prefix'=>'usuarios', 'before'=>'auth'),function(){
 	Route::get('/mostrar_usuario/{id}','UserController@mostrar_usuario');
 	Route::get('/mostrar_usuario_sesion/{id}','UserController@mostrar_usuario_actual');
 	Route::get('/mostrar_herramientas_usuario/{id}','UserController@mostrar_herramientas_usuario');
-	/*Route::post('/submit_disable_user','UserController@submit_disable_user');
-	Route::post('/submit_enable_user','UserController@submit_enable_user');*/
+	Route::post('/submit_agregar_herramientas','UserController@submit_agregar_herramientas');
+	Route::get('/mostrar_sectores_usuario/{id}','UserController@mostrar_sectores_usuario');
+	Route::post('/submit_agregar_sectores','UserController@submit_agregar_sectores');		
+	Route::post('/submit_habilitar_usuario','UserController@submit_habilitar_usuario');
+	Route::post('/submit_inhabilitar_usuario','UserController@submit_inhabilitar_usuario');
 	
 });
 
@@ -57,9 +60,19 @@ Route::group(array('prefix'=>'entidades_canales_sectores', 'before'=>'auth'),fun
 	Route::get('/listar/{flag_seleccion}','SectorCanalEntidadController@listar_sectores_canales_entidades');
 });
 
+/*SECTORES*/
+Route::group(array('prefix'=>'sectores', 'before'=>'auth'),function(){
+	Route::post('/submit_eliminar_sector_usuario','SectorController@submit_eliminar_sector_usuario');
+});
+
 /*SOLICITUDES*/
 Route::group(array('prefix'=>'solicitudes', 'before'=>'auth'),function(){
 	Route::get('/cargar_solicitudes','SolicitudController@cargar_solicitudes');
 	Route::get('/listar_solicitudes','SolicitudController@listar_solicitudes');
+});
+
+/*TIPOS_SOLICITUD*/
+Route::group(array('prefix'=>'tipos_solicitudes', 'before'=>'auth'),function(){
+	Route::get('/ver_acciones_herramienta_usuario/{id}','TipoSolicitudController@ver_acciones_herramienta');
 });
 

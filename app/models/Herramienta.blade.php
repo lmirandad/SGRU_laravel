@@ -26,13 +26,16 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 	 */
 	public function scopeListarHerramientasDisponibles($query,$search_criteria)
 	{
-		$query->leftJoin('herramientaxusers as hu', function($q) use($search_criteria) {
-   				  $q->on('herramienta.idherramienta', '=', 'hu.idherramienta')
-   				    ->where('hu.iduser','=',$search_criteria);});
-   		$query->join('denominacion_herramienta','herramienta.iddenominacion_herramienta','=','denominacion_herramienta.iddenominacion_herramienta');		
+		$query->join('denominacion_herramienta','herramienta.iddenominacion_herramienta','=','denominacion_herramienta.iddenominacion_herramienta');
+		$query->whereNotIn('herramienta.idherramienta',function($subquery) use ($search_criteria){
+					$subquery->leftJoin('herramientaxusers','herramienta.idherramienta','=','herramientaxusers.idherramienta');
+					$subquery->from(with(new Herramienta)->getTable());
+					$subquery->where('herramientaxusers.iduser','=',$search_criteria);
+					$subquery->select('herramienta.idherramienta')->distinct();
+		});
 
-		$query->select('hu.idherramientaxusers as idherramientaxusers','herramienta.*','denominacion_herramienta.nombre as nombre_denominacion');
-		
+		$query->select('herramienta.*','denominacion_herramienta.nombre as nombre_denominacion');
+
 		return $query;
 	}
 

@@ -115,7 +115,7 @@ $( document ).ready(function(){
 
 
 
-	/*$('#submit-enable-user').click(function(){
+	$('#submit-habilitar-usuario').click(function(){
 		BootstrapDialog.confirm({
 			title: 'Mensaje de Confirmación',
 			message: '¿Está seguro que desea realizar esta acción?', 
@@ -124,13 +124,13 @@ $( document ).ready(function(){
 	    	btnOKLabel: 'Aceptar', 
 			callback: function(result){
 		        if(result) {
-					document.getElementById("enable_user").submit();
+					document.getElementById("habilitar_usuario").submit();
 				}
 			}
 		});
-	});*/
+	});
 
-	/*$('#submit-disable-user').click(function(){
+	$('#submit-inhabilitar-usuario').click(function(){
 		BootstrapDialog.confirm({
 			title: 'Mensaje de Confirmación',
 			message: '¿Está seguro que desea realizar esta acción?', 
@@ -139,11 +139,11 @@ $( document ).ready(function(){
 	    	btnOKLabel: 'Aceptar', 
 			callback: function(result){
 		        if(result) {
-					document.getElementById("disable_user").submit();
+					document.getElementById("inhabilitar_usuario").submit();
 				}
 			}
 		});
-	});*/
+	});
 
 	$('#btnLimpiar').click(function(){
 		$('#search').val(null);
@@ -188,129 +188,47 @@ $( document ).ready(function(){
 		}
 	});
 
-	$('#btnAgregarHerramienta').click(function(){
-		mostrar_herramientas_disponibles();
-	});
-
-	$('#btnCerrarModal').click(function(){
-		$("#tabla_herramientas_disponibles tbody").remove(); 
-	});
-
+	
 	$('#btnAgregarHerramientaSubmit').click(function(){
 		agregarNuevasHerramientas();
 	});
+
+	$('#btnAgregarSectorSubmit').click(function(){
+		agregarNuevosSectores();
+	});
+
 });
 
-function mostrar_herramientas_disponibles(){
-	usuario_id = $('#usuario_id').val();
-	$.ajax({
-            url: inside_url+'herramientas/listar_herramientas_disponibles',
-            type: 'POST',
-            data: {'usuario_id':usuario_id},
-            beforeSend: function(){
-                $(".loader_container").show();
-            },
-            complete: function(){
-                $(".loader_container").hide();
-            },
-            success: function(response){
-                if(response.success){                
-                	arr_herramientas = response["herramientas"];
-                	tamano_arr_herramientas = arr_herramientas.length;
-                	contador = 0;
-                	for (i=0;i<tamano_arr_herramientas;i++){
-                		if(arr_herramientas[i].idherramientaxusers == null){
-	                		$('#tabla_herramientas_disponibles').append("<tr>"
-				                +"<td class=\"text-nowrap text-center\">"+(contador+1)+"</td>"
-				                +"<td class=\"text-nowrap text-center\" style=\"display:none\" id=\"idherramienta"+contador+"\">"+arr_herramientas[i].idherramienta+"</td>"
-				                +"<td class=\"text-nowrap text-center\">"+arr_herramientas[i].nombre+"</td>"
-				                +"<td class=\"text-nowrap text-center\">"+arr_herramientas[i].nombre_denominacion+"</td>"
-				                +"<td class=\"text-nowrap text-center\"><div class=\"form-check\"><label class=\"form-check-label\"><input id=\"checkbox"+contador+"\" type=\"checkbox\" class=\"form-check-input\"><label></div></td></tr>");
-                			contador++;
-                		}                		
-                	}
-                	if(contador==0){
-                		dialog = BootstrapDialog.show({
-				            title: 'Mensaje',
-				            message: 'El usuario posee todos los aplicativos para registrar.',
-				            type : BootstrapDialog.TYPE_INFO,
-				            buttons: [{
-				                label: 'Aceptar',
-				                action: function(dialog) {
-				                    dialog.close();
-				                }
-				            }]
-				        });		
-                	}else{
-                		$('#modal_herramientas').modal('show');
-	   					$('#modal_header_herramientas').removeClass();
-	    				$('#modal_header_herramientas').addClass("modal-header ");
-	    				$('#modal_header_herramientas').addClass("bg-primary");
-                	}
-                   	
-                }else{                	
-                    alert('La petición no se pudo completar, inténtelo de nuevo.');
-                }
-            },
-            error: function(){
-                alert('La petición no se pudo completar, inténtelo de nuevo.');
-            }
-        });
-}
+
 
 function agregarNuevasHerramientas(){
-	tamano_tabla = document.getElementById("tabla_herramientas_disponibles").rows.length - 1; //tamaño de la tabla total
-	var arr_idherramientas = [];
-	indice = 0;
-	for(i=0;i<tamano_tabla;i++){
-		if($('#checkbox'+i).is(":checked")){ //si fue elegido se agrega al arreglo
-			arr_idherramientas[indice] = $('#idherramienta'+i).text();
-			indice++;
-		}	
-	}
-	var tamano_arr_idherramientas = arr_idherramientas.length;
-	if(tamano_arr_idherramientas == 0){
-		//no se seleccionó ningún aplicativo.
-		$("#tabla_herramientas_disponibles tbody").remove();
-		
-	}else{
-		//se procede a realizar la carga de herramientas al sistema
-		usuario_id = $('#usuario_id').val();
-		$.ajax({
-            url: inside_url+'herramientas/submit_agregar_herramientas',
-            type: 'POST',
-            data: {'usuario_id':usuario_id,
-        		   'herramientas':arr_idherramientas},
-            beforeSend: function(){
-                $(".loader_container").show();
-            },
-            complete: function(){
-                $(".loader_container").hide();
-            },
-            success: function(response){
-                if(response.success){
-                	dialog = BootstrapDialog.show({
-			            title: 'Mensaje',
-			            message: 'Se agregaron las herramientas al usuario',
-			            type : BootstrapDialog.TYPE_SUCCESS,
-			            buttons: [{
-			                label: 'Entendido',
-			                action: function(dialog) {
-			                    var url = inside_url + "usuarios/mostrar_herramientas_usuario/"+usuario_id;
-                                window.location = url;
-			                }
-			            }]
-			        });
-                }else{                	
-                    alert('La petición no se pudo completar, inténtelo de nuevo.');
-                }
-            },
-            error: function(){
-                alert('La petición no se pudo completar, inténtelo de nuevo.');
+	BootstrapDialog.confirm({
+		title: 'Mensaje de Confirmación',
+		message: '¿Está seguro que desea realizar esta acción?', 
+		type: BootstrapDialog.TYPE_INFO,
+		btnCancelLabel: 'Cancelar', 
+    	btnOKLabel: 'Aceptar', 
+		callback: function(result){
+            if(result) {
+				document.getElementById("submit-agregar-herramientas").submit();
             }
-        });
-	}
-	
+        }
+    });					
+}
+
+function agregarNuevosSectores(){
+	BootstrapDialog.confirm({
+		title: 'Mensaje de Confirmación',
+		message: '¿Está seguro que desea realizar esta acción?', 
+		type: BootstrapDialog.TYPE_INFO,
+		btnCancelLabel: 'Cancelar', 
+    	btnOKLabel: 'Aceptar', 
+		callback: function(result){
+            if(result) {
+				document.getElementById("submit-agregar-sectores").submit();
+            }
+        }
+    });					
 }
 
 function eliminar_herramienta(e,id){
@@ -357,4 +275,97 @@ function eliminar_herramienta(e,id){
 			}
 		}
 	});	
+}
+
+function eliminar_sector(e,id){
+	usuario_id = $('#usuario_id').val();
+	e.preventDefault();
+	BootstrapDialog.confirm({
+		title: 'Mensaje de Confirmación',
+		message: '¿Está seguro que desea realizar esta acción?', 
+		type: BootstrapDialog.TYPE_DANGER,
+		btnCancelLabel: 'Cancelar', 
+    	btnOKLabel: 'Aceptar', 
+		callback: function(result){
+            if(result) {
+            	$.ajax({
+					url: inside_url+'sectores/submit_eliminar_sector_usuario',
+					type: 'POST',
+					data: { 
+						'idusersxsector' : id,
+					},
+					beforeSend: function(){
+						//$(this).prop('disabled',true);
+					},
+					complete: function(){
+						//$(this).prop('disabled',false);
+					},
+					success: function(response){
+						dialog = BootstrapDialog.show({
+				            title: 'Mensaje',
+				            message: 'Se eliminó el sector '+response["nombre_sector"]+ ' del usuario',
+				            type : BootstrapDialog.TYPE_SUCCESS,
+				            buttons: [{
+				                label: 'Entendido',
+				                action: function(dialog) {
+				                    var url = inside_url + "usuarios/mostrar_sectores_usuario/"+usuario_id;
+									window.location = url;
+				                }
+				            }]
+				        });
+						
+					},
+					error: function(){
+					}
+				});
+			}
+		}
+	});	
+}
+
+function ver_acciones(e,id){
+	usuario_id = $('#usuario_id').val();
+	$("#tabla_acciones_disponibles tbody").remove();
+	e.preventDefault();	
+	$.ajax({
+		url: inside_url+'tipos_solicitudes/ver_acciones_herramienta_usuario/'+usuario_id,
+		type: 'GET',
+		data: { 
+			'idherramientaxusers' : id,
+		},
+		beforeSend: function(){
+			//$(this).prop('disabled',true);
+		},
+		complete: function(){
+			//$(this).prop('disabled',false);
+		},
+		success: function(response){
+			if(response.success){
+				tamano_arr = response["acciones"].length;
+				for (i=0;i<tamano_arr;i++){
+					data = "<tr>"
+			                +"<td class=\"text-nowrap text-center\">"+(i+1)+"</td>"
+			                +"<td class=\"text-nowrap text-center\" style=\"display:none\" id=\"idherramientaxtipo_solicitudxuser"+i+"\">"+response["acciones"][i].idherramientaxtipo_solicitudxuser+"</td>"	
+			                +"<td class=\"text-nowrap text-center\">"+response["acciones"][i].nombre_solicitud+"</td>";
+            		if(response["acciones"][i].eliminado == null){
+                		data += "<td class=\"text-nowrap text-center\"><div class=\"form-check\"><label class=\"form-check-label\"><input id=\"checkbox"+i+"\" type=\"checkbox\" class=\"form-check-input\" checked=\"false\"><label></div></td></tr>"; 
+                	}else{
+                		"<td class=\"text-nowrap text-center\"><div class=\"form-check\"><label class=\"form-check-label\"><input id=\"checkbox"+i+"\" type=\"checkbox\" class=\"form-check-input\" ><label></div></td></tr>";
+                	}	
+
+            		$('#tabla_acciones_disponibles').append(data);
+            			
+            		                		
+            	}            	
+	    		$('#modal_acciones').modal('show');
+				$('#modal_header_acciones').removeClass();
+				$('#modal_header_acciones').addClass("modal-header ");
+				$('#modal_header_acciones').addClass("bg-primary");
+			}
+			
+		},
+		error: function(){
+		}
+	});
+			
 }

@@ -32,5 +32,20 @@ class Sector extends Eloquent implements UserInterface, RemindableInterface {
 
 		return $query;
 	}
+
+	public function scopeListarSectoresDisponibles($query,$search_criteria)
+	{
+		$query->whereNotIn('sector.idsector',function($subquery) use ($search_criteria){
+					$subquery->leftJoin('usersxsector','sector.idsector','=','usersxsector.idsector');
+					$subquery->from(with(new Sector)->getTable());
+					$subquery->where('usersxsector.iduser','=',$search_criteria);
+					$subquery->select('sector.idsector')->distinct();
+		});
+
+		$query->select('sector.*');
+
+		return $query;
+	}
+
 	
 }

@@ -135,8 +135,6 @@ class UserController extends BaseController {
 					$user->telefono = Input::get('telefono');
 					$user->fecha_nacimiento = date('Y-m-d H:i:s',strtotime(Input::get('fecha_nacimiento')));
 					$user->iduser_created_by = $data["user"]->id;
-					$user->usuario_bloqueado = 0; //no está bloqueado
-					$user->usuario_vena = 0; //no es vena
 					$user->save();					
 					Session::flash('message', 'Se registró correctamente al usuario.');
 					
@@ -209,7 +207,7 @@ class UserController extends BaseController {
 			{	
 				$data["tipo_doc_identidades"] = TipoDocIdentidad::lists('nombre','idtipo_doc_identidad');
 				$data["roles"] = Rol::lists('nombre','idrol');				
-				$data["usuario"] = User::find($idusuario);
+				$data["usuario"] = User::withTrashed()->find($idusuario);
 
 				if($data["usuario"]==null){
 					return Redirect::to('usuarios/listar_usuarios');
@@ -345,6 +343,7 @@ class UserController extends BaseController {
 					return Redirect::to('usuarios/listar_usuarios')->with('error','Usuario no encontrado');
 				}
 				$data["herramientas"] = HerramientaXUser::buscarHerramientasPorIdUsuario($data["usuario"]->id)->get();
+				$data["sectores"] = UsersXSector::buscarSectoresPorIdUsuario($data["usuario"]->id)->get();
 				return View::make('Mantenimientos/usuarios/mostrarUsuario',$data);
 			}else{
 				return View::make('error/error',$data);
@@ -393,11 +392,198 @@ class UserController extends BaseController {
 					return Redirect::to('usuarios/listar_usuarios')->with('error','Usuario no encontrado');
 				}
 				$data["herramientas"] = HerramientaXUser::buscarHerramientasPorIdUsuario($data["usuario"]->id)->get();
+				$data["herramientas_disponibles"] = Herramienta::listarHerramientasDisponibles($data["usuario"]->id)->get();
+				/*echo '<pre>';
+			    var_dump(count($data["herramientas_disponibles"]));
+			    echo '</pre>';*/
 				
+				return View::make('Mantenimientos/usuarios/mostrarHerramientasUsuario',$data);			
+				
+			}else{
+				return View::make('error/error',$data);
+			}
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
 
-				return View::make('Mantenimientos/usuarios/mostrarHerramientasUsuario',$data);
+	public function mostrar_sectores_usuario($idusuario=null){
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if(($data["user"]->idrol == 1) && $idusuario)
+			{	
+				$data["usuario"] = User::find($idusuario);
+				if($data["usuario"]==null){						
+					return Redirect::to('usuarios/listar_usuarios')->with('error','Usuario no encontrado');
+				}
+				$data["sectores"] = UsersXSector::buscarSectoresPorIdUsuario($data["usuario"]->id)->get();
+				$data["sectores_disponibles"] = Sector::listarSectoresDisponibles($data["usuario"]->id)->get();
+				/*echo '<pre>';
+			    var_dump(count($data["sectores_disponibles"]));
+			    echo '</pre>';*/
 				
+				return View::make('Mantenimientos/usuarios/mostrarSectoresUsuario',$data);			
 				
+			}else{
+				return View::make('error/error',$data);
+			}
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function submit_agregar_herramientas(){
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				// Validate the info, create rules for the inputs
+				$user = User::find(Input::get('usuario_id'));				
+				$usuario_id = Input::get('usuario_id');
+				$arr_idherramienta = Input::get('ids_herramientas');
+				/*echo '<pre>';
+			    var_dump(count($arr_idherramienta));
+			    echo '</pre>';*/
+			    $size_ids = count($arr_idherramienta);
+			    $flag_seleccion = false;
+			    //por cada uno validar si el checkbox asociado fue tecleado
+			    for($i=0;$i<$size_ids;$i++){
+			    	$res_checkbox = Input::get('checkbox'.$i);
+			    	/*echo '<pre>';
+				    var_dump('seleccionado ' .$res_checkbox.': id-> '.$arr_idherramienta[$i] );	
+				    echo '</pre>';*/
+				    if($res_checkbox == 1)
+				    {
+				    	//quiere decir que se desea agregar uno nuevo
+				    	$herramientaxuser = new HerramientaXUser;
+				    	$herramientaxuser->idherramienta = $arr_idherramienta[$i];
+				    	$herramientaxuser->iduser = $usuario_id;
+				    	$herramientaxuser->estado = 1;
+				    	$herramientaxuser->save();
+				    	//Agregar todos los tipos de acciones:
+				    	$herramientaxtipo_solicitud = HerramientaXTipoSolicitud::listarTipoSolicitudHerramienta($herramientaxuser->idherramienta)->get();
+				    	if(!$herramientaxtipo_solicitud->isEmpty()){
+				    		$size_tipos = count($herramientaxtipo_solicitud);
+				    		for($j=0;$j<$size_tipos;$j++){
+				    			$herramientaxtipo_solicitudxuser = new HerramientaXTipoSolicitudXUser;
+				    			$herramientaxtipo_solicitudxuser->idherramientaxtipo_solicitud = $herramientaxtipo_solicitud[$j]->idherramientaxtipo_solicitud;
+				    			$herramientaxtipo_solicitudxuser->iduser = $usuario_id;
+				    			$herramientaxtipo_solicitudxuser->save();
+				    		}
+				    	}
+				    	$flag_seleccion = true;
+				    }
+			    }
+
+			    if($size_ids > 0)
+			    {
+			    	if($flag_seleccion)
+			    		return Redirect::to('usuarios/mostrar_herramientas_usuario/'.$usuario_id)->with('message', 'Se actualizaron correctamente los aplicativos al usuario');	
+			    	else
+			    		return Redirect::to('usuarios/mostrar_herramientas_usuario/'.$usuario_id)->with('error', 'No se seleccionó ningún aplicativo.');	
+			    }else
+			    {
+			    	return Redirect::to('usuarios/mostrar_herramientas_usuario/'.$usuario_id)->with('error', 'No se agregaron los aplicativos al usuario');	
+			    }	
+				
+			}else{
+				return View::make('error/error',$data);
+			}
+
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function submit_agregar_sectores(){
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				// Validate the info, create rules for the inputs
+				$user = User::find(Input::get('usuario_id'));				
+				$usuario_id = Input::get('usuario_id');
+				$arr_idsectores = Input::get('ids_sectores');
+				/*echo '<pre>';
+			    var_dump(count($arr_idsectores));
+			    echo '</pre>';*/
+			    $size_ids = count($arr_idsectores);
+			    $flag_seleccion = false;
+			    //por cada uno validar si el checkbox asociado fue tecleado
+			    for($i=0;$i<$size_ids;$i++){
+			    	$res_checkbox = Input::get('checkbox'.$i);
+			    	/*echo '<pre>';
+				    var_dump('seleccionado ' .$res_checkbox.': id-> '.$arr_idsectores[$i] );	
+				    echo '</pre>';*/
+				    if($res_checkbox == 1)
+				    {
+				    	//quiere decir que se desea agregar uno nuevo
+				    	$usersxsector = new UsersXSector;
+				    	$usersxsector->idsector = $arr_idsectores[$i];
+				    	$usersxsector->iduser = $usuario_id;
+				    	$usersxsector->save();
+				    	$flag_seleccion = true;
+				    }
+			    }
+
+			    if($size_ids > 0)
+			    {
+			    	if($flag_seleccion)
+			    		return Redirect::to('usuarios/mostrar_sectores_usuario/'.$usuario_id)->with('message', 'Se actualizaron correctamente los sectores al usuario');	
+			    	else
+			    		return Redirect::to('usuarios/mostrar_sectores_usuario/'.$usuario_id)->with('error', 'No se seleccionó ningún sector.');	
+			    }else
+			    {
+			    	return Redirect::to('usuarios/mostrar_sectores_usuario/'.$usuario_id)->with('error', 'No se agregaron los sectores al usuario');	
+			    }	
+				
+			}else{
+				return View::make('error/error',$data);
+			}
+
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function submit_inhabilitar_usuario()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				$user_id = Input::get('user_id');
+				$url = "usuarios/mostrar_usuario"."/".$user_id;
+				$user = User::find($user_id);
+				$user->delete();
+				Session::flash('message', 'Se inhabilitó correctamente al usuario.');
+				return Redirect::to($url);
+			}else{
+				return View::make('error/error',$data);
+			}
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function submit_habilitar_usuario()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				$user_id = Input::get('user_id');
+				$url = "usuarios/mostrar_usuario"."/".$user_id;
+				$user = User::withTrashed()->find($user_id);
+				$user->restore();
+				Session::flash('message', 'Se habilitó correctamente al usuario.');
+				return Redirect::to($url);
 			}else{
 				return View::make('error/error',$data);
 			}

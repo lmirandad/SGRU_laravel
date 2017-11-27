@@ -27,13 +27,13 @@
 				@endif
 			</div>
 		</div> 
-		{{ Form::open(array('url'=>'/usuarios/submit_agregar_herramientas' ,'role'=>'form','id'=>'submit-agregar-herramientas')) }}
+		{{ Form::open(array('url'=>'/usuarios/submit_agregar_sectores' ,'role'=>'form','id'=>'submit-agregar-sectores')) }}
 		{{ Form::hidden('usuario_id', $usuario->id, array('id'=>'usuario_id')) }}
 		<div class="row">
 			<div class="col-md-6">
 				<div class="panel">	
 					<div class="panel-heading">
-						<h4 class="page-title">HERRAMIENTAS DISPONIBLES POR EL USUARIO</h4>
+						<h4 class="page-title">SECTORES DISPONIBLES PARA EL USUARIO</h4>
 					</div>	
 					<div class="panel-body">
 						<div class="row">
@@ -43,24 +43,20 @@
 										<thead>
 											<tr>
 												<th class="text-nowrap text-center">N°</th>
-												<th class="text-nowrap text-center">Nombre Aplicativo</th>
-												<th class="text-nowrap text-center">Tipo Aplicativo</th>
+												<th class="text-nowrap text-center">Sector</th>
 												<th class="text-nowrap text-center">Agregar</th>
 											</tr>
 										</thead>
 										<tbody>	
-											@if(count($herramientas_disponibles)>0)
-												@foreach($herramientas_disponibles as $index  => $herramienta)
+											@if(count($sectores_disponibles)>0)
+												@foreach($sectores_disponibles as $index  => $sector)
 												<tr class="">
 													<td class="text-nowrap text-center">
-														<input style="display:none" name='ids_herramientas[]' value='{{ $herramienta->idherramienta }}' readonly/>
+														<input style="display:none" name='ids_sectores[]' value='{{ $sector->idsector }}' readonly/>
 														{{$index+1}}
 													</td>
 													<td class="text-nowrap text-center">
-														{{$herramienta->nombre}}
-													</td>
-													<td class="text-nowrap text-center">
-														{{$herramienta->nombre_denominacion}}
+														{{$sector->nombre}}
 													</td>
 													<td class="text-nowrap">
 														<div style="text-align:center">
@@ -79,10 +75,10 @@
 								</div>
 							</div>
 						</div>
-						@if(count($herramientas_disponibles)>0)
+						@if(count($sectores_disponibles)>0)
 						<div class="row">
 							<div class="form-group col-md-5  col-md-offset-7">
-								{{ Form::button('<span class="lnr lnr-plus-circle""></span> Agregar Herramientas', array('id'=>'btnAgregarHerramientaSubmit', 'class' => 'btn btn-info btn-block')) }}	
+								{{ Form::button('<span class="lnr lnr-plus-circle""></span> Agregar Sectores', array('id'=>'btnAgregarSectorSubmit', 'class' => 'btn btn-info btn-block')) }}	
 							</div>
 						</div>
 						@endif
@@ -92,7 +88,7 @@
 			<div class="col-md-6">
 				<div class="panel">	
 					<div class="panel-heading">
-						<h4 class="page-title">HERRAMIENTAS GESTIONADAS POR EL USUARIO</h4>
+						<h4 class="page-title">SECTORES ASIGNADOS POR EL USUARIO</h4>
 					</div>	
 					<div class="panel-body">
 						<div class="row">
@@ -102,34 +98,25 @@
 										<thead>
 											<tr>
 												<th class="text-nowrap text-center">N°</th>
-												<th class="text-nowrap text-center">Nombre Aplicativo</th>
-												<th class="text-nowrap text-center">Tipo Aplicativo</th>
+												<th class="text-nowrap text-center">Sector</th>
 												<th class="text-nowrap text-center">Retirar</th>
 												<th class="text-nowrap text-center">Ver Acciones</th>
 											</tr>
 										</thead>
 										<tbody>	
-											@foreach($herramientas as $index  => $herramienta)
+											@foreach($sectores as $index  => $sector)
 											<tr class="">
 												<td class="text-nowrap text-center">
 													{{$index+1}}
 												</td>
 												<td class="text-nowrap text-center">
-													{{$herramienta->nombre}}
-												</td>
-												<td class="text-nowrap text-center">
-													{{$herramienta->nombre_denominacion}}
+													{{$sector->nombre}}
 												</td>
 												<td class="text-nowrap">
-													<div style="text-align:center">
-														<button class="btn btn-danger boton-eliminar-herramienta" onclick="eliminar_herramienta(event,{{$herramienta->idherramientaxusers}})" type="button"><span class="lnr lnr-trash"></span></button>
+													<div style="margin-left:37%">
+														<button class="btn btn-danger boton-eliminar-sector" onclick="eliminar_sector(event,{{$sector->idusersxsector}})" type="button"><span class="lnr lnr-trash"></span></button>
 													</div>
-												</td>												
-												<td class="text-nowrap">
-													<div style="text-align:center">
-														<button class="btn btn-info boton-ver-acciones" onclick="ver_acciones(event,{{$herramienta->idherramientaxusers}})" type="button"><span class="fa fa-search"></span></button>
-													</div>
-												</td>	
+												</td>											
 											</tr>
 											@endforeach
 										</tbody>
@@ -145,42 +132,6 @@
 		
 	</div>
 </div>
-<div class="container" >
-  <!-- Modal -->
-  <div class="modal fade" id="modal_acciones"  role="dialog">
-    <div class="modal-dialog modal-md">    
-      <!-- Modal content-->
-      <div class="modal-content" >
-	        <div class="modal-header" id="modal_header_acciones">
-	          <button type="button" class="close" id="btnCerrarModal" data-dismiss="modal">&times;</button>
-	          <h4 class="modal-title">Acciones Disponibles</h4>
-	        </div>
-	        <div class="modal-body" id="modal_text_acciones" style="height:150px; overflow: auto;">
-	         	<div class="container-fluid">
-	         		<div class="row">
-						<div class="table-responsive">
-							<table class="table table-hover" id="tabla_acciones_disponibles">
-								<thead>
-									<tr>
-										<th class="text-nowrap text-center">N°</th>
-										<th class="text-nowrap text-center">Acción</th>
-										<th class="text-nowrap text-center">Adicionar</th>
-									</tr>
-								</thead>
-								<tbody >	
-									
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-			</div>
-	        <div class="modal-footer">
-	          <button type="button" class="btn btn-info" id="btnAgregarAccionSubmit" data-dismiss="modal"><i class="fa fa-floppy-o "></i>&nbsp&nbspActualizar</button>
-	        </div>
-      </div>      
-    </div>
-  </div>
- </div>  
+
 
 @stop

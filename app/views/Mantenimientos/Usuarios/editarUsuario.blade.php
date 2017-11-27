@@ -3,22 +3,29 @@
 <!-- MAIN CONTENT -->
 <div class="main-content">
 	<div class="container-fluid">
-		<h3 class="page-title"><strong>USUARIO:</strong> {{$usuario->nombre}} {{$usuario->apellido_paterno}} {{$usuario->apellido_materno}} ({{$usuario->username}})</h3>
-
-		
-		@if (Session::has('error'))
-			<div class="alert alert-danger alert-dismissible" role="alert">
-				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-				<i class="fa fa-times-circle"></i> {{ Session::get('message') }}
+		<div class="row">
+			<div class="col-md-10">
+				<h3 class="page-title"><strong>USUARIO:</strong> {{$usuario->nombre}} {{$usuario->apellido_paterno}} {{$usuario->apellido_materno}} ({{$usuario->username}})</h3>
 			</div>
-		@endif
-		@if (Session::has('message'))		
-			<div class="alert alert-success alert-dismissible" role="alert">
-				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<i class="fa fa-check-circle"></i>
-				{{ Session::get('message') }}
-			</div>
-		@endif
+			<div class="col-md-2">
+				<a class="btn btn-default btn-block" href="{{URL::to('/usuarios/listar_usuarios')}}"><i class="lnr lnr-arrow-left"></i> Cancelar</a>		
+			</div>	
+		</div>
+		<div class="row">
+			@if (Session::has('error'))
+				<div class="alert alert-danger alert-dismissible" role="alert">
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+					<i class="fa fa-times-circle"></i> {{ Session::get('message') }}
+				</div>
+			@endif
+			@if (Session::has('message'))		
+				<div class="alert alert-success alert-dismissible" role="alert">
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<i class="fa fa-check-circle"></i>
+					{{ Session::get('message') }}
+				</div>
+			@endif
+		</div>		
 		
 		{{ Form::open(array('url'=>'/usuarios/submit_editar_usuario' ,'role'=>'form','id'=>'submit-editar')) }}
 		{{ Form::hidden('usuario_id', $usuario->id, array('id'=>'usuario_id')) }}	
@@ -150,18 +157,32 @@
 		<div class="row">
 			<div class="form-group col-md-3 ">
 				<a class="btn btn-success btn-block" id="btnReestablecer"><i class="fa fa-eraser"></i> Reestablecer Contraseña </a>
-			</div>
+			</div>			
+			
 			<div class="form-group col-md-2  col-md-offset-5">
 				{{ Form::button('<i class="lnr lnr-plus-circle"></i> Guardar', array('id'=>'btnEditar', 'class' => 'btn btn-info btn-block')) }}
 			</div>
-			<div class="form-group col-md-2">
-				<a class="btn btn-default btn-block" href="{{URL::to('/usuarios/listar_usuarios')}}">Cancelar</a>			
-			</div>
+			{{ Form::close() }}	
+			@if($usuario->deleted_at)
+				{{ Form::open(array('url'=>'usuarios/submit_habilitar_usuario', 'role'=>'form','id'=>'habilitar_usuario')) }}
+					{{ Form::hidden('user_id', $usuario->id) }}
+					<div class="form-group col-md-2">
+						{{ Form::button('<span class="glyphicon glyphicon-circle-arrow-up"></span> Habilitar', array('id'=>'submit-habilitar-usuario', 'class' => 'btn btn-success btn-block')) }}
+					</div>
+				{{ Form::close() }}
+			@else
+				{{ Form::open(array('url'=>'usuarios/submit_inhabilitar_usuario', 'role'=>'form','id'=>'inhabilitar_usuario')) }}
+					{{ Form::hidden('user_id', $usuario->id) }}
+					<div class="form-group col-md-2">
+						{{ Form::button('<span class="glyphicon glyphicon-circle-arrow-down"></span> Inhabilitar', array('id'=>'submit-inhabilitar-usuario', 'class' => 'btn btn-danger btn-block')) }}
+					</div>
+				{{ Form::close() }}
+			@endif
 		</div>
 
 	</div>
 		
-		{{ Form::close() }}					
+						
 	</div>
 </div>
 @stop

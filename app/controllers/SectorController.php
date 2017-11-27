@@ -1,8 +1,8 @@
 <?php
 
-class HerramientaController extends BaseController {
+class SectorController extends BaseController {
 
-	public function submit_eliminar_herramienta_usuario(){
+	public function submit_eliminar_sector_usuario(){
 		if(!Request::ajax() || !Auth::check()){
 			return Response::json(array( 'success' => false ),200);
 		}
@@ -12,29 +12,29 @@ class HerramientaController extends BaseController {
 		if($data["user"]->idrol == 1){
 			// Check if the current user is the "System Admin"
 			$usuario_id = Input::get('usuario_id');
-			$idherramientaxusers = Input::get('idherramientaxusers');
+			$idusersxsector = Input::get('idusersxsector');
 			
 			//buscamos al idherramientaxuser
-			$hu = HerramientaXUser::find($idherramientaxusers);
+			$hu = UsersXSector::find($idusersxsector);
 			if($hu==null)
 				return Response::json(array( 'success' => false),200);
 
-			$herramienta =Herramienta::find($hu->idherramienta);
+			$sector=Sector::find($hu->idsector);
 
-			if($herramienta==null)
+			if($sector==null)
 				return Response::json(array( 'success' => false),200);
 
 			$hu->forceDelete();
 			
 
-			return Response::json(array( 'success' => true,'idherramientaxusers' => $idherramientaxusers,'nombre_herramienta'=>$herramienta->nombre),200);
+			return Response::json(array( 'success' => true,'idusersxsector' => $idusersxsector,'nombre_sector'=>$sector->nombre),200);
 			
 		}else{
 			return Response::json(array( 'success' => false),200);
 		}
 	}
 
-	public function listar_herramientas()
+	/*public function listar_herramientas()
 	{
 		if(Auth::check()){
 			$data["inside_url"] = Config::get('app.inside_url');
@@ -79,6 +79,6 @@ class HerramientaController extends BaseController {
 		}else{
 			return View::make('error/error',$data);
 		}
-	}
+	}*/
 
 }

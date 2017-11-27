@@ -147,17 +147,17 @@
 		</div>
 		@if($usuario->idrol != 1)
 		<div class="row">
-			<div class="col-md-10 col-md-offset-1">
+			<div class="col-md-6">
 				<div class="panel">	
 					<div class="panel-heading">
 						<h4 class="page-title">HERRAMIENTAS GESTIONADAS POR EL USUARIO</h4>
 					</div>	
-					<div class="panel-body">
+					<div class="panel-body" style="height:175px;overflow-y:auto;" >
 						<div class="row">
 							<div class="col-md-12">
 								@if(count($herramientas) > 0)
 								<div class="table-responsive">
-									<table class="table table-hover">
+									<table class="table table-hover"  >
 										<thead>
 											<tr>
 												<th class="text-nowrap text-center">N°</th>
@@ -166,7 +166,7 @@
 											</tr>
 										</thead>
 										
-											<tbody>	
+											<tbody >	
 												@foreach($herramientas as $index  => $herramienta)
 												<tr class="">
 													<td class="text-nowrap text-center">
@@ -177,6 +177,46 @@
 													</td>
 													<td class="text-nowrap text-center">
 														{{$herramienta->nombre_denominacion}}
+													</td>
+												</tr>
+												@endforeach
+											</tbody>										
+									</table>
+								</div>
+								@else
+								<h3 style="text-align:center">SIN REGISTROS</h3>
+								@endif
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="panel">	
+					<div class="panel-heading">
+						<h4 class="page-title">SECTORES ASIGNADOS AL USUARIO</h4>
+					</div>	
+					<div class="panel-body" style="height:175px;overflow-y:auto;">
+						<div class="row">
+							<div class="col-md-12">
+								@if(count($sectores) > 0)
+								<div class="table-responsive">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th class="text-nowrap text-center">N°</th>
+												<th class="text-nowrap text-center">Sector</th>
+											</tr>
+										</thead>
+										
+											<tbody >	
+												@foreach($sectores as $index  => $sector)
+												<tr class="">
+													<td class="text-nowrap text-center">
+														{{$index+1}}
+													</td>
+													<td class="text-nowrap text-center">
+														{{$sector->nombre}}
 													</td>
 												</tr>
 												@endforeach

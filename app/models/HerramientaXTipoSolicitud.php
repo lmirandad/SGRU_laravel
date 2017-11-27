@@ -5,7 +5,7 @@ use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 
-class TipoSolicitud extends Eloquent implements UserInterface, RemindableInterface {
+class HerramientaXTipoSolicitud extends Eloquent implements UserInterface, RemindableInterface {
 
 	use UserTrait, RemindableTrait;
 	use SoftDeletingTrait;
@@ -15,9 +15,9 @@ class TipoSolicitud extends Eloquent implements UserInterface, RemindableInterfa
 	 *
 	 * @var string
 	 */
-	protected $table = 'tipo_solicitud';
+	protected $table = 'herramientaxtipo_solicitud';
 	protected $softDelete = true;
-	protected $primaryKey = 'idtipo_solicitud';
+	protected $primaryKey = 'idherramientaxtipo_solicitud';
 
 	/**
 	 * The attributes excluded from the model's JSON form.
@@ -25,11 +25,15 @@ class TipoSolicitud extends Eloquent implements UserInterface, RemindableInterfa
 	 * @var array
 	 */
 	
-	public function scopeListarTiposSolicitud($query)
+
+	public function scopeListarTipoSolicitudHerramienta($query,$search_criteria)
 	{
-		$query->select('tipo_solicitud.*');
+		$query->where('herramientaxtipo_solicitud.idherramienta','=',$search_criteria);
+
+		$query->select('herramientaxtipo_solicitud.*');
 
 		return $query;
 	}
 
+	
 }

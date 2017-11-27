@@ -67,12 +67,14 @@
 										<th class="text-nowrap text-center">Doc. de identidad</th>
 										<th class="text-nowrap text-center">Rol</th>
 										<th class="text-nowrap text-center">Editar</th>
-										<th class="text-nowrap text-center">Aplicativos</th>
+										<th class="text-nowrap text-center">Aplicativos Especializados</th>
+										<th class="text-nowrap text-center">Sectores Asignados</th>
+										<th class="text-nowrap text-center">Habilitado/Inhabilitado</th>
 									</tr>
 								</thead>
 								<tbody>	
 									@foreach($users_data as $user_data)
-									<tr class="@if($user_data->deleted_at) bg-danger @endif">
+									<tr class="">
 										<td class="text-nowrap text-center">
 											<a href="{{URL::to('/usuarios/mostrar_usuario/')}}/{{$user_data->id}}">{{$user_data->username}}</a>
 										</td>
@@ -89,14 +91,35 @@
 											{{$user_data->nombre_rol}}
 										</td>
 										<td class="text-nowrap">
-											<a class="btn btn-warning btn-block btn-sm" href="{{URL::to('/usuarios/editar_usuario')}}/{{$user_data->id}}">
-											<span class="lnr lnr-pencil"></span></a>
+											<div style="text-align:center">
+												<a class="btn btn-warning btn-sm" href="{{URL::to('/usuarios/editar_usuario')}}/{{$user_data->id}}">
+												<span class="lnr lnr-pencil"></span></a>
+											</div>
 										</td>
 										<td class="text-nowrap">
 											@if($user_data->idrol != 1)
-												<a class="btn btn-info btn-block btn-sm" href="{{URL::to('/usuarios/mostrar_herramientas_usuario')}}/{{$user_data->id}}">
-												<span class="fa fa-search"></span></a>
+												<div style="text-align:center">
+													<a class="btn btn-info  btn-sm" href="{{URL::to('/usuarios/mostrar_herramientas_usuario')}}/{{$user_data->id}}">
+													<span class="fa fa-search"></span></a>
+												</div>		
 											@endif
+										</td>
+										<td class="text-nowrap">
+											@if($user_data->idrol != 1)
+												<div style="text-align:center">
+													<a class="btn btn-info  btn-sm" href="{{URL::to('/usuarios/mostrar_sectores_usuario')}}/{{$user_data->id}}">
+													<span class="fa fa-search"></span></a>
+												</div>
+											@endif
+										</td>
+										<td class="text-nowrap">
+											<div style="text-align:center">
+												@if($user_data->deleted_at)
+													Inhabilitado
+												@else
+													Habilitado
+												@endif
+											</div>
 										</td>
 									</tr>
 									@endforeach

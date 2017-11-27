@@ -29,8 +29,6 @@ class CreateUsersTable extends Migration {
 			$table->timestamps();
 			$table->softDeletes();
 			$table->integer('idrol')->index('fk_users_rol_idx');
-			$table->integer('usuario_bloqueado')->nullable();
-			$table->integer('usuario_vena')->nullable();
 			$table->integer('idtipo_doc_identidad')->index('fk_users_tipo_doc_identidad1_idx');
 			$table->integer('iduser_created_by')->nullable()->index('fk_users_users1_idx');
 			$table->integer('iduser_updated_by')->nullable()->index('fk_users_users2_idx');
