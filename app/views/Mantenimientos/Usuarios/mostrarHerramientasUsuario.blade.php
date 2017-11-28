@@ -33,13 +33,14 @@
 			<div class="col-md-6">
 				<div class="panel">	
 					<div class="panel-heading">
-						<h4 class="page-title">HERRAMIENTAS DISPONIBLES POR EL USUARIO</h4>
+						<h4 class="page-title"><strong>HERRAMIENTAS DISPONIBLES</strong></h4>
 					</div>	
-					<div class="panel-body">
-						<div class="row">
+					<div class="panel-body" >
+						<div class="row" style="height:150px;overflow-y:auto; " >
 							<div class="col-md-12">
 								<div class="table-responsive">
 									<table class="table table-hover">
+										@if(count($herramientas_disponibles)>0)
 										<thead>
 											<tr>
 												<th class="text-nowrap text-center">N°</th>
@@ -48,10 +49,10 @@
 												<th class="text-nowrap text-center">Agregar</th>
 											</tr>
 										</thead>
-										<tbody>	
-											@if(count($herramientas_disponibles)>0)
+										<tbody >	
+											
 												@foreach($herramientas_disponibles as $index  => $herramienta)
-												<tr class="">
+												<tr>
 													<td class="text-nowrap text-center">
 														<input style="display:none" name='ids_herramientas[]' value='{{ $herramienta->idherramienta }}' readonly/>
 														{{$index+1}}
@@ -68,34 +69,41 @@
 														</div>
 													</td>
 												</tr>
-												@endforeach
-											@else
-												<tr class="">
-													<h4 style="text-align:center">No hay registros</h4>
-												</tr>
-											@endif
+												@endforeach											
 										</tbody>
+										@else												
+											<h4 style="text-align:center">No hay aplicativos disponibles</h4>
+										@endif
 									</table>
 								</div>
 							</div>
 						</div>
 						@if(count($herramientas_disponibles)>0)
-						<div class="row">
-							<div class="form-group col-md-5  col-md-offset-7">
-								{{ Form::button('<span class="lnr lnr-plus-circle""></span> Agregar Herramientas', array('id'=>'btnAgregarHerramientaSubmit', 'class' => 'btn btn-info btn-block')) }}	
+						<br><br>
+						<div class=" form-group row">
+							<div class="col-md-5  col-md-offset-7">
+								{{ Form::button(' Agregar Herramientas &nbsp&nbsp <span class="fa fa-arrow-right"></span>', array('id'=>'btnAgregarHerramientaSubmit', 'class' => 'btn btn-info btn-block')) }}	
+							</div>
+						</div>
+						@else
+						<br><br>
+						<div class=" form-group row">
+							<div class="col-md-5  col-md-offset-7">
+								{{ Form::button(' Agregar Herramientas &nbsp&nbsp <span class="fa fa-arrow-right"></span>', array('id'=>'btnAgregarHerramientaSubmit', 'class' => 'btn btn-info btn-block','disabled'=>'disabled')) }}	
 							</div>
 						</div>
 						@endif
+
 					</div>
 				</div>
 			</div>
 			<div class="col-md-6">
 				<div class="panel">	
 					<div class="panel-heading">
-						<h4 class="page-title">HERRAMIENTAS GESTIONADAS POR EL USUARIO</h4>
+						<h4 class="page-title"><strong>HERRAMIENTAS GESTIONADAS POR EL USUARIO</strong></h4>
 					</div>	
 					<div class="panel-body">
-						<div class="row">
+						<div class="row"  style="height:240px;overflow-y:auto;" >
 							<div class="col-md-12">
 								<div class="table-responsive">
 									<table class="table table-hover">
@@ -155,7 +163,7 @@
 	          <button type="button" class="close" id="btnCerrarModal" data-dismiss="modal">&times;</button>
 	          <h4 class="modal-title">Acciones Disponibles</h4>
 	        </div>
-	        <div class="modal-body" id="modal_text_acciones" style="height:150px; overflow: auto;">
+	        <div class="modal-body" id="modal_text_acciones">
 	         	<div class="container-fluid">
 	         		<div class="row">
 						<div class="table-responsive">
@@ -164,7 +172,7 @@
 									<tr>
 										<th class="text-nowrap text-center">N°</th>
 										<th class="text-nowrap text-center">Acción</th>
-										<th class="text-nowrap text-center">Adicionar</th>
+										<th class="text-nowrap text-center">Activo <input type="checkbox" id="checkboxAll" class="form-check-input"></th>
 									</tr>
 								</thead>
 								<tbody >	

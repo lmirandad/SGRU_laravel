@@ -36,6 +36,20 @@ class HerramientaXUser extends Eloquent implements UserInterface, RemindableInte
 		return $query;
 	}
 
+	public function scopeBuscarHerramientasPorIdUsuarioIdHerramienta($query,$search_idusuario,$search_idherramienta)
+	{
+		$query->withTrashed()
+			  ->join('herramienta','herramienta.idherramienta','=','herramientaxusers.idherramienta')		
+			  ->join('users','users.id','=','herramientaxusers.iduser')		
+			  ->join('denominacion_herramienta','denominacion_herramienta.iddenominacion_herramienta','=','herramienta.iddenominacion_herramienta')
+			  ->where('herramientaxusers.iduser','=',$search_idusuario)
+			  ->where('herramientaxusers.idherramienta','=',$search_idherramienta);
+
+		$query->select('herramientaxusers.*');
+		
+		return $query;
+	}
+
 	
 
 	

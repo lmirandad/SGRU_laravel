@@ -31,6 +31,7 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 					$subquery->leftJoin('herramientaxusers','herramienta.idherramienta','=','herramientaxusers.idherramienta');
 					$subquery->from(with(new Herramienta)->getTable());
 					$subquery->where('herramientaxusers.iduser','=',$search_criteria);
+					$subquery->where('herramientaxusers.deleted_at','=',NULL);
 					$subquery->select('herramienta.idherramienta')->distinct();
 		});
 

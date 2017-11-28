@@ -16,7 +16,6 @@ class CreateDenominacionHerramientaTable extends Migration {
 		{
 			$table->integer('iddenominacion_herramienta', true);
 			$table->string('nombre', 100);
-			$table->integer('flag_seguridad')->nullable();
 			$table->timestamps();
 			$table->softDeletes();
 		});

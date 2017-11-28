@@ -15,16 +15,28 @@ class HerramientaController extends BaseController {
 			$idherramientaxusers = Input::get('idherramientaxusers');
 			
 			//buscamos al idherramientaxuser
-			$hu = HerramientaXUser::find($idherramientaxusers);
-			if($hu==null)
+			$herramientaUsuario = HerramientaXUser::find($idherramientaxusers);
+			if($herramientaUsuario==null)
 				return Response::json(array( 'success' => false),200);
 
-			$herramienta =Herramienta::find($hu->idherramienta);
+			$herramienta =Herramienta::find($herramientaUsuario->idherramienta);
 
 			if($herramienta==null)
 				return Response::json(array( 'success' => false),200);
 
-			$hu->forceDelete();
+			
+			$accionesHerramientaUsuario = HerramientaXTipoSolicitudXUser::listarTipoSolicitudUsuario($usuario_id,$herramienta->idherramienta)->get();
+			
+			if($accionesHerramientaUsuario == null || $accionesHerramientaUsuario->isEmpty()){
+				return Response::json(array( 'success' => false),200);				
+			}
+
+			$size_acciones = count($accionesHerramientaUsuario);
+			for($i=0;$i<$size_acciones;$i++){
+				$accionesHerramientaUsuario[$i]->delete();
+			}
+
+			$herramientaUsuario->delete();
 			
 
 			return Response::json(array( 'success' => true,'idherramientaxusers' => $idherramientaxusers,'nombre_herramienta'=>$herramienta->nombre),200);

@@ -36,10 +36,11 @@
 						<h4 class="page-title">SECTORES DISPONIBLES PARA EL USUARIO</h4>
 					</div>	
 					<div class="panel-body">
-						<div class="row">
+						<div class="row" style="height:150px;overflow-y:auto; ">
 							<div class="col-md-12">
 								<div class="table-responsive">
 									<table class="table table-hover">
+										@if(count($sectores_disponibles)>0)
 										<thead>
 											<tr>
 												<th class="text-nowrap text-center">N°</th>
@@ -48,7 +49,6 @@
 											</tr>
 										</thead>
 										<tbody>	
-											@if(count($sectores_disponibles)>0)
 												@foreach($sectores_disponibles as $index  => $sector)
 												<tr class="">
 													<td class="text-nowrap text-center">
@@ -65,20 +65,27 @@
 													</td>
 												</tr>
 												@endforeach
-											@else
-												<tr class="">
-													<h4 style="text-align:center">No hay registros</h4>
-												</tr>
-											@endif
+											
 										</tbody>
+										@else
+											<h4 style="text-align:center">Sin sectores disponibles</h4>
+										@endif
 									</table>
 								</div>
 							</div>
 						</div>
 						@if(count($sectores_disponibles)>0)
+						<br><br>
 						<div class="row">
 							<div class="form-group col-md-5  col-md-offset-7">
 								{{ Form::button('<span class="lnr lnr-plus-circle""></span> Agregar Sectores', array('id'=>'btnAgregarSectorSubmit', 'class' => 'btn btn-info btn-block')) }}	
+							</div>
+						</div>
+						@else
+						<br><br>
+						<div class="row">
+							<div class="form-group col-md-5  col-md-offset-7">
+								{{ Form::button('<span class="lnr lnr-plus-circle""></span> Agregar Sectores', array('id'=>'btnAgregarSectorSubmit', 'class' => 'btn btn-info btn-block','disabled'=>'disabled')) }}
 							</div>
 						</div>
 						@endif
@@ -91,7 +98,7 @@
 						<h4 class="page-title">SECTORES ASIGNADOS POR EL USUARIO</h4>
 					</div>	
 					<div class="panel-body">
-						<div class="row">
+						<div class="row"  style="height:240px;overflow-y:auto;" >
 							<div class="col-md-12">
 								<div class="table-responsive">
 									<table class="table table-hover">
@@ -100,7 +107,6 @@
 												<th class="text-nowrap text-center">N°</th>
 												<th class="text-nowrap text-center">Sector</th>
 												<th class="text-nowrap text-center">Retirar</th>
-												<th class="text-nowrap text-center">Ver Acciones</th>
 											</tr>
 										</thead>
 										<tbody>	

@@ -26,13 +26,14 @@ class HerramientaXTipoSolicitudXUser extends Eloquent implements UserInterface, 
 	 */
 	
 
-	public function scopeListarTipoSolicitudUsuario($query,$search_criteria)
+	public function scopeListarTipoSolicitudUsuario($query,$idusuario,$idherramienta)
 	{
 		$query->withTrashed()
 			  ->join('herramientaxtipo_solicitud','herramientaxtipo_solicitudxuser.idherramientaxtipo_solicitud','=','herramientaxtipo_solicitud.idherramientaxtipo_solicitud')
 			  ->join('tipo_solicitud','herramientaxtipo_solicitud.idtipo_solicitud','=','tipo_solicitud.idtipo_solicitud');
 
-		$query->where('herramientaxtipo_solicitudxuser.iduser','=',$search_criteria);
+		$query->where('herramientaxtipo_solicitudxuser.iduser','=',$idusuario);
+		$query->where('herramientaxtipo_solicitud.idherramienta','=',$idherramienta);
 
 		$query->select('herramientaxtipo_solicitudxuser.*','herramientaxtipo_solicitudxuser.deleted_at as eliminado','tipo_solicitud.nombre as nombre_solicitud');
 

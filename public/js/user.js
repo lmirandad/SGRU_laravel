@@ -197,6 +197,24 @@ $( document ).ready(function(){
 		agregarNuevosSectores();
 	});
 
+	$('#btnAgregarAccionSubmit').click(function(){
+		actualizarAcciones();
+	});
+
+	$('#checkboxAll').change(function() {
+       if(this.checked){
+       		size_table = document.getElementById("tabla_acciones_disponibles").rows.length-1;
+       		for(i=0;i<size_table;i++){
+				$('#checkbox'+i).prop('checked', true);
+			}
+       }else{
+       		size_table = document.getElementById("tabla_acciones_disponibles").rows.length-1;
+       		for(i=0;i<size_table;i++){
+				$('#checkbox'+i).prop('checked', false);
+			}
+       }
+    });
+
 });
 
 
@@ -247,6 +265,7 @@ function eliminar_herramienta(e,id){
 					type: 'POST',
 					data: { 
 						'idherramientaxusers' : id,
+						'usuario_id': usuario_id,
 					},
 					beforeSend: function(){
 						//$(this).prop('disabled',true);
@@ -350,7 +369,7 @@ function ver_acciones(e,id){
             		if(response["acciones"][i].eliminado == null){
                 		data += "<td class=\"text-nowrap text-center\"><div class=\"form-check\"><label class=\"form-check-label\"><input id=\"checkbox"+i+"\" type=\"checkbox\" class=\"form-check-input\" checked=\"false\"><label></div></td></tr>"; 
                 	}else{
-                		"<td class=\"text-nowrap text-center\"><div class=\"form-check\"><label class=\"form-check-label\"><input id=\"checkbox"+i+"\" type=\"checkbox\" class=\"form-check-input\" ><label></div></td></tr>";
+                		data += "<td class=\"text-nowrap text-center\"><div class=\"form-check\"><label class=\"form-check-label\"><input id=\"checkbox"+i+"\" type=\"checkbox\" class=\"form-check-input\" ><label></div></td></tr>";
                 	}	
 
             		$('#tabla_acciones_disponibles').append(data);
@@ -368,4 +387,52 @@ function ver_acciones(e,id){
 		}
 	});
 			
+}
+
+function actualizarAcciones(){
+	size_table = document.getElementById("tabla_acciones_disponibles").rows.length-1;
+	arr_idherramientaxtipo_solicitudxuser = [];
+	arr_checkbox = [];
+	usuario_id = $('#usuario_id').val();
+	for(i=0;i<size_table;i++){
+		arr_idherramientaxtipo_solicitudxuser[i] = $('#idherramientaxtipo_solicitudxuser'+i).html();
+		if($('#checkbox'+i).is(":checked"))
+			arr_checkbox[i] = 1;
+		else
+			arr_checkbox[i] = 0;
+	}
+
+	$.ajax({
+		url: inside_url+'tipos_solicitudes/eliminar_tipo_solicitud',
+		type: 'POST',
+		data: { 
+			'arr_idherramientaxtipo_solicitudxuser' : arr_idherramientaxtipo_solicitudxuser,
+			'arr_checkbox': arr_checkbox,
+		},
+		beforeSend: function(){
+			//$(this).prop('disabled',true);
+		},
+		complete: function(){
+			//$(this).prop('disabled',false);
+		},
+		success: function(response){
+			if(response.success){
+				dialog = BootstrapDialog.show({
+		            title: 'Mensaje',
+		            message: 'Se hicieron las actualizaciones con éxito',
+		            type : BootstrapDialog.TYPE_SUCCESS,
+		            buttons: [{
+		                label: 'Entendido',
+		                action: function(dialog) {
+		                    var url = inside_url + "usuarios/mostrar_herramientas_usuario/"+usuario_id;
+							window.location = url;
+		                }
+		            }]
+		        });
+			}
+			
+		},
+		error: function(){
+		}
+	});
 }

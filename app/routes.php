@@ -74,5 +74,6 @@ Route::group(array('prefix'=>'solicitudes', 'before'=>'auth'),function(){
 /*TIPOS_SOLICITUD*/
 Route::group(array('prefix'=>'tipos_solicitudes', 'before'=>'auth'),function(){
 	Route::get('/ver_acciones_herramienta_usuario/{id}','TipoSolicitudController@ver_acciones_herramienta');
+	Route::post('/eliminar_tipo_solicitud','TipoSolicitudController@eliminar_acciones_herramienta');
 });
 

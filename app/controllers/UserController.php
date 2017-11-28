@@ -457,28 +457,47 @@ class UserController extends BaseController {
 				    echo '</pre>';*/
 				    if($res_checkbox == 1)
 				    {
-				    	//quiere decir que se desea agregar uno nuevo
-				    	$herramientaxuser = new HerramientaXUser;
-				    	$herramientaxuser->idherramienta = $arr_idherramienta[$i];
-				    	$herramientaxuser->iduser = $usuario_id;
-				    	$herramientaxuser->estado = 1;
-				    	$herramientaxuser->save();
-				    	//Agregar todos los tipos de acciones:
-				    	$herramientaxtipo_solicitud = HerramientaXTipoSolicitud::listarTipoSolicitudHerramienta($herramientaxuser->idherramienta)->get();
-				    	if(!$herramientaxtipo_solicitud->isEmpty()){
-				    		$size_tipos = count($herramientaxtipo_solicitud);
-				    		for($j=0;$j<$size_tipos;$j++){
-				    			$herramientaxtipo_solicitudxuser = new HerramientaXTipoSolicitudXUser;
-				    			$herramientaxtipo_solicitudxuser->idherramientaxtipo_solicitud = $herramientaxtipo_solicitud[$j]->idherramientaxtipo_solicitud;
-				    			$herramientaxtipo_solicitudxuser->iduser = $usuario_id;
-				    			$herramientaxtipo_solicitudxuser->save();
+				    	//validar si ya existe el objeto
+				    	$herramientaxuser = HerramientaXUser::buscarHerramientasPorIdUsuarioIdHerramienta($usuario_id,$arr_idherramienta[$i])->get();
+				    	/*echo '<pre>';
+					    var_dump($herramientaxuser[0]->deleted_at);	
+					    echo '</pre>';*/
+				    	
+				    	if($herramientaxuser==null || $herramientaxuser->isEmpty()){
+				    		//quiere decir que es una herramienta nueva a crear
+				    		$herramientaxuser = new HerramientaXUser;
+					    	$herramientaxuser->idherramienta = $arr_idherramienta[$i];
+					    	$herramientaxuser->iduser = $usuario_id;
+					    	$herramientaxuser->estado = 1;
+					    	$herramientaxuser->save();
+					    	//Agregar todos los tipos de acciones:
+					    	$herramientaxtipo_solicitud = HerramientaXTipoSolicitud::listarTipoSolicitudHerramienta($herramientaxuser->idherramienta)->get();
+					    	if(!$herramientaxtipo_solicitud->isEmpty()){
+					    		$size_tipos = count($herramientaxtipo_solicitud);
+					    		for($j=0;$j<$size_tipos;$j++){
+					    			$herramientaxtipo_solicitudxuser = new HerramientaXTipoSolicitudXUser;
+					    			$herramientaxtipo_solicitudxuser->idherramientaxtipo_solicitud = $herramientaxtipo_solicitud[$j]->idherramientaxtipo_solicitud;
+					    			$herramientaxtipo_solicitudxuser->iduser = $usuario_id;
+					    			$herramientaxtipo_solicitudxuser->save();
+					    		}
+					    	}
+				    	}else{
+				    		//quiere decir que solo se requiere restaurar
+				    		$herramientaxuser = $herramientaxuser->first();
+				    		$herramientaxuser->restore();
+				    		$accionesHerramientaUsuario = HerramientaXTipoSolicitudXUser::listarTipoSolicitudUsuario($usuario_id,$herramientaxuser->idherramienta)->get();
+
+
+				    		$size_acciones = count($accionesHerramientaUsuario);
+				    		for($j=0;$j<$size_acciones;$j++){
+				    			$accionesHerramientaUsuario[$j]->restore();
 				    		}
 				    	}
 				    	$flag_seleccion = true;
 				    }
 			    }
 
-			    if($size_ids > 0)
+			  	if($size_ids > 0)
 			    {
 			    	if($flag_seleccion)
 			    		return Redirect::to('usuarios/mostrar_herramientas_usuario/'.$usuario_id)->with('message', 'Se actualizaron correctamente los aplicativos al usuario');	
@@ -487,7 +506,7 @@ class UserController extends BaseController {
 			    }else
 			    {
 			    	return Redirect::to('usuarios/mostrar_herramientas_usuario/'.$usuario_id)->with('error', 'No se agregaron los aplicativos al usuario');	
-			    }	
+			   	}
 				
 			}else{
 				return View::make('error/error',$data);
