@@ -16,7 +16,7 @@ class CreateSectorTable extends Migration {
 		{
 			$table->integer('idsector', true);
 			$table->string('nombre', 100);
-			$table->string('descripcion', 100);
+			$table->string('descripcion', 200)->nullable();
 			$table->integer('iduser_created_by')->nullable()->index('fk_sector_users1_idx');
 			$table->integer('iduser_updated_by')->nullable()->index('fk_sector_users2_idx');
 			$table->timestamps();

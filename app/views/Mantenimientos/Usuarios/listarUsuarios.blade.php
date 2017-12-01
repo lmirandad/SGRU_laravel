@@ -129,13 +129,16 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div>		
 		@if($search || $search_tipo_doc_identidad || $search_documento_identidad || $search_herramienta)
 			{{ $users_data->appends(array('search' => $search,'search_tipo_doc_identidad'=>$search_tipo_doc_identidad,
 			'search_documento_identidad'=>$search_documento_identidad,'search_herramienta'=>$search_herramienta))->links() }}
 		@else
 			{{ $users_data->links() }}
 		@endif
+		<div class="form-group col-md-2 col-md-offset-10">
+			<a href="{{URL::to('usuarios/crear_usuario')}}" class="btn btn-info"><span class="lnr lnr-plus-circle"></span>&nbsp Crear Nuevo Usuario</a>
+		</div>
 	</div>
 </div>
 @stop

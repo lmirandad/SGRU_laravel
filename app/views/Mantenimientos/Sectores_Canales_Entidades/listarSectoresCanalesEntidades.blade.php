@@ -42,7 +42,7 @@
 			@endif
 			<!-- OVERVIEW -->
 			<div class="row">
-				<div class="col-md-8 col-md-offset-2">
+				<div class="col-md-4">
 					<div class="panel panel-headline">
 						<div class="panel-heading">
 							<h3 class="panel-title">Criterios de Búsqueda</h3>
@@ -50,66 +50,70 @@
 						<div class="panel-body">
 							{{ Form::open(array('url'=>'/sectores/buscar_sectores','method'=>'get' ,'role'=>'form', 'id'=>'search-form')) }}
 							<div class="row">
-								<div class="col-md-5">
+								<div class="col-md-12">
 									{{ Form::label('sector_search','Nombre del Sector')}}
-									{{ Form::text('sector_search',$sector_search,array('class'=>'form-control','placeholder'=>'Ingrese nombre del sector','id'=>'search')) }}
+									{{ Form::text('sector_search',$sector_search,array('class'=>'form-control','placeholder'=>'Ingrese nombre del sector','id'=>'sector_search')) }}
 								</div>
-								<div class="form-group col-md-3 col-md-offset-1">
+							</div>
+							<div class="row">
+								<div class="form-group col-md-6">
 								{{ Form::button('<span class="fa fa-search""></span> Buscar', array('id'=>'submit-search-form','type' => 'submit', 'class' => 'btn btn-info btn-block','style'=>'margin-top:25px;')) }}	
 								</div>
-								<div class="col-md-3">
+								<div class="col-md-6">
 									<div class="btn btn-default btn-block" id="btnLimpiarSector" style='margin-top:25px;'><span class="lnr lnr-sync""></span> Limpiar</div>				
 								</div>				
 							</div>
 							{{ Form::close() }}					
 						</div>
 					</div>
+				</div>
+					<div class="col-md-8">
+						<div class="panel">		
+							<div class="panel-body">
+								<div class="row" style="height:206px;overflow-y:auto; " >
+									<div class="col-md-12">
+										<div class="table-responsive">
+											<table class="table table-hover">
+												<thead>
+													<tr>
+														<th class="text-nowrap text-center">Nombre del Sector</th>
+														<th class="text-nowrap text-center">Editar</th>
+													</tr>
+												</thead>
+												<tbody>	
+													@foreach($sectores_data as $sector_data)
+													<tr class="@if($sector_data->deleted_at) bg-danger @endif">
+														<td class="text-nowrap text-center">
+															<a href="{{URL::to('/sectores/mostrar_sector/')}}/{{$sector_data->idsector}}">{{$sector_data->nombre}}</a>
+														</td>
+														<td class="text-nowrap">
+															<div style="text-align:center">
+																<a class="btn btn-warning btn-sm" href="{{URL::to('/sectores/editar_sector')}}/{{$sector_data->idsector}}">
+																<span class="lnr lnr-pencil"></span></a>
+															</div>
+														</td>
+													</tr>
+													@endforeach
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>	
 			</div>
 			
 
-			<div class="panel">		
-				<div class="panel-body">
-					<div class="row">
-						<div class="col-md-12">
-							<div class="table-responsive">
-								<table class="table table-hover">
-									<thead>
-										<tr>
-											<th class="text-nowrap text-center">Nombre del Sector</th>
-											<th class="text-nowrap text-center">Descripcion</th>
-											<th class="text-nowrap text-center">Editar</th>
-										</tr>
-									</thead>
-									<tbody>	
-										@foreach($sectores_data as $sector_data)
-										<tr class="@if($sector_data->deleted_at) bg-danger @endif">
-											<td class="text-nowrap text-center">
-												<a href="{{URL::to('/sectores/mostrar_sector/')}}/{{$sector_data->idsector}}">{{$sector_data->nombre}}</a>
-											</td>
-											<td class="text-nowrap text-center">
-												{{$sector_data->descripcion}}
-											</td>
-											<td class="text-nowrap">
-												<a class="btn btn-warning btn-block btn-sm" href="{{URL::to('/sectores/editar_sector')}}/{{$sector_data->idsector}}">
-												<span class="lnr lnr-pencil"></span></a>
-											</td>
-										</tr>
-										@endforeach
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>			
+							
 			@if($sector_search)
 				{{ $sectores_data->appends(array('sector_search' => $sector_search))->links() }}
 			@else
 				{{ $sectores_data->links() }}
 			@endif
 			<div class="col-md-2 col-md-offset-10" style="margin-top:-30px;margin-bottom: 10px">
-				<a class="btn btn-info btn-block" style='margin-top:25px;'><span class="lnr lnr-plus-circle"></span> Crear Sector</a>	
+				<a class="btn btn-info btn-block" style='margin-top:25px;' href="{{URL::to('sectores/crear_sector')}}"><span class="lnr lnr-plus-circle"></span> Crear Sector</a>	
 			</div>	
 		</div>
 	@elseif($flag_seleccion == 2)
@@ -138,17 +142,17 @@
 					<div class="row">
 						<div class="col-md-4">
 							{{ Form::label('canal_search','Nombre del Canal')}}
-							{{ Form::text('canal_search',$canal_search,array('class'=>'form-control','placeholder'=>'Ingrese nombre del canal','id'=>'search')) }}
+							{{ Form::text('canal_search',$canal_search,array('class'=>'form-control','placeholder'=>'Ingrese nombre del canal','id'=>'canal_search')) }}
 						</div>
 						<div class="col-md-4">
 							{{ Form::label('canal_search_sector','Sector')}}
-							{{ Form::select('canal_search_sector',array('0'=>'Seleccione')+$sectores,$canal_search_sector,array('class'=>'form-control')) }}
+							{{ Form::select('canal_search_sector',array(''=>'Seleccione')+$sectores,$canal_search_sector,array('class'=>'form-control','id'=>'canal_search_sector')) }}
 						</div>
 						<div class="form-group col-md-2">
 						{{ Form::button('<span class="fa fa-search""></span> Buscar', array('id'=>'submit-search-form','type' => 'submit', 'class' => 'btn btn-info btn-block','style'=>'margin-top:25px;')) }}	
 						</div>
 						<div class="col-md-2">
-							<div class="btn btn-default btn-block" id="btnLimpiar" style='margin-top:25px;'><span class="lnr lnr-sync""></span> Limpiar</div>				
+							<div class="btn btn-default btn-block" id="btnLimpiarCanal" style='margin-top:25px;'><span class="lnr lnr-sync""></span> Limpiar</div>				
 						</div>				
 					</div>
 					{{ Form::close() }}					
@@ -178,8 +182,10 @@
 												{{$canal_data->nombre_sector}}
 											</td>
 											<td class="text-nowrap">
-												<a class="btn btn-warning btn-block btn-sm" href="{{URL::to('/canales/editar_canal')}}/{{$canal_data->idcanal}}">
-												<span class="lnr lnr-pencil"></span></a>
+												<div style="text-align:center">
+													<a class="btn btn-warning btn-sm" href="{{URL::to('/canales/editar_canal')}}/{{$canal_data->idcanal}}">
+													<span class="lnr lnr-pencil"></span></a>
+												</div>
 											</td>
 										</tr>
 										@endforeach
@@ -195,8 +201,8 @@
 			@else
 				{{ $canales_data->links() }}
 			@endif
-			<div class="col-md-2 col-md-offset-10" style="margin-top:-30px">
-				<a class="btn btn-info btn-block" style='margin-top:25px;'><span class="lnr lnr-plus-circle"></span> Crear Canal</a>	
+			<div class="col-md-2 col-md-offset-10" style="margin-top:-30px;margin-bottom: 10px">
+				<a class="btn btn-info btn-block" style='margin-top:25px;' href="{{URL::to('canales/crear_canal')}}"><span class="lnr lnr-plus-circle" ></span> Crear Canal</a>	
 			</div>	
 		</div>
 	@elseif($flag_seleccion==3)
@@ -228,13 +234,13 @@
 							{{ Form::text('entidad_search',$entidad_search,array('class'=>'form-control','placeholder'=>'Ingrese nombre de la entidad','id'=>'search')) }}
 						</div>
 						<div class="col-md-4">
-							{{ Form::label('entidad_search_canal','Canal')}}
-							{{ Form::select('entidad_search_canal',array('0'=>'Seleccione')+$canales,$entidad_search_canal,array('class'=>'form-control')) }}
+							{{ Form::label('entidad_search_sector','Sector')}}
+							{{ Form::select('entidad_search_sector',array('0'=>'Seleccione')+$sectores,$entidad_search_sector,array('class'=>'form-control','id'=>'slcSector')) }}
 						</div>
 						<div class="col-md-4">
-							{{ Form::label('entidad_search_sector','Sector')}}
-							{{ Form::select('entidad_search_sector',array('0'=>'Seleccione')+$sectores,$entidad_search_sector,array('class'=>'form-control')) }}
-						</div>
+							{{ Form::label('entidad_search_canal','Canal')}}
+							{{ Form::select('entidad_search_canal',array('0'=>'Seleccione'),$entidad_search_canal,array('class'=>'form-control','id'=>'slcCanal')) }}
+						</div>						
 					</div>
 					<div class="row">
 						<div class="form-group col-md-2 col-md-offset-8">
@@ -293,7 +299,7 @@
 				{{ $entidades_data->links() }}
 			@endif
 			<div class="col-md-2 col-md-offset-10" style="margin-top:-30px;margin-bottom: 10px">
-				<a class="btn btn-info btn-block" style='margin-top:25px;'><span class="lnr lnr-plus-circle"></span> Crear Entidad</a>	
+				<a class="btn btn-info btn-block" style='margin-top:25px;' href="{{URL::to('entidades/crear_entidad')}}"><span class="lnr lnr-plus-circle"></span> Crear Entidad</a>	
 			</div>	
 		</div>
 	@endif

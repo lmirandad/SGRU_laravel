@@ -29,6 +29,7 @@
 		</div> 
 		{{ Form::open(array('url'=>'/usuarios/submit_agregar_sectores' ,'role'=>'form','id'=>'submit-agregar-sectores')) }}
 		{{ Form::hidden('usuario_id', $usuario->id, array('id'=>'usuario_id')) }}
+		<br>
 		<div class="row">
 			<div class="col-md-6">
 				<div class="panel">	

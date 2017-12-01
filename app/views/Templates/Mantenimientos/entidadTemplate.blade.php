@@ -33,7 +33,7 @@
 	<script src="{{asset('assets/chartist/js/chartist.min.js')}}"></script>
 	<script src="{{asset('assets/js/klorofil-common.js')}}"></script>
 	<script src="{{asset('assets/bootstrap/js/locale-es.js')}}"></script>
-	<script src="{{asset('js/sector_canal_entidad.js')}}"></script>
+	<script src="{{asset('js/entidad.js')}}"></script>
 </head>
 
 <body>

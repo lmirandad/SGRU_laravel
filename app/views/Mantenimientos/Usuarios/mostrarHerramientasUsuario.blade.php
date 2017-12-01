@@ -29,6 +29,7 @@
 		</div> 
 		{{ Form::open(array('url'=>'/usuarios/submit_agregar_herramientas' ,'role'=>'form','id'=>'submit-agregar-herramientas')) }}
 		{{ Form::hidden('usuario_id', $usuario->id, array('id'=>'usuario_id')) }}
+		<br>
 		<div class="row">
 			<div class="col-md-6">
 				<div class="panel">	

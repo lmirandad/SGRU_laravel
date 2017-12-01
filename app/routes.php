@@ -53,6 +53,10 @@ Route::group(array('prefix'=>'herramientas', 'before'=>'auth'),function(){
 	Route::post('/submit_eliminar_herramienta_usuario','HerramientaController@submit_eliminar_herramienta_usuario');
 	Route::get('/listar_herramientas','HerramientaController@listar_herramientas');
 	Route::get('/buscar_herramientas','HerramientaController@buscar_herramientas');
+	Route::get('/crear_herramienta','HerramientaController@crear_herramienta');
+	Route::post('/submit_crear_herramienta','HerramientaController@submit_crear_herramienta');	
+	Route::get('/editar_herramienta/{id}','HerramientaController@editar_herramienta');
+	Route::post('/submit_editar_herramienta','HerramientaController@submit_editar_herramienta');
 });
 
 /*ENTIDADES CANALES SECTORES*/
@@ -63,7 +67,37 @@ Route::group(array('prefix'=>'entidades_canales_sectores', 'before'=>'auth'),fun
 /*SECTORES*/
 Route::group(array('prefix'=>'sectores', 'before'=>'auth'),function(){
 	Route::post('/submit_eliminar_sector_usuario','SectorController@submit_eliminar_sector_usuario');
+	Route::get('/crear_sector','SectorController@crear_sector');
+	Route::post('/submit_crear_sector','SectorController@submit_crear_sector');	
+	Route::get('/editar_sector/{id}','SectorController@editar_sector');
+	Route::post('/submit_editar_sector','SectorController@submit_editar_sector');
+	Route::get('/buscar_sectores','SectorController@buscar_sectores');
+	Route::get('/mostrar_sector/{id}','SectorController@mostrar_sector');
 });
+
+/*CANALES*/
+Route::group(array('prefix'=>'canales', 'before'=>'auth'),function(){
+	Route::get('/crear_canal','CanalController@crear_canal');
+	Route::post('/submit_crear_canal','CanalController@submit_crear_canal');	
+	Route::get('/editar_canal/{id}','CanalController@editar_canal');
+	Route::post('/submit_editar_canal','CanalController@submit_editar_canal');
+	Route::get('/buscar_canales','CanalController@buscar_canales');
+	Route::get('/mostrar_canal/{id}','CanalController@mostrar_canal');
+});
+
+/*ENTIDADES*/
+Route::group(array('prefix'=>'entidades', 'before'=>'auth'),function(){
+	Route::get('/crear_entidad','EntidadController@crear_entidad');
+	Route::post('/submit_crear_entidad','EntidadController@submit_crear_entidad');	
+	Route::get('/editar_entidad/{id}','EntidadController@editar_entidad');
+	Route::post('/submit_editar_entidad','EntidadController@submit_editar_entidad');
+	Route::get('/buscar_entidades','EntidadController@buscar_entidades');
+	Route::get('/mostrar_entidad/{id}','EntidadController@mostrar_entidad');
+	Route::post('/mostrar_canales','EntidadController@mostrar_canales');
+});
+
+
+
 
 /*SOLICITUDES*/
 Route::group(array('prefix'=>'solicitudes', 'before'=>'auth'),function(){

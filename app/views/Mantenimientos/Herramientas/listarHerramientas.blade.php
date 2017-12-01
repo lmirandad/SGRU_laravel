@@ -51,10 +51,11 @@
 							<table class="table table-hover">
 								<thead>
 									<tr>
-										<th class="text-nowrap text-center">Nombre de Aplicativo</th>
+										<th class="text-nowrap text-center">Nombre de Aplicativo (PENDIENTE)</th>
 										<th class="text-nowrap text-center">Denominación Aplicativo</th>
+										<th class="text-nowrap text-center">¿Valida Seguridad?</th>
 										<th class="text-nowrap text-center">Editar</th>
-										<th class="text-nowrap text-center">Gestores</th>
+										<th class="text-nowrap text-center">SLA's (PENDIENTE)</th>
 									</tr>
 								</thead>
 								<tbody>	
@@ -65,6 +66,13 @@
 										</td>
 										<td class="text-nowrap text-center">
 											{{$herramienta_data->nombre_denominacion}}
+										</td>
+										
+										<td class="text-nowrap text-center">
+											@if($herramienta_data->flag_seguridad == 1)SI
+											@elseif($herramienta_data->flag_seguridad == 0)NO
+											@else POR VALIDAR
+											@endif
 										</td>
 										<td class="text-nowrap">
 											<a class="btn btn-warning btn-block btn-sm" href="{{URL::to('/herramientas/editar_herramienta')}}/{{$herramienta_data->idherramienta}}">
@@ -88,6 +96,10 @@
 		@else
 			{{ $herramientas_data->links() }}
 		@endif
+		<div class="form-group col-md-2 col-md-offset-10">
+			<a href="{{URL::to('herramientas/crear_herramienta')}}" class="btn btn-info"><span class="lnr lnr-plus-circle"></span>&nbsp Crear Nuevo Aplicativo</a>
+		</div>
+		
 	</div>
 </div>
 @stop

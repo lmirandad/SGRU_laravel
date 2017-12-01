@@ -16,7 +16,7 @@ class CreateCanalTable extends Migration {
 		{
 			$table->integer('idcanal', true);
 			$table->string('nombre', 100);
-			$table->string('descripcion', 100);
+			$table->string('descripcion', 200)->nullable();
 			$table->integer('idsector')->index('fk_canal_sector1_idx');
 			$table->integer('iduser_created_by')->nullable()->index('fk_canal_users1_idx');
 			$table->integer('iduser_updated_by')->nullable()->index('fk_canal_users2_idx');

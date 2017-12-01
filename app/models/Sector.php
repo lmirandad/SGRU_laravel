@@ -47,5 +47,13 @@ class Sector extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	public function scopeBuscarSectores($query,$search_criteria)
+	{
+		$query->where('sector.nombre','LIKE',"%$search_criteria%");
+		$query->select('sector.*');
+
+		return $query;
+	}
+
 	
 }

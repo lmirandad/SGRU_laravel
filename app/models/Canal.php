@@ -34,5 +34,24 @@ class Canal extends Eloquent implements UserInterface, RemindableInterface {
 
 		return $query;
 	}
+
+	public function scopeBuscarCanalesPorIdSector($query,$idsector){
+		$query->where('canal.idsector','=',$idsector);
+		$query->select('canal.*');
+
+		return $query;	
+	}
+
+	public function scopeBuscarCanales($query,$nombre_canal,$idsector){
+		
+		$query->join('sector','canal.idsector','=','sector.idsector');
+		if($nombre_canal != null)
+			$query->where('canal.nombre','LIKE',"%$nombre_canal%");
+		if(strcmp($idsector,"")!=0)
+			$query->where('canal.idsector','=',$idsector);
+
+		$query->select('canal.*','sector.nombre as nombre_sector');
+
+	}
 	
 }

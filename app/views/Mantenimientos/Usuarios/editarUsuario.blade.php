@@ -34,7 +34,7 @@
 			<div class="col-md-12">
 				<div class="panel panel-headline">
 					<div class="panel-heading">
-						<h3 class="panel-title">Datos Generales</h3>
+						<h3 class="panel-title">Datos del Aplicativo</h3>
 					</div>
 					<div class="panel-body">
 						<div class="row">
@@ -160,7 +160,7 @@
 			</div>			
 			
 			<div class="form-group col-md-2  col-md-offset-5">
-				{{ Form::button('<i class="lnr lnr-plus-circle"></i> Guardar', array('id'=>'btnEditar', 'class' => 'btn btn-info btn-block')) }}
+				{{ Form::button('<i class="fa fa-floppy-o"></i> Guardar', array('id'=>'btnEditar', 'class' => 'btn btn-info btn-block')) }}
 			</div>
 			{{ Form::close() }}	
 			@if($usuario->deleted_at)

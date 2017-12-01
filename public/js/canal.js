@@ -1,11 +1,8 @@
 $( document ).ready(function(){
 	
-	$('#btnLimpiar').click(function(){
-		$('#search').val(null);
-		$('#search_denominacion_herramienta').val(0);
-	});
+	
 
-	$('#btnCrearHerramienta').click(function(){
+	$('#btnCrearCanal').click(function(){
 		BootstrapDialog.confirm({
 			title: 'Mensaje de Confirmación',
 			message: '¿Está seguro que desea realizar esta acción?', 
@@ -20,7 +17,7 @@ $( document ).ready(function(){
 		});
 	});
 
-	$('#btnEditarHerramienta').click(function(){
+	$('#btnEditarCanal').click(function(){
 		BootstrapDialog.confirm({
 			title: 'Mensaje de Confirmación',
 			message: '¿Está seguro que desea realizar esta acción?', 

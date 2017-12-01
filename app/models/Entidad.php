@@ -35,5 +35,11 @@ class Entidad extends Eloquent implements UserInterface, RemindableInterface {
 
 		return $query;
 	}
+
+	public function scopeBuscarEntidadesPorIdCanal($query,$idcanal)
+	{
+		$query->where('entidad.idcanal','=',$idcanal);
+		$query->select('entidad.*');
+	}
 	
 }
