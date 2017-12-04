@@ -210,7 +210,7 @@ class SectorController extends BaseController {
 			// Verifico si el usuario es un Webmaster
 			if(($data["user"]->idrol == 1) && $idsector)
 			{	
-				$data["sector"] = Sector::find($idsector);
+				$data["sector"] = Sector::withTrashed()->find($idsector);
 
 				if($data["sector"]==null){						
 					return Redirect::to('entidades_canales_sectores/listar/1')->with('error','Sector no encontrado');
@@ -224,5 +224,175 @@ class SectorController extends BaseController {
 			return View::make('error/error',$data);
 		}
 	}
+
+	public function submit_inhabilitar_sector()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				$sector_id = Input::get('sector_id');
+				$url = "sectores/mostrar_sector"."/".$sector_id;
+				$sector = Sector::find($sector_id);
+				
+				//Validar si el sector posee canales activos
+				$canales = Canal::buscarCanalesPorIdSector($sector->idsector)->get();
+
+				if($canales == null || $canales->isEmpty()){
+					//Esta vacio, se puede eliminar el sector
+					$sector->delete();
+				}else
+				{
+					//Por seguridad, se vuelve a revalidar la cantidad de canales asociados al sector
+					$size_canales = count($canales);
+					if($size_canales>0){
+						Session::flash('error', 'No se puede inhabilitar el sector. El sector cuenta con canales activos.');
+						return Redirect::to($url);
+					}
+					else
+						$sector->delete();						
+				}
+
+
+				Session::flash('message', 'Se inhabilitó correctamente el sector.');
+				return Redirect::to($url);
+			}else{
+				return View::make('error/error',$data);
+			}
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function submit_habilitar_sector()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				$sector_id = Input::get('sector_id');
+				$url = "sectores/mostrar_sector"."/".$sector_id;
+				$sector = Sector::withTrashed()->find($sector_id);
+				$sector->restore();
+				Session::flash('message', 'Se habilitó correctamente el sector.');
+				return Redirect::to($url);
+			}else{
+				return View::make('error/error',$data);
+			}
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function mostrar_herramientas_sector($idsector=null){
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if(($data["user"]->idrol == 1) && $idsector)
+			{	
+				$data["sector"] = Sector::find($idsector);
+				if($data["sector"]==null){						
+					return Redirect::to('sectores/listar_sectores')->with('error','Sector no encontrado.');
+				}
+				$data["herramientas"] = HerramientaXSector::buscarHerramientasPorIdSector($data["sector"]->idsector)->get();
+				$data["herramientas_disponibles"] = Herramienta::listarHerramientasDisponiblesSector($data["sector"]->idsector)->get();
+				
+				return View::make('Mantenimientos/Sectores_Canales_Entidades/Sectores/mostrarHerramientasSector',$data);			
+				
+			}else{
+				return View::make('error/error',$data);
+			}
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function submit_agregar_herramientas(){
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				// Validate the info, create rules for the inputs
+				$sector = Sector::find(Input::get('sector_id'));				
+				$sector_id = Input::get('sector_id');
+				$arr_idherramienta = Input::get('ids_herramientas');
+				/*echo '<pre>';
+			    var_dump(count($arr_idherramienta));
+			    echo '</pre>';*/
+			    $size_ids = count($arr_idherramienta);
+			    $flag_seleccion = false;
+			    //por cada uno validar si el checkbox asociado fue tecleado
+			    for($i=0;$i<$size_ids;$i++){
+			    	$res_checkbox = Input::get('checkbox'.$i);
+			    	/*echo '<pre>';
+				    var_dump('seleccionado ' .$res_checkbox.': id-> '.$arr_idherramienta[$i] );	
+				    echo '</pre>';*/
+				    if($res_checkbox == 1)
+				    {
+				    	//validar si ya existe el objeto
+				    	$herramientaxsector = HerramientaXSector::buscarHerramientasPorIdSectorIdHerramienta($sector_id,$arr_idherramienta[$i])->get();
+				    	/*echo '<pre>';
+					    var_dump($herramientaxuser[0]->deleted_at);	
+					    echo '</pre>';*/
+				    	
+				    	if($herramientaxsector==null || $herramientaxsector->isEmpty()){
+				    		//quiere decir que es una herramienta nueva a crear
+				    		$herramientaxsector = new HerramientaXSector;
+					    	$herramientaxsector->idherramienta = $arr_idherramienta[$i];
+					    	$herramientaxsector->idsector = $sector_id;
+					    	$herramientaxsector->save();
+					    	//Agregar todos los tipos de acciones:
+					    	$tipos_solicitud = TipoSolicitud::listarTiposSolicitud()->get();
+					    	if(!$tipos_solicitud->isEmpty()){
+					    		$size_tipos = count($tipos_solicitud);
+					    		for($j=0;$j<$size_tipos;$j++){
+					    			$herramientaxsectorxtipo_solicitud = new HerramientaXSectorXTipoSolicitud;
+					    			$herramientaxsectorxtipo_solicitud->idtipo_solicitud = $tipos_solicitud[$j]->idtipo_solicitud;
+					    			$herramientaxsectorxtipo_solicitud->idherramientaxsector = $herramientaxsector->idherramientaxsector;
+					    			$herramientaxsectorxtipo_solicitud->save();
+					    		}
+					    	}
+				    	}else{
+				    		//quiere decir que solo se requiere restaurar
+				    		$herramientaxsector = $herramientaxsector->first();
+				    		$herramientaxsector->restore();
+				    		$accionesHerramientaSector = HerramientaXSectorXTipoSolicitud::listarTipoSolicitudSector($sector_id,$herramientaxsector->idherramienta)->get();
+
+
+				    		$size_acciones = count($accionesHerramientaSector);
+				    		for($j=0;$j<$size_acciones;$j++){
+				    			$accionesHerramientaSector[$j]->restore();
+				    		}
+				    	}
+				    	$flag_seleccion = true;
+				    }
+			    }
+
+			  	if($size_ids > 0)
+			    {
+			    	if($flag_seleccion)
+			    		return Redirect::to('sectores/mostrar_herramientas_sector/'.$sector_id)->with('message', 'Se actualizaron correctamente los aplicativos al sector');	
+			    	else
+			    		return Redirect::to('sectores/mostrar_herramientas_sector/'.$sector_id)->with('error', 'No se seleccionó ningún aplicativo.');	
+			    }else
+			    {
+			    	return Redirect::to('sectores/mostrar_herramientas_sector/'.$sector_id)->with('error', 'No se agregaron los aplicativos al sector');	
+			   	}
+				
+			}else{
+				return View::make('error/error',$data);
+			}
+
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+
+	
 
 }

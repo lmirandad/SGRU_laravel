@@ -46,6 +46,50 @@ class HerramientaController extends BaseController {
 		}
 	}
 
+	public function submit_eliminar_herramienta_sector(){
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			$sector_id = Input::get('sector_id');
+			$idherramientaxsector = Input::get('idherramientaxsector');
+			
+			//buscamos al idherramientaxuser
+			$herramientaSector = HerramientaXSector::find($idherramientaxsector);
+			if($herramientaSector==null)
+				return Response::json(array( 'success' => false),200);
+
+			$herramienta =Herramienta::find($herramientaSector->idherramienta);
+
+			if($herramienta==null)
+				return Response::json(array( 'success' => false),200);
+
+			
+			$accionesHerramientaSector = HerramientaXSectorXTipoSolicitud::listarTipoSolicitudSector($sector_id,$herramienta->idherramienta)->get();
+			
+			if($accionesHerramientaSector == null || $accionesHerramientaSector->isEmpty()){
+				return Response::json(array( 'success' => false),200);				
+			}
+
+			$size_acciones = count($accionesHerramientaSector);
+			for($i=0;$i<$size_acciones;$i++){
+				$accionesHerramientaSector[$i]->delete();
+			}
+
+			$herramientaSector->delete();
+			
+
+			return Response::json(array( 'success' => true,'idherramientaxsector' => $idherramientaxsector,'nombre_herramienta'=>$herramienta->nombre),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
+
 	public function listar_herramientas()
 	{
 		if(Auth::check()){
@@ -56,7 +100,7 @@ class HerramientaController extends BaseController {
 				$data["search"] = null;
 				$data["search_denominacion_herramienta"] = null;
 				$data["denominacion_herramienta"] = DenominacionHerramienta::lists('nombre','iddenominacion_herramienta');
-				$data["herramientas_data"] = Herramienta::listarHerramientas()->paginate(10);
+				$data["herramientas_data"] = Herramienta::withTrashed()->listarHerramientas()->paginate(10);
 				return View::make('Mantenimientos/Herramientas/listarHerramientas',$data);
 			}else{
 				return View::make('error/error',$data);
@@ -78,11 +122,11 @@ class HerramientaController extends BaseController {
 				$data["search_denominacion_herramienta"] = Input::get('search_denominacion_herramienta');;
 				$data["denominacion_herramienta"] = DenominacionHerramienta::lists('nombre','iddenominacion_herramienta');
 				if($data["search"] == null && $data["search_denominacion_herramienta"]== 0){
-					$data["herramientas_data"] = Herramienta::listarHerramientas()->paginate(10);
+					$data["herramientas_data"] = Herramienta::withTrashed()->listarHerramientas()->paginate(10);
 					return View::make('Mantenimientos/Herramientas/listarHerramientas',$data);
 
 				}else{
-					$data["herramientas_data"] = Herramienta::buscarHerramientas($data["search"],$data["search_denominacion_herramienta"])->paginate(10);
+					$data["herramientas_data"] = Herramienta::withTrashed()->buscarHerramientas($data["search"],$data["search_denominacion_herramienta"])->paginate(10);
 					return View::make('Mantenimientos/Herramientas/listarHerramientas',$data);	
 				}				
 			}else{
@@ -279,6 +323,98 @@ class HerramientaController extends BaseController {
 				return View::make('error/error',$data);
 			}
 
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function mostrar_herramienta($idherramienta=null){
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if(($data["user"]->idrol == 1) && $idherramienta)
+			{	
+				$data["herramienta"] = Herramienta::find($idherramienta);
+				
+				if($data["herramienta"]==null){
+					return Redirect::to('herramientas/listar_herramientas');
+				}
+
+				$data["sectores"] = HerramientaXSector::buscarSectorPorIdHerramienta($data["herramienta"]->idherramienta)->get();
+				$data["usuarios"] = HerramientaXUser::buscarUsuariosPorIdHerramienta($data["herramienta"]->idherramienta)->get();
+				$data["denominaciones"] = DenominacionHerramienta::lists('nombre','iddenominacion_herramienta');
+
+				return View::make('Mantenimientos/Herramientas/mostrarHerramienta',$data);
+			}else{
+				return View::make('error/error',$data);
+			}
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function submit_inhabilitar_herramienta()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				$herramienta_id = Input::get('herramienta_id');
+				$url = "herramientas/mostrar_herramienta"."/".$herramienta_id;
+				$herramienta = Herramienta::find($herramienta_id);
+				
+				//Validar si la entidad posee solicitudes pendientes o en proceso
+
+				$sectores = HerramientaXSector::buscarSectorPorIdHerramienta($herramienta_id)->get();
+				$usuarios = HerramientaXUser::buscarUsuariosPorIdHerramienta($herramienta_id)->get();
+				
+
+				if( ($sectores == null || $sectores->isEmpty()) && ($usuarios == null || $usuarios->isEmpty()) ){
+					//Esta vacio, se puede eliminar la entidad					
+					$herramienta->delete();
+				}else
+				{
+					//Por seguridad, se vuelve a revalidar la cantidad de solicitudes pendientes o procesando
+					$size_sectores = count($sectores);
+					$size_usuarios = count($usuarios);
+					if($size_sectores>0 || $size_usuarios>0){
+						Session::flash('error', 'No se puede inhabilitar el aplicativo. El aplicativo cuenta con usuarios y/o sectores asignados.');
+
+						return Redirect::to($url);
+					}
+					else
+						$herramienta->delete();						
+				}
+				
+				Session::flash('message', 'Se inhabilitó correctamente el aplicativo.');
+				return Redirect::to($url);
+			}else{
+				return View::make('error/error',$data);
+			}
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function submit_habilitar_herramienta()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				$herramienta_id = Input::get('herramienta_id');
+				$url = "herramientas/mostrar_herramienta"."/".$herramienta_id;
+				$herramienta = Herramienta::withTrashed()->find($herramienta_id);
+				$herramienta->restore();
+				Session::flash('message', 'Se habilitó correctamente el aplicativo.');
+				return Redirect::to($url);
+			}else{
+				return View::make('error/error',$data);
+			}
 		}else{
 			return View::make('error/error',$data);
 		}

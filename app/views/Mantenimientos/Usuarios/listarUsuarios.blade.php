@@ -69,7 +69,7 @@
 										<th class="text-nowrap text-center">Editar</th>
 										<th class="text-nowrap text-center">Aplicativos Especializados</th>
 										<th class="text-nowrap text-center">Sectores Asignados</th>
-										<th class="text-nowrap text-center">Habilitado/Inhabilitado</th>
+										<th class="text-nowrap text-center">Estado</th>
 									</tr>
 								</thead>
 								<tbody>	
@@ -90,36 +90,52 @@
 										<td class="text-nowrap text-center">
 											{{$user_data->nombre_rol}}
 										</td>
-										<td class="text-nowrap">
-											<div style="text-align:center">
-												<a class="btn btn-warning btn-sm" href="{{URL::to('/usuarios/editar_usuario')}}/{{$user_data->id}}">
-												<span class="lnr lnr-pencil"></span></a>
-											</div>
-										</td>
-										<td class="text-nowrap">
-											@if($user_data->idrol != 1)
+										<td class="text-nowrap text-center">
+											@if($user_data->deleted_at)
+												-
+											@else
 												<div style="text-align:center">
-													<a class="btn btn-info  btn-sm" href="{{URL::to('/usuarios/mostrar_herramientas_usuario')}}/{{$user_data->id}}">
-													<span class="fa fa-search"></span></a>
-												</div>		
-											@endif
-										</td>
-										<td class="text-nowrap">
-											@if($user_data->idrol != 1)
-												<div style="text-align:center">
-													<a class="btn btn-info  btn-sm" href="{{URL::to('/usuarios/mostrar_sectores_usuario')}}/{{$user_data->id}}">
-													<span class="fa fa-search"></span></a>
+													<a class="btn btn-warning btn-sm" href="{{URL::to('/usuarios/editar_usuario')}}/{{$user_data->id}}">
+													<span class="lnr lnr-pencil"></span></a>
 												</div>
+											@endif											
+										</td>
+										<td class="text-nowrap text-center">
+											@if($user_data->idrol != 1)
+												@if($user_data->deleted_at)
+													-
+												@else
+													<div style="text-align:center">
+														<a class="btn btn-info  btn-sm" href="{{URL::to('/usuarios/mostrar_herramientas_usuario')}}/{{$user_data->id}}">
+														<span class="fa fa-search"></span></a>
+													</div>
+												@endif
+											@else
+												-
 											@endif
 										</td>
-										<td class="text-nowrap">
-											<div style="text-align:center">
+										<td class="text-nowrap text-center">
+											@if($user_data->idrol != 1)
 												@if($user_data->deleted_at)
-													Inhabilitado
+													-
 												@else
-													Habilitado
+													<div style="text-align:center">
+														<a class="btn btn-info  btn-sm" href="{{URL::to('/usuarios/mostrar_sectores_usuario')}}/{{$user_data->id}}">
+														<span class="fa fa-search"></span></a>
+													</div>
 												@endif
-											</div>
+											@else
+												-
+											@endif
+										</td>
+										<td class="text-nowrap text-center">
+										
+											@if($user_data->deleted_at)
+												Inactivo
+											@else
+												Activo
+											@endif
+										
 										</td>
 									</tr>
 									@endforeach

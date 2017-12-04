@@ -19,7 +19,7 @@ class SectorCanalEntidadController extends BaseController {
 				{
 					$data["sector_search"] = null;					
 					$data["flag_seleccion"] = 1;
-					$data["sectores_data"] = Sector::listarSectores()->paginate(10);
+					$data["sectores_data"] = Sector::withTrashed()->listarSectores()->paginate(10);
 
 					return View::make('Mantenimientos/Sectores_Canales_Entidades/listarSectoresCanalesEntidades',$data);
 				}
@@ -28,7 +28,7 @@ class SectorCanalEntidadController extends BaseController {
 					$data["canal_search"] = null;					
 					$data["canal_search_sector"] = null;
 					$data["sectores"] = Sector::lists('nombre','idsector');
-					$data["canales_data"] = Canal::listarCanales()->paginate(10);
+					$data["canales_data"] = Canal::withTrashed()->listarCanales()->paginate(10);
 					$data["flag_seleccion"] = 2;
 
 					return View::make('Mantenimientos/Sectores_Canales_Entidades/listarSectoresCanalesEntidades',$data);
@@ -40,7 +40,7 @@ class SectorCanalEntidadController extends BaseController {
 					$data["entidad_search_sector"] = null;
 					$data["sectores"] = Sector::lists('nombre','idsector');
 					$data["canales"] = Canal::lists('nombre','idcanal');
-					$data["entidades_data"] = Entidad::listarEntidades()->paginate(10);
+					$data["entidades_data"] = Entidad::withTrashed()->listarEntidades()->paginate(10);
 					$data["flag_seleccion"] = 3;
 
 					return View::make('Mantenimientos/Sectores_Canales_Entidades/listarSectoresCanalesEntidades',$data);

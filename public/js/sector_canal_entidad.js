@@ -1,6 +1,12 @@
 $( document ).ready(function(){
 	
-	
+	flag_seleccion = $('#flag_seleccion').val();
+	if(flag_seleccion == 3)
+	{
+		//para entidades se realiza nuevamente el ajax
+		mostrar_canales_ajax();
+	}
+
 	$('#btnLimpiarSector').click(function(){
 		$('#sector_search').val(null);
 	});
@@ -10,8 +16,22 @@ $( document ).ready(function(){
 		$('#canal_search_sector').val(null);
 	});
 
+	$('#btnLimpiarEntidad').click(function(){
+		$('#entidad_search').val(null);
+		$('#slcSector').val(null);
+		$('#slcCanal').val(null);
+	});
+
 	$('#slcSector').on('change',function(){
-		$('#slcCanal')[0].options.length = 0;
+		mostrar_canales_ajax();
+	});
+	
+});
+
+
+function mostrar_canales_ajax()
+{
+	$('#slcCanal')[0].options.length = 0;
 		idsector = $('#slcSector').val(); 
 		if( idsector != ''){
 			$.ajax({
@@ -28,11 +48,16 @@ $( document ).ready(function(){
 	            success: function(response){
 	                if(response.success){
 	                	canales = response["canales"];
-	                	size_canales = canales.length;
-	                	$('#slcCanal')[0].options.add(new Option("Seleccione",""));
-	                	for(i=0;i<size_canales;i++){
-	                		$('#slcCanal')[0].options.add(new Option(canales[i].nombre,canales[i].idcanal));
-	                	}
+	                	if (canales != null)
+	                	{
+		                	size_canales = canales.length;
+		                	$('#slcCanal')[0].options.add(new Option("Seleccione",""));
+		                	for(i=0;i<size_canales;i++){
+		                		$('#slcCanal')[0].options.add(new Option(canales[i].nombre,canales[i].idcanal));
+		                	}
+		                }else{
+		                	$('#slcCanal')[0].options.add(new Option("Seleccione",""));
+		                }
 	                	
 	                }else{
 	                	
@@ -47,8 +72,4 @@ $( document ).ready(function(){
 			$('#slcCanal')[0].options.add(new Option("Seleccione",""));
 		}
 		
-	});
-	
-});
-
-
+}

@@ -55,7 +55,7 @@
 										<th class="text-nowrap text-center">Denominación Aplicativo</th>
 										<th class="text-nowrap text-center">¿Valida Seguridad?</th>
 										<th class="text-nowrap text-center">Editar</th>
-										<th class="text-nowrap text-center">SLA's (PENDIENTE)</th>
+										<th class="text-nowrap text-center">Estado</th>
 									</tr>
 								</thead>
 								<tbody>	
@@ -74,13 +74,25 @@
 											@else POR VALIDAR
 											@endif
 										</td>
-										<td class="text-nowrap">
-											<a class="btn btn-warning btn-block btn-sm" href="{{URL::to('/herramientas/editar_herramienta')}}/{{$herramienta_data->idherramienta}}">
-											<span class="lnr lnr-pencil"></span></a>
+										<td class="text-nowrap text-center">
+											@if($user->idrol == 1)
+												@if($herramienta_data->deleted_at != null)
+													-
+												@else
+													<div style="text-align:center">
+														<a class="btn btn-warning btn-sm" href="{{URL::to('/herramientas/editar_herramienta')}}/{{$herramienta_data->idherramienta}}"><span class="lnr lnr-pencil"></span></a>
+													</div>
+												@endif
+											@else
+												-
+											@endif											
 										</td>
-										<td class="text-nowrap">
-											<a class="btn btn-info btn-block btn-sm" href="{{URL::to('/herramientas/mostrar_usuarios_herramienta')}}/{{$herramienta_data->idherramienta}}">
-											<span class="fa fa-search"></span></a>											
+										<td class="text-nowrap text-center">
+												@if($herramienta_data->deleted_at != null)
+													Inactivo
+												@else
+													Activo
+												@endif									
 										</td>
 									</tr>
 									@endforeach

@@ -21,7 +21,7 @@
 						</ul>
 					</div>
 				</li>
-				@if($user->idrol == 1)
+				
 				<li> <!-- SUBMENÚ MANTENIMIENTOS -->
 					<a href="#subPagesMantenimientos" data-toggle="collapse" class="collapsed"><i class="lnr lnr-construction"></i> <span>Mantenimientos</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
 					<div id="subPagesMantenimientos" class="collapse ">
@@ -33,7 +33,7 @@
 						</ul>
 					</div>
 				</li>
-				@endif
+				
 				<li><a href="#" class=""><i class="lnr lnr-chart-bars"></i> <span>Indicadores</span></a></li>
 			</ul>
 		</nav>

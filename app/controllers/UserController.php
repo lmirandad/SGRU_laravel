@@ -337,7 +337,7 @@ class UserController extends BaseController {
 			{	
 				$data["tipo_doc_identidades"] = TipoDocIdentidad::lists('nombre','idtipo_doc_identidad');
 				$data["roles"] = Rol::lists('nombre','idrol');				
-				$data["usuario"] = User::find($idusuario);
+				$data["usuario"] = User::withTrashed()->find($idusuario);
 
 				if($data["usuario"]==null){						
 					return Redirect::to('usuarios/listar_usuarios')->with('error','Usuario no encontrado');
@@ -579,7 +579,25 @@ class UserController extends BaseController {
 				$user_id = Input::get('user_id');
 				$url = "usuarios/mostrar_usuario"."/".$user_id;
 				$user = User::find($user_id);
-				$user->delete();
+				
+				//Validar si la entidad posee solicitudes pendientes o en proceso
+				$solicitudes = Solicitud::buscarSolicitudesPendientesProcesandoPorIdUsuario($user->id)->get();
+
+				if($solicitudes == null || $solicitudes->isEmpty()){
+					//Esta vacio, se puede eliminar la entidad
+					$user->delete();
+				}else
+				{
+					//Por seguridad, se vuelve a revalidar la cantidad de solicitudes pendientes o procesando
+					$size_solicitudes = count($solicitudes);
+					if($size_solicitudes>0){
+						Session::flash('error', 'No se puede inhabilitar al usuario. El usuario cuenta con solicitudes asignadas en estado pendiente y/o procesando.');
+						return Redirect::to($url);
+					}
+					else
+						$user->delete();						
+				}
+				
 				Session::flash('message', 'Se inhabilitó correctamente al usuario.');
 				return Redirect::to($url);
 			}else{

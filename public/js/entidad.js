@@ -1,5 +1,7 @@
 $( document ).ready(function(){
+		
 	
+
 	$('#btnCrearEntidad').click(function(){
 		BootstrapDialog.confirm({
 			title: 'Mensaje de Confirmación',
@@ -48,11 +50,16 @@ $( document ).ready(function(){
 	            success: function(response){
 	                if(response.success){
 	                	canales = response["canales"];
-	                	size_canales = canales.length;
-	                	$('#slcCanal')[0].options.add(new Option("Seleccione",""));
-	                	for(i=0;i<size_canales;i++){
-	                		$('#slcCanal')[0].options.add(new Option(canales[i].nombre,canales[i].idcanal));
-	                	}
+	                	if (canales != null)
+	                	{
+		                	size_canales = canales.length;
+		                	$('#slcCanal')[0].options.add(new Option("Seleccione",""));
+		                	for(i=0;i<size_canales;i++){
+		                		$('#slcCanal')[0].options.add(new Option(canales[i].nombre,canales[i].idcanal));
+		                	}
+		                }else{
+		                	$('#slcCanal')[0].options.add(new Option("Seleccione",""));
+		                }
 	                	
 	                }else{
 	                	
@@ -68,4 +75,35 @@ $( document ).ready(function(){
 		}
 		
 	});
+
+	$('#submit-habilitar-entidad').click(function(){
+		BootstrapDialog.confirm({
+			title: 'Mensaje de Confirmación',
+			message: '¿Está seguro que desea realizar esta acción?', 
+			type: BootstrapDialog.TYPE_INFO,
+			btnCancelLabel: 'Cancelar', 
+	    	btnOKLabel: 'Aceptar', 
+			callback: function(result){
+		        if(result) {
+					document.getElementById("habilitar_entidad").submit();
+				}
+			}
+		});
+	});
+
+	$('#submit-inhabilitar-entidad').click(function(){
+		BootstrapDialog.confirm({
+			title: 'Mensaje de Confirmación',
+			message: '¿Está seguro que desea realizar esta acción?', 
+			type: BootstrapDialog.TYPE_INFO,
+			btnCancelLabel: 'Cancelar', 
+	    	btnOKLabel: 'Aceptar', 
+			callback: function(result){
+		        if(result) {
+					document.getElementById("inhabilitar_entidad").submit();
+				}
+			}
+		});
+	});
+
 });

@@ -40,6 +40,22 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 		return $query;
 	}
 
+	public function scopeListarHerramientasDisponiblesSector($query,$search_criteria)
+	{
+		$query->join('denominacion_herramienta','herramienta.iddenominacion_herramienta','=','denominacion_herramienta.iddenominacion_herramienta');
+		$query->whereNotIn('herramienta.idherramienta',function($subquery) use ($search_criteria){
+					$subquery->leftJoin('herramientaxsector','herramienta.idherramienta','=','herramientaxsector.idherramienta');
+					$subquery->from(with(new Herramienta)->getTable());
+					$subquery->where('herramientaxsector.idsector','=',$search_criteria);
+					$subquery->where('herramientaxsector.deleted_at','=',NULL);
+					$subquery->select('herramienta.idherramienta')->distinct();
+		});
+
+		$query->select('herramienta.*','denominacion_herramienta.nombre as nombre_denominacion');
+
+		return $query;
+	}
+
 	public function scopeListarHerramientas($query)
 	{
 		$query->join('denominacion_herramienta','herramienta.iddenominacion_herramienta','=','denominacion_herramienta.iddenominacion_herramienta');

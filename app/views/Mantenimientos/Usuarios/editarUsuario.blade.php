@@ -159,25 +159,11 @@
 				<a class="btn btn-success btn-block" id="btnReestablecer"><i class="fa fa-eraser"></i> Reestablecer Contraseña </a>
 			</div>			
 			
-			<div class="form-group col-md-2  col-md-offset-5">
+			<div class="form-group col-md-2  col-md-offset-7">
 				{{ Form::button('<i class="fa fa-floppy-o"></i> Guardar', array('id'=>'btnEditar', 'class' => 'btn btn-info btn-block')) }}
 			</div>
 			{{ Form::close() }}	
-			@if($usuario->deleted_at)
-				{{ Form::open(array('url'=>'usuarios/submit_habilitar_usuario', 'role'=>'form','id'=>'habilitar_usuario')) }}
-					{{ Form::hidden('user_id', $usuario->id) }}
-					<div class="form-group col-md-2">
-						{{ Form::button('<span class="glyphicon glyphicon-circle-arrow-up"></span> Habilitar', array('id'=>'submit-habilitar-usuario', 'class' => 'btn btn-success btn-block')) }}
-					</div>
-				{{ Form::close() }}
-			@else
-				{{ Form::open(array('url'=>'usuarios/submit_inhabilitar_usuario', 'role'=>'form','id'=>'inhabilitar_usuario')) }}
-					{{ Form::hidden('user_id', $usuario->id) }}
-					<div class="form-group col-md-2">
-						{{ Form::button('<span class="glyphicon glyphicon-circle-arrow-down"></span> Inhabilitar', array('id'=>'submit-inhabilitar-usuario', 'class' => 'btn btn-danger btn-block')) }}
-					</div>
-				{{ Form::close() }}
-			@endif
+			
 		</div>
 
 	</div>

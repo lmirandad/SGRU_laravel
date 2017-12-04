@@ -86,7 +86,24 @@
 		
 
 		<div class="row">
-			<div class="form-group col-md-2 col-md-offset-10">
+			@if($user->idrol == 1)
+				@if($sector->deleted_at)
+					{{ Form::open(array('url'=>'sectores/submit_habilitar_sector', 'role'=>'form','id'=>'habilitar_sector')) }}
+						{{ Form::hidden('sector_id', $sector->idsector) }}
+						<div class="form-group col-md-2">
+							{{ Form::button('<span class="glyphicon glyphicon-circle-arrow-up"></span> Habilitar', array('id'=>'submit-habilitar-sector', 'class' => 'btn btn-success btn-block')) }}
+						</div>
+					{{ Form::close() }}
+				@else
+					{{ Form::open(array('url'=>'sectores/submit_inhabilitar_sector', 'role'=>'form','id'=>'inhabilitar_sector')) }}
+						{{ Form::hidden('sector_id', $sector->idsector) }}
+						<div class="form-group col-md-2">
+							{{ Form::button('<span class="glyphicon glyphicon-circle-arrow-down"></span> Inhabilitar', array('id'=>'submit-inhabilitar-sector', 'class' => 'btn btn-danger btn-block')) }}
+						</div>
+					{{ Form::close() }}
+				@endif
+			@endif
+			<div class="form-group col-md-2 @if($user->idrol==1) col-md-offset-8 @else col-md-offset-10 @endif">
 				<a class="btn btn-default btn-block" href="{{URL::to('entidades_canales_sectores/listar/1')}}"><i class="lnr lnr-arrow-left"></i>&nbspSalir</a>				
 			</div>
 		</div>

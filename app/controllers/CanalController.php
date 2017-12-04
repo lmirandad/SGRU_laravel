@@ -192,7 +192,7 @@ class CanalController extends BaseController {
 			// Verifico si el usuario es un Webmaster
 			if(($data["user"]->idrol == 1) && $idcanal)
 			{	
-				$data["canal"] = Canal::find($idcanal);
+				$data["canal"] = Canal::withTrashed()->find($idcanal);
 				$data["sectores"] = Sector::lists('nombre','idsector');
 
 				if($data["canal"]==null){						
@@ -200,6 +200,66 @@ class CanalController extends BaseController {
 				}
 				$data["entidades"] = Entidad::buscarEntidadesPorIdCanal($data["canal"]->idcanal)->get();
 				return View::make('Mantenimientos/Sectores_Canales_Entidades/Canales/mostrarCanal',$data);
+			}else{
+				return View::make('error/error',$data);
+			}
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+	public function submit_inhabilitar_canal()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				$canal_id = Input::get('canal_id');
+				$url = "canales/mostrar_canal"."/".$canal_id;
+				$canal = Canal::find($canal_id);
+				
+				//Validar si el canal posee entidades activas
+				$entidades = Entidad::buscarEntidadesPorIdCanal($canal->idcanal)->get();
+
+				if($entidades == null || $entidades->isEmpty()){
+					//Esta vacio, se puede eliminar el canal
+					$canal->delete();
+				}else
+				{
+					//Por seguridad, se vuelve a revalidar si el sector posee canales.
+					$size_canales = count($entidades);
+					if($size_canales>0){
+						Session::flash('error', 'No se puede inhabilitar el canal. El canal posee entidades activas.');
+						return Redirect::to($url);
+					}
+					else
+						$canal->delete();						
+				}
+
+
+				Session::flash('message', 'Se inhabilitó correctamente la entidad.');
+				return Redirect::to($url);
+			}else{
+				return View::make('error/error',$data);
+			}
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function submit_habilitar_canal()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				$canal_id = Input::get('canal_id');
+				$url = "canales/mostrar_canal"."/".$canal_id;
+				$canal = Canal::withTrashed()->find($canal_id);
+				$canal->restore();
+				Session::flash('message', 'Se habilitó correctamente el canal.');
+				return Redirect::to($url);
 			}else{
 				return View::make('error/error',$data);
 			}

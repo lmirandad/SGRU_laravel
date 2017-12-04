@@ -56,4 +56,8 @@ class Sector extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	
+
+
+
+	
 }

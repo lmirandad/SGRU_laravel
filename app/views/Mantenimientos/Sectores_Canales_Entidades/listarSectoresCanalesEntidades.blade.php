@@ -24,6 +24,7 @@
 			</div>
 		</div>
 	</div>
+	{{ Form::hidden('flag_seleccion', $flag_seleccion,array('id'=>'flag_seleccion')) }}	
 	@if($flag_seleccion == 1)
 		<!--SECTORES-->
 		<div class="container-fluid">
@@ -78,19 +79,42 @@
 													<tr>
 														<th class="text-nowrap text-center">Nombre del Sector</th>
 														<th class="text-nowrap text-center">Editar</th>
+														<th class="text-nowrap text-center">Aplicativos Asignados</th>					
+														<th class="text-nowrap text-center">Estado</th>
 													</tr>
 												</thead>
 												<tbody>	
 													@foreach($sectores_data as $sector_data)
-													<tr class="@if($sector_data->deleted_at) bg-danger @endif">
+													<tr>
 														<td class="text-nowrap text-center">
 															<a href="{{URL::to('/sectores/mostrar_sector/')}}/{{$sector_data->idsector}}">{{$sector_data->nombre}}</a>
 														</td>
-														<td class="text-nowrap">
-															<div style="text-align:center">
-																<a class="btn btn-warning btn-sm" href="{{URL::to('/sectores/editar_sector')}}/{{$sector_data->idsector}}">
-																<span class="lnr lnr-pencil"></span></a>
-															</div>
+														<td class="text-nowrap text-center">
+															@if($sector_data->deleted_at == null)
+																<div style="text-align:center">
+																	<a class="btn btn-warning btn-sm" href="{{URL::to('/sectores/editar_sector')}}/{{$sector_data->idsector}}">
+																	<span class="lnr lnr-pencil"></span></a>
+																</div>
+															@else
+																-
+															@endif															
+														</td>														
+														<td class="text-nowrap text-center">
+															@if($sector_data->deleted_at == null)
+																<div style="text-align:center">
+																	<a class="btn btn-info btn-sm" href="{{URL::to('/sectores/mostrar_herramientas_sector')}}/{{$sector_data->idsector}}">
+																	<span class="fa fa-search"></span></a>
+																</div>
+															@else
+																-
+															@endif															
+														</td>
+														<td class="text-nowrap text-center">
+															@if($sector_data->deleted_at == null)	
+																Activo
+															@else
+																Inactivo
+															@endif
 														</td>
 													</tr>
 													@endforeach
@@ -170,22 +194,34 @@
 											<th class="text-nowrap text-center">Nombre del Canal</th>
 											<th class="text-nowrap text-center">Sector</th>
 											<th class="text-nowrap text-center">Editar</th>
+											<th class="text-nowrap text-center">Estado</th>
 										</tr>
 									</thead>
 									<tbody>	
 										@foreach($canales_data as $canal_data)
-										<tr class="@if($canal_data->deleted_at) bg-danger @endif">
+										<tr>
 											<td class="text-nowrap text-center">
 												<a href="{{URL::to('/canales/mostrar_canal/')}}/{{$canal_data->idcanal}}">{{$canal_data->nombre}}</a>
 											</td>
 											<td class="text-nowrap text-center">
 												{{$canal_data->nombre_sector}}
 											</td>
-											<td class="text-nowrap">
-												<div style="text-align:center">
-													<a class="btn btn-warning btn-sm" href="{{URL::to('/canales/editar_canal')}}/{{$canal_data->idcanal}}">
-													<span class="lnr lnr-pencil"></span></a>
-												</div>
+											<td class="text-nowrap text-center">
+												@if($canal_data->deleted_at == null)
+													<div style="text-align:center">
+														<a class="btn btn-warning btn-sm" href="{{URL::to('/canales/editar_canal')}}/{{$canal_data->idcanal}}">
+														<span class="lnr lnr-pencil"></span></a>
+													</div>
+												@else
+													-
+												@endif												
+											</td>
+											<td class="text-nowrap text-center">
+												@if($canal_data->deleted_at == null)	
+													Activo
+												@else
+													Inactivo
+												@endif
 											</td>
 										</tr>
 										@endforeach
@@ -231,15 +267,15 @@
 					<div class="row">
 						<div class="col-md-4">
 							{{ Form::label('entidad_search','Nombre de la Entidad')}}
-							{{ Form::text('entidad_search',$entidad_search,array('class'=>'form-control','placeholder'=>'Ingrese nombre de la entidad','id'=>'search')) }}
+							{{ Form::text('entidad_search',$entidad_search,array('class'=>'form-control','placeholder'=>'Ingrese nombre de la entidad','id'=>'entidad_search')) }}
 						</div>
 						<div class="col-md-4">
 							{{ Form::label('entidad_search_sector','Sector')}}
-							{{ Form::select('entidad_search_sector',array('0'=>'Seleccione')+$sectores,$entidad_search_sector,array('class'=>'form-control','id'=>'slcSector')) }}
+							{{ Form::select('entidad_search_sector',array(''=>'Seleccione')+$sectores,$entidad_search_sector,array('class'=>'form-control','id'=>'slcSector')) }}
 						</div>
 						<div class="col-md-4">
 							{{ Form::label('entidad_search_canal','Canal')}}
-							{{ Form::select('entidad_search_canal',array('0'=>'Seleccione'),$entidad_search_canal,array('class'=>'form-control','id'=>'slcCanal')) }}
+							{{ Form::select('entidad_search_canal',array(''=>'Seleccione'),$entidad_search_canal,array('class'=>'form-control','id'=>'slcCanal')) }}
 						</div>						
 					</div>
 					<div class="row">
@@ -247,7 +283,7 @@
 							{{ Form::button('<span class="fa fa-search""></span> Buscar', array('id'=>'submit-search-form','type' => 'submit', 'class' => 'btn btn-info btn-block','style'=>'margin-top:25px;')) }}	
 						</div>
 						<div class="col-md-2">
-							<div class="btn btn-default btn-block" id="btnLimpiar" style='margin-top:25px;'><span class="lnr lnr-sync""></span> Limpiar</div>				
+							<div class="btn btn-default btn-block" id="btnLimpiarEntidad" style='margin-top:25px;'><span class="lnr lnr-sync""></span> Limpiar</div>				
 						</div>				
 					</div>
 					{{ Form::close() }}					
@@ -263,16 +299,21 @@
 									<thead>
 										<tr>
 											<th class="text-nowrap text-center">Entidad</th>
+											<th class="text-nowrap text-center">Código Entidad</th>
 											<th class="text-nowrap text-center">Canal</th>
 											<th class="text-nowrap text-center">Sector</th>
 											<th class="text-nowrap text-center">Editar</th>
+											<th class="text-nowrap text-center">Estado</th>
 										</tr>
 									</thead>
 									<tbody>	
 										@foreach($entidades_data as $entidad_data)
-										<tr class="@if($entidad_data->deleted_at) bg-danger @endif">
+										<tr>
 											<td class="text-nowrap text-center">
 												<a href="{{URL::to('/entidades/mostrar_entidad/')}}/{{$entidad_data->identidad}}">{{$entidad_data->nombre}}</a>
+											</td>
+											<td class="text-nowrap text-center">
+												{{$entidad_data->codigo_enve}}
 											</td>
 											<td class="text-nowrap text-center">
 												{{$entidad_data->nombre_canal}}
@@ -280,9 +321,21 @@
 											<td class="text-nowrap text-center">
 												{{$entidad_data->nombre_sector}}
 											</td>
-											<td class="text-nowrap">
-												<a class="btn btn-warning btn-block btn-sm" href="{{URL::to('/entidades/editar_entidad')}}/{{$entidad_data->identidad}}">
-												<span class="lnr lnr-pencil"></span></a>
+											<td class="text-nowrap text-center">
+												@if($entidad_data->deleted_at == null)	
+													<a class="btn btn-warning btn-sm" href="{{URL::to('/entidades/editar_entidad')}}/{{$entidad_data->identidad}}">
+													<span class="lnr lnr-pencil"></span></a>
+												@else
+													-
+												@endif
+
+											</td>
+											<td class="text-nowrap text-center">
+												@if($entidad_data->deleted_at == null)	
+													Activo
+												@else
+													Inactivo
+												@endif
 											</td>
 										</tr>
 										@endforeach
