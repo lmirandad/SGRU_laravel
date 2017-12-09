@@ -5,7 +5,7 @@ use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 
-class EstadoSolicitud extends Eloquent implements UserInterface, RemindableInterface {
+class Asignacion extends Eloquent implements UserInterface, RemindableInterface {
 
 	use UserTrait, RemindableTrait;
 	use SoftDeletingTrait;
@@ -15,22 +15,14 @@ class EstadoSolicitud extends Eloquent implements UserInterface, RemindableInter
 	 *
 	 * @var string
 	 */
-	protected $table = 'estado_solicitud';
+	protected $table = 'asignacion';
 	protected $softDelete = true;
-	protected $primaryKey = 'idestado_solicitud';
 
 	/**
 	 * The attributes excluded from the model's JSON form.
 	 *
 	 * @var array
 	 */
-
-	public function scopeBuscarPorNombre($query,$nombre)
-	{
-		$query->where('estado_solicitud.nombre','LIKE',$nombre);
-		$query->select('estado_solicitud.*');
-		return $query;
-	}
 	
 
 }

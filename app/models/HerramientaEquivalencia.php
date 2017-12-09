@@ -5,7 +5,7 @@ use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 
-class EstadoSolicitud extends Eloquent implements UserInterface, RemindableInterface {
+class HerramientaEquivalencia extends Eloquent implements UserInterface, RemindableInterface {
 
 	use UserTrait, RemindableTrait;
 	use SoftDeletingTrait;
@@ -15,9 +15,9 @@ class EstadoSolicitud extends Eloquent implements UserInterface, RemindableInter
 	 *
 	 * @var string
 	 */
-	protected $table = 'estado_solicitud';
+	protected $table = 'herramienta_equivalencia';
 	protected $softDelete = true;
-	protected $primaryKey = 'idestado_solicitud';
+	protected $primaryKey = 'idherramienta_equivalencia';
 
 	/**
 	 * The attributes excluded from the model's JSON form.
@@ -25,10 +25,10 @@ class EstadoSolicitud extends Eloquent implements UserInterface, RemindableInter
 	 * @var array
 	 */
 
-	public function scopeBuscarPorNombre($query,$nombre)
+	public function scopeBuscarEquivalenciasPorIdHerramienta($query,$idherramienta)
 	{
-		$query->where('estado_solicitud.nombre','LIKE',$nombre);
-		$query->select('estado_solicitud.*');
+		$query->where('herramienta_equivalencia.idherramienta','=',$idherramienta);
+		$query->select('herramienta_equivalencia.*');
 		return $query;
 	}
 	

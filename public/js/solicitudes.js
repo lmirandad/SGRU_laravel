@@ -1,53 +1,35 @@
 var start,end;
 $( document ).ready(function(){	
+	
 	$("#input-file").fileinput({
 	    language: "es",
 	    allowedFileExtensions: ["csv"],
 	    showPreview: false,
-	    showUpload: false
+	    showUpload: false,
 	});
+
+	 $('#input-file').attr('name', 'file');
 
 	
 
-	$('#btnVistaPrevia').click(function(){
-		var file = $('#input-file')[0].files;
-		var config = buildConfig();
-		start = performance.now();
-		//alert(file[0].size);
-		$('#input-file').parse({
-			config: config,
-			before: function(file, inputElem)
-			{
-				console.log("Parsing file:", file);
-			},
-			complete: function()
-			{
-				console.log("Done with all files.");
+	$('#btnCargar').click(function(){
+		BootstrapDialog.confirm({
+			title: 'Mensaje de Confirmación',
+			message: '¿Está seguro que desea realizar esta acción?', 
+			type: BootstrapDialog.TYPE_INFO,
+			btnCancelLabel: 'Cancelar', 
+	    	btnOKLabel: 'Aceptar', 
+			callback: function(result){
+		        if(result) {
+					document.getElementById("submit-cargar").submit();
+				}
 			}
 		});
 	});
 
+	$('#btnDescargarLogs').click(function(){
+		document.getElementById("submit-descargar-logs").submit();				
+	});
+
 });
 
-function buildConfig(){
-	return {
-		delimiter:"|",
-		newline: "\n",
-		header: true,
-		download: false,
-		error: errorFn,
-		complete: completeFn,
-		
-	};
-}
-
-function errorFn(error, file)
-{
-	console.log("ERROR:", error, file);
-}
-
-function completeFn()
-{
-	end = performance.now();
-	console.log("Finished input (async). Time:", end-start, arguments);
-}

@@ -41,6 +41,21 @@ class TipoSolicitudXSla extends Eloquent implements UserInterface, RemindableInt
 		return $query;
 	}
 	
+	public function scopeBuscarSlaPorSectorHerramientaAccion($query,$idsector,$idherramienta,$idaccion)
+	{
+		$query->join('sla','sla.idsla','=','tipo_solicitudxsla.idsla')
+			  ->join('herramientaxsectorxtipo_solicitud','herramientaxsectorxtipo_solicitud.idherramientaxsectorxtipo_solicitud','=','tipo_solicitudxsla.idherramientaxsectorxtipo_solicitud')
+			  ->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','herramientaxsectorxtipo_solicitud.idtipo_solicitud')
+			  ->join('herramientaxsector','herramientaxsector.idherramientaxsector','=','herramientaxsectorxtipo_solicitud.idherramientaxsector')
+			  ->join('herramienta','herramienta.idherramienta','=','herramientaxsector.idherramienta')
+			  ->join('sector','sector.idsector','=','herramientaxsector.idsector');
+
+		$query->where('sector.idsector','=',$idsector);
+		$query->where('herramienta.idherramienta','=',$idherramienta);
+		$query->where('tipo_solicitud.idtipo_solicitud','=',$idtipo_solicitud);
+
+		$query->select('sla.*');
+	}
 
 	
 }

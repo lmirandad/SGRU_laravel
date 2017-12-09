@@ -22,7 +22,7 @@
 		{{ Form::hidden('herramienta_id', $herramienta->idherramienta, array('id'=>'herramienta_id')) }}	
 		<!-- OVERVIEW -->		
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col-md-7">
 				<div class="panel panel-headline">
 					<div class="panel-heading">
 						<h3 class="panel-title">Datos del Aplicativo</h3>
@@ -40,25 +40,66 @@
 							@endif
 						</div>
 						<div class="row">
-							<div class="form-group col-md-3 col-md-offset-1 @if($errors->first('nombre_herramienta')) has-error has-feedback @endif"">
+							<div class="form-group col-md-4 @if($errors->first('nombre_herramienta')) has-error has-feedback @endif"">
 								{{ Form::label('nombre_herramienta','Nombre del Aplicativo')}}
 								{{ Form::text('nombre_herramienta',$herramienta->nombre,array('class'=>'form-control','placeholder'=>'Ingrese nombre del aplicativo','disabled'=>'disabled')) }}
 							</div>
-							<div class="form-group col-md-3 @if($errors->first('flag_seguridad')) has-error has-feedback @endif"">
+							<div class="form-group col-md-4 @if($errors->first('flag_seguridad')) has-error has-feedback @endif"">
 								{{ Form::label('flag_seguridad','Valida Seguridad:')}}
 								{{ Form::select('flag_seguridad', [''=>'Seleccione','0'=>'No','1'=>'Si','2'=>'Por Validar'],$herramienta->flag_seguridad,['class' => 'form-control','disabled'=>'disabled']) }}
 							</div>
-							<div class="form-group col-md-3 @if($errors->first('denominacion_herramienta')) has-error has-feedback @endif">
+							<div class="form-group col-md-4 @if($errors->first('denominacion_herramienta')) has-error has-feedback @endif">
 								{{ Form::label('denominacion_herramienta','Categoría Aplicativo:')}}
 								{{ Form::select('denominacion_herramienta',array(''=>'Seleccione')+$denominaciones,$herramienta->iddenominacion_herramienta,array('class'=>'form-control','disabled'=>'disabled')) }}
 							</div>
 						</div>
 						<div class="row">
-							<div class="form-group col-md-9 col-md-offset-1 @if($errors->first('descripcion')) has-error has-feedback @endif"">
+							<div class="form-group col-md-12 @if($errors->first('descripcion')) has-error has-feedback @endif"">
 								{{ Form::label('descripcion','Descripción:')}}
 								{{ Form::textarea('descripcion',$herramienta->descripcion,array('class'=>'form-control','placeholder'=>'Ingrese una descripción','rows'=>5,'style'=>'resize:none','disabled'=>'disabled')) }}
 							</div>
 						</div>						
+					</div>
+				</div>
+			</div>
+			<div class="col-md-5">
+				<div class="panel panel-headline">
+					<div class="panel-heading">
+						<h3 class="panel-title">Equivalencias</h3>
+					</div>
+					<div class="panel-body">
+						<div class="row" style="height:230px;overflow-y:auto; ">
+							
+							<div class="col-md-12">
+								<div class="table-responsive">
+									<table class="table table-hover">
+										@if(count($equivalencias)>0)
+										<thead>
+											<tr>
+												<th class="text-nowrap text-center">N°</th>
+												<th class="text-nowrap text-center">Nombre</th>
+											</tr>
+										</thead>
+										<tbody>	
+												@foreach($equivalencias as $index  => $equivalencia)
+												<tr class="">
+													<td class="text-nowrap text-center">
+														
+														{{$index+1}}
+													</td>
+													<td class="text-nowrap text-center">
+														{{$equivalencia->nombre_equivalencia}}
+													</td>
+												</tr>
+												@endforeach											
+										</tbody>
+										@else
+											<h4 style="text-align:center">Sin nombres equivalentes</h4>
+										@endif
+									</table>
+								</div>
+							</div>					
+						</div>
 					</div>
 				</div>
 			</div>
@@ -144,7 +185,7 @@
 									</table>
 								</div>
 							@else
-							<h3 style="text-align:center;height:120px;overflow-y:auto;">SIN REGISTROS</h3>
+							<h3 style="text-align:center;height:150px;overflow-y:auto;">SIN REGISTROS</h3>
 							@endif					
 						</div>
 					</div>

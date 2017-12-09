@@ -61,6 +61,7 @@ Route::group(array('prefix'=>'herramientas', 'before'=>'auth'),function(){
 	Route::get('/mostrar_herramienta/{id}','HerramientaController@mostrar_herramienta');		
 	Route::post('/submit_habilitar_herramienta','HerramientaController@submit_habilitar_herramienta');
 	Route::post('/submit_inhabilitar_herramienta','HerramientaController@submit_inhabilitar_herramienta');
+	Route::post('/submit_agregar_equivalencia','HerramientaController@submit_agregar_equivalencia');	
 });
 
 /*ENTIDADES CANALES SECTORES*/
@@ -126,6 +127,8 @@ Route::group(array('prefix'=>'slas', 'before'=>'auth'),function(){
 Route::group(array('prefix'=>'solicitudes', 'before'=>'auth'),function(){
 	Route::get('/cargar_solicitudes','SolicitudController@cargar_solicitudes');
 	Route::get('/listar_solicitudes','SolicitudController@listar_solicitudes');
+	Route::post('/cargar_archivo_solicitudes','SolicitudController@cargar_archivo_solicitudes');
+	Route::post('/descargar_logs','SolicitudController@descargar_logs');
 });
 
 /*TIPOS_SOLICITUD*/
@@ -134,3 +137,12 @@ Route::group(array('prefix'=>'tipos_solicitudes', 'before'=>'auth'),function(){
 	Route::post('/eliminar_tipo_solicitud','TipoSolicitudController@eliminar_acciones_herramienta');
 });
 
+/*HERRAMIENTA EQUIVALENCIA*/
+Route::group(array('prefix'=>'herramienta_equivalencia', 'before'=>'auth'),function(){
+	Route::post('/eliminar_equivalencia','HerramientaController@eliminar_equivalencia');
+});
+
+/*ASIGNACIONES*/
+Route::group(array('prefix'=>'asignaciones', 'before'=>'auth'),function(){
+	Route::post('/submit_asignacion','AsignacionController@submit_asignacion');
+});

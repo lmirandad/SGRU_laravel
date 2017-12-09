@@ -70,5 +70,11 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;	
 	}
 	
+	public function scopeBuscarPorCodigoSolicitud($query,$codigo_solicitud)
+	{
+		$query->where('solicitud.codigo_solicitud','LIKE',$codigo_solicitud);
+		$query->select('solicitud.*');
+		return $query;
+	}
 
 }

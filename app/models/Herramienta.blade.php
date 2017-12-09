@@ -81,5 +81,12 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 			  
 		return $query;
 	}
+
+	public function scopeBuscarPorCodigo($query,$nombre)
+	{
+		$query->where('herramienta.nombre','LIKE',$nombre);
+		$query->select('herramienta.*');
+		return $query;
+	}
 	
 }

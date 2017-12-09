@@ -73,6 +73,44 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
-	
+	public function scopeBuscarUsuariosDisponiblesPorHerramienta($query,$idherramienta)
+	{
+		$query->join('herramientaxusers','herramientaxusers.iduser','=','users.id')
+			  ->join('herramienta','herramienta.idherramienta','=','herramientaxusers.idherramienta')
+			  ->join('asignacion','asignacion.iduser_asignado','=','users.id')
+			  ->join('solicitud','solicitud.idsolicitud','=','asignacion.idsolicitud');
+
+		$query->where('herramienta.idherramienta','=',$idherramienta)
+			  ->whereNested(function($query) {
+                    $query->where('solicitud.idestado_solicitud','=', 3)
+                          ->orWhere('solicitud.idestado_solicitud','=',4);
+                });
+		$query->groupBy('users.id');
+		$query->select('users.id',DB::raw('count(solicitud.idsolicitud) as cantidad_solicitud'));
+		$query->orderBy('cantidad_solicitud','DESC');
+
+		return $query->orderBy('cantidad_solicitud');
+
+	}
+
+	public function scopeBuscarUsuariosDisponiblesPorSector($query,$idsector)
+	{
+		$query->join('usersxsector','usersxsector.iduser','=','users.id')
+			  ->join('sector','sector.idsector','=','usersxsector.idsector')
+			  ->join('asignacion','asignacion.iduser_asignado','=','users.id')
+			  ->join('solicitud','solicitud.idsolicitud','=','asignacion.idsolicitud');
+
+		$query->where('sector.idsector','=',$idsector)
+			  ->whereNested(function($query) {
+                    $query->where('solicitud.idestado_solicitud','=', 3)
+                          ->orWhere('solicitud.idestado_solicitud','=',4);
+                });
+		$query->groupBy('users.id');
+		$query->select('users.id',DB::raw('count(solicitud.idsolicitud) as cantidad_solicitud'));
+		$query->orderBy('cantidad_solicitud','DESC');
+
+		return $query->orderBy('cantidad_solicitud');
+
+	}
 
 }

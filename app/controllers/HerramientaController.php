@@ -244,7 +244,8 @@ class HerramientaController extends BaseController {
 			{	
 				$data["denominaciones"] = DenominacionHerramienta::lists('nombre','iddenominacion_herramienta');
 				$data["herramienta"] = Herramienta::withTrashed()->find($idherramienta);
-
+				$data["equivalencias"] = HerramientaEquivalencia::buscarEquivalenciasPorIdHerramienta($idherramienta)->get();
+				
 				if($data["herramienta"]==null){
 					return Redirect::to('herramientas/listar_herramientas');
 				}
@@ -328,6 +329,54 @@ class HerramientaController extends BaseController {
 		}
 	}
 
+	public function submit_agregar_equivalencia(){
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				// Validate the info, create rules for the inputs
+				$herramienta_id = Input::get('herramienta_id');
+				$attributes = array(
+					'nombre_equivalencia' => 'Nombre de Aplicativo (Equivalencia)',
+				);
+
+				$messages = array();
+
+				$rules = array(
+					'nombre_equivalencia' => 'required|max:100|alpha_num_spaces_slash_dash|unique:herramienta_equivalencia,nombre_equivalencia',
+				);
+				// Run the validation rules on the inputs from the form
+				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);
+				// If the validator fails, redirect back to the form
+				if($validator->fails()){
+					$herramienta_id = Input::get('herramienta_id');
+					$url = "herramientas/editar_herramienta"."/".$herramienta_id;
+					return Redirect::to($url)->withErrors($validator)->withInput(Input::all());
+				}else{	
+					$herramienta_id = Input::get('herramienta_id');
+					$url = "herramientas/editar_herramienta"."/".$herramienta_id;		
+					
+					$equivalencia = new HerramientaEquivalencia;
+					$equivalencia->nombre_equivalencia = Input::get('nombre_equivalencia');
+					$equivalencia->idherramienta = $herramienta_id;
+					$equivalencia->iduser_created_by = $data["user"]->id;
+					
+					$equivalencia->save();	
+
+					$herramienta = Herramienta::find($herramienta_id);
+
+					return Redirect::to($url)->with('message', 'Se editó correctamente el aplicativo: '.$herramienta->nombre);
+				}
+			}else{
+				return View::make('error/error',$data);
+			}
+
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
 	public function mostrar_herramienta($idherramienta=null){
 		if(Auth::check()){
 			$data["inside_url"] = Config::get('app.inside_url');
@@ -345,6 +394,7 @@ class HerramientaController extends BaseController {
 				$data["sectores"] = HerramientaXSector::buscarSectorPorIdHerramienta($data["herramienta"]->idherramienta)->get();
 				$data["usuarios"] = HerramientaXUser::buscarUsuariosPorIdHerramienta($data["herramienta"]->idherramienta)->get();
 				$data["denominaciones"] = DenominacionHerramienta::lists('nombre','iddenominacion_herramienta');
+				$data["equivalencias"] = HerramientaEquivalencia::buscarEquivalenciasPorIdHerramienta($idherramienta)->get();
 
 				return View::make('Mantenimientos/Herramientas/mostrarHerramienta',$data);
 			}else{
@@ -418,6 +468,32 @@ class HerramientaController extends BaseController {
 		}else{
 			return View::make('error/error',$data);
 		}
+	}
+
+	public function eliminar_equivalencia()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		// Check if the current user is the "System Admin"
+		$idherramienta_equivalencia = Input::get('idherramienta_equivalencia');
+		$herramienta_equivalencia = HerramientaEquivalencia::find($idherramienta_equivalencia);
+
+		if($herramienta_equivalencia == null)
+			return Response::json(array( 'success' => true,'herramienta_equivalencia'=>null),200);
+
+		$idherramienta = Input::get('idherramienta');
+		$herramienta = Herramienta::find($idherramienta);
+
+		if(strcmp($herramienta->nombre,$herramienta_equivalencia->nombre_equivalencia) == 0)
+			return Response::json(array( 'success' => true,'herramienta_equivalencia'=>1),200);
+
+		$herramienta_equivalencia->forceDelete();
+
+		return Response::json(array( 'success' => true, 'herramienta_equivalencia' => $herramienta_equivalencia),200);		
 	}
 
 }

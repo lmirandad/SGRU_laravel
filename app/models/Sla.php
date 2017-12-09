@@ -45,6 +45,7 @@ class Sla extends Eloquent implements UserInterface, RemindableInterface {
 		$query->select('sla.*');
 		return $query;
 	}
+
 	
 	
 }
