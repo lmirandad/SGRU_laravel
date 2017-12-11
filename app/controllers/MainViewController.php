@@ -4,9 +4,218 @@ class MenuPrincipalController extends BaseController {
 
 	public function home()
 	{
-		$data["inside_url"] = Config::get('app.inside_url');
-		$data["user"]= Session::get('user');
-		return View::make('MenuPrincipal/menuPrincipal',$data);
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				
+				$data["search_usuario"] = null;
+				$data["solicitudes_data"] = array();
+
+				$data["idusuario"] = null;
+
+				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstado(1)->get()); 
+				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstado(2)->get()); 
+				$data["solicitudes_pendientes"] = count(Solicitud::buscarPorIdEstado(3)->get()); 
+				$data["solicitudes_procesando"] = count(Solicitud::buscarPorIdEstado(4)->get()); 
+				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstado(5)->get()); 
+				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstado(6)->get()); 
+
+				$data["origen"] = 1; //1: sin usuario //2: con usuario
+				
+				return View::make('MenuPrincipal/menuPrincipal',$data);
+
+			}else if($data["user"]->idrol == 2)
+			{
+				$data["search_usuario"] = null;
+				$data["solicitudes_data"] = array();
+				
+				$data["idusuario"] = $data["user"]->id;
+
+				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstadoPorUsuario(1,$data["user"]->id)->get()); 
+				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstadoPorUsuario(2,$data["user"]->id)->get()); 
+				$data["solicitudes_pendientes"] = count(Solicitud::buscarPorIdEstadoPorUsuario(3,$data["user"]->id)->get());
+				$data["solicitudes_procesando"] = count(Solicitud::buscarPorIdEstadoPorUsuario(4,$data["user"]->id)->get());  
+				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(5,$data["user"]->id)->get());
+				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(6,$data["user"]->id)->get());
+
+				return View::make('MenuPrincipal/menuPrincipal',$data);
+
+			}else
+				return View::make('error/error',$data);
+
+		}else{
+			return View::make('error/error',$data);
+		}
+		
+	}
+
+	public function mostrar_solicitudes_estado($idestado=null)
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if(($data["user"]->idrol == 1 || $data["user"]->idrol == 2) && $idestado){
+				
+				$data["search_usuario"] = null;
+				
+				$data["idusuario"] = null;
+
+				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstado(1)->get()); 
+				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstado(2)->get()); 
+				$data["solicitudes_pendientes"] = count(Solicitud::buscarPorIdEstado(3)->get()); 
+				$data["solicitudes_procesando"] = count(Solicitud::buscarPorIdEstado(4)->get()); 
+				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstado(5)->get()); 
+				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstado(6)->get()); 
+
+				$data["solicitudes_data"] = Solicitud::buscarPorIdEstado($idestado)->get();
+				$data["slas_data"] = array();
+				$data["diferencia_fechas"] = array();
+				$data["diferencia_fechas_trabajo"] = array();
+				$cantidad_solicitudes = count($data["solicitudes_data"]);
+				for($i=0;$i<$cantidad_solicitudes;$i++)
+				{
+					$sla = Sla::buscarSlaSolicitud($data["solicitudes_data"][$i]->idsolicitud,$data["solicitudes_data"][$i]->idtipo_solicitud)->get()[0];
+					array_push($data["slas_data"], $sla);
+
+					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_data"][$i]->fecha_asignacion);				
+					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+
+					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_data"][$i]->fecha_solicitud);				
+					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+					$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
+
+					array_push($data["diferencia_fechas"],$diferencia_dias);
+
+					//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
+					$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+					$diferencia_dias_fecha_trabajo= $fecha_asignacion_formateada->diffInDays($fecha_actual);
+					array_push($data["diferencia_fechas_trabajo"],$diferencia_dias_fecha_trabajo);
+				}
+
+				
+				$data["origen"] = 1; //1: sin usuario //2: con usuario
+
+				
+				
+				return View::make('MenuPrincipal/menuPrincipal',$data);
+
+			}else
+				return View::make('error/error',$data);
+
+		}else{
+			return View::make('error/error',$data);
+		}
+		
+	}
+
+	public function mostrar_solicitudes_estado_usuario($idestado=null,$idusuario=null)
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if(($data["user"]->idrol == 1 || $data["user"]->idrol == 2) && $idestado && $idusuario){
+				
+				$data["search_usuario"] = Input::get('search_usuario');
+				
+
+				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstadoPorUsuario(1, $idusuario)->get()); 
+				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstadoPorUsuario(2, $idusuario)->get()); 
+				$data["solicitudes_pendientes"] = count(Solicitud::buscarPorIdEstadoPorUsuario(3, $idusuario)->get()); 
+				$data["solicitudes_procesando"] = count(Solicitud::buscarPorIdEstadoPorUsuario(4, $idusuario)->get()); 
+				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(5, $idusuario)->get()); 
+				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(6, $idusuario)->get()); 
+
+				$data["solicitudes_data"] = Solicitud::buscarPorIdEstadoPorUsuario($idestado, $idusuario)->get();
+				$data["slas_data"] = array();
+				$data["diferencia_fechas"] = array();
+				$data["diferencia_fechas_trabajo"] = array();
+				$cantidad_solicitudes = count($data["solicitudes_data"]);
+
+				for($i=0;$i<$cantidad_solicitudes;$i++)
+				{
+					$sla = Sla::buscarSlaSolicitud($data["solicitudes_data"][$i]->idsolicitud,$data["solicitudes_data"][$i]->idtipo_solicitud)->get()[0];
+					array_push($data["slas_data"], $sla);
+
+					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_data"][$i]->fecha_asignacion);				
+					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+
+					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_data"][$i]->fecha_solicitud);				
+					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+					$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
+
+					array_push($data["diferencia_fechas"],$diferencia_dias);
+
+					//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
+					$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+					$diferencia_dias_fecha_trabajo= $fecha_asignacion_formateada->diffInDays($fecha_actual);
+					array_push($data["diferencia_fechas_trabajo"],$diferencia_dias_fecha_trabajo);
+
+				}
+
+
+				$data["idusuario"] = $idusuario;
+
+				$data["origen"] = 2; //1: sin usuario //2: con usuario
+				
+				return View::make('MenuPrincipal/menuPrincipal',$data);
+
+			}else
+				return View::make('error/error',$data);
+
+		}else{
+			return View::make('error/error',$data);
+		}
+		
+	}
+
+	public function buscar_solicitudes_usuario()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if(($data["user"]->idrol == 1) ){
+				
+				$data["search_usuario"] = Input::get('search_usuario');
+
+				if(Input::get('search_usuario') == null){
+					return Redirect::to('/principal');
+				}
+
+				$usuario = User::buscarPorNombre($data["search_usuario"])->get();
+
+				if($usuario == null || $usuario->isEmpty()){
+					return Redirect::to('/principal');
+				}
+
+				$idusuario = $usuario[0]->id;
+
+				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstadoPorUsuario(1, $idusuario)->get()); 
+				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstadoPorUsuario(2, $idusuario)->get()); 
+				$data["solicitudes_pendientes"] = count(Solicitud::buscarPorIdEstadoPorUsuario(3, $idusuario)->get()); 
+				$data["solicitudes_procesando"] = count(Solicitud::buscarPorIdEstadoPorUsuario(4, $idusuario)->get()); 
+				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(5, $idusuario)->get()); 
+				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(6, $idusuario)->get()); 
+
+				$data["solicitudes_data"] = array();
+
+				$data["idusuario"] = $idusuario;
+
+				$data["origen"] = 2; //1: sin usuario //2: con usuario
+				
+				return View::make('MenuPrincipal/menuPrincipal',$data);
+
+			}else
+				return View::make('error/error',$data);
+
+		}else{
+			return View::make('error/error',$data);
+		}
+		
 	}
 
 

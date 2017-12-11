@@ -31,7 +31,9 @@ class LoginController extends BaseController {
 					return Redirect::to('/usuarios/cambiar_contrasena');						
 				}				
 				$data["user"] = Session::get('user');
-				return View::make('MenuPrincipal/MenuPrincipal',$data);
+				Session::put('user',Auth::user());
+				return Redirect::to('/principal');
+				
 				
 			}else{
 				// Si falla la autenticacion se lo regresa al login con un mensaje de error

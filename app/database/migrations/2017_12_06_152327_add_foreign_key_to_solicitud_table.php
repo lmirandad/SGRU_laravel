@@ -21,7 +21,6 @@ class AddForeignKeyToSolicitudTable extends Migration {
 			$table->foreign('iduser_created_by', 'fk_solicitud_users1')->references('id')->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 			$table->foreign('iduser_updated_by', 'fk_solicitud_users2')->references('id')->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 			$table->foreign('idcarga_archivo', 'fk_solicitud_carga_archivo1')->references('idcarga_archivo')->on('carga_archivo')->onUpdate('NO ACTION')->onDelete('NO ACTION');
-			$table->foreign('idasignacion', 'fk_solicitud_asignacion1')->references('idasignacion')->on('asignacion')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 			$table->foreign('idsla', 'fk_solicitud_sla')->references('idsla')->on('sla')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 
 		});
@@ -43,7 +42,6 @@ class AddForeignKeyToSolicitudTable extends Migration {
 			$table->dropForeign('fk_solicitud_users1');
 			$table->dropForeign('fk_solicitud_users2');
 			$table->dropForeign('fk_solicitud_carga_archivo1');
-			$table->dropForeign('fk_solicitud_asignacion1');
 			$table->dropForeign('fk_solicitud_sla');
 		});
 	}

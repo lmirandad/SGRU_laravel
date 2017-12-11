@@ -24,6 +24,13 @@ Route::group(array('before'=>'auth'),function(){
 	Route::get('/principal','MenuPrincipalController@home');
 });
 
+Route::group(array('prefix'=>'principal','before'=>'auth'),function(){
+	Route::get('/mostrar_solicitudes_estado/{id}','MenuPrincipalController@mostrar_solicitudes_estado');
+	Route::get('/mostrar_solicitudes_estado_usuario/{id}/{idusuario}','MenuPrincipalController@mostrar_solicitudes_estado_usuario');
+	Route::get('/buscar_solicitudes_usuario','MenuPrincipalController@buscar_solicitudes_usuario');
+	
+});
+
 /* USUARIOS DEL SISTEMA */
 Route::group(array('prefix'=>'usuarios', 'before'=>'auth'),function(){
 	Route::get('/listar_usuarios','UserController@listar_usuarios');
@@ -126,9 +133,12 @@ Route::group(array('prefix'=>'slas', 'before'=>'auth'),function(){
 /*SOLICITUDES*/
 Route::group(array('prefix'=>'solicitudes', 'before'=>'auth'),function(){
 	Route::get('/cargar_solicitudes','SolicitudController@cargar_solicitudes');
+	Route::get('/buscar_solicitudes','SolicitudController@buscar_solicitudes');
 	Route::get('/listar_solicitudes','SolicitudController@listar_solicitudes');
 	Route::post('/cargar_archivo_solicitudes','SolicitudController@cargar_archivo_solicitudes');
 	Route::post('/descargar_logs','SolicitudController@descargar_logs');
+	Route::get('/mostrar_solicitud/{id}','SolicitudController@mostrar_solicitud');
+	Route::post('/obtener_herramientas','SolicitudController@obtener_herramientas');
 });
 
 /*TIPOS_SOLICITUD*/

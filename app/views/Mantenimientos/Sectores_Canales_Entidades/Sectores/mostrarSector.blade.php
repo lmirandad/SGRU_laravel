@@ -82,6 +82,44 @@
 					</div>
 				</div>
 			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="panel panel-headline">
+					<div class="panel-heading">
+						<h3 class="panel-title">Aplicativos Asociadas al Sector</h3>
+					</div>
+					<div class="panel-body">
+						<div class="table-responsive" style="height:155px;overflow-y:auto; " >
+							<table class="table table-hover"  >
+								<thead>
+									<tr>
+										<th class="text-nowrap text-center">N°</th>
+										<th class="text-nowrap text-center">Nombre Aplicativo</th>
+										<th class="text-nowrap text-center">Denominación</th>
+									</tr>
+								</thead>
+								
+									<tbody >	
+										@foreach($herramientas as $index  => $herramienta)
+										<tr class="">
+											<td class="text-nowrap text-center">
+												{{$index+1}}
+											</td>
+											<td class="text-nowrap text-center">
+												{{$herramienta->nombre}}
+											</td>
+											<td class="text-nowrap text-center">
+												{{$herramienta->nombre_denominacion}}
+											</td>
+										</tr>
+										@endforeach
+									</tbody>										
+							</table>
+						</div>	
+					</div>
+				</div>
+			</div>
 		</div>		
 		
 

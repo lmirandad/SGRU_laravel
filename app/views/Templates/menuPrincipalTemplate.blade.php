@@ -39,9 +39,8 @@
 		@include('layouts.headerLayout')
 		@include('layouts.sidebarLayout')		
 		<!-- MAIN -->
-		<div class="main">
-			@yield('content')
-		</div>
+		@yield('content')
+		
 		<!-- END MAIN -->
 		<div class="clearfix"></div>
 		@include('layouts.footerLayout')		

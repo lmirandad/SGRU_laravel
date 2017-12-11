@@ -216,7 +216,7 @@
 														{{$index+1}}
 													</td>
 													<td class="text-nowrap text-center">
-														{{$sector->nombre}}
+														<a href="{{URL::to('/sectores/mostrar_sector/')}}/{{$sector->idsector}}">{{$sector->nombre}}</a>
 													</td>
 												</tr>
 												@endforeach

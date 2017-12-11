@@ -216,6 +216,7 @@ class SectorController extends BaseController {
 					return Redirect::to('entidades_canales_sectores/listar/1')->with('error','Sector no encontrado');
 				}
 				$data["canales"] = Canal::buscarCanalesPorIdSector($data["sector"]->idsector)->get();
+				$data["herramientas"] = HerramientaXSector::buscarHerramientasPorIdSector($data["sector"]->idsector)->get();
 				return View::make('Mantenimientos/Sectores_Canales_Entidades/Sectores/mostrarSector',$data);
 			}else{
 				return View::make('error/error',$data);
@@ -328,16 +329,11 @@ class SectorController extends BaseController {
 			    //por cada uno validar si el checkbox asociado fue tecleado
 			    for($i=0;$i<$size_ids;$i++){
 			    	$res_checkbox = Input::get('checkbox'.$i);
-			    	/*echo '<pre>';
-				    var_dump('seleccionado ' .$res_checkbox.': id-> '.$arr_idherramienta[$i] );	
-				    echo '</pre>';*/
-				    if($res_checkbox == 1)
+			    	
+			    	if($res_checkbox == 1)
 				    {
 				    	//validar si ya existe el objeto
 				    	$herramientaxsector = HerramientaXSector::buscarHerramientasPorIdSectorIdHerramienta($sector_id,$arr_idherramienta[$i])->get();
-				    	/*echo '<pre>';
-					    var_dump($herramientaxuser[0]->deleted_at);	
-					    echo '</pre>';*/
 				    	
 				    	if($herramientaxsector==null || $herramientaxsector->isEmpty()){
 				    		//quiere decir que es una herramienta nueva a crear
@@ -345,6 +341,7 @@ class SectorController extends BaseController {
 					    	$herramientaxsector->idherramienta = $arr_idherramienta[$i];
 					    	$herramientaxsector->idsector = $sector_id;
 					    	$herramientaxsector->save();
+					    	
 					    	//Agregar todos los tipos de acciones:
 					    	$tipos_solicitud = TipoSolicitud::listarTiposSolicitud()->get();
 					    	if(!$tipos_solicitud->isEmpty()){
@@ -368,6 +365,60 @@ class SectorController extends BaseController {
 				    			$accionesHerramientaSector[$j]->restore();
 				    		}
 				    	}
+
+				    	/*//SE AGREGA ESTA NUEVA HERRAMIENTA PARA LOS USUARIOS ASIGNADOS
+				    	$usuarios_sector = User::buscarUsuariosPorIdSector($sector_id)->get();
+
+				    	if($usuarios_sector != null && !$usuarios_sector->isEmpty())
+				    	{
+
+				    		//procedo a agregar esta herramienta los usuarios.
+				    		$cantidad_usuarios = count($usuarios_sector);
+				    		for($z=0;$z<$cantidad_usuarios;$z++)
+				    		{
+				    			//Validar si ya existe:
+					    		$herramientaxuser = HerramientaXUser::buscarHerramientasPorIdUsuarioIdHerramienta($usuarios_sector[$z]->id,$arr_idherramienta[$i])->get();
+					    		if($herramientaxuser == null || $herramientaxuser->isEmpty())
+					    		{
+					    			//es una nueva herramienta para el usuario
+					    			$herramientaxuser = new HerramientaXUser;
+					    			$herramientaxuser->idherramienta = $arr_idherramienta[$i];
+					    			$herramientaxuser->iduser = $usuarios_sector[$z]->id;
+					    			$herramientaxuser->estado = 1;
+					    			$herramientaxuser->save();
+					    			
+					    		
+					    			//Agregar todos los tipos de acciones:
+							    	$herramientaxtipo_solicitud = HerramientaXTipoSolicitud::listarTipoSolicitudHerramienta($arr_idherramienta[$i])->get();
+							    	if(!$herramientaxtipo_solicitud->isEmpty()){
+
+							    		$size_tipos = count($herramientaxtipo_solicitud);
+							    		for($j=0;$j<$size_tipos;$j++){
+							    			$herramientaxtipo_solicitudxuser = new HerramientaXTipoSolicitudXUser;
+							    			$herramientaxtipo_solicitudxuser->idherramientaxtipo_solicitud = $herramientaxtipo_solicitud[$j]->idherramientaxtipo_solicitud;
+							    			$herramientaxtipo_solicitudxuser->iduser = $usuarios_sector[$z]->id;
+							    			$herramientaxtipo_solicitudxuser->save();
+							    		}
+							    	}
+
+					    		}else
+					    		{
+					    			//quiere decir que ya existe ahora validemos si esta eliminado o no
+					    			if($herramientaxuser[0]->deleted_at != null){
+					    				$herramientaxuser[0]->restore();
+					    				$accionesHerramientaUsuario = HerramientaXTipoSolicitudXUser::listarTipoSolicitudUsuario($usuarios_sector[$z]->id,$arr_idherramienta[$i])->get();
+							    		$size_acciones = count($accionesHerramientaUsuario);
+							    		for($j=0;$j<$size_acciones;$j++){
+							    			$accionesHerramientaUsuario[$j]->restore();
+							    		}
+					    			}
+					    			
+					    		}
+				    		}
+
+				    		
+				    	}*/
+
 				    	$flag_seleccion = true;
 				    }
 			    }

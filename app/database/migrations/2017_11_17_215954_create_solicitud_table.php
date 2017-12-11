@@ -17,6 +17,7 @@ class CreateSolicitudTable extends Migration {
 			$table->integer('idsolicitud', true);
 			$table->string('asunto', 300);
 			$table->string('codigo_solicitud',100);
+			$table->string('nombre_herramienta',200)->nullable();
 			$table->integer('identidad')->index('fk_solicitud_entidad_idx');
 			$table->integer('idtipo_solicitud')->nullable()->index('fk_solicitud_tipo_solicitud1_idx');
 			$table->integer('idestado_solicitud')->index('fk_solicitud_estado_solicitud1_idx');
@@ -25,7 +26,6 @@ class CreateSolicitudTable extends Migration {
 			$table->integer('idcarga_archivo')->nullable()->index('fk_solicitud_carga_archivo1_idx');
 			$table->integer('idsla')->nullable()->index('fk_solicitud_sla_idx');
 			$table->dateTime('fecha_solicitud');
-			$table->integer('idasignacion')->nullable()->index('fk_solicitud_asignacion1_idx');
 			$table->integer('idtipo_solicitud_general')->nullable()->index('fk_solicitud_tipo_solicitud_general_idx');
 			$table->timestamps();
 			$table->softDeletes();

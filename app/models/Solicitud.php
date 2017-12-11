@@ -77,4 +77,73 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	public function scopeListarSolicitudes($query)
+	{
+		$query->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','solicitud.idtipo_solicitud')
+			  ->join('estado_solicitud','estado_solicitud.idestado_solicitud','=','solicitud.idestado_solicitud')
+			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
+
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');
+		return $query;
+	}
+
+	public function scopeBuscarSolicitudes($query,$codigo_solicitud,$fecha_solicitud_desde,$fecha_solicitud_hasta,$idtipo_solicitud,$idestado_solicitud,$idsector)
+	{
+		$query->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','solicitud.idtipo_solicitud')
+			  ->join('estado_solicitud','estado_solicitud.idestado_solicitud','=','solicitud.idestado_solicitud')
+			  ->join('entidad','entidad.identidad','=','solicitud.identidad')
+			  ->join('canal','canal.idcanal','=','entidad.idcanal')
+			  ->join('sector','sector.idsector','=','canal.idsector')
+			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
+
+		if($codigo_solicitud != null)
+			$query->where('solicitud.codigo_solicitud','LIKE',$codigo_solicitud);
+		
+		if($fecha_solicitud_desde != "")
+			$query->where('solicitud.fecha_solicitud','>=',date('Y-m-d H:i:s',strtotime($fecha_solicitud_desde)));
+		
+		if($fecha_solicitud_hasta != "")
+			$query->where('solicitud.fecha_solicitud','<=',date('Y-m-d H:i:s',strtotime($fecha_solicitud_hasta)));
+
+		if($idtipo_solicitud != 0)
+			$query->where('solicitud.idtipo_solicitud','=',$idtipo_solicitud);
+
+		if($idestado_solicitud != 0)
+			$query->where('solicitud.idestado_solicitud','=',$idestado_solicitud);
+
+		if($idsector != 0)
+			$query->where('sector.idsector','=',$idsector);
+
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');
+		return $query;
+	}
+
+	public function scopeBuscarPorIdEstado($query,$idestado_solicitud){
+		$query->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','solicitud.idtipo_solicitud')
+			  ->join('estado_solicitud','estado_solicitud.idestado_solicitud','=','solicitud.idestado_solicitud')
+			  ->join('entidad','entidad.identidad','=','solicitud.identidad')
+			  ->join('canal','canal.idcanal','=','entidad.idcanal')
+			  ->join('sector','sector.idsector','=','canal.idsector')
+			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
+
+		$query->where('solicitud.idestado_solicitud','=',$idestado_solicitud);
+		
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');
+		return $query;
+	}
+
+	public function scopeBuscarPorIdEstadoPorUsuario($query,$idestado_solicitud,$idusuario){
+		$query->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','solicitud.idtipo_solicitud')
+			  ->join('estado_solicitud','estado_solicitud.idestado_solicitud','=','solicitud.idestado_solicitud')
+			  ->join('entidad','entidad.identidad','=','solicitud.identidad')
+			  ->join('canal','canal.idcanal','=','entidad.idcanal')
+			  ->join('sector','sector.idsector','=','canal.idsector')
+			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
+
+		$query->where('solicitud.idestado_solicitud','=',$idestado_solicitud);
+		$query->where('asignacion.iduser_asignado','=',$idusuario);
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');;
+		return $query;
+	}
+
 }

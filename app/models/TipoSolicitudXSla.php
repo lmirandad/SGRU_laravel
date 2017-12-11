@@ -52,7 +52,7 @@ class TipoSolicitudXSla extends Eloquent implements UserInterface, RemindableInt
 
 		$query->where('sector.idsector','=',$idsector);
 		$query->where('herramienta.idherramienta','=',$idherramienta);
-		$query->where('tipo_solicitud.idtipo_solicitud','=',$idtipo_solicitud);
+		$query->where('tipo_solicitud.idtipo_solicitud','=',$idaccion);
 
 		$query->select('sla.*');
 	}

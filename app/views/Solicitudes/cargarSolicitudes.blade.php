@@ -119,8 +119,9 @@
 											<input style="display:none" name='idstipo_solicitud[]' value='{{ $resultado["idtipo_solicitud"]}}' readonly/>
 										</td>
 										<td class="text-nowrap text-center">
-											{{$resultado["fecha_solicitud"]}}
-											<input style="display:none" name='fechas_solicitud[]' value='{{ $resultado["fecha_solicitud"]}}' readonly/>
+											{{date('d-m-Y',strtotime($resultado["fecha_solicitud"]))}}
+											
+											<input style="display:none" name='fechas_solicitud[]' value="{{date('d-m-Y',strtotime($resultado["fecha_solicitud"]))}}" readonly/>
 										</td>
 										<td class="text-nowrap text-center">
 											{{$resultado["estado_solicitud"]}}
@@ -130,6 +131,7 @@
 											{{$resultado["nombre_herramienta"]}}
 											<input style="display:none" name='asuntos[]' value='{{ $resultado["asunto"]}}' readonly/>
 											<input style="display:none" name='nombres_herramienta[]' value='{{ $resultado["nombre_herramienta"]}}' readonly/>
+											<input style="display:none" name='codigos_herramientas[]' value='{{ $resultado["codigos_herramientas"]}}' readonly/>
 										</td>
 									</tr>
 									@endforeach
@@ -144,7 +146,7 @@
 		
 		<div class="row">
 			<div class="form-group col-md-2">				
-				<a class="btn btn-info btn-block" id="btnCargar" type="submit"> <i class="lnr lnr-location"></i>&nbsp&nbspAsignación</a>
+				<a class="btn btn-info btn-block" id="btnAsignar" > <i class="lnr lnr-location"></i>&nbsp&nbspAsignación</a>
 			</div>
 			<div class="form-group col-md-2">
 				<a class="btn btn-default btn-block" href="{{URL::to('/principal')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>		

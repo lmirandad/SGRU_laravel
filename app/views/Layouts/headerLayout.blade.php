@@ -1,7 +1,7 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-default navbar-fixed-top">
 	<div class="brand">
-		<a href="index.html"><img src="{{asset('assets/img/logo-sgru.png')}}" alt="SGRU" class="img-responsive logo" style="margin-bottom: -30px;margin-top: -20px;width:80%"	></a>
+		<a href="{{URL::to('/principal')}}"><img src="{{asset('assets/img/logo-sgru.png')}}" alt="SGRU" class="img-responsive logo" style="margin-bottom: -30px;margin-top: -20px;width:80%"	></a>
 	</div>
 	<div class="container-fluid">
 		<div class="navbar-btn">

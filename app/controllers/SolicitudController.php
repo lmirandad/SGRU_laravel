@@ -24,14 +24,49 @@ class SolicitudController extends BaseController {
 				$data["fecha_solicitud"] = null;
 				$data["search_tipo_solicitud"] = null;
 				$data["search_estado_solicitud"] = null;
+				$data["search_sector"] = null;
 				$data["tipos_solicitud"] = TipoSolicitud::lists('nombre','idtipo_solicitud');
 				$data["estados_solicitud"] = EstadoSolicitud::lists('nombre','idestado_solicitud');
-				//$data["solicitudes_data"] = Solicitud::listarSolicitudes()->paginate(10);
+				$data["solicitudes_data"] = Solicitud::withTrashed()->listarSolicitudes()->paginate(10);
+				$data["sectores"] = Sector::lists('nombre','idsector');
 				return View::make('Solicitudes/listarSolicitudes',$data);
 			}else{
 				return View::make('error/error',$data);
 			}
 
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function buscar_solicitudes()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un WEBMASTER (ADMINISTRADOR DEL SISTEMA)
+			if($data["user"]->idrol == 1 || $data["user"]->idrol == 2){
+				$data["search_solicitud"] = Input::get('search_solicitud');
+				$data["fecha_solicitud_desde"] = Input::get('fecha_solicitud_desde');
+				$data["fecha_solicitud_hasta"] = Input::get('fecha_solicitud_hasta');
+				$data["search_tipo_solicitud"] = Input::get('search_tipo_solicitud');
+				$data["search_estado_solicitud"] = Input::get('search_estado_solicitud');
+				$data["search_sector"] = Input::get('search_sector');
+				$data["tipos_solicitud"] = TipoSolicitud::lists('nombre','idtipo_solicitud');
+				$data["estados_solicitud"] = EstadoSolicitud::lists('nombre','idestado_solicitud');
+				$data["sectores"] = Sector::lists('nombre','idsector');
+
+				if($data["search_solicitud"] == null && $data["fecha_solicitud_desde"]== null && $data["fecha_solicitud_hasta"]== null && $data["search_tipo_solicitud"] == 0 && $data["search_estado_solicitud"] == 0 && $data["search_sector"] == 0 ){
+					$data["solicitudes_data"] = Solicitud::withTrashed()->listarSolicitudes()->paginate(10);
+					return View::make('Solicitudes/listarSolicitudes',$data);
+
+				}else{
+					$data["solicitudes_data"] = Solicitud::withTrashed()->buscarSolicitudes($data["search_solicitud"],$data["fecha_solicitud_desde"],$data["fecha_solicitud_hasta"],$data["search_tipo_solicitud"],$data["search_estado_solicitud"],$data["search_sector"])->paginate(10);
+					return View::make('Solicitudes/listarSolicitudes',$data);	
+				}				
+			}else{
+				return View::make('error/error',$data);
+			}
 		}else{
 			return View::make('error/error',$data);
 		}
@@ -92,6 +127,7 @@ class SolicitudController extends BaseController {
 					$fecha_estado_date = null;
 					$tipo_accion = null;
 					$entidad = null;
+					$array_herramientas = array();
 					//2.2. Validar datos vacíos y válidos
 					
 					//CODIGO ENTIDAD y NOMBRE ENTIDAD
@@ -162,15 +198,13 @@ class SolicitudController extends BaseController {
 						} 
 						else{	
 							$partes = explode("/",$fecha_solicitud);
-							$fecha_solicitud_date = date('d/m/Y',strtotime($partes[1]."/".$partes[0]."/".$partes[2]));
+							$fecha_solicitud_date = date('Y-m-d',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));
 						}
 					}else //NO PROCEDE
 					{
 						array_push($logs_errores,"El campo Fecha de Solicitud está vacío.");
 						continue; //(LOGS)
-					}	
-
-
+					}
 					//ESTADO SOLICITUD
 					if(strcmp($estado_solicitud,'') != 0)
 					{	//validar si el estado de solicitud existe
@@ -201,7 +235,7 @@ class SolicitudController extends BaseController {
 						}
 						else{
 							$partes = explode("/",$fecha_estado);
-							$fecha_estado_date = date('d/m/Y',strtotime($partes[1]."/".$partes[0]."/".$partes[2]));
+							$fecha_estado_date = date('Y-m-d',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));
 						}
 					}else //NO PROCEDE (LOGS)
 					{	
@@ -222,9 +256,34 @@ class SolicitudController extends BaseController {
 						$tipo_accion = TipoSolicitud::find($idtipo_accion);
 					
 					//VALIDACION DE LA APLICACION
-					$nombre_herramienta = SolicitudController::obtener_herramienta($asunto,$herramientas);
+					$array_herramientas = SolicitudController::obtener_herramienta($asunto,$herramientas);
+					$codigos_herramientas = '';
+					if(count($array_herramientas)>1)
+					{
+						//quiere decir que hay mas de una herramienta
+						$tamano =count($array_herramientas);
+						$nombre_herramienta = "VARIOS";
+						for($p=0; $p<$tamano; $p++)
+						{
+							if($p<$tamano-1)
+								$codigos_herramientas = $codigos_herramientas.$array_herramientas[$p]->idherramienta.'|';
+							else
+								$codigos_herramientas = $codigos_herramientas.$array_herramientas[$p]->idherramienta;
+						}
 
-					
+						
+
+					}else if(count($array_herramientas) == 1)
+					{
+						//solo existe 1
+						$nombre_herramienta = $array_herramientas[0]->nombre;
+						$codigos_herramientas = $array_herramientas[0]->idherramienta;
+					}else
+					{
+						//quiere decir que no existen herramientas
+						$nombre_herramienta = "NO DETECTADO";
+					}
+
 					//2.5 Luego de estas validaciones se deberá revisar si la solicitud ya existe 
 					$solicitud = Solicitud::buscarPorCodigoSolicitud($codigo_solicitud_ingresar)->get();
 					if($solicitud == null || $solicitud->isEmpty())
@@ -260,6 +319,7 @@ class SolicitudController extends BaseController {
 						"idtipo_solicitud_general" => $tipo_solicitud_obj[0]->idtipo_solicitud_general,
 						"idestado_solicitud" => $estado_solicitud_obj[0]->idestado_solicitud,
 						"asunto" => $asunto,
+						"codigos_herramientas" => $codigos_herramientas,
 					];
 
 					array_push($logs_errores,"solicitud correcta");
@@ -271,6 +331,7 @@ class SolicitudController extends BaseController {
 				$data["cantidad_procesados"] = $cantidad_registros_procesados;
 				$data["cantidad_total"] = $cantidad_registros_totales-2;			
 
+				
 
 				return View::make('Solicitudes/cargarSolicitudes',$data);
 			}else{
@@ -308,7 +369,7 @@ class SolicitudController extends BaseController {
 	public function obtener_herramienta($cadena,$herramientas)
 	{
 		$contador_aplicativos = 0;
-    	$nombre_herramienta = null;
+    	$resultados = array();
     	$palabras = explode(' ',$cadena);
     	$cantidad_palabras = count($palabras);
     	$cantidad_herramientas = count($herramientas);
@@ -333,18 +394,67 @@ class SolicitudController extends BaseController {
     			if($aplicativo_encontrado == true)
     			{
     				$contador_aplicativos++;
-	    			$nombre_herramienta = $herramientas[$z]->nombre;
+	    			array_push($resultados,$herramientas[$z]);
     			}
     			
     		}
     	}   	
 
-    	if($contador_aplicativos > 1)
-    		$nombre_herramienta = "VARIOS";
-    	else if($contador_aplicativos == 0)
-    		$nombre_herramienta = "NO DETECTADO";
+    	return $resultados;
+	}
 
-    	return $nombre_herramienta;
+	public function obtener_herramientas()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1 || $data["user"]->idrol == 2 ){
+			// Check if the current user is the "System Admin"
+			$cadena = Input::get('asunto');
+			$herramientas =  Herramienta::listarHerramientas()->get();
+			$contador_aplicativos = 0;
+	    	$resultados = array();
+	    	$palabras = explode(' ',$cadena);
+	    	$cantidad_palabras = count($palabras);
+	    	$cantidad_herramientas = count($herramientas);
+	    	for($j=0;$j<$cantidad_palabras;$j++)
+	    	{
+	    		for($z=0;$z<$cantidad_herramientas;$z++)
+	    		{
+	    			$equivalencias = HerramientaEquivalencia::buscarEquivalenciasPorIdHerramienta($herramientas[$z]->idherramienta)->get();
+	    			$cantidad_equivalencias = count($equivalencias);
+	    			$aplicativo_encontrado = false;
+	    			for($w=0;$w<$cantidad_equivalencias;$w++)
+	    			{
+	    				similar_text(strtolower($palabras[$j]), strtolower($equivalencias[$w]->nombre_equivalencia),$porcentaje);
+	    				//si es mayor a 90% entonces contamos con una herramienta
+		    			if($porcentaje>90)
+		    			{
+		    				$aplicativo_encontrado = true;
+		    				break;
+		    				
+		    			}	
+	    			}
+	    			if($aplicativo_encontrado == true)
+	    			{
+	    				$contador_aplicativos++;
+		    			array_push($resultados,$herramientas[$z]);
+	    			}
+	    			
+	    		}
+	    	}  
+
+	    	if($resultados == null)
+				return Response::json(array( 'success' => true,'herramientas'=>null),200);	    		
+
+			return Response::json(array( 'success' => true,'herramientas'=>$resultados),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
 	}
 
 	public function descargar_logs()
@@ -382,5 +492,47 @@ class SolicitudController extends BaseController {
 			return View::make('error/error',$data);
 		}
 	}
+	
+	public function mostrar_solicitud($idsolicitud=null)
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if(($data["user"]->idrol == 1 || $data["user"]->idrol == 2) && $idsolicitud)
+			{	
+				$data["solicitud"] = Solicitud::find($idsolicitud);
+				
+				if($data["solicitud"]==null){
+					return Redirect::to('solicitudes/listar_solicitudes');
+				}
+
+				$data["tipos_solicitud"] = TipoSolicitud::lists('nombre','idtipo_solicitud');
+				$data["estados_solicitud"] = EstadoSolicitud::lists('nombre','idestado_solicitud');
+				$data["tipos_solicitud_general"] = TipoSolicitudGeneral::lists('nombre','idtipo_solicitud_general');
+				$data["entidad"] = Entidad::find($data["solicitud"]->identidad);
+
+				$data["asignacion"] = Asignacion::buscarPorIdSolicitud($data["solicitud"]->idsolicitud)->get();
+
+				if($data["asignacion"]==null){
+					return Redirect::to('solicitudes/listar_solicitudes');
+				}
+
+				$data["usuario_asignado"] = User::find($data["asignacion"][0]->iduser_asignado);
+
+				$data["herramientas"] = SolicitudXHerramienta::buscarHerramientasPorIdSolicitud($idsolicitud)->get();
+
+				
+
+				return View::make('Solicitudes/mostrarSolicitud',$data);
+			}else{
+				return View::make('error/error',$data);
+			}
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
 	
 }

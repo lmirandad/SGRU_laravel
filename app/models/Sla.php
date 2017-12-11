@@ -46,6 +46,19 @@ class Sla extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	public function scopeBuscarSlaSolicitud($query,$idsolicitud,$idtipo_solicitud)
+	{
+		$query->join('solicitud','solicitud.idsla','=','sla.idsla')
+			  ->join('tipo_solicitudxsla','tipo_solicitudxsla.idsla','=','sla.idsla')
+			  ->join('herramientaxsectorxtipo_solicitud','herramientaxsectorxtipo_solicitud.idherramientaxsectorxtipo_solicitud','=','tipo_solicitudxsla.idherramientaxsectorxtipo_solicitud')
+			  ->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','herramientaxsectorxtipo_solicitud.idtipo_solicitud');
+
+		$query->where('solicitud.idsolicitud','=',$idsolicitud);	  
+		$query->where('tipo_solicitud.idtipo_solicitud','=',$idtipo_solicitud);
+		$query->select('sla.*','tipo_solicitudxsla.*');
+		return $query;
+	}
+
 	
 	
 }
