@@ -21,7 +21,8 @@ Route::get('/login', 'LoginController@login_expires');
 
 Route::group(array('before'=>'auth'),function(){
 	Route::get('/logout','LoginController@logout');
-	Route::get('/principal','MenuPrincipalController@home');
+	Route::get('/principal_admin','MenuPrincipalController@home_admin');
+	Route::get('/principal_gestor','MenuPrincipalController@home_gestor');
 });
 
 Route::group(array('prefix'=>'principal','before'=>'auth'),function(){

@@ -32,7 +32,10 @@ class LoginController extends BaseController {
 				}				
 				$data["user"] = Session::get('user');
 				Session::put('user',Auth::user());
-				return Redirect::to('/principal');
+				if($data["user"]->idrol == 1)
+					return Redirect::to('/principal_admin');
+				else
+					return Redirect::to('/principal_gestor');
 				
 				
 			}else{

@@ -51,7 +51,7 @@
 							<table class="table table-hover">
 								<thead>
 									<tr>
-										<th class="text-nowrap text-center">Nombre de Aplicativo (PENDIENTE)</th>
+										<th class="text-nowrap text-center">Nombre de Aplicativo</th>
 										<th class="text-nowrap text-center">Denominación Aplicativo</th>
 										<th class="text-nowrap text-center">¿Valida Seguridad?</th>
 										<th class="text-nowrap text-center">Editar</th>

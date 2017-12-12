@@ -311,7 +311,7 @@ class UserController extends BaseController {
 					$user->apellido_materno = Input::get('apellido_materno');
 					$user->idtipo_doc_identidad = Input::get('tipo_doc_identidad');
 					$user->numero_doc_identidad = Input::get('documento_identidad');
-					//$user->idrol = Input::get('rol'); POR DEFINIR (PODRIA SER POSIBLE DARLE DE BAJA Y CREARLE OTRO)
+					$user->idrol = Input::get('rol');
 					$user->genero = Input::get('genero');
 					$user->telefono = Input::get('telefono');
 					$user->fecha_nacimiento = date('Y-m-d H:i:s',strtotime(Input::get('fecha_nacimiento')));

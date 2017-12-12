@@ -111,10 +111,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	{
 		$query->join('usersxsector','usersxsector.iduser','=','users.id')
 			  ->join('sector','sector.idsector','=','usersxsector.idsector')
-			  ->join('herramientaxtipo_solicitudxuser','herramientaxtipo_solicitudxuser.iduser','=','usersxsector.iduser')
+			  /*->join('herramientaxtipo_solicitudxuser','herramientaxtipo_solicitudxuser.iduser','=','usersxsector.iduser')
 			  ->join('herramientaxtipo_solicitud','herramientaxtipo_solicitud.idherramientaxtipo_solicitud','=','herramientaxtipo_solicitudxuser.idherramientaxtipo_solicitud')
 			  ->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','herramientaxtipo_solicitud.idtipo_solicitud')
-			  ->join('herramienta','herramienta.idherramienta','=','herramientaxtipo_solicitud.idherramienta')
+			  ->join('herramienta','herramienta.idherramienta','=','herramientaxtipo_solicitud.idherramienta')*/
 			  ->join('asignacion','asignacion.iduser_asignado','=','users.id')
 			  ->join('solicitud','solicitud.idsolicitud','=','asignacion.idsolicitud');
 
@@ -155,11 +155,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	public function scopeBuscarUsuariosPorSector($query,$idsector,$idherramienta,$idaccion)
 	{
 		$query->join('usersxsector','usersxsector.iduser','=','users.id')
-			  ->join('sector','sector.idsector','=','usersxsector.idsector')
-			  ->join('herramientaxtipo_solicitudxuser','herramientaxtipo_solicitudxuser.iduser','=','usersxsector.iduser')
+			  ->join('sector','sector.idsector','=','usersxsector.idsector');
+			  /*->join('herramientaxtipo_solicitudxuser','herramientaxtipo_solicitudxuser.iduser','=','usersxsector.iduser')
 			  ->join('herramientaxtipo_solicitud','herramientaxtipo_solicitud.idherramientaxtipo_solicitud','=','herramientaxtipo_solicitudxuser.idherramientaxtipo_solicitud')
 			  ->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','herramientaxtipo_solicitud.idtipo_solicitud')
-			  ->join('herramienta','herramienta.idherramienta','=','herramientaxtipo_solicitud.idherramienta');
+			  ->join('herramienta','herramienta.idherramienta','=','herramientaxtipo_solicitud.idherramienta');*/
 
 		$query->where('sector.idsector','=',$idsector)
 			  //->where('herramienta.idherramienta','=',$idherramienta)
@@ -202,11 +202,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	public function scopeBuscarUsuariosLibresPorSector($query,$idsector,$idherramienta,$idaccion)
 	{
 		$query->join('usersxsector','usersxsector.iduser','=','users.id')
-			  ->join('sector','sector.idsector','=','usersxsector.idsector')
-			  ->join('herramientaxtipo_solicitudxuser','herramientaxtipo_solicitudxuser.iduser','=','usersxsector.iduser')
+			  ->join('sector','sector.idsector','=','usersxsector.idsector');
+			  /*->join('herramientaxtipo_solicitudxuser','herramientaxtipo_solicitudxuser.iduser','=','usersxsector.iduser')
 			  ->join('herramientaxtipo_solicitud','herramientaxtipo_solicitud.idherramientaxtipo_solicitud','=','herramientaxtipo_solicitudxuser.idherramientaxtipo_solicitud')
 			  ->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','herramientaxtipo_solicitud.idtipo_solicitud')
-			  ->join('herramienta','herramienta.idherramienta','=','herramientaxtipo_solicitud.idherramienta');
+			  ->join('herramienta','herramienta.idherramienta','=','herramientaxtipo_solicitud.idherramienta');*/
 
 		$query->where('sector.idsector','=',$idsector)
 			  //->where('herramienta.idherramienta','=',$idherramienta)

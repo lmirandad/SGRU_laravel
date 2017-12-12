@@ -94,7 +94,7 @@
 										<th class="text-nowrap text-center">Tipo Solicitud</th>
 										<th class="text-nowrap text-center">Tipo Acción</th>
 										<th class="text-nowrap text-center">Fecha Solicitud</th>
-										<th class="text-nowrap text-center">Estado</th>
+										<th class="text-nowrap text-center">Estado Ticket</th>
 										<th class="text-nowrap text-center">Aplicación</th>
 									</tr>
 								</thead>

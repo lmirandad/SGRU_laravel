@@ -100,7 +100,7 @@ class AsignacionController extends BaseController {
 					if(strcmp($nombre_herramienta, "VARIOS") == 0){
 						$usuarios = User::buscarUsuariosDisponiblesPorSector($sector->idsector,$idherramienta,$idaccion)->get();
 						
-						
+
 						if($usuarios ==null || $usuarios->isEmpty())
 						{
 							//como no hay usuarios que tengan solicitudes entonces se utiliza cualquiera

@@ -27,8 +27,10 @@ class CreateSolicitudTable extends Migration {
 			$table->integer('idsla')->nullable()->index('fk_solicitud_sla_idx');
 			$table->dateTime('fecha_solicitud');
 			$table->integer('idtipo_solicitud_general')->nullable()->index('fk_solicitud_tipo_solicitud_general_idx');
+			$table->integer('idmotivo_rechazo')->nullable()->index('fk_solicitud_motivo_rechazo_idx');
 			$table->timestamps();
 			$table->softDeletes();
+
 		});
 	}
 

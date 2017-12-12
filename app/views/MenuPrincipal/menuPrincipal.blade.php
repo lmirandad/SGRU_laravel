@@ -37,7 +37,7 @@
 								{{ Form::button('<span class="fa fa-search""></span> Buscar', array('id'=>'submit-search-form','type' => 'submit', 'class' => 'btn btn-info btn-block','style'=>'margin-top:25px;')) }}	
 								</div>
 								<div class="col-md-3">
-									<div class="btn btn-default btn-block" id="btnLimpiarSector" style='margin-top:25px;'><span class="lnr lnr-sync""></span> Limpiar</div>				
+									<div class="btn btn-default btn-block" id="btnLimpiarNombre" style='margin-top:25px;'><span class="lnr lnr-sync""></span> Limpiar</div>				
 								</div>	
 							</div>
 							{{Form::close()}}
@@ -91,12 +91,12 @@
 							<div class="metric">
 								@if($user->idrol == 1)
 									@if($origen == 1)
-										<a href="{{URL::to('/principal/mostrar_solicitudes_estado')}}/3"><span class="icon" style="background-color:#0088CC;"><i class="lnr lnr-warning"></i></span></a>
+										<a href="{{URL::to('/principal/mostrar_solicitudes_estado')}}/3"><span class="icon" style="background-color:#ffeb3b;"><i class="lnr lnr-warning"></i></span></a>
 									@else
-										<a href="{{URL::to('/principal/mostrar_solicitudes_estado_usuario')}}/3/{{$idusuario}}"><span class="icon" style="background-color:#0088CC;"><i class="lnr lnr-warning"></i></span></a>
+										<a href="{{URL::to('/principal/mostrar_solicitudes_estado_usuario')}}/3/{{$idusuario}}"><span class="icon" style="background-color:#ffeb3b;"><i class="lnr lnr-warning"></i></span></a>
 									@endif
 								@else
-									<a href="{{URL::to('/principal/mostrar_solicitudes_estado_usuario')}}/3/{{$idusuario}}"><span class="icon" style="background-color:#0088CC;"><i class="lnr lnr-warning"></i></span></a>
+									<a href="{{URL::to('/principal/mostrar_solicitudes_estado_usuario')}}/3/{{$idusuario}}"><span class="icon" style="background-color:#ffeb3b;"><i class="lnr lnr-warning"></i></span></a>
 								@endif
 								<p>
 									<span class="number">{{$solicitudes_pendientes}}</span>

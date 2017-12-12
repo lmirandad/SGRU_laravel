@@ -234,7 +234,7 @@
 		</div>
 		@endif
 		<div class="row">
-			@if($user->idrol == 1)
+			@if($user->idrol == 1 && $usuario->id != $user->id)
 				@if($usuario->deleted_at)
 					{{ Form::open(array('url'=>'usuarios/submit_habilitar_usuario', 'role'=>'form','id'=>'habilitar_usuario')) }}
 						{{ Form::hidden('user_id', $usuario->id) }}
@@ -249,12 +249,18 @@
 							{{ Form::button('<span class="glyphicon glyphicon-circle-arrow-down"></span> Inhabilitar', array('id'=>'submit-inhabilitar-usuario', 'class' => 'btn btn-danger btn-block')) }}
 						</div>
 					{{ Form::close() }}
-				@endif
+				@endif				
 			@endif
 			@if($user->idrol == 1)
-				<div class="form-group col-md-2 col-md-offset-8">
-					<a class="btn btn-default btn-block" href="{{URL::to('/usuarios/listar_usuarios')}}"><i class="lnr lnr-arrow-left"></i>&nbspSalir</a>
-				</div>
+				@if($usuario->id != $user->id)
+					<div class="form-group col-md-2 col-md-offset-8">
+						<a class="btn btn-default btn-block" href="{{URL::to('/usuarios/listar_usuarios')}}"><i class="lnr lnr-arrow-left"></i>&nbspSalir</a>
+					</div>
+				@else
+					<div class="form-group col-md-2 col-md-offset-10">
+						<a class="btn btn-default btn-block" href="{{URL::to('/usuarios/listar_usuarios')}}"><i class="lnr lnr-arrow-left"></i>&nbspSalir</a>
+					</div>
+				@endif
 			@else
 				<div class="form-group col-md-2 col-md-offset-8">
 					<a class="btn btn-default btn-block" href="{{URL::to('/principal')}}"><i class="lnr lnr-arrow-left"></i>&nbspSalir</a>
