@@ -17,7 +17,7 @@ class CreateSolicitudTable extends Migration {
 			$table->integer('idsolicitud', true);
 			$table->string('asunto', 300);
 			$table->string('codigo_solicitud',100);
-			$table->string('nombre_herramienta',200)->nullable();
+			$table->integer('idherramienta')->nullable()->index('fk_solicitud_herramienta_idx');
 			$table->integer('identidad')->index('fk_solicitud_entidad_idx');
 			$table->integer('idtipo_solicitud')->nullable()->index('fk_solicitud_tipo_solicitud1_idx');
 			$table->integer('idestado_solicitud')->index('fk_solicitud_estado_solicitud1_idx');

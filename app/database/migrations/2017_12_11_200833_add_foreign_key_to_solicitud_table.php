@@ -15,6 +15,7 @@ class AddForeignKeyToSolicitudTable extends Migration {
 		Schema::table('solicitud', function(Blueprint $table)
 		{
 			$table->foreign('idtipo_solicitud', 'fk_solicitud_tipo_solicitud1')->references('idtipo_solicitud')->on('tipo_solicitud')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+			$table->foreign('idherramienta', 'fk_solicitud_herramienta')->references('idherramienta')->on('herramienta')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 			$table->foreign('idtipo_solicitud_general', 'fk_solicitud_tipo_solicitud_general')->references('idtipo_solicitud_general')->on('tipo_solicitud_general')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 			$table->foreign('idestado_solicitud', 'fk_solicitud_estado_solicitud1')->references('idestado_solicitud')->on('estado_solicitud')->onUpdate('NO ACTION')->onDelete('NO ACTION');
 			$table->foreign('identidad', 'fk_solicitud_entidad')->references('identidad')->on('entidad');
@@ -37,6 +38,7 @@ class AddForeignKeyToSolicitudTable extends Migration {
 		Schema::table('solicitud', function(Blueprint $table)
 		{
 			$table->dropForeign('fk_solicitud_tipo_solicitud1');
+			$table->dropForeign('fk_solicitud_herramienta');
 			$table->dropForeign('fk_solicitud_tipo_solicitud_general');
 			$table->dropForeign('fk_solicitud_estado_solicitud1');
 			$table->dropForeign('fk_solicitud_entidad');

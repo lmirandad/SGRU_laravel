@@ -88,39 +88,35 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			  ->join('herramientaxtipo_solicitud','herramientaxtipo_solicitud.idherramientaxtipo_solicitud','=','herramientaxtipo_solicitudxuser.idherramientaxtipo_solicitud')
 			  ->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','herramientaxtipo_solicitud.idtipo_solicitud')
 			  ->join('herramienta','herramienta.idherramienta','=','herramientaxtipo_solicitud.idherramienta')
-			  ->join('asignacion','asignacion.iduser_asignado','=','users.id')
+			  ->join('usuariosxasignacion','users.id','=','usuariosxasignacion.idusuario_asignado')
+			  ->join('asignacion','asignacion.idasignacion','=','usuariosxasignacion.idasignacion')
 			  ->join('solicitud','solicitud.idsolicitud','=','asignacion.idsolicitud');
 
 		$query->where('herramienta.idherramienta','=',$idherramienta)
 			  ->where('tipo_solicitud.idtipo_solicitud','=',$idaccion)
-			  ->whereNull('herramientaxtipo_solicitudxuser.deleted_at') 
+			  ->whereNull('herramientaxtipo_solicitudxuser.deleted_at')
+			  ->where('usuariosxasignacion.estado_usuario_asignado','=',1) 
 			  ->whereNested(function($query) {
                     $query->where('solicitud.idestado_solicitud','=', 3)
                           ->orWhere('solicitud.idestado_solicitud','=',4);
                 });
 		$query->groupBy('herramientaxtipo_solicitudxuser.iduser');
 		$query->select('herramientaxtipo_solicitudxuser.iduser',DB::raw('count(solicitud.idsolicitud) as cantidad_solicitud'));
-		$query->orderBy('cantidad_solicitud','DESC');
+		$query->orderBy('cantidad_solicitud','ASC');
 
 		return $query->distinct();
 
-
 	}
 
-	public function scopeBuscarUsuariosDisponiblesPorSector($query,$idsector,$idherramienta,$idaccion)
+	public function scopeBuscarUsuariosDisponiblesPorSector($query,$idsector)
 	{
 		$query->join('usersxsector','usersxsector.iduser','=','users.id')
 			  ->join('sector','sector.idsector','=','usersxsector.idsector')
-			  /*->join('herramientaxtipo_solicitudxuser','herramientaxtipo_solicitudxuser.iduser','=','usersxsector.iduser')
-			  ->join('herramientaxtipo_solicitud','herramientaxtipo_solicitud.idherramientaxtipo_solicitud','=','herramientaxtipo_solicitudxuser.idherramientaxtipo_solicitud')
-			  ->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','herramientaxtipo_solicitud.idtipo_solicitud')
-			  ->join('herramienta','herramienta.idherramienta','=','herramientaxtipo_solicitud.idherramienta')*/
-			  ->join('asignacion','asignacion.iduser_asignado','=','users.id')
+			  ->join('usuariosxasignacion','users.id','=','usuariosxasignacion.idusuario_asignado')
+			  ->join('asignacion','asignacion.idasignacion','=','usuariosxasignacion.idasignacion')
 			  ->join('solicitud','solicitud.idsolicitud','=','asignacion.idsolicitud');
 
 		$query->where('sector.idsector','=',$idsector)
-			  //->where('herramienta.idherramienta','=',$idherramienta)
-			  //->where('tipo_solicitud.idtipo_solicitud','=',$idaccion)
 			  ->whereNull('usersxsector.deleted_at') 
 			  ->whereNested(function($query) {
                     $query->where('solicitud.idestado_solicitud','=', 3)
@@ -128,7 +124,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 });
 		$query->groupBy('users.id');
 		$query->select('users.id as iduser',DB::raw('count(solicitud.idsolicitud) as cantidad_solicitud'));
-		$query->orderBy('cantidad_solicitud','DESC');
+		$query->orderBy('cantidad_solicitud','ASC');
 
 		return $query->distinct();
 
@@ -152,18 +148,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	}
 
-	public function scopeBuscarUsuariosPorSector($query,$idsector,$idherramienta,$idaccion)
+	public function scopeBuscarUsuariosPorSector($query,$idsector)
 	{
 		$query->join('usersxsector','usersxsector.iduser','=','users.id')
 			  ->join('sector','sector.idsector','=','usersxsector.idsector');
-			  /*->join('herramientaxtipo_solicitudxuser','herramientaxtipo_solicitudxuser.iduser','=','usersxsector.iduser')
-			  ->join('herramientaxtipo_solicitud','herramientaxtipo_solicitud.idherramientaxtipo_solicitud','=','herramientaxtipo_solicitudxuser.idherramientaxtipo_solicitud')
-			  ->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','herramientaxtipo_solicitud.idtipo_solicitud')
-			  ->join('herramienta','herramienta.idherramienta','=','herramientaxtipo_solicitud.idherramienta');*/
 
 		$query->where('sector.idsector','=',$idsector)
-			  //->where('herramienta.idherramienta','=',$idherramienta)
-			  //->where('tipo_solicitud.idtipo_solicitud','=',$idaccion)
 			  ->whereNull('usersxsector.deleted_at') ;
 
 		$query->select('usersxsector.iduser');
@@ -184,9 +174,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			  ->whereNull('herramientaxtipo_solicitudxuser.deleted_at');
 
 		$query->whereNotIn('herramientaxtipo_solicitudxuser.iduser',function($subquery){
-					$subquery->join('asignacion','asignacion.iduser_asignado','=','users.id');
-					$subquery->join('solicitud','asignacion.idsolicitud','=','solicitud.idsolicitud');
+					$subquery->join('usuariosxasignacion','users.id','=','usuariosxasignacion.idusuario_asignado');
+			  		$subquery->join('asignacion','asignacion.idasignacion','=','usuariosxasignacion.idasignacion');
+			  		$subquery->join('solicitud','solicitud.idsolicitud','=','asignacion.idsolicitud');
 					$subquery->from(with(new User)->getTable());
+					$subquery->where('usuariosxasignacion.estado_usuario_asignado','=',1) ;
 					$subquery->whereNested(function($subsubquery) {
 				                    $subsubquery->where('solicitud.idestado_solicitud','=', 3)
 				                          ->orWhere('solicitud.idestado_solicitud','=',4);
@@ -199,24 +191,20 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
-	public function scopeBuscarUsuariosLibresPorSector($query,$idsector,$idherramienta,$idaccion)
+	public function scopeBuscarUsuariosLibresPorSector($query,$idsector)
 	{
 		$query->join('usersxsector','usersxsector.iduser','=','users.id')
 			  ->join('sector','sector.idsector','=','usersxsector.idsector');
-			  /*->join('herramientaxtipo_solicitudxuser','herramientaxtipo_solicitudxuser.iduser','=','usersxsector.iduser')
-			  ->join('herramientaxtipo_solicitud','herramientaxtipo_solicitud.idherramientaxtipo_solicitud','=','herramientaxtipo_solicitudxuser.idherramientaxtipo_solicitud')
-			  ->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','herramientaxtipo_solicitud.idtipo_solicitud')
-			  ->join('herramienta','herramienta.idherramienta','=','herramientaxtipo_solicitud.idherramienta');*/
-
+			  
 		$query->where('sector.idsector','=',$idsector)
-			  //->where('herramienta.idherramienta','=',$idherramienta)
-			  //->where('tipo_solicitud.idtipo_solicitud','=',$idaccion)
 			  ->whereNull('usersxsector.deleted_at') ;
 
 		$query->whereNotIn('usersxsector.iduser',function($subquery){
-					$subquery->join('asignacion','asignacion.iduser_asignado','=','users.id');
-					$subquery->join('solicitud','asignacion.idsolicitud','=','solicitud.idsolicitud');
-					$subquery->from(with(new User)->getTable());
+					$subquery->join('usuariosxasignacion','users.id','=','usuariosxasignacion.idusuario_asignado');
+			  		$subquery->join('asignacion','asignacion.idasignacion','=','usuariosxasignacion.idasignacion');
+			  		$subquery->join('solicitud','solicitud.idsolicitud','=','asignacion.idsolicitud');
+			  		$subquery->where('usuariosxasignacion.estado_usuario_asignado','=',1);
+			  		$subquery->from(with(new User)->getTable());
 					$subquery->whereNested(function($subsubquery) {
 				                    $subsubquery->where('solicitud.idestado_solicitud','=', 3)
 				                          ->orWhere('solicitud.idestado_solicitud','=',4);
@@ -240,6 +228,73 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			  });
 	  	$query->select('users.*');
 		return $query;
+	}
+
+	public function scopeBuscarUsuariosReasignacionPorSector($query,$idsector)
+	{
+		
+		
+		$tempTableSector = DB::select('Select A.id_usuario, A.nombre_usuario, A.apellido_paterno, A.apellido_materno, ISNULL(B.cantidad_solicitudes,0) cantidad_solicitudes
+			FROM 
+			(select [users].[id] id_usuario, [users].[nombre] nombre_usuario, [users].[apellido_paterno] apellido_paterno, [users].[apellido_materno] apellido_materno
+			from [users] 
+			inner join [usersxsector] on [usersxsector].[iduser] = [users].[id]
+			inner join [sector] on [sector].[idsector] = [usersxsector].[idsector]
+			where 
+			[sector].[idsector] = ? and [users].[deleted_at] IS null) A
+			LEFT JOIN 
+			(select [users].[id] id_usuario, count([solicitud].[idsolicitud]) cantidad_solicitudes
+			from [users] 
+			inner join [usersxsector] on [usersxsector].[iduser] = [users].[id]
+			inner join [sector] on [sector].[idsector] = [usersxsector].[idsector]
+			inner join [usuariosxasignacion] on [users].[id] = [usuariosxasignacion].[idusuario_asignado] 
+			inner join [asignacion] on [asignacion].[idasignacion] = [usuariosxasignacion].[idasignacion] 
+			inner join [solicitud] on [solicitud].[idsolicitud] = [asignacion].[idsolicitud] 
+			where ([solicitud].[idestado_solicitud] = 3 or [solicitud].[idestado_solicitud] = 4)
+			and [sector].[idsector] = ? and [usuariosxasignacion].[estado_usuario_asignado] = 1
+			group by [users].[id]) B
+			ON (A.id_usuario = B.id_usuario)
+			order by B.cantidad_solicitudes',array("$idsector","$idsector"));
+
+		return $tempTableSector;
+		
+	}
+
+	public function scopeBuscarUsuariosReasignacionPorHerramienta($query,$idherramienta,$idaccion)
+	{
+		return DB::select('Select A.id_usuario, A.nombre_usuario, A.apellido_paterno, A.apellido_materno, ISNULL(B.cantidad_solicitudes,0) cantidad_solicitudes
+			FROM
+			(
+			select [users].[id] id_usuario, [users].[nombre] nombre_usuario, [users].[apellido_paterno] apellido_paterno, [users].[apellido_materno] apellido_materno
+			from [users] 
+			inner join [herramientaxtipo_solicitudxuser] on [herramientaxtipo_solicitudxuser].[iduser] = [users].[id] 
+			inner join [herramientaxtipo_solicitud] on [herramientaxtipo_solicitud].[idherramientaxtipo_solicitud] = [herramientaxtipo_solicitudxuser].[idherramientaxtipo_solicitud] 
+			inner join [tipo_solicitud] on [tipo_solicitud].[idtipo_solicitud] = [herramientaxtipo_solicitud].[idtipo_solicitud] 
+			inner join [herramienta] on [herramienta].[idherramienta] = [herramientaxtipo_solicitud].[idherramienta] 
+			where [users].[deleted_at] is null 
+			and [herramienta].[idherramienta] = '.$idherramienta.' 
+			and [tipo_solicitud].[idtipo_solicitud] = '.$idaccion.'  
+			and [herramientaxtipo_solicitudxuser].[deleted_at] is null) A 
+			LEFT JOIN
+			(
+			select [herramientaxtipo_solicitudxuser].[iduser] id_usuario, count(solicitud.idsolicitud) as cantidad_solicitudes 
+			from [users] 
+			inner join [herramientaxtipo_solicitudxuser] on [herramientaxtipo_solicitudxuser].[iduser] = [users].[id] 
+			inner join [herramientaxtipo_solicitud] on [herramientaxtipo_solicitud].[idherramientaxtipo_solicitud] = [herramientaxtipo_solicitudxuser].[idherramientaxtipo_solicitud] 
+			inner join [tipo_solicitud] on [tipo_solicitud].[idtipo_solicitud] = [herramientaxtipo_solicitud].[idtipo_solicitud] 
+			inner join [herramienta] on [herramienta].[idherramienta] = [herramientaxtipo_solicitud].[idherramienta] 
+			inner join [usuariosxasignacion] on [users].[id]= [usuariosxasignacion].[idusuario_asignado]
+			inner join [asignacion] on [asignacion].[idasignacion] = [usuariosxasignacion].[idasignacion] 
+			inner join [solicitud] on [solicitud].[idsolicitud] = [asignacion].[idsolicitud] 
+			where [users].[deleted_at] is null 
+			and [herramienta].[idherramienta] = '.$idherramienta.' 
+			and [tipo_solicitud].[idtipo_solicitud] = '.$idaccion.'  
+			and [herramientaxtipo_solicitudxuser].[deleted_at] is null 
+			and [usuariosxasignacion].[estado_usuario_asignado] = 1 
+			and ([solicitud].[idestado_solicitud] = 3 or [solicitud].[idestado_solicitud] = 4)
+			group by [herramientaxtipo_solicitudxuser].[iduser] ) B
+			ON (A.id_usuario = B.id_usuario)
+			order by cantidad_solicitudes');
 	}
 
 }

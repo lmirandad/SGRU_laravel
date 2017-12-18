@@ -21,7 +21,7 @@
 			@if($user->idrol == 1)
 			<!-- OVERVIEW -->
 			<div class="row">
-				<div class="col-md-8 col-md-offset-2">
+				<div class="col-md-10 col-md-offset-1">
 					<div class="panel panel-headline">
 						<div class="panel-heading">
 							<h3 class="panel-title">Buscar por Usuario</h3>
@@ -29,14 +29,23 @@
 						<div class="panel-body">	
 							{{ Form::open(array('url'=>'/principal/buscar_solicitudes_usuario','method'=>'get' ,'role'=>'form')) }}
 							<div class="row">
-								<div class="col-md-6">
+								<div class="col-md-4">
 									{{ Form::label('search_usuario','Nombre del Usuario')}}
 									{{ Form::text('search_usuario',$search_usuario,array('class'=>'form-control','placeholder'=>'Ingrese nombre del usuario','id'=>'search_usuario')) }}
 								</div>
-								<div class="form-group col-md-3">
+								<div class="form-group col-md-4">	
+									{{ Form::label('mes_solicitud','Mes') }}
+									<div id="datetimepicker1" class="form-group input-group date @if($errors->first('fecha_nacimiento')) has-error has-feedback @endif">
+										{{ Form::text('mes_solicitud',$search_fecha,array('class'=>'form-control','placeholder'=>'Mes Solicitud','id'=>'search_fecha')) }}
+										<span class="input-group-addon">
+					                        <span class="glyphicon glyphicon-calendar"></span>
+					                    </span>
+									</div>	
+								</div>		
+								<div class="form-group col-md-2">
 								{{ Form::button('<span class="fa fa-search""></span> Buscar', array('id'=>'submit-search-form','type' => 'submit', 'class' => 'btn btn-info btn-block','style'=>'margin-top:25px;')) }}	
 								</div>
-								<div class="col-md-3">
+								<div class="col-md-2">
 									<div class="btn btn-default btn-block" id="btnLimpiarNombre" style='margin-top:25px;'><span class="lnr lnr-sync""></span> Limpiar</div>				
 								</div>	
 							</div>
@@ -173,10 +182,10 @@
 											<th class="text-nowrap text-center">Fecha de Solicitud</th>
 											<th class="text-nowrap text-center">Fecha de Asignación</th>
 											<th class="text-nowrap text-center">Días de Asignación</th>
-											<th class="text-nowrap text-center">Tipo de Solicitud</th>
-											<th class="text-nowrap text-center">Estado Solicitud</th>
+											<th class="text-nowrap text-center">Tipo</th>
+											<th class="text-nowrap text-center">Estado</th>
 											<th class="text-nowrap text-center">Herramienta</th>
-											<th class="text-nowrap text-center">SLA (N° Días)</th>
+											<th class="text-nowrap text-center">SLA</th>
 											<th class="text-nowrap text-center">SEMÁFORO</th>
 										</tr>
 									</thead>

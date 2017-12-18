@@ -15,12 +15,19 @@ class MenuPrincipalController extends BaseController {
 
 				$data["idusuario"] = null;
 
-				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstado(1)->get()); 
-				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstado(2)->get()); 
-				$data["solicitudes_pendientes"] = count(Solicitud::buscarPorIdEstado(3)->get()); 
-				$data["solicitudes_procesando"] = count(Solicitud::buscarPorIdEstado(4)->get()); 
-				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstado(5)->get()); 
-				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstado(6)->get()); 
+				$data["search_fecha"] = null;
+
+				$mes_actual = date('m');
+				$anho_actual = date('Y');
+
+
+
+				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstado(1,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstado(2,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_pendientes"] = count(Solicitud::buscarPorIdEstado(3,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_procesando"] = count(Solicitud::buscarPorIdEstado(4,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstado(5,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstado(6,$mes_actual,$anho_actual)->get()); 
 
 				$data["origen"] = 1; //1: sin usuario //2: con usuario
 				
@@ -42,17 +49,21 @@ class MenuPrincipalController extends BaseController {
 			// Verifico si el usuario es un Webmaster
 			if($data["user"]->idrol == 2)
 			{
-				$data["solicitudes_pendiente_data"] = Solicitud::buscarPorIdEstadoPorUsuario(3,$data["user"]->id)->get();
-				$data["solicitudes_procesando_data"] = Solicitud::buscarPorIdEstadoPorUsuario(4,$data["user"]->id)->get();
+
+				$mes_actual = date('m');
+				$anho_actual = date('Y');
+
+				$data["solicitudes_pendiente_data"] = Solicitud::buscarPorIdEstadoPorUsuario(3,$data["user"]->id,$mes_actual,$anho_actual)->get();
+				$data["solicitudes_procesando_data"] = Solicitud::buscarPorIdEstadoPorUsuario(4,$data["user"]->id,$mes_actual,$anho_actual)->get();
 				
 				$data["idusuario"] = $data["user"]->id;
 
-				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstadoPorUsuario(1,$data["user"]->id)->get()); 
-				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstadoPorUsuario(2,$data["user"]->id)->get()); 
+				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstadoPorUsuario(1,$data["user"]->id,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstadoPorUsuario(2,$data["user"]->id,$mes_actual,$anho_actual)->get()); 
 				$data["solicitudes_pendientes"] = count($data["solicitudes_pendiente_data"]);
 				$data["solicitudes_procesando"] = count($data["solicitudes_procesando_data"]);  
-				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(5,$data["user"]->id)->get());
-				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(6,$data["user"]->id)->get());
+				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(5,$data["user"]->id,$mes_actual,$anho_actual)->get());
+				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(6,$data["user"]->id,$mes_actual,$anho_actual)->get());
 
 
 				$data["slas_data_pendiente"] = array();
@@ -128,17 +139,21 @@ class MenuPrincipalController extends BaseController {
 			if(($data["user"]->idrol == 1 || $data["user"]->idrol == 2) && $idestado){
 				
 				$data["search_usuario"] = null;
+				$data["search_fecha"] = null;
 				
 				$data["idusuario"] = null;
 
-				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstado(1)->get()); 
-				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstado(2)->get()); 
-				$data["solicitudes_pendientes"] = count(Solicitud::buscarPorIdEstado(3)->get()); 
-				$data["solicitudes_procesando"] = count(Solicitud::buscarPorIdEstado(4)->get()); 
-				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstado(5)->get()); 
-				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstado(6)->get()); 
+				$mes_actual = date('m');
+				$anho_actual = date('Y');
 
-				$data["solicitudes_data"] = Solicitud::buscarPorIdEstado($idestado)->get();
+				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstado(1,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstado(2,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_pendientes"] = count(Solicitud::buscarPorIdEstado(3,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_procesando"] = count(Solicitud::buscarPorIdEstado(4,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstado(5,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstado(6,$mes_actual,$anho_actual)->get()); 
+
+				$data["solicitudes_data"] = Solicitud::buscarPorIdEstado($idestado,$mes_actual,$anho_actual)->get();
 				$data["slas_data"] = array();
 				$data["diferencia_fechas"] = array();
 				$data["diferencia_fechas_trabajo"] = array();
@@ -189,15 +204,18 @@ class MenuPrincipalController extends BaseController {
 				
 				$data["search_usuario"] = Input::get('search_usuario');
 				
+				$mes_actual = date('m');
+				$anho_actual = date('Y');
 
-				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstadoPorUsuario(1, $idusuario)->get()); 
-				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstadoPorUsuario(2, $idusuario)->get()); 
-				$data["solicitudes_pendientes"] = count(Solicitud::buscarPorIdEstadoPorUsuario(3, $idusuario)->get()); 
-				$data["solicitudes_procesando"] = count(Solicitud::buscarPorIdEstadoPorUsuario(4, $idusuario)->get()); 
-				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(5, $idusuario)->get()); 
-				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(6, $idusuario)->get()); 
 
-				$data["solicitudes_data"] = Solicitud::buscarPorIdEstadoPorUsuario($idestado, $idusuario)->get();
+				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstadoPorUsuario(1, $idusuario,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstadoPorUsuario(2, $idusuario,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_pendientes"] = count(Solicitud::buscarPorIdEstadoPorUsuario(3, $idusuario,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_procesando"] = count(Solicitud::buscarPorIdEstadoPorUsuario(4, $idusuario,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(5, $idusuario,$mes_actual,$anho_actual)->get()); 
+				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(6, $idusuario,$mes_actual,$anho_actual)->get()); 
+
+				$data["solicitudes_data"] = Solicitud::buscarPorIdEstadoPorUsuario($idestado, $idusuario,$mes_actual,$anho_actual)->get();
 				$data["slas_data"] = array();
 				$data["diferencia_fechas"] = array();
 				$data["diferencia_fechas_trabajo"] = array();
@@ -249,10 +267,16 @@ class MenuPrincipalController extends BaseController {
 			if(($data["user"]->idrol == 1) ){
 				
 				$data["search_usuario"] = Input::get('search_usuario');
+				$data["search_fecha"] = Input::get('search_fecha');
 
-				if(Input::get('search_usuario') == null){
+				
+
+				if(Input::get('search_usuario') == null && $data["search_fecha"] == null){
 					return Redirect::to('/principal');
 				}
+
+				$mes_busqueda = date('m',strtotime($data["search_fecha"]));
+				$anho_busqueda = date('Y',strtotime($data["search_fecha"]));
 
 				$usuario = User::buscarPorNombre($data["search_usuario"])->get();
 
@@ -262,12 +286,12 @@ class MenuPrincipalController extends BaseController {
 
 				$idusuario = $usuario[0]->id;
 
-				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstadoPorUsuario(1, $idusuario)->get()); 
-				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstadoPorUsuario(2, $idusuario)->get()); 
-				$data["solicitudes_pendientes"] = count(Solicitud::buscarPorIdEstadoPorUsuario(3, $idusuario)->get()); 
-				$data["solicitudes_procesando"] = count(Solicitud::buscarPorIdEstadoPorUsuario(4, $idusuario)->get()); 
-				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(5, $idusuario)->get()); 
-				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(6, $idusuario)->get()); 
+				$data["solicitudes_atendidos"] = count(Solicitud::buscarPorIdEstadoPorUsuario(1, $idusuario,$mes_busqueda,$anho_busqueda)->get()); 
+				$data["solicitudes_cerrados"] = count(Solicitud::buscarPorIdEstadoPorUsuario(2, $idusuario,$mes_busqueda,$anho_busqueda)->get()); 
+				$data["solicitudes_pendientes"] = count(Solicitud::buscarPorIdEstadoPorUsuario(3, $idusuario,$mes_busqueda,$anho_busqueda)->get()); 
+				$data["solicitudes_procesando"] = count(Solicitud::buscarPorIdEstadoPorUsuario(4, $idusuario,$mes_busqueda,$anho_busqueda)->get()); 
+				$data["solicitudes_rechazadas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(5, $idusuario,$mes_busqueda,$anho_busqueda)->get()); 
+				$data["solicitudes_anuladas"] = count(Solicitud::buscarPorIdEstadoPorUsuario(6, $idusuario,$mes_busqueda,$anho_busqueda)->get()); 
 
 				$data["solicitudes_data"] = array();
 

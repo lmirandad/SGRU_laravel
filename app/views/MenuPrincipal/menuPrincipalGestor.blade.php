@@ -22,7 +22,18 @@
 				<div class="panel-heading">
 					<h3 class="panel-title">Tickets Pendientes</h3>
 				</div>
-				<div class="panel-body">	
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-md-2">
+							<div class="metric">
+								<span class="icon" style="background-color:#ffeb3b;"><i class="lnr lnr-warning"></i></span>
+								<p>
+									<span class="number">{{$solicitudes_pendientes}}</span>
+									<span class="title">Tickets Pendientes</span>
+								</p>
+							</div>
+						</div>
+					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="table-responsive">
@@ -33,9 +44,9 @@
 											<th class="text-nowrap text-center">Fecha de Solicitud</th>
 											<th class="text-nowrap text-center">Fecha de Asignación</th>
 											<th class="text-nowrap text-center">Días de Asignación</th>
-											<th class="text-nowrap text-center">Tipo de Solicitud</th>
+											<th class="text-nowrap text-center">Tipo</th>
 											<th class="text-nowrap text-center">Herramienta</th>
-											<th class="text-nowrap text-center">SLA (N° Días)</th>
+											<th class="text-nowrap text-center">SLA</th>
 											<th class="text-nowrap text-center">SEMÁFORO</th>
 											<th class="text-nowrap text-center">Requerimientos</th>
 										</tr>
@@ -96,7 +107,18 @@
 				<div class="panel-heading">
 					<h3 class="panel-title">Tickets Procesando</h3>
 				</div>
-				<div class="panel-body">	
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-md-2">
+							<div class="metric">
+								<span class="icon" style="background-color:#0088CC;"><i class="lnr lnr-history"></i></span>
+								<p>
+									<span class="number">{{$solicitudes_procesando}}</span>
+									<span class="title">Tickets Procesando</span>
+								</p>
+							</div>
+						</div>
+					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="table-responsive">
@@ -107,9 +129,9 @@
 											<th class="text-nowrap text-center">Fecha de Solicitud</th>
 											<th class="text-nowrap text-center">Fecha de Asignación</th>
 											<th class="text-nowrap text-center">Días de Asignación</th>
-											<th class="text-nowrap text-center">Tipo de Solicitud</th>
+											<th class="text-nowrap text-center">Tipo</th>
 											<th class="text-nowrap text-center">Herramienta</th>
-											<th class="text-nowrap text-center">SLA (N° Días)</th>
+											<th class="text-nowrap text-center">SLA</th>
 											<th class="text-nowrap text-center">SEMÁFORO</th>
 										</tr>
 									</thead>
@@ -153,70 +175,6 @@
 									</tbody>
 									@endforeach
 								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="panel panel-headline">
-				<div class="panel-heading">
-					<h3 class="panel-title">Tus Solicitudes</h3>
-					<p class="panel-subtitle">Fecha Actual: {{date('d-m-Y')}}</p>
-				</div>
-				<div class="panel-body">	
-					<div class="row">
-						<div class="col-md-2">
-							<div class="metric">								
-								<span class="icon" style="background-color:#5cb85c;"><i class="lnr lnr-thumbs-up"></i></span>
-								<p>
-									<span class="number">{{$solicitudes_atendidos}}</span>
-									<span class="title">Tickets Atendidos</span>
-								</p>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="metric">
-								<span class="icon" style="background-color:#F89406;"><i class="fa fa-eye"></i></span>
-								<p>
-									<span class="number">{{$solicitudes_cerrados}}</span>
-									<span class="title">Tickets Cerrados con Obs.</span>
-								</p>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="metric">
-								<span class="icon" style="background-color:#ffeb3b;"><i class="lnr lnr-warning"></i></span>
-								<p>
-									<span class="number">{{$solicitudes_pendientes}}</span>
-									<span class="title">Tickets Pendientes</span>
-								</p>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="metric">
-								<span class="icon" style="background-color:#0088CC;"><i class="lnr lnr-history"></i></span>
-								<p>
-									<span class="number">{{$solicitudes_procesando}}</span>
-									<span class="title">Tickets Procesando</span>
-								</p>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="metric">
-								<span class="icon" style="background-color:#d9534f;"><i class="fa fa-hand-paper-o"></i></span>
-								<p>
-									<span class="number">{{$solicitudes_rechazadas}}</span>
-									<span class="title">Tickets Rechazados</span>
-								</p>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="metric">
-								<span class="icon" style="background-color:#d9534f;"><i class="lnr lnr-thumbs-down"></i></span>
-								<p>
-									<span class="number">{{$solicitudes_anuladas}}</span>
-									<span class="title">Tickets Anulados</span>
-								</p>
 							</div>
 						</div>
 					</div>

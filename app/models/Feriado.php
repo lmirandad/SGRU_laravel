@@ -5,7 +5,7 @@ use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 
-class Asignacion extends Eloquent implements UserInterface, RemindableInterface {
+class Feriado extends Eloquent implements UserInterface, RemindableInterface {
 
 	use UserTrait, RemindableTrait;
 	use SoftDeletingTrait;
@@ -15,23 +15,25 @@ class Asignacion extends Eloquent implements UserInterface, RemindableInterface 
 	 *
 	 * @var string
 	 */
-	protected $table = 'asignacion';
+	protected $table = 'fecha_feriado';
 	protected $softDelete = true;
-	protected $primaryKey = 'idasignacion';
-
+	protected $primaryKey = 'idfecha_feriado';
 	/**
 	 * The attributes excluded from the model's JSON form.
 	 *
 	 * @var array
 	 */
 
-	public function scopeBuscarPorIdSolicitud($query,$idsolicitud)
+	public function scopeListarFeriados($query)
 	{
-		$query->where('asignacion.idsolicitud','=',$idsolicitud);
-		$query->select('asignacion.*');
-
+		$query->select('fecha_feriado.*');
 		return $query;
 	}
 	
-
+	public function scopeBuscarFeriados($query,$anho)
+	{
+		$query->whereYear('fecha_feriado.valor_fecha','=',$anho);
+		$query->select('fecha_feriado.*');
+		return $query;
+	}
 }

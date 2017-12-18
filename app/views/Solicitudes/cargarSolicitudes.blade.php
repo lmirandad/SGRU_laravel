@@ -66,7 +66,7 @@
 								<label class="control-label">Registros Procesados:</label>
 								{{ Form::text('numero_registros',$cantidad_procesados,array('class'=>'form-control','disabled'=>'disabled','style'=>'text-align:center')) }}							
 							</div>	
-							@if(is_array($logs) || is_object($logs) || count($logs)>0 )
+							@if($logs != null )
 							<div class="form-group col-md-4" style="margin-top:25px">
 								<a class="btn btn-success btn-block" id="btnDescargarLogs"><i class="fa fa-download"></i>&nbspDescargar Logs</a>				
 							</div>
@@ -130,8 +130,7 @@
 										<td class="text-nowrap text-center">
 											{{$resultado["nombre_herramienta"]}}
 											<input style="display:none" name='asuntos[]' value='{{ $resultado["asunto"]}}' readonly/>
-											<input style="display:none" name='nombres_herramienta[]' value='{{ $resultado["nombre_herramienta"]}}' readonly/>
-											<input style="display:none" name='codigos_herramientas[]' value='{{ $resultado["codigos_herramientas"]}}' readonly/>
+											<input style="display:none" name='idherramientas[]' value='{{ $resultado["idherramienta"]}}' readonly/>
 										</td>
 									</tr>
 									@endforeach
@@ -153,11 +152,11 @@
 			</div>
 		{{Form::close()}}
 		{{ Form::open(array('url'=>'/solicitudes/descargar_logs' ,'role'=>'form','id'=>'submit-descargar-logs', 'enctype'=>'multipart/form-data')) }}
-			@if(is_array($logs) || is_object($logs))
-				@foreach($logs as $log)		
-					<input style="display:none" name='logs[]' value='{{ $log }}' readonly/>
-				@endforeach					
-			@endif
+			
+					<input style="display:none" name='logs' value='{{ $logs }}' readonly/>
+					
+
+			
 		{{Form::close()}}
 			
 		</div>

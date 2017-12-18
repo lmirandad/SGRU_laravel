@@ -106,11 +106,10 @@ class SolicitudController extends BaseController {
 
 				$herramientas = Herramienta::listarHerramientas()->get();
 				$logs_errores = array();
-				$logs_errores_keys = array();
+				
 				
 				for($i = 1; $i < $cantidad_registros_totales-1; $i++)
 				{
-					array_push($logs_errores_keys,$i);
 					//2.1. Leer Valores
 					$codigo_entidad = $lista_solicitudes[$i][0];
 					$nombre_entidad = $lista_solicitudes[$i][1];
@@ -128,32 +127,81 @@ class SolicitudController extends BaseController {
 					$tipo_accion = null;
 					$entidad = null;
 					$array_herramientas = array();
+					$idherramienta = null;
 					//2.2. Validar datos vacíos y válidos
+
+					//CREACION DEL ARREGLO LOG
+					$obj_log = [
+						"numero" => $i,
+						"descripcion" => null,
+						"entidad" => "no existe",
+						"canal" => "no existe",
+						"sector" => "no existe",
+					];
 					
-					//CODIGO ENTIDAD y NOMBRE ENTIDAD
+					$array_log_text = '';
+
+					//1. VALIDACION DEL CODIGO DE ENTIDAD
 					if(strcmp($codigo_entidad,'') != 0)
 					{
 						//validar si existe el codigo
 						$entidad = Entidad::buscarPorCodigoEntidad($codigo_entidad)->get();
 						if($entidad == null || $entidad->isEmpty()){
 							//NO PROCEDE
-							array_push($logs_errores,"La entidad ".$nombre_entidad." del registro no existe");
+							$obj_log["descripcion"] = "La entidad ".$nombre_entidad." del registro no existe";
+							array_push($logs_errores,$obj_log);
 							continue; //(LOGS)	
 						} 
 						else{
 							$nombre_entidad_encontrada = $entidad[0]->nombre;
 							if( strcmp($nombre_entidad_encontrada, $nombre_entidad) != 0 ){
 								//NO PROCEDE
-								array_push($logs_errores,"La entidad ".$nombre_entidad." no coincide con el código registrado en el sistema.");
+								$obj_log["descripcion"] = "La entidad ".$nombre_entidad." no coincide con el código registrado en el sistema.";
+								array_push($logs_errores,$obj_log);
 								continue; //(LOGS)
 							} 
 						}
 					}else{
 						//NO PROCEDE
-						array_push($logs_errores,"El campo Entidad está vacío.");
+						$obj_log["descripcion"] = "El campo Entidad está vacío.";
+						array_push($logs_errores,$obj_log);
 						continue; //(LOGS)
 					}
-					//TIPO SOLICITUD GRAL
+
+					//1.2 EXTRACCION DE LA DATA PARA LA OBTENCION DEL CANAL Y EL SECTOR
+					$canal_entidad = Canal::find($entidad[0]->idcanal);
+					$sector_canal = Sector::find($canal_entidad->idsector);
+
+					$obj_log["entidad"] = $entidad[0]->nombre;
+					$obj_log["canal"] = $canal_entidad->nombre;
+					$obj_log["sector"] = $sector_canal->nombre;
+
+					//2. VALIDACION DEL ESTADO DE SOLICITUD
+
+					if(strcmp($estado_solicitud,'') != 0)
+					{	//validar si el estado de solicitud existe
+						$estado_solicitud_obj = EstadoSolicitud::buscarPorNombre($estado_solicitud)->get();
+						if($estado_solicitud_obj == null || $estado_solicitud_obj->isEmpty()) //NO PROCEDE
+						{
+							$obj_log["descripcion"] = "El estado de la solicitud no se encuentra registrado en el sistema.";
+							array_push($logs_errores,$obj_log);
+							continue; //(LOGS)
+						}
+
+						if($estado_solicitud_obj[0]->idestado_solicitud != 3){
+							$obj_log["descripcion"] = "La solicitud ya se encuentra procesada. No se asignan solicitudes que ya están en proceso.";
+							array_push($logs_errores,$obj_log);
+							continue;
+						}
+					}else //NO PROCEDE
+					{
+						$obj_log["descripcion"] = "El campo Estado de Solicitud está vacío.";
+						array_push($logs_errores,$obj_log);
+						
+						continue; //(LOGS)
+					}
+
+					//3. VALIDACION DEL TIPO DE SOLICITUD GENERAL
 					if(strcmp($tipo_solicitud_gral,'') != 0)
 					{
 						//validar si existe el tipo de solicitud
@@ -166,33 +214,37 @@ class SolicitudController extends BaseController {
 						}
 					}else
 					{   
-						array_push($logs_errores,"El tipo de solicitud no existe.");
+						$obj_log["descripcion"] = "El tipo de solicitud no existe.";
+						array_push($logs_errores,$obj_log);
 						//NO PROCEDE
 						continue; //(LOGS)
 					}
 
-					//CODIGO SOLICITUD
+					//4. VALIDACION DEL CODIGO DE LA SOLICITUD
 					//Validar si el codigo es vacío y posteriomente se valida si es numérico
 					if(strcmp($codigo_solicitud,'') == 0 || !ctype_digit($codigo_solicitud))
 					{
-						array_push($logs_errores,"El código de solicitud no existe o no es numérico");
+						$obj_log["descripcion"] = "El código de solicitud no existe o no es numérico";
+						array_push($logs_errores,$obj_log);
 						continue; //(LOGS)
 					}
 					else
 						$codigo_solicitud_ingresar = (int)$codigo_solicitud;
 
-					//ASUNTO
+					//5. VALIDACION DEL ASUNTO
 					if(strcmp($asunto,'') == 0){
-						array_push($logs_errores,"El campo asunto no existe.");
+						$obj_log["descripcion"] = "El campo asunto no existe.";
+						array_push($logs_errores,$obj_log);
 						continue; //(LOGS)
 					}
 
-					//FECHA SOLICITUD
+					//6. VALIDACION DE LA FECHA DE SOLICITUD
 					if(strcmp($fecha_solicitud,'') != 0)
 					{
 						if(DateTime::createFromFormat('d/m/Y', $fecha_solicitud) == false)
 						{
-							array_push($logs_errores,"La fecha de solicitud no cuenta con el formato de fecha correcto");
+							$obj_log["descripcion"] = "La fecha de solicitud no cuenta con el formato de fecha correcto";
+							array_push($logs_errores,$obj_log);
 							//FECHA CON FORMATO ERRADO
 							continue; //(LOGS)
 						} 
@@ -202,35 +254,20 @@ class SolicitudController extends BaseController {
 						}
 					}else //NO PROCEDE
 					{
-						array_push($logs_errores,"El campo Fecha de Solicitud está vacío.");
+						$obj_log["descripcion"] = "El campo Fecha de Solicitud está vacío.";
+						array_push($logs_errores,$obj_log);
 						continue; //(LOGS)
 					}
-					//ESTADO SOLICITUD
-					if(strcmp($estado_solicitud,'') != 0)
-					{	//validar si el estado de solicitud existe
-						$estado_solicitud_obj = EstadoSolicitud::buscarPorNombre($estado_solicitud)->get();
-						if($estado_solicitud_obj == null || $estado_solicitud_obj->isEmpty()) //NO PROCEDE
-						{
-							array_push($logs_errores,"El estado de la solicitud no se encuentra registrado en el sistema.");
-							continue; //(LOGS)
-						}
+					
 
-						if($estado_solicitud_obj[0]->idestado_solicitud != 3){
-							array_push($logs_errores,"La solicitud ya se encuentra procesada. No se asignan solicitudes que ya están en proceso.");
-							continue;
-						}
-					}else //NO PROCEDE
-					{
-						array_push($logs_errores,"El campo Estado de Solicitud está vacío.");
-						continue; //(LOGS)
-					}
-
-					//FECHA ESTADO
+					//7. VALIDACION DE LA FECHA DE ESTADO
 					if(strcmp($fecha_estado,'') != 0)
 					{
 						if(DateTime::createFromFormat('d/m/Y', $fecha_estado) == false) //FECHA CON FORMATO ERRADO
 						{
-							array_push($logs_errores,"La fecha de estado no cuenta con el formato de fecha correcto.");
+							$obj_log["descripcion"] = "La fecha de estado no cuenta con el formato de fecha correcto.";
+							array_push($logs_errores,$obj_log);
+							
 							continue; //(LOGS)
 						}
 						else{
@@ -239,27 +276,36 @@ class SolicitudController extends BaseController {
 						}
 					}else //NO PROCEDE (LOGS)
 					{	
-						array_push($logs_errores,"El campo Fecha de Estado está vacío.");				
+						$obj_log["descripcion"] = "El campo Fecha de Estado está vacío.";
+						array_push($logs_errores,$obj_log);
 						continue;
 					}
 
 					
-					//2.4 Se debe validar el asunto
+					//8. VALIDACION DEL TIPO DE ACCION
 
 					//VALIDACION TIPO DE ACCION
+					/*******************SUJETO A CAMBIO DE ALGORITMO***********************/
 					$idtipo_accion = SolicitudController::obtener_tipo_solicitud($asunto);
+					/**********************************************************************/
 					if($idtipo_accion == 0){
-						array_push($logs_errores,"La solicitud no describe ninguna acción registrada en el sistema.");
+						$obj_log["descripcion"] = "La solicitud no describe ninguna acción registrada en el sistema.";
+						array_push($logs_errores,$obj_log);
+						
 						continue; //NO PROCEDE porque no existe la creacion (NO SE ACEPTARA MAS DE UNA ACCION) - LOGS
 					}
 					else		
 						$tipo_accion = TipoSolicitud::find($idtipo_accion);
 					
-					//VALIDACION DE LA APLICACION
-					$array_herramientas = SolicitudController::obtener_herramienta($asunto,$herramientas);
-					$codigos_herramientas = '';
+					//9. VALIDACION DE LA APLICACION
+					/*******************SUJETO A CAMBIO DE ALGORITMO*************************************/
+					$resultado = SolicitudController::obtener_herramienta($asunto,$herramientas);
+					/************************************************************************************/
+					/************************CAMBIO DE CODIGO (SE USARÁ ÑLA HERRAMIENTA "VARIOS")*************/
+					/*$codigos_herramientas = '';
 					if(count($array_herramientas)>1)
 					{
+						
 						//quiere decir que hay mas de una herramienta
 						$tamano =count($array_herramientas);
 						$nombre_herramienta = "VARIOS";
@@ -270,6 +316,8 @@ class SolicitudController extends BaseController {
 							else
 								$codigos_herramientas = $codigos_herramientas.$array_herramientas[$p]->idherramienta;
 						}
+						
+						$nombre_herramienta[0]->
 
 						
 
@@ -282,7 +330,19 @@ class SolicitudController extends BaseController {
 					{
 						//quiere decir que no existen herramientas
 						$nombre_herramienta = "NO DETECTADO";
+					}*/
+					/***********************************NUEVO CODIGO***************************************************/
+					if($resultado == 0)
+					{
+						$idherramienta = 39; //REPRESENTA LA HERRAMIENTA VARIOS
+					}else if($resultado == -1)
+					{
+						$idherramienta = 0; //REPRESENTA NO DETECCION DE HERRAMIENTA
+					}else{
+						$idherramienta = $resultado;
 					}
+
+					$herramienta = Herramienta::find($idherramienta);
 
 					//2.5 Luego de estas validaciones se deberá revisar si la solicitud ya existe 
 					$solicitud = Solicitud::buscarPorCodigoSolicitud($codigo_solicitud_ingresar)->get();
@@ -292,17 +352,9 @@ class SolicitudController extends BaseController {
 						
 					}else
 					{
-						array_push($logs_errores,"solicitud ya fue registrada en el sistema.");
+						$obj_log["descripcion"] = "solicitud ya fue registrada en el sistema.";
+						array_push($logs_errores,$obj_log);
 						continue;
-						//Esta solicitud ya existe en el sistema
-						//¿Si tiene diferente estado que en el portal de canales se debe actualizar el estado?.
-						/****************POR CONFIRMAR*************************************************
-						if($solicitud->idestado_solicitud != $estado_solicitud_obj->idestado_solicitud)
-						{
-							$solicitud->idestado_solicitud = $estado_solicitud_obj->idestado_solicitud;
-							$solicitud->save();
-						}
-						*******************************************************************************/
 					}
 					
 					$cantidad_registros_procesados++;
@@ -313,25 +365,32 @@ class SolicitudController extends BaseController {
 						"tipo_accion" => $tipo_accion->nombre,
 						"fecha_solicitud" => $fecha_solicitud_date,
 						"estado_solicitud" => $estado_solicitud_obj[0]->nombre,
-						"nombre_herramienta" => $nombre_herramienta,
+						"idherramienta" => $idherramienta,
 						"identidad" => $entidad[0]->identidad,
 						"idtipo_solicitud" => $tipo_accion->idtipo_solicitud,
 						"idtipo_solicitud_general" => $tipo_solicitud_obj[0]->idtipo_solicitud_general,
 						"idestado_solicitud" => $estado_solicitud_obj[0]->idestado_solicitud,
 						"asunto" => $asunto,
-						"codigos_herramientas" => $codigos_herramientas,
+						"nombre_herramienta" => $herramienta->nombre,
 					];
 
-					array_push($logs_errores,"solicitud correcta");
+					$obj_log["descripcion"] = "solicitud correcta";
+					array_push($logs_errores,$obj_log);
 
 					array_push($data["resultados"],$solicitud_arreglo);
 				}
 				
-				$data["logs"] = array_combine($logs_errores_keys,$logs_errores);
-				$data["cantidad_procesados"] = $cantidad_registros_procesados;
-				$data["cantidad_total"] = $cantidad_registros_totales-2;			
+				$array_log_text = SolicitudController::transformar_log_texto($logs_errores);
+				$data["logs"] = $array_log_text;
 
 				
+				$data["cantidad_procesados"] = $cantidad_registros_procesados;
+				$data["cantidad_total"] = $cantidad_registros_totales-2;				
+
+				//$array_l = User::buscarUsuariosReasignacionPorSector(2);
+				/*echo '<pre>';
+				var_dump($array_l[0]->nombre_usuario);
+				echo '</pre>';*/
 
 				return View::make('Solicitudes/cargarSolicitudes',$data);
 			}else{
@@ -341,6 +400,17 @@ class SolicitudController extends BaseController {
 		}else{
 			return View::make('error/error',$data);
 		}
+	}
+
+	public function transformar_log_texto($logs)
+	{
+		$tamano_log = count($logs);
+		$cadena = '';
+		for($i=0;$i<$tamano_log;$i++)
+		{
+			$cadena=$cadena.$logs[$i]["descripcion"].'/'.$logs[$i]["entidad"].'/'.$logs[$i]["canal"].'/'.$logs[$i]["sector"].'?';
+		}
+		return $cadena;
 	}
 
 	public function obtener_tipo_solicitud($cadena)
@@ -369,7 +439,7 @@ class SolicitudController extends BaseController {
 	public function obtener_herramienta($cadena,$herramientas)
 	{
 		$contador_aplicativos = 0;
-    	$resultados = array();
+    	$resultados = null;
     	$palabras = explode(' ',$cadena);
     	$cantidad_palabras = count($palabras);
     	$cantidad_herramientas = count($herramientas);
@@ -394,13 +464,21 @@ class SolicitudController extends BaseController {
     			if($aplicativo_encontrado == true)
     			{
     				$contador_aplicativos++;
-	    			array_push($resultados,$herramientas[$z]);
-    			}
+    				if($contador_aplicativos == 1)
+	    				$resultados = $herramientas[$z]->idherramienta;
+	    		}
     			
     		}
     	}   	
 
-    	return $resultados;
+    	//return $resultados;
+    	if($contador_aplicativos > 1)
+    		return 0;
+    	else if($contador_aplicativos == 1)
+    		return $resultados;
+    	else
+    		return -1;
+
 	}
 
 	public function obtener_herramientas()
@@ -468,22 +546,27 @@ class SolicitudController extends BaseController {
 				
 				$date=new DateTime(); //this returns the current date time
 				$result = $date->format('Y.m.d H.i.s');
-				
-				return Excel::create('Reporte Logs '.$result, function($excel) {
-						$excel->sheet('Reporte', function($sheet) {
+
+				$value = Excel::create('Reporte Logs '.$result, function($excel) {
+						$excel->sheet('Reporte', function($sheet)  {
 							$sheet->row(1, array(
-								     'N° Registro','Resultado'
+								     'N° Registro','Resultado','Nombre Entidad (Socio)','Nombre Canal','Nombre Sector'
 								));
 							$logs = Input::get('logs');
-							$tamano_logs = count($logs);
+							
+							$registros = explode('?',$logs);
+							$tamano_logs = count($registros)-1;
+
 							for($i = 0;$i<$tamano_logs;$i++){
+								$partes = explode('/',$registros[$i]);
 								$sheet->row($i+2, array(
-								     $i+1, $logs[$i],
+								     $i+1, $partes[0], $partes[1],$partes[2],$partes[3]
 								));
 							}
 
 						});
 					})->download('xls');
+				return true;
 			}else{
 				return View::make('error/error',$data);
 			}
@@ -519,9 +602,15 @@ class SolicitudController extends BaseController {
 					return Redirect::to('solicitudes/listar_solicitudes');
 				}
 
-				$data["usuario_asignado"] = User::find($data["asignacion"][0]->iduser_asignado);
+				$usuario_asignado_actual = UsuariosXAsignacion::buscarUsuarioActual($data["asignacion"][0]->idasignacion)->get();
 
-				$data["herramientas"] = SolicitudXHerramienta::buscarHerramientasPorIdSolicitud($idsolicitud)->get();
+				if($usuario_asignado_actual==null){
+					return Redirect::to('solicitudes/listar_solicitudes');
+				}				
+
+				$data["usuario_asignado"] = User::withTrashed()->find($usuario_asignado_actual[0]->idusuario_asignado);
+
+				$data["herramienta"] = Herramienta::find($data["solicitud"]->idherramienta);
 
 				
 
@@ -534,5 +623,125 @@ class SolicitudController extends BaseController {
 		}
 	}
 
+	public function mostrar_usuarios_disponibles_reasignacion()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			$idsolicitud = Input::get('idsolicitud');
+
+			$solicitud = Solicitud::find($idsolicitud);
+
+			if($solicitud == null)
+				return Response::json(array( 'success' => false),200);	
+
+			$entidad = Entidad::find($solicitud->identidad);
+			$canal = Canal::find($entidad->idcanal);
+			$sector = Sector::find($canal->idsector);
+
+			$idherramienta = $solicitud->idherramienta;
+
+			if($idherramienta == 39){
+				//herramienta representada para "VARIOS"
+				$usuarios = User::buscarUsuariosReasignacionPorSector($sector->idsector);	
+				
+				if(is_array($usuarios) == true) //hay usuarios
+				{
+					return Response::json(array( 'success' => true,'usuarios'=>$usuarios),200);
+				}else
+				{
+					return Response::json(array( 'success' => true,'usuarios'=>null),200);
+				}
+				
+			}else{
+
+				//como solo tiene una sola herramienta, buscamos a los usuarios especializados y que tengan menos solicitudes pendientes y en proceso.
+
+				$usuarios = User::buscarUsuariosReasignacionPorHerramienta($idherramienta,$idaccion);	
+
+				if(is_array($usuarios) == true) //hay usuarios
+				{
+					return Response::json(array( 'success' => true,'usuarios'=>$usuarios),200);
+				}else
+				{
+					return Response::json(array( 'success' => true,'usuarios'=>null),200);
+				}			
+			}	
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
+
+	public function submit_reasignar_solicitud()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				// Validate the info, create rules for the inputs
+				$idasignacion = Input::get('asignacion_id');
+				$idsolicitud = Input::get('solicitud_id');
+
+				$attributes = array(
+					'usuario_disponible' => 'Usuario Disponible',
+					'motivo_asignacion' => 'Motivo Asignación',
+				);
+
+				$messages = array();
+
+				$rules = array(
+					'usuario_disponible' => 'required',
+					'motivo_asignacion' => 'alpha_num_spaces_slash_dash_enter|max:200',
+				);
+				// Run the validation rules on the inputs from the form
+				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);
+				// If the validator fails, redirect back to the form
+				if($validator->fails()){
+					return Redirect::to('solicitudes/mostrar_solicitud/'.$idsolicitud)->withErrors($validator)->withInput(Input::all());
+				}else{
+					$idusuario_reasignacion = Input::get('usuario_disponible');
+					$motivo_asignacion = Input::get('motivo_asignacion');
+
+					$usuariosxasignacion = UsuariosXAsignacion::buscarPorIdAsignacion($idasignacion)->get();
+
+					if($usuariosxasignacion == null || $usuariosxasignacion->isEmpty()){
+						Session::flash('error', 'No es posible reasignar una solicitud que no posee usuario asignado.');
+						return Redirect::to('solicitudes/mostrar_solicitud/'.$idsolicitud);
+					}
+					
+					$tamano = count($usuariosxasignacion);
+					for($i=0; $i<$tamano; $i++)
+					{
+						$usuariosxasignacion[$i]->estado_usuario_asignado = 0;
+						$usuariosxasignacion[$i]->save();
+					}
+					
+					$nuevo_usuarioxasignacion = new UsuariosXAsignacion;
+					$nuevo_usuarioxasignacion->idusuario_asignado = $idusuario_reasignacion;
+					$nuevo_usuarioxasignacion->idasignacion = $idasignacion;
+					$nuevo_usuarioxasignacion->motivo_asignacion = $motivo_asignacion;
+					$nuevo_usuarioxasignacion->estado_usuario_asignado = 1; //1: activo 0: inactivado (se hace reasignacion)
+					$nuevo_usuarioxasignacion->iduser_created_by = $data["user"]->id;
+					$nuevo_usuarioxasignacion->save();
+
+					Session::flash('message', 'Se realizó correctamente la reasignación.');
+					
+					return Redirect::to('solicitudes/mostrar_solicitud/'.$idsolicitud);
+				}
+			}else{
+				return View::make('error/error',$data);
+			}
+
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
 	
 }

@@ -118,7 +118,7 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
-	public function scopeBuscarPorIdEstado($query,$idestado_solicitud){
+	public function scopeBuscarPorIdEstado($query,$idestado_solicitud,$mes_actual,$anho_actual){
 		$query->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','solicitud.idtipo_solicitud')
 			  ->join('estado_solicitud','estado_solicitud.idestado_solicitud','=','solicitud.idestado_solicitud')
 			  ->join('entidad','entidad.identidad','=','solicitud.identidad')
@@ -128,11 +128,16 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 
 		$query->where('solicitud.idestado_solicitud','=',$idestado_solicitud);
 		
+		$query->whereMonth('solicitud.fecha_solicitud','=',$mes_actual);
+		$query->whereYear('solicitud.fecha_solicitud','=',$anho_actual);
+
+		
 		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');
 		return $query;
+		
 	}
 
-	public function scopeBuscarPorIdEstadoPorUsuario($query,$idestado_solicitud,$idusuario){
+	public function scopeBuscarPorIdEstadoPorUsuario($query,$idestado_solicitud,$idusuario,$mes_actual,$anho_actual){
 		$query->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','solicitud.idtipo_solicitud')
 			  ->join('estado_solicitud','estado_solicitud.idestado_solicitud','=','solicitud.idestado_solicitud')
 			  ->join('entidad','entidad.identidad','=','solicitud.identidad')
@@ -142,6 +147,8 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 
 		$query->where('solicitud.idestado_solicitud','=',$idestado_solicitud);
 		$query->where('asignacion.iduser_asignado','=',$idusuario);
+		$query->whereMonth('solicitud.fecha_solicitud','=',$mes_actual);
+		$query->whereYear('solicitud.fecha_solicitud','=',$anho_actual);
 		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');;
 		return $query;
 	}

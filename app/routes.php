@@ -140,6 +140,8 @@ Route::group(array('prefix'=>'solicitudes', 'before'=>'auth'),function(){
 	Route::post('/descargar_logs','SolicitudController@descargar_logs');
 	Route::get('/mostrar_solicitud/{id}','SolicitudController@mostrar_solicitud');
 	Route::post('/obtener_herramientas','SolicitudController@obtener_herramientas');
+	Route::post('/mostrar_usuarios_disponibles_reasignacion','SolicitudController@mostrar_usuarios_disponibles_reasignacion');
+	Route::post('/submit_reasignar_solicitud','SolicitudController@submit_reasignar_solicitud');
 });
 
 /*TIPOS_SOLICITUD*/
@@ -156,4 +158,20 @@ Route::group(array('prefix'=>'herramienta_equivalencia', 'before'=>'auth'),funct
 /*ASIGNACIONES*/
 Route::group(array('prefix'=>'asignaciones', 'before'=>'auth'),function(){
 	Route::post('/submit_asignacion','AsignacionController@submit_asignacion');
+});
+
+/*EQUIVALENCIAS TIPO SOLICITUD*/
+Route::group(array('prefix'=>'equivalencias_tipo_solicitud', 'before'=>'auth'),function(){
+	Route::get('/listar_equivalencias','EquivalenciaTipoSolicitudController@mostrar_equivalencias_tipo_solicitud');
+	Route::post('/mostrar_datos','EquivalenciaTipoSolicitudController@mostrar_equivalencias_ajax');
+	Route::post('/submit_eliminar_equivalencia_tipo_solicitud','EquivalenciaTipoSolicitudController@submit_eliminar_equivalencia_tipo_solicitud');
+	Route::post('/submit_crear_equivalencia_tipo_solicitud','EquivalenciaTipoSolicitudController@submit_crear_equivalencia_tipo_solicitud');
+});
+
+/*FERIADOS*/
+Route::group(array('prefix'=>'feriados', 'before'=>'auth'),function(){
+	Route::get('/listar_feriados','FeriadoController@listar_feriados');
+	Route::post('/submit_crear_feriado','FeriadoController@submit_crear_feriado');
+	Route::post('/submit_eliminar_feriado','FeriadoController@submit_eliminar_feriado');
+	Route::get('/buscar_feriados','FeriadoController@buscar_feriados');
 });

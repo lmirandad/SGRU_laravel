@@ -4,6 +4,14 @@
 <div class="main-content">
 	<div class="container-fluid">
 		<h3 class="page-title">SOLICITUD <strong>N° {{$solicitud->codigo_solicitud}}</strong></h3>
+		@if ($errors->has())
+			<div class="alert alert-danger" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<p>{{ $errors->first('usuario_disponible') }}</p>		
+				<p>{{ $errors->first('motivo_reasignacion') }}</p>
+			</div>
+		@endif
+
 		@if (Session::has('message'))
 			<div class="alert alert-success">
 				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -73,29 +81,9 @@
 						{{ Form::label('asunto','Asunto')}}
 						{{ Form::text('asunto',$solicitud->asunto,array('class'=>'form-control','placeholder'=>'Ingrese nombre del usuario','id'=>'asunto_detectar','disabled'=>'disabled')) }}
 					</div>
-					<div class="col-md-6">
-						<div class="table-responsive">
-							<table class="table table-hover" id="tabla_herramientas">
-								<thead>
-									<tr>
-										<th class="text-nowrap text-center">N°</th>
-										<th class="text-nowrap text-center">Herramienta</th>
-									</tr>
-								</thead>
-								@foreach($herramientas as $index => $herramienta)
-								<tbody>	
-									<tr>
-										<td class="text-nowrap text-center">
-											{{$index+1}}
-										</td>
-										<td class="text-nowrap text-center">
-											{{$herramienta->nombre}}
-										</td>										
-									</tr>
-								</tbody>
-								@endforeach											
-							</table>
-						</div>
+					<div class="col-md-6">						
+						{{ Form::label('herramienta','Aplicativo:')}}
+						{{ Form::text('herramienta',$herramienta->nombre,array('class'=>'form-control','disabled'=>'disabled')) }}
 					</div>
 				</div>
 			</div>
@@ -126,7 +114,10 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-2 col-md-offset-8">
+			<div class="col-md-2">
+				<button class="btn btn-success btn-block" onclick="mostrar_usuarios_disponibles(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-redo"></i> Reasignación</button>
+			</div>	
+			<div class="col-md-2 col-md-offset-6">
 				<a class="btn btn-info btn-block" href="#"> <i class="lnr lnr-plus-circle"></i> Crear Requerimiento</a>
 			</div>			
 			<div class="form-group col-md-2">
@@ -136,4 +127,44 @@
 		
 	</div>
 </div>
+<div class="container" >
+  <!-- Modal -->
+  <div class="modal fade" id="modal_reasignacion"  role="dialog">
+    <div class="modal-dialog modal-lg">    
+      <!-- Modal content-->
+      <div class="modal-content" >
+	        <div class="modal-header bg-primary">
+	          <button type="button" class="close" id="btnCerrarModal" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title">Tipo de Acción Solicitud - Equivalencias</h4>
+	        </div>
+	        <div class="modal-body" id="modal_text_equivalencias">
+	         	<div class="container-fluid">	        
+	         	{{ Form::open(array('url'=>'/solicitudes/submit_reasignar_solicitud' ,'role'=>'form','id'=>'submit-crear')) }}
+	         	{{ Form::hidden('asignacion_id', $asignacion[0]->idasignacion, array('id'=>'asignacion_id')) }} 		
+	         	{{ Form::hidden('solicitud_id', $solicitud->idsolicitud, array('id'=>'solicitud_id')) }} 		
+					<div class="row">
+	         			<div class="col-md-6">
+							{{ Form::label('usuario_disponible','Usuarios Disponibles:')}}
+							{{ Form::select('usuario_disponible', [''=>'Seleccione'],Input::old('usuario_disponible'),['class' => 'form-control','id'=>'slcUsuarios']) }}
+						</div>	
+						<div class="col-md-6">
+							{{ Form::label('motivo_reasignacion','Motivo Reasignacion:')}}
+							{{ Form::text('motivo_reasignacion',Input::old('motivo_reasignacion'),array('class'=>'form-control','placeholder'=>'Ingrese motivo','id'=>'motivo_reasignacion')) }}
+						</div>					
+					</div>
+					<div class="row">
+						<div class="col-md-6" style="margin-top:26px">
+							<button type="submit" class="btn btn-info"><i class="fa fa-floppy-o "></i>&nbsp&nbspReasignar</button>
+						</div>
+					</div>
+				</div>
+				{{ Form::close() }}
+			</div>
+	        <div class="modal-footer">
+	          
+	        </div>
+      </div>      
+    </div>
+  </div>
+ </div>  
 @stop

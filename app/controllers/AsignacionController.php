@@ -19,9 +19,8 @@ class AsignacionController extends BaseController {
 				$idsestado_solicitud = Input::get('idsestado_solicitud');
 				$fechas_solicitud = Input::get('fechas_solicitud');
 				$asuntos = Input::get('asuntos');
-				$nombres_herramientas = Input::get('nombres_herramienta');
-				$codigos_herramientas = Input::get('codigos_herramientas');
-
+				$idherramientas = Input::get('idherramientas');
+				
 				$cantidad_registros = count($codigos_solicitud);
 
 				// 1. Registrar la carga del archivo
@@ -59,20 +58,8 @@ class AsignacionController extends BaseController {
 					
 					//a. Herramienta
 
-					$nombre_herramienta = $nombres_herramientas[$i];
-					$solicitud->nombre_herramienta = $nombre_herramienta;
-					
-					$codigos_herramientas_parseados = explode('|',$codigos_herramientas[$i]);
-					
-					
-
-					if(strcmp($nombre_herramienta, "VARIOS") == 0){
-						//POR CONFIRMAR (ASUMIR LA PRIMERA HERRAMIENTA DEL SISTEMA)
-						$idherramienta = (int)$codigos_herramientas_parseados[0];
-					}else{
-						$herramienta = Herramienta::buscarPorCodigo($nombre_herramienta)->get();
-						$idherramienta = $herramienta[0]->idherramienta;
-					}
+					$idherramienta = $idherramientas[$i];
+					$solicitud->idherramienta = $idherramienta;
 
 					//b. Sector
 					$entidad = Entidad::find($ids_entidad[$i]);
@@ -95,21 +82,25 @@ class AsignacionController extends BaseController {
 
 					//Determinar Asignacion
 					$usuarios = null;
+
 					//En caso solo se tenga varias herramientas, se debe buscar a los usuarios del sector, que tengan menos solicitudes pendientes y en proceso.
 					$usuario_apto = null;
-					if(strcmp($nombre_herramienta, "VARIOS") == 0){
-						$usuarios = User::buscarUsuariosDisponiblesPorSector($sector->idsector,$idherramienta,$idaccion)->get();
-						
+					if($idherramienta == 39){
+						//herramienta representada para "VARIOS"
+						$usuarios = User::buscarUsuariosDisponiblesPorSector($sector->idsector)->get();	
 
 						if($usuarios ==null || $usuarios->isEmpty())
 						{
 							//como no hay usuarios que tengan solicitudes entonces se utiliza cualquiera
-							$usuarios = User::buscarUsuariosPorSector($sector->idsector,$idherramienta,$idaccion)->get(); //¿Se puede usar RANDOM?
+							$usuarios = User::buscarUsuariosPorSector($sector->idsector)->get();
+
 							if(!$usuarios ==null && !$usuarios->isEmpty())
 								$usuario_apto = $usuarios[0];
+
 						}else
 						{
-							$usuarios_libres = User::buscarUsuariosLibresPorSector($sector->idsector,$idherramienta,$idaccion)->get();
+							$usuarios_libres = User::buscarUsuariosLibresPorSector($sector->idsector)->get();
+
 							if($usuarios_libres == null || $usuarios_libres->isEmpty()){	
 
 								$usuario_apto = $usuarios[0];
@@ -121,20 +112,25 @@ class AsignacionController extends BaseController {
 						}	
 						
 					}else{
-						//como solo tiene una sola herramienta, buscamos a los usuarios especializados y que tengan menos solicitudes pendientes y en proceso
+
+						//como solo tiene una sola herramienta, buscamos a los usuarios especializados y que tengan menos solicitudes pendientes y en proceso.
+
 						$usuarios = User::buscarUsuariosDisponiblesPorHerramienta($idherramienta,$idaccion)->get();	
 
 						if($usuarios ==null || $usuarios->isEmpty())
 						{
 							//como no hay usuarios que tengan solicitudes entonces se utiliza cualquiera
-							$usuarios = User::buscarUsuariosPorHerramienta($idherramienta,$idaccion)->get(); //¿Se puede usar RANDOM?		
+							$usuarios = User::buscarUsuariosPorHerramienta($idherramienta,$idaccion)->get();
+
 							if(!$usuarios ==null && !$usuarios->isEmpty())
 								$usuario_apto = $usuarios[0];
-						}else{
-							$usuarios_libres = User::buscarUsuariosLibresPorHerramienta($idherramienta,$idaccion)->get();
-							if($usuarios_libres == null || $usuarios_libres->isEmpty()){
-								
 
+						}else{
+
+							$usuarios_libres = User::buscarUsuariosLibresPorHerramienta($idherramienta,$idaccion)->get();							
+
+							if($usuarios_libres == null || $usuarios_libres->isEmpty())
+							{
 								$usuario_apto = $usuarios[0];
 							}
 							else
@@ -145,6 +141,7 @@ class AsignacionController extends BaseController {
 						
 					}
 
+					
 					if($usuario_apto == null){
 						array_push($array_codigos_no_procesados,$solicitud->codigo_solicitud);
 						continue;
@@ -152,25 +149,22 @@ class AsignacionController extends BaseController {
 
 					$solicitud->save();
 
-					// 3. Crear SolicitudXHerramienta
-
-					$cantidad_herramientas = count($codigos_herramientas_parseados);
-					for($w=0;$w<$cantidad_herramientas;$w++)
-					{
-						$solicitudxherramienta = new SolicitudXHerramienta;
-						$solicitudxherramienta->idsolicitud = $solicitud->idsolicitud;
-						$solicitudxherramienta->idherramienta = (int)$codigos_herramientas_parseados[$w];
-						$solicitudxherramienta->save();
-					}
-
 					// 4. Realizar las asignaciones
 					$asignacion = new Asignacion;
 					$asignacion->fecha_asignacion = date('Y-m-d H:i:s');
 					$asignacion->idestado_asignacion = 2;//Realizado
-					$asignacion->iduser_asignado = $usuario_apto->iduser;
 					$asignacion->iduser_created_by = $data["user"]->id;
 					$asignacion->idsolicitud = $solicitud->idsolicitud;
 					$asignacion->save();
+
+					
+					$usuariosxasignacion = new UsuariosXAsignacion;
+					$usuariosxasignacion->idusuario_asignado = $usuario_apto->iduser;
+					$usuariosxasignacion->idasignacion = $asignacion->idasignacion;
+					$usuariosxasignacion->motivo_asignacion = "Primera asignación";
+					$usuariosxasignacion->estado_usuario_asignado = 1; //1: activo 0: inactivado (se hace reasignacion)
+					$usuariosxasignacion->iduser_created_by = $data["user"]->id;
+					$usuariosxasignacion->save();
 
 					array_push($array_codigos_procesados,$solicitud->codigo_solicitud);
 				}
@@ -193,7 +187,6 @@ class AsignacionController extends BaseController {
 					}
 					Session::flash('message','Se realizaron las asignaciones para los siguientes códigos:'.'<br>'.$texto);
 				}
-
 								
 				return Redirect::to('solicitudes/listar_solicitudes');
 				

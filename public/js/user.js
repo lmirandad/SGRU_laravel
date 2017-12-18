@@ -173,15 +173,16 @@ $( document ).ready(function(){
 
 	$('#create_tipo_doc_identidad').on("change",function(){
 		var tipo_doc_identidad = $('#create_tipo_doc_identidad').val();
+		$('#documento_identidad').val(null);
 		if(tipo_doc_identidad==1){
 			//es DNI (maximo 7 digitos)
 			$('#documento_identidad').prop('disabled', false);
 			$('#documento_identidad').prop('maxLength', '8');
 
 		}else if(tipo_doc_identidad==2){
-			//es RUC (maximo 10 digitos)
+			//es CARNET DE EXTRANJERIA (maximo 12 digitos)
 			$('#documento_identidad').prop('disabled', false);
-			$('#documento_identidad').prop('maxLength', '10');
+			$('#documento_identidad').prop('maxLength', '12');
 		}else{
 			$('#documento_identidad').prop('disabled', true);
 			$('#documento_identidad').val(null);

@@ -16,6 +16,7 @@ class CreateFechaFeriadoTable extends Migration {
 		{
 			$table->integer('idfecha_feriado', true);
 			$table->datetime('valor_fecha');
+			$table->string('motivo_feriado',100)->nullable();
 			$table->timestamps();
 			$table->softDeletes();
 		});

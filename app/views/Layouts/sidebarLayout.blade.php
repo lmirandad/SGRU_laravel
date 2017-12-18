@@ -30,6 +30,11 @@
 							<li><a href="{{URL::to('herramientas/listar_herramientas')}}"><i class="lnr lnr-laptop-phone"></i><span>Aplicativos</span></a></li>
 							<li><a href="{{URL::to('usuarios/listar_usuarios')}}"><i class="lnr lnr-user"></i><span>Usuarios Sistema</span> </a>
 							</li>
+							<li><a href="{{URL::to('equivalencias_tipo_solicitud/listar_equivalencias')}}"><i class="fa fa-exchange"></i><span>Equivalencias Acción Solicitud</span> </a>
+							</li>
+							<li><a href="{{URL::to('feriados/listar_feriados')}}"><i class="fa fa-calendar"></i><span>Feriados</span> </a>
+							<li><a href="#"><i class="lnr lnr-cross-circle"></i><span>Lista Vena / Observados</span> </a>
+							</li>
 						</ul>
 					</div>
 				</li>

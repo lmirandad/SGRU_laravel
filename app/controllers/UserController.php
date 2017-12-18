@@ -580,23 +580,9 @@ class UserController extends BaseController {
 				$url = "usuarios/mostrar_usuario"."/".$user_id;
 				$user = User::find($user_id);
 				
-				//Validar si la entidad posee solicitudes pendientes o en proceso
-				$solicitudes = Solicitud::buscarSolicitudesPendientesProcesandoPorIdUsuario($user->id)->get();
-
-				if($solicitudes == null || $solicitudes->isEmpty()){
-					//Esta vacio, se puede eliminar la entidad
-					$user->delete();
-				}else
-				{
-					//Por seguridad, se vuelve a revalidar la cantidad de solicitudes pendientes o procesando
-					$size_solicitudes = count($solicitudes);
-					if($size_solicitudes>0){
-						Session::flash('error', 'No se puede inhabilitar al usuario. El usuario cuenta con solicitudes asignadas en estado pendiente y/o procesando.');
-						return Redirect::to($url);
-					}
-					else
-						$user->delete();						
-				}
+				//No importa que tenga solicitudes pendientes o procesando
+				$user->delete();
+				
 				
 				Session::flash('message', 'Se inhabilitó correctamente al usuario.');
 				return Redirect::to($url);
