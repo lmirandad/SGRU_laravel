@@ -18,9 +18,31 @@
 					<i class="fa fa-times-circle"></i> {{ Session::get('error') }}
 				</div>
 			@endif
+			<div class="row">
+				<div class="col-md-7 col-md-offset-3">
+					<div class="panel panel-headline">
+						<div class="panel-body">	
+							{{ Form::open(array('url'=>'/principal/buscar_solicitud_codigo','method'=>'get' ,'role'=>'form')) }}
+							<div class="row">
+								<div class="col-md-5">
+									{{ Form::label('search_codigo_solicitud','Código Solicitud:')}}
+									{{ Form::text('search_codigo_solicitud',$search_codigo_solicitud,array('class'=>'form-control','placeholder'=>'Ingresar código solicitud','id'=>'search_codigo_solicitud')) }}
+								</div>	
+								<div class="form-group col-md-3">
+									{{ Form::button('<span class="fa fa-search""></span> Buscar', array('id'=>'submit-search-form','type' => 'submit', 'class' => 'btn btn-info btn-block','style'=>'margin-top:25px;')) }}	
+								</div>
+								<div class="col-md-3">
+									<div class="btn btn-default btn-block" id="btnLimpiarCodigo" style='margin-top:25px;'><span class="lnr lnr-sync""></span> Limpiar</div>				
+								</div>	
+							</div>
+							{{Form::close()}}
+						</div>
+					</div>
+				</div>
+			</div>
 			<div class="panel panel-headline">
 				<div class="panel-heading">
-					<h3 class="panel-title">Tickets Pendientes</h3>
+					<h3 class="panel-title">Tickets Por Usuarios</h3>
 				</div>
 				<div class="panel-body">
 					<div class="row">
@@ -40,7 +62,7 @@
 								<table class="table table-hover">
 									<thead>
 										<tr>
-											<th class="text-nowrap text-center">Código Solicitud</th>
+											<<th class="text-nowrap text-center">Código Solicitud</th>
 											<th class="text-nowrap text-center">Fecha de Solicitud</th>
 											<th class="text-nowrap text-center">Fecha de Asignación</th>
 											<th class="text-nowrap text-center">Días de Asignación</th>

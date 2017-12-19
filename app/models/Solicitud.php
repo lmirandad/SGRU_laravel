@@ -72,8 +72,19 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 	
 	public function scopeBuscarPorCodigoSolicitud($query,$codigo_solicitud)
 	{
+		$query->join('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','solicitud.idtipo_solicitud')
+			  ->join('estado_solicitud','estado_solicitud.idestado_solicitud','=','solicitud.idestado_solicitud')
+			  ->join('entidad','entidad.identidad','=','solicitud.identidad')
+			  ->join('canal','canal.idcanal','=','entidad.idcanal')
+			  ->join('sector','sector.idsector','=','canal.idsector')
+			  ->join('herramienta','herramienta.idherramienta','=','solicitud.idherramienta')
+			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
+
 		$query->where('solicitud.codigo_solicitud','LIKE',$codigo_solicitud);
-		$query->select('solicitud.*');
+
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','herramienta.nombre as nombre_herramienta');
+		
+		
 		return $query;
 	}
 
@@ -124,6 +135,7 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->join('entidad','entidad.identidad','=','solicitud.identidad')
 			  ->join('canal','canal.idcanal','=','entidad.idcanal')
 			  ->join('sector','sector.idsector','=','canal.idsector')
+			  ->join('herramienta','herramienta.idherramienta','=','solicitud.idherramienta')
 			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
 
 		$query->where('solicitud.idestado_solicitud','=',$idestado_solicitud);
@@ -132,7 +144,7 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		$query->whereYear('solicitud.fecha_solicitud','=',$anho_actual);
 
 		
-		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','herramienta.nombre as nombre_herramienta');
 		return $query;
 		
 	}
@@ -143,14 +155,55 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->join('entidad','entidad.identidad','=','solicitud.identidad')
 			  ->join('canal','canal.idcanal','=','entidad.idcanal')
 			  ->join('sector','sector.idsector','=','canal.idsector')
-			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
+			  ->join('herramienta','herramienta.idherramienta','=','solicitud.idherramienta')
+			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+			  ->join('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
 
 		$query->where('solicitud.idestado_solicitud','=',$idestado_solicitud);
-		$query->where('asignacion.iduser_asignado','=',$idusuario);
+		$query->where('usuariosxasignacion.idusuario_asignado','=',$idusuario);
+		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
 		$query->whereMonth('solicitud.fecha_solicitud','=',$mes_actual);
 		$query->whereYear('solicitud.fecha_solicitud','=',$anho_actual);
-		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');;
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','herramienta.nombre as nombre_herramienta');
 		return $query;
+	}
+
+	public function scopeResumenSolicitudesPorUsuario($query)
+	{
+		return DB::select('Select CONCAT(users.nombre,\' \',users.apellido_paterno,\' \',users.apellido_materno) nombre_usuario,count(codigo_solicitud) cantidad_total, sum(case when solicitud.idestado_solicitud = 3 then 1 else 0 end) cantidad_pendientes,sum(case when solicitud.idestado_solicitud = 4 then 1 else 0 end) cantidad_procesando
+			FROM solicitud
+			join asignacion on (solicitud.idsolicitud = asignacion.idsolicitud)
+			join usuariosxasignacion on (usuariosxasignacion.idasignacion = asignacion.idasignacion)
+			join users on (users.id = usuariosxasignacion.idusuario_asignado)
+			where usuariosxasignacion.estado_usuario_asignado = 1
+			group by CONCAT(users.nombre,\' \',users.apellido_paterno,\' \',users.apellido_materno)
+			order by cantidad_total DESC');
+	}
+
+	public function scopeResumenSolicitudesPorSectorPorUsuario($query)
+	{
+		return DB::select('Select sector.nombre nombre_sector, CONCAT(users.nombre,\' \',users.apellido_paterno,\' \',users.apellido_materno) nombre_usuario ,count(codigo_solicitud) cantidad_total, sum(case when solicitud.idestado_solicitud = 3 then 1 else 0 end) cantidad_pendientes,sum(case when solicitud.idestado_solicitud = 4 then 1 else 0 end) cantidad_procesando
+			FROM solicitud
+			join asignacion on (solicitud.idsolicitud = asignacion.idsolicitud)
+			join usuariosxasignacion on (usuariosxasignacion.idasignacion = asignacion.idasignacion)
+			join users on (users.id = usuariosxasignacion.idusuario_asignado)
+			join entidad on (entidad.identidad = solicitud.identidad)
+			join canal on (canal.idcanal = entidad.idcanal)
+			join sector on (sector.idsector = canal.idsector)
+			where usuariosxasignacion.estado_usuario_asignado = 1
+			group by sector.nombre ,CONCAT(users.nombre,\' \',users.apellido_paterno,\' \',users.apellido_materno)
+			order by nombre_sector DESC');
+	}
+
+	public function scopeResumenSolicitudesPorSector($query)
+	{
+		return DB::select('Select sector.nombre nombre_sector,count(codigo_solicitud) cantidad_total, sum(case when solicitud.idestado_solicitud = 3 				then 1 else 0 end) cantidad_pendientes,sum(case when solicitud.idestado_solicitud = 4 then 1 else 0 end) cantidad_procesando 
+			FROM solicitud
+		join entidad on (entidad.identidad = solicitud.identidad)
+		join canal on (canal.idcanal = entidad.idcanal)
+		join sector on (sector.idsector = canal.idsector)
+		group by sector.nombre
+		order by nombre_sector DESC');
 	}
 
 }

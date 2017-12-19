@@ -114,15 +114,27 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-2">
-				<button class="btn btn-success btn-block" onclick="mostrar_usuarios_disponibles(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-redo"></i> Reasignación</button>
-			</div>	
-			<div class="col-md-2 col-md-offset-6">
-				<a class="btn btn-info btn-block" href="#"> <i class="lnr lnr-plus-circle"></i> Crear Requerimiento</a>
-			</div>			
-			<div class="form-group col-md-2">
-				<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
-			</div>
+			@if($solicitud->idestado_solicitud == 3 || $solicitud->idestado_solicitud == 4 )
+				<div class="col-md-2">
+					<button class="btn btn-success btn-block" onclick="mostrar_usuarios_disponibles(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-redo"></i> Reasignación</button>
+				</div>	
+				<div class="col-md-2 col-md-offset-6">
+					<a class="btn btn-info btn-block" href="#"> <i class="lnr lnr-plus-circle"></i> Crear Requerimiento</a>
+				</div>			
+				<div class="form-group col-md-2">
+					<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
+				</div>
+			@else
+				<div class="col-md-2">
+					<button class="btn btn-success btn-block" onclick="mostrar_usuarios_disponibles(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-redo"></i> Reasignación</button>
+				</div>	
+				<div class="col-md-2 col-md-offset-6">
+					<a class="btn btn-info btn-block" href="#"> <i class="lnr lnr-plus-circle"></i> Crear Requerimiento</a>
+				</div>			
+				<div class="form-group col-md-2">
+					<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
+				</div>
+			@endif
 		</div>
 		
 	</div>

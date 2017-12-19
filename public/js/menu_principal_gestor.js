@@ -1,15 +1,10 @@
 $( document ).ready(function(){
 		
-	if($('#input-file').length){
-		$("#input-file").fileinput({
-		    language: "es",
-		    allowedFileExtensions: ["csv"],
-		    showPreview: false,
-		    showUpload: false,
-		});
+	
 
-	 	$('#input-file').attr('name', 'file');
-	}
+	$('#btnLimpiarCodigo').click(function(){
+		$('#search_codigo_solicitud').val(null);
+	});
 
 	
 });

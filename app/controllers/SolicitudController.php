@@ -645,10 +645,11 @@ class SolicitudController extends BaseController {
 			$sector = Sector::find($canal->idsector);
 
 			$idherramienta = $solicitud->idherramienta;
+			$idaccion = $solicitud->idtipo_solicitud;
 
 			if($idherramienta == 39){
 				//herramienta representada para "VARIOS"
-				$usuarios = User::buscarUsuariosReasignacionPorSector($sector->idsector);	
+				$usuarios = User::buscarUsuariosAsignacionPorSector($sector->idsector);	
 				
 				if(is_array($usuarios) == true) //hay usuarios
 				{
@@ -662,7 +663,7 @@ class SolicitudController extends BaseController {
 
 				//como solo tiene una sola herramienta, buscamos a los usuarios especializados y que tengan menos solicitudes pendientes y en proceso.
 
-				$usuarios = User::buscarUsuariosReasignacionPorHerramienta($idherramienta,$idaccion);	
+				$usuarios = User::buscarUsuariosAsignacionPorHerramienta($idherramienta,$idaccion);	
 
 				if(is_array($usuarios) == true) //hay usuarios
 				{

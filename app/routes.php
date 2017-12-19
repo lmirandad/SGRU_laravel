@@ -23,12 +23,15 @@ Route::group(array('before'=>'auth'),function(){
 	Route::get('/logout','LoginController@logout');
 	Route::get('/principal_admin','MenuPrincipalController@home_admin');
 	Route::get('/principal_gestor','MenuPrincipalController@home_gestor');
+
 });
 
 Route::group(array('prefix'=>'principal','before'=>'auth'),function(){
 	Route::get('/mostrar_solicitudes_estado/{id}','MenuPrincipalController@mostrar_solicitudes_estado');
 	Route::get('/mostrar_solicitudes_estado_usuario/{id}/{idusuario}','MenuPrincipalController@mostrar_solicitudes_estado_usuario');
 	Route::get('/buscar_solicitudes_usuario','MenuPrincipalController@buscar_solicitudes_usuario');
+	Route::get('/buscar_solicitud_codigo','MenuPrincipalController@buscar_solicitud_codigo');
+	Route::get('/resumen_usuarios','MenuPrincipalController@resumen_usuarios');
 	
 });
 

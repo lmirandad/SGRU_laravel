@@ -87,56 +87,29 @@ class AsignacionController extends BaseController {
 					$usuario_apto = null;
 					if($idherramienta == 39){
 						//herramienta representada para "VARIOS"
-						$usuarios = User::buscarUsuariosDisponiblesPorSector($sector->idsector)->get();	
-
-						if($usuarios ==null || $usuarios->isEmpty())
+						
+						$usuarios = User::buscarUsuariosAsignacionPorSector($sector->idsector);	
+				
+						if(is_array($usuarios) == true) //hay usuarios
 						{
-							//como no hay usuarios que tengan solicitudes entonces se utiliza cualquiera
-							$usuarios = User::buscarUsuariosPorSector($sector->idsector)->get();
-
-							if(!$usuarios ==null && !$usuarios->isEmpty())
-								$usuario_apto = $usuarios[0];
-
+							$usuario_apto = User::find($usuarios[0]->id_usuario);
 						}else
 						{
-							$usuarios_libres = User::buscarUsuariosLibresPorSector($sector->idsector)->get();
-
-							if($usuarios_libres == null || $usuarios_libres->isEmpty()){	
-
-								$usuario_apto = $usuarios[0];
-							}
-							else
-							{
-								$usuario_apto = $usuarios_libres[0];
-							}
-						}	
+							$usuario_apto = null;
+						}
 						
 					}else{
 
 						//como solo tiene una sola herramienta, buscamos a los usuarios especializados y que tengan menos solicitudes pendientes y en proceso.
 
-						$usuarios = User::buscarUsuariosDisponiblesPorHerramienta($idherramienta,$idaccion)->get();	
+						$usuarios = User::buscarUsuariosAsignacionPorHerramienta($idherramienta,$idaccion);	
 
-						if($usuarios ==null || $usuarios->isEmpty())
+						if(is_array($usuarios) == true) //hay usuarios
 						{
-							//como no hay usuarios que tengan solicitudes entonces se utiliza cualquiera
-							$usuarios = User::buscarUsuariosPorHerramienta($idherramienta,$idaccion)->get();
-
-							if(!$usuarios ==null && !$usuarios->isEmpty())
-								$usuario_apto = $usuarios[0];
-
-						}else{
-
-							$usuarios_libres = User::buscarUsuariosLibresPorHerramienta($idherramienta,$idaccion)->get();							
-
-							if($usuarios_libres == null || $usuarios_libres->isEmpty())
-							{
-								$usuario_apto = $usuarios[0];
-							}
-							else
-							{
-								$usuario_apto = $usuarios_libres[0];
-							}
+							$usuario_apto = User::find($usuarios[0]->id_usuario);
+						}else
+						{
+							$usuario_apto = null;
 						}	
 						
 					}
@@ -159,7 +132,7 @@ class AsignacionController extends BaseController {
 
 					
 					$usuariosxasignacion = new UsuariosXAsignacion;
-					$usuariosxasignacion->idusuario_asignado = $usuario_apto->iduser;
+					$usuariosxasignacion->idusuario_asignado = $usuario_apto->id;
 					$usuariosxasignacion->idasignacion = $asignacion->idasignacion;
 					$usuariosxasignacion->motivo_asignacion = "Primera asignación";
 					$usuariosxasignacion->estado_usuario_asignado = 1; //1: activo 0: inactivado (se hace reasignacion)

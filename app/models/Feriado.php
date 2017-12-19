@@ -36,4 +36,13 @@ class Feriado extends Eloquent implements UserInterface, RemindableInterface {
 		$query->select('fecha_feriado.*');
 		return $query;
 	}
+
+	public function scopeBuscarDiasFeriados($query,$fecha_inicio,$fecha_fin)
+	{
+		$query->where('fecha_feriado.valor_fecha','<=',date('Y-m-d H:i:s',strtotime($fecha_fin)));
+		$query->where('fecha_feriado.valor_fecha','>=',date('Y-m-d H:i:s',strtotime($fecha_inicio)));
+		$query->whereDay('fecha_feriado.valor_fecha','!=','00');
+		$query->select('fecha_feriado.*');
+		return $query;
+	}
 }
