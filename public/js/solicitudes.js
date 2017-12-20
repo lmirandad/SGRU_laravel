@@ -16,11 +16,13 @@ $( document ).ready(function(){
 	 if($('#search_datetimepicker1').length && $('#search_datetimepicker2').length){
         $('#search_datetimepicker1').datetimepicker({
      		ignoreReadonly: true,
-     		format:'DD-MM-YYYY'
+     		format:'DD-MM-YYYY',
+     		locale:'es',
      	});
         $('#search_datetimepicker2').datetimepicker({
             ignoreReadonly: true,
-            format:'DD-MM-YYYY'
+            format:'DD-MM-YYYY',
+            locale:'es',
         });
         $("#search_datetimepicker1").on("dp.change", function (e) {
             $('#search_datetimepicker2').data("DateTimePicker").minDate(e.date);
@@ -34,10 +36,13 @@ $( document ).ready(function(){
     	mostrar_usuarios_disponibles();
     });
   
-	
-
-    
-
+	if($('#datetimepicker_creacion_solicitud').length){
+        $('#datetimepicker_creacion_solicitud').datetimepicker({
+     		ignoreReadonly: true,
+     		format:'DD-MM-YYYY',
+     		locale:'es',
+     	});
+     }
 
 	$('#btnCargar').click(function(){
 		BootstrapDialog.confirm({
@@ -81,6 +86,129 @@ $( document ).ready(function(){
 		$('#search_tipo_solicitud').val(0);
 		$('#search_estado_solicitud').val(0);
 		$('#search_sector').val(0);
+	});
+
+	$('#slcSector').on('change',function(){
+		$('#slcCanal')[0].options.length = 0;
+		$('#slcEntidad')[0].options.length = 0;
+		$('#slcEntidad')[0].options.add(new Option("Seleccione",""));
+		$('#slcHerramienta')[0].options.length = 0;
+		idsector = $('#slcSector').val(); 
+		if( idsector != ''){
+			$.ajax({
+	            url: inside_url+'sectores/mostrar_canales_herramientas',
+	            type: 'POST',
+	            data: { 'sector_id' : idsector,	            		
+	                },
+	            beforeSend: function(){
+	                $(".loader_container").show();
+	            },
+	            complete: function(){
+	                $(".loader_container").hide();
+	            },
+	            success: function(response){
+	                if(response.success){
+	                	canales = response["canales"];
+	                	if (canales != null)
+	                	{
+		                	size_canales = canales.length;
+		                	$('#slcCanal')[0].options.add(new Option("Seleccione",""));
+		                	for(i=0;i<size_canales;i++){
+		                		$('#slcCanal')[0].options.add(new Option(canales[i].nombre,canales[i].idcanal));
+		                	}
+		                }else{
+		                	$('#slcCanal')[0].options.add(new Option("Seleccione",""));
+		                }
+
+		                herramientas = response["herramientas"];
+
+		                if (herramientas != null)
+	                	{
+		                	size_herramientas = herramientas.length;
+		                	$('#slcHerramienta')[0].options.add(new Option("Seleccione",""));
+		                	for(i=0;i<size_herramientas;i++){
+		                		$('#slcHerramienta')[0].options.add(new Option(herramientas[i].nombre,herramientas[i].idherramienta));
+		                	}
+		                }else{
+		                	$('#slcHerramienta')[0].options.add(new Option("Seleccione",""));
+		                }
+	                	
+	                }else{
+	                	
+	                    alert('La petición no se pudo completar, inténtelo de nuevo.');
+	                }
+	            },
+	            error: function(){
+	                alert('La petición no se pudo completar, inténtelo de nuevo.');
+	            }
+	        });
+		}else{
+			$('#slcCanal')[0].options.add(new Option("Seleccione",""));
+			$('#slcHerramienta')[0].options.add(new Option("Seleccione",""));
+		}
+		
+	});
+
+	$('#slcCanal').on('change',function(){
+		$('#slcEntidad')[0].options.length = 0;
+		idcanal = $('#slcCanal').val(); 
+		if( idsector != ''){
+			$.ajax({
+	            url: inside_url+'entidades/mostrar_entidades',
+	            type: 'POST',
+	            data: { 'canal_id' : idcanal,	            		
+	                },
+	            beforeSend: function(){
+	                $(".loader_container").show();
+	            },
+	            complete: function(){
+	                $(".loader_container").hide();
+	            },
+	            success: function(response){
+	                if(response.success){
+	                	entidades = response["entidades"];
+	                	if (entidades != null)
+	                	{
+		                	size_entidades = entidades.length;
+		                	$('#slcEntidad')[0].options.add(new Option("Seleccione",""));
+		                	for(i=0;i<size_entidades;i++){
+		                		$('#slcEntidad')[0].options.add(new Option(entidades[i].nombre,entidades[i].identidad));
+		                	}
+		                }else{
+		                	$('#slcEntidad')[0].options.add(new Option("Seleccione",""));
+		                }
+	                	
+	                }else{
+	                	
+	                    alert('La petición no se pudo completar, inténtelo de nuevo.');
+	                }
+	            },
+	            error: function(){
+	                alert('La petición no se pudo completar, inténtelo de nuevo.');
+	            }
+	        });
+		}else{
+			$('#slcEntidad')[0].options.add(new Option("Seleccione",""));
+		}
+		
+	});
+
+	if($('#codigo_solicitud').length)
+		$('#codigo_solicitud').prop('maxLength', '6');
+
+	$('#btnCrearSolicitud').click(function(){
+		BootstrapDialog.confirm({
+			title: 'Mensaje de Confirmación',
+			message: '¿Está seguro que desea realizar esta acción?', 
+			type: BootstrapDialog.TYPE_INFO,
+			btnCancelLabel: 'Cancelar', 
+	    	btnOKLabel: 'Aceptar', 
+			callback: function(result){
+		        if(result) {
+					document.getElementById("submit-crear-solicitud").submit();
+				}
+			}
+		});
 	});
 
 });
@@ -135,5 +263,5 @@ function mostrar_usuarios_disponibles(e,idsolicitud){
 		}
 	});
 			
-
 }
+

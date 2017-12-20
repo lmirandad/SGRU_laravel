@@ -338,11 +338,18 @@ class SolicitudController extends BaseController {
 					}else if($resultado == -1)
 					{
 						$idherramienta = 0; //REPRESENTA NO DETECCION DE HERRAMIENTA
+
 					}else{
 						$idherramienta = $resultado;
 					}
 
-					$herramienta = Herramienta::find($idherramienta);
+					if($idherramienta == 0)
+					{
+						$obj_log["descripcion"] = "El sistema no puede detectar la herramienta(s) solicitadas.";
+						array_push($logs_errores,$obj_log);
+						continue;
+					}else
+						$herramienta = Herramienta::find($idherramienta);
 
 					//2.5 Luego de estas validaciones se deberá revisar si la solicitud ya existe 
 					$solicitud = Solicitud::buscarPorCodigoSolicitud($codigo_solicitud_ingresar)->get();
@@ -387,11 +394,7 @@ class SolicitudController extends BaseController {
 				$data["cantidad_procesados"] = $cantidad_registros_procesados;
 				$data["cantidad_total"] = $cantidad_registros_totales-2;				
 
-				//$array_l = User::buscarUsuariosReasignacionPorSector(2);
-				/*echo '<pre>';
-				var_dump($array_l[0]->nombre_usuario);
-				echo '</pre>';*/
-
+				
 				return View::make('Solicitudes/cargarSolicitudes',$data);
 			}else{
 				return View::make('error/error',$data);
@@ -735,6 +738,183 @@ class SolicitudController extends BaseController {
 					Session::flash('message', 'Se realizó correctamente la reasignación.');
 					
 					return Redirect::to('solicitudes/mostrar_solicitud/'.$idsolicitud);
+				}
+			}else{
+				return View::make('error/error',$data);
+			}
+
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function crear_solicitud()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				$data["sectores"] = Sector::lists('nombre','idsector');
+				$data["tipos_solicitud"] = TipoSolicitud::lists('nombre','idtipo_solicitud');
+				$data["estados_solicitud"] = EstadoSolicitud::lists('nombre','idestado_solicitud');
+				$data["tipos_solicitud_general"] = TipoSolicitudGeneral::lists('nombre','idtipo_solicitud_general');
+				return View::make('Solicitudes/crearSolicitud',$data);
+			}else{
+				return View::make('error/error',$data);
+			}
+
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function submit_crear_solicitud()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				// Validate the info, create rules for the inputs
+				
+				$attributes = array(
+					'codigo_solicitud' => 'Código de Solicitud',
+					'fecha_solicitud' => 'Fecha de la Solicitud',
+					'tipo_solicitud_general' => 'Tipo de Solicitud',
+					'estado_solicitud' => 'Estado de la Solicitud',
+					'tipo_solicitud' => 'Tipo de Solicitud (Acción)',
+					'asunto' => 'Asunto',
+					'sector' => 'Sector',
+					'canal' => 'Canal',
+					'entidad' => 'Entidad',
+					'herramienta' => 'Aplicativo',
+				);
+
+				$messages = array();
+
+				$rules = array(
+					'codigo_solicitud' => 'numeric|digits:6|required|unique:solicitud,codigo_solicitud',
+					'fecha_solicitud' => 'required',
+					'tipo_solicitud_general' => 'required',
+					'estado_solicitud' => 'required',
+					'tipo_solicitud' => 'required',
+					'asunto' => 'alpha_num_spaces_slash_dash_enter|max:200|required',
+					'sector' => 'required',
+					'canal' => 'required',
+					'entidad' => 'required',
+					'herramienta' => 'required',
+				);
+				// Run the validation rules on the inputs from the form
+				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);
+				// If the validator fails, redirect back to the form
+				if($validator->fails()){
+					return Redirect::to('solicitudes/crear_solicitud')->withErrors($validator)->withInput(Input::all());
+				}else{
+					
+					$codigo_solicitud = Input::get('codigo_solicitud');
+					$fecha_solicitud = date('Y-m-d H:i:s',strtotime(Input::get('fecha_solicitud')));
+					$idtipo_solicitud_general = Input::get('tipo_solicitud_general');
+					$idestado_solicitud = Input::get('estado_solicitud');
+					$idaccion = Input::get('tipo_solicitud');
+					$asunto = Input::get('asunto');
+					$idsector = Input::get('sector');
+					$idcanal = Input::get('canal');
+					$identidad = Input::get('canal');
+					$idherramienta = Input::get('herramienta');
+
+					$solicitud = new Solicitud;
+					$solicitud->codigo_solicitud = $codigo_solicitud;
+					$solicitud->fecha_solicitud = $fecha_solicitud;
+					$solicitud->asunto = $asunto;
+					$solicitud->idherramienta = $idherramienta;
+					$solicitud->identidad = $identidad;
+					$solicitud->idtipo_solicitud_general = $idtipo_solicitud_general;
+					$solicitud->idtipo_solicitud = $idaccion;
+
+					if($idestado_solicitud != 3)
+					{
+						Session::flash('error', 'Solo se pueden registrar solicitudes en estado Pendiente.');				
+						return Redirect::to('solicitudes/crear_solicitud');
+					}
+
+					$solicitud->idestado_solicitud = $idestado_solicitud;
+					$solicitud->iduser_created_by = $data["user"]->id;
+
+					//BUSCANDO EL SLA
+
+					$sla = TipoSolicitudXSla::buscarSlaPorSectorHerramientaAccion($idsector,$idherramienta,$idaccion)->get();
+
+					if($sla==null || $sla->isEmpty())
+					{
+						Session::flash('error', 'No existe un SLA en el sistema para realizar la creación.');				
+						//return Redirect::to('solicitudes/crear_solicitud');
+					}
+
+					$solicitud->idsla = $sla[0]->idsla;
+
+					//BUSCANDO AL USUARIO PARA ASIGNAR
+					$usuarios = null;
+
+					//En caso solo se tenga varias herramientas, se debe buscar a los usuarios del sector, que tengan menos solicitudes pendientes y en proceso.
+					$usuario_apto = null;
+					if($idherramienta == 39){
+						//herramienta representada para "VARIOS"
+						
+						$usuarios = User::buscarUsuariosAsignacionPorSector($idsector);	
+				
+						if(is_array($usuarios) == true) //hay usuarios
+						{
+							$usuario_apto = User::find($usuarios[0]->id_usuario);
+						}else
+						{
+							$usuario_apto = null;
+						}
+						
+					}else{
+
+						//como solo tiene una sola herramienta, buscamos a los usuarios especializados y que tengan menos solicitudes pendientes y en proceso.
+
+						$usuarios = User::buscarUsuariosAsignacionPorHerramienta($idherramienta,$idaccion);	
+
+						if(is_array($usuarios) == true) //hay usuarios
+						{
+							$usuario_apto = User::find($usuarios[0]->id_usuario);
+						}else
+						{
+							$usuario_apto = null;
+						}	
+						
+					}
+
+					
+					if($usuario_apto == null){
+						Session::flash('error', 'No se cuenta con un usuario para asignar.');				
+						return Redirect::to('solicitudes/crear_solicitud');
+					}
+					
+					$solicitud->save();
+
+					//ASIGNACION
+					$asignacion = new Asignacion;
+					$asignacion->fecha_asignacion = date('Y-m-d H:i:s');
+					$asignacion->idestado_asignacion = 2;//Realizado
+					$asignacion->iduser_created_by = $data["user"]->id;
+					$asignacion->idsolicitud = $solicitud->idsolicitud;
+					$asignacion->save();
+
+					
+					$usuariosxasignacion = new UsuariosXAsignacion;
+					$usuariosxasignacion->idusuario_asignado = $usuario_apto->id;
+					$usuariosxasignacion->idasignacion = $asignacion->idasignacion;
+					$usuariosxasignacion->motivo_asignacion = "Primera asignación";
+					$usuariosxasignacion->estado_usuario_asignado = 1; //1: activo 0: inactivado (se hace reasignacion)
+					$usuariosxasignacion->iduser_created_by = $data["user"]->id;
+					$usuariosxasignacion->save();
+
+					
+					Session::flash('message', 'Se creó la solicitud con éxito.');					
+					return Redirect::to('solicitudes/listar_solicitudes');
 				}
 			}else{
 				return View::make('error/error',$data);

@@ -245,6 +245,25 @@ class EntidadController extends BaseController {
 		
 	}
 
+	public function mostrar_entidades(){
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		// Check if the current user is the "System Admin"
+		$canal_id = Input::get('canal_id');
+		$entidades = Entidad::buscarEntidadesPorIdCanal($canal_id)->get();
+		
+		
+		if($entidades==null || $entidades->isEmpty())
+			return Response::json(array( 'success' => true,'entidades'=>null),200);		
+
+		return Response::json(array( 'success' => true,'entidades' => $entidades),200);			
+		
+	}
+
 	public function submit_inhabilitar_entidad()
 	{
 		if(Auth::check()){

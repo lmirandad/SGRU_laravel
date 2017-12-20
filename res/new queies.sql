@@ -186,6 +186,8 @@ join asignacion on (solicitud.idsolicitud = asignacion.idsolicitud)
 join usuariosxasignacion on (usuariosxasignacion.idasignacion = asignacion.idasignacion)
 join users on (users.id = usuariosxasignacion.idusuario_asignado)
 where usuariosxasignacion.estado_usuario_asignado = 1
+and month(solicitud.fecha_solicitud) = 12
+and year(solicitud.fecha_solicitud) = 2017
 group by CONCAT(users.nombre,' ',users.apellido_paterno,' ',users.apellido_materno)
 order by total DESC
 
@@ -202,7 +204,27 @@ where usuariosxasignacion.estado_usuario_asignado = 1
 group by sector.nombre ,CONCAT(users.nombre,' ',users.apellido_paterno,' ',users.apellido_materno)
 order by cantidad_total DESC
 
-SELECT * from solicitud
+SELECT * from solicitud;
+
 UPDATE solicitud
-set codigo_solicitud = 255003
-where idsolicitud = 21
+set idestado_solicitud = 3
+where idsolicitud = 3
+
+truncate table base_recibo_noviembre
+
+BULK
+INSERT base_recibo_octubre
+FROM 'C:\Users\lmirandadu\Escritorio\base_octubre.csv'
+WITH
+(
+FIELDTERMINATOR = '|',
+ROWTERMINATOR = '\n',
+FIRSTROW = 2
+)
+
+TRUNCATE TABLE base_recibo_octubre
+SELECT * INTO base_recibo_octubre FROM base_recibo_noviembre
+
+SELECT FLAG_DEPENDENCIA,ESTADO_DE_GESTION_1,GESTION,AFILIACION_A_FACTURA_DIGITAL FROM base_recibo_noviembre
+
+SELECT NUMERO_DE_DOCUMENTO,CODIGO_PEDIDO INTO base_recibo_octubre_final FROM base_recibo_octubre ORDER BY NUMERO_DE_DOCUMENTO

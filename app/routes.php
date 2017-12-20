@@ -32,6 +32,7 @@ Route::group(array('prefix'=>'principal','before'=>'auth'),function(){
 	Route::get('/buscar_solicitudes_usuario','MenuPrincipalController@buscar_solicitudes_usuario');
 	Route::get('/buscar_solicitud_codigo','MenuPrincipalController@buscar_solicitud_codigo');
 	Route::get('/resumen_usuarios','MenuPrincipalController@resumen_usuarios');
+	Route::get('/resumen_usuarios_mes','MenuPrincipalController@resumen_usuarios_mes');
 	
 });
 
@@ -93,6 +94,7 @@ Route::group(array('prefix'=>'sectores', 'before'=>'auth'),function(){
 	Route::post('/submit_inhabilitar_sector','SectorController@submit_inhabilitar_sector');
 	Route::get('/mostrar_herramientas_sector/{id}','SectorController@mostrar_herramientas_sector');
 	Route::post('/submit_agregar_herramientas','SectorController@submit_agregar_herramientas');
+	Route::post('/mostrar_canales_herramientas','SectorController@mostrar_canales_herramientas');
 	
 });
 
@@ -117,6 +119,7 @@ Route::group(array('prefix'=>'entidades', 'before'=>'auth'),function(){
 	Route::get('/buscar_entidades','EntidadController@buscar_entidades');
 	Route::get('/mostrar_entidad/{id}','EntidadController@mostrar_entidad');
 	Route::post('/mostrar_canales','EntidadController@mostrar_canales');
+	Route::post('/mostrar_entidades','EntidadController@mostrar_entidades');
 	Route::post('/submit_habilitar_entidad','EntidadController@submit_habilitar_entidad');
 	Route::post('/submit_inhabilitar_entidad','EntidadController@submit_inhabilitar_entidad');
 });
@@ -145,6 +148,9 @@ Route::group(array('prefix'=>'solicitudes', 'before'=>'auth'),function(){
 	Route::post('/obtener_herramientas','SolicitudController@obtener_herramientas');
 	Route::post('/mostrar_usuarios_disponibles_reasignacion','SolicitudController@mostrar_usuarios_disponibles_reasignacion');
 	Route::post('/submit_reasignar_solicitud','SolicitudController@submit_reasignar_solicitud');
+	Route::get('/crear_solicitud','SolicitudController@crear_solicitud');
+	Route::post('/submit_crear_solicitud','SolicitudController@submit_crear_solicitud');	
+	
 });
 
 /*TIPOS_SOLICITUD*/

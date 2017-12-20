@@ -31,6 +31,7 @@
 	<script src="{{asset('assets/js/klorofil-common.js')}}"></script>	
 	<script src="{{asset('assets/bootstrap/js/moment.min.js')}}"></script>		
 	<script src="{{asset('assets/bootstrap/js/bootstrap-datetimepicker.min.js')}}"></script>
+	<script src="{{asset('assets/bootstrap/js/locale-es.js')}}"></script>
 	<script src="../../vendor/kartik-v/bootstrap-fileinput/js/fileinput.min.js"></script>
 	<script src="../../vendor/kartik-v/bootstrap-fileinput/js/locales/es.js"></script>	
 	<script src="{{asset('js/solicitudes.js')}}"></script>

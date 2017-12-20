@@ -140,8 +140,10 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 
 		$query->where('solicitud.idestado_solicitud','=',$idestado_solicitud);
 		
-		$query->whereMonth('solicitud.fecha_solicitud','=',$mes_actual);
-		$query->whereYear('solicitud.fecha_solicitud','=',$anho_actual);
+		if($mes_actual != null)
+			$query->whereMonth('solicitud.fecha_solicitud','=',$mes_actual);
+		if($anho_actual != null)
+			$query->whereYear('solicitud.fecha_solicitud','=',$anho_actual);
 
 		
 		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','herramienta.nombre as nombre_herramienta');
@@ -160,10 +162,13 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->join('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
 
 		$query->where('solicitud.idestado_solicitud','=',$idestado_solicitud);
-		$query->where('usuariosxasignacion.idusuario_asignado','=',$idusuario);
 		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
-		$query->whereMonth('solicitud.fecha_solicitud','=',$mes_actual);
-		$query->whereYear('solicitud.fecha_solicitud','=',$anho_actual);
+		if($idusuario != null)
+			$query->where('usuariosxasignacion.idusuario_asignado','=',$idusuario);
+		if($mes_actual != null)
+			$query->whereMonth('solicitud.fecha_solicitud','=',$mes_actual);
+		if($anho_actual != null)
+			$query->whereYear('solicitud.fecha_solicitud','=',$anho_actual);
 		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','herramienta.nombre as nombre_herramienta');
 		return $query;
 	}
@@ -204,6 +209,50 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		join sector on (sector.idsector = canal.idsector)
 		group by sector.nombre
 		order by nombre_sector DESC');
+	}
+
+	public function scopeBuscarResumenSolicitudesPorUsuarioPorFecha($query,$mes,$anho)
+	{
+		return DB::select('Select CONCAT(users.nombre,\' \',users.apellido_paterno,\' \',users.apellido_materno) nombre_usuario,count(codigo_solicitud) cantidad_total, sum(case when solicitud.idestado_solicitud = 3 then 1 else 0 end) cantidad_pendientes,sum(case when solicitud.idestado_solicitud = 4 then 1 else 0 end) cantidad_procesando
+			FROM solicitud
+			join asignacion on (solicitud.idsolicitud = asignacion.idsolicitud)
+			join usuariosxasignacion on (usuariosxasignacion.idasignacion = asignacion.idasignacion)
+			join users on (users.id = usuariosxasignacion.idusuario_asignado)
+			where usuariosxasignacion.estado_usuario_asignado = 1
+			and month(solicitud.fecha_solicitud) = '.$mes.
+			' and year(solicitud.fecha_solicitud) = '.$anho.
+			' group by CONCAT(users.nombre,\' \',users.apellido_paterno,\' \',users.apellido_materno)
+			order by cantidad_total DESC');
+	}
+
+	public function scopeBuscarResumenSolicitudesPorSectorPorUsuarioPorFecha($query,$mes,$anho)
+	{
+		return DB::select('Select sector.nombre nombre_sector, CONCAT(users.nombre,\' \',users.apellido_paterno,\' \',users.apellido_materno) nombre_usuario ,count(codigo_solicitud) cantidad_total, sum(case when solicitud.idestado_solicitud = 3 then 1 else 0 end) cantidad_pendientes,sum(case when solicitud.idestado_solicitud = 4 then 1 else 0 end) cantidad_procesando
+			FROM solicitud
+			join asignacion on (solicitud.idsolicitud = asignacion.idsolicitud)
+			join usuariosxasignacion on (usuariosxasignacion.idasignacion = asignacion.idasignacion)
+			join users on (users.id = usuariosxasignacion.idusuario_asignado)
+			join entidad on (entidad.identidad = solicitud.identidad)
+			join canal on (canal.idcanal = entidad.idcanal)
+			join sector on (sector.idsector = canal.idsector)
+			where usuariosxasignacion.estado_usuario_asignado = 1
+			and month(solicitud.fecha_solicitud) = '.$mes.
+			' and year(solicitud.fecha_solicitud) = '.$anho.
+			' group by sector.nombre ,CONCAT(users.nombre,\' \',users.apellido_paterno,\' \',users.apellido_materno)
+			order by nombre_sector DESC');
+	}
+
+	public function scopeBuscarResumenSolicitudesPorSectorPorFecha($query,$mes,$anho)
+	{
+		return DB::select('Select sector.nombre nombre_sector,count(codigo_solicitud) cantidad_total, sum(case when solicitud.idestado_solicitud = 3 				then 1 else 0 end) cantidad_pendientes,sum(case when solicitud.idestado_solicitud = 4 then 1 else 0 end) cantidad_procesando 
+			FROM solicitud
+			join entidad on (entidad.identidad = solicitud.identidad)
+			join canal on (canal.idcanal = entidad.idcanal)
+			join sector on (sector.idsector = canal.idsector)
+			where month(solicitud.fecha_solicitud) = '.$mes.
+			' and year(solicitud.fecha_solicitud) = '.$anho.
+			' group by sector.nombre
+			order by nombre_sector DESC');
 	}
 
 }

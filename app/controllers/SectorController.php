@@ -443,7 +443,27 @@ class SectorController extends BaseController {
 		}
 	}
 
+	public function mostrar_canales_herramientas(){
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		// Check if the current user is the "System Admin"
+		$sector_id = Input::get('sector_id');
+		$canales = Canal::buscarCanalesPorIdSector($sector_id)->get();
+		$herramientas = HerramientaXSector::buscarHerramientasPorIdSector($sector_id)->get();
+		
+		if($canales==null || $canales->isEmpty())
+			$canales = null;
 
+		if($herramientas==null || $herramientas->isEmpty())
+			$herramientas = null;
+
+		return Response::json(array( 'success' => true,'canales' => $canales, 'herramientas' => $herramientas),200);			
+		
+	}
 	
 
 }
