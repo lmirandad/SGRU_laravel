@@ -164,6 +164,7 @@
 											<th class="text-nowrap text-center">Estado</th>
 											<th class="text-nowrap text-center">Herramienta</th>
 											<th class="text-nowrap text-center">SLA</th>
+											<th class="text-nowrap text-center">Días Laborables</th>
 											<th class="text-nowrap text-center">SEMÁFORO</th>
 										</tr>
 									</thead>
@@ -253,6 +254,9 @@
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
+												{{$diferencia_fechas_trabajo_pendiente[$index]}}
+											</td>
+											<td class="text-nowrap text-center">
 												@if($solicitud_data->idestado_solicitud == 3) <!-- PENDIENTE -->
 													@if( $diferencia_fechas_trabajo_pendiente[$index] < $slas_data_pendiente[$index]->sla_pendiente )
 													 	<!-- VERDE -->
@@ -310,6 +314,9 @@
 												@elseif ($solicitud_data->idestado_solicitud == 4) <!-- PROCESANDO -->
 													{{$slas_data_procesando[$index]->sla_procesando}}
 												@endif
+											</td>
+											<td class="text-nowrap text-center">
+												{{$diferencia_fechas_trabajo_procesando[$index]}}
 											</td>
 											<td class="text-nowrap text-center">
 												@if($solicitud_data->idestado_solicitud == 3) <!-- PENDIENTE -->
