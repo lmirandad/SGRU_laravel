@@ -150,6 +150,7 @@ Route::group(array('prefix'=>'solicitudes', 'before'=>'auth'),function(){
 	Route::post('/submit_reasignar_solicitud','SolicitudController@submit_reasignar_solicitud');
 	Route::get('/crear_solicitud','SolicitudController@crear_solicitud');
 	Route::post('/submit_crear_solicitud','SolicitudController@submit_crear_solicitud');	
+	Route::post('/submit_anular_solicitud','SolicitudController@submit_anular_solicitud');	
 	
 });
 
@@ -183,4 +184,16 @@ Route::group(array('prefix'=>'feriados', 'before'=>'auth'),function(){
 	Route::post('/submit_crear_feriado','FeriadoController@submit_crear_feriado');
 	Route::post('/submit_eliminar_feriado','FeriadoController@submit_eliminar_feriado');
 	Route::get('/buscar_feriados','FeriadoController@buscar_feriados');
+});
+
+/*USUARIOS OBSERVADOS / VENA */
+Route::group(array('prefix'=>'usuarios_observados_vena', 'before'=>'auth'),function(){
+	Route::get('/cargar_usuarios_observados_vena','UsuariosObservadosVenaController@cargar_usuarios_observados_vena');
+	Route::post('/submit_cargar_observados','UsuariosObservadosVenaController@submit_cargar_observados');
+	Route::post('/submit_cargar_vena','UsuariosObservadosVenaController@submit_cargar_vena');
+	Route::post('/descargar_logs_observados','UsuariosObservadosVenaController@descargar_logs_observados');
+	Route::post('/submit_cargar_vena','UsuariosObservadosVenaController@submit_cargar_vena');
+	Route::post('/descargar_logs_vena','UsuariosObservadosVenaController@descargar_logs_vena');
+	Route::post('/submit_base_observados','UsuariosObservadosVenaController@submit_base_observados');
+	Route::post('/submit_base_vena','UsuariosObservadosVenaController@submit_base_vena');
 });

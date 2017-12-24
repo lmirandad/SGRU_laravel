@@ -6,6 +6,10 @@ $( document ).ready(function(){
 		locale:'es',
 	});
 
+	$("#datetimepicker1").on("dp.change", function (e) {
+            $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
+        });
+
 
 
 	$('#btnCrear').click(function(){
@@ -189,6 +193,10 @@ $( document ).ready(function(){
 		}
 	});
 
+	if($('#telefono_contacto').length)
+	{	
+		$( "#telefono_contacto" ).prop('maxLength', '9');
+	}
 	
 	$('#btnAgregarHerramientaSubmit').click(function(){
 		agregarNuevasHerramientas();
@@ -275,18 +283,36 @@ function eliminar_herramienta(e,id){
 						//$(this).prop('disabled',false);
 					},
 					success: function(response){
-						dialog = BootstrapDialog.show({
-				            title: 'Mensaje',
-				            message: 'Se eliminó la herramienta '+response["nombre_herramienta"]+ ' del usuario',
-				            type : BootstrapDialog.TYPE_SUCCESS,
-				            buttons: [{
-				                label: 'Entendido',
-				                action: function(dialog) {
-				                    var url = inside_url + "usuarios/mostrar_herramientas_usuario/"+usuario_id;
-									window.location = url;
-				                }
-				            }]
-				        });
+						if(response["tiene_solicitudes"] == false){
+							dialog = BootstrapDialog.show({
+					            title: 'Mensaje',
+					            message: 'Se eliminó la herramienta '+response["nombre_herramienta"]+ ' del usuario',
+					            type : BootstrapDialog.TYPE_SUCCESS,
+					            buttons: [{
+					                label: 'Entendido',
+					                action: function(dialog) {
+					                    var url = inside_url + "usuarios/mostrar_herramientas_usuario/"+usuario_id;
+										window.location = url;
+					                }
+					            }]
+					        });
+					    }
+						else
+						{
+							dialog = BootstrapDialog.show({
+					            title: 'Mensaje',
+					            message: 'No se pudo eliminar el aplicativo. Existen solicitudes pendientes o procesando sobre esta herramienta',
+					            type : BootstrapDialog.TYPE_DANGER,
+					            buttons: [{
+					                label: 'Entendido',
+					                action: function(dialog) {
+					                    var url = inside_url + "usuarios/mostrar_herramientas_usuario/"+usuario_id;
+										window.location = url;
+					                }
+					            }]
+					        });
+						}
+
 						
 					},
 					error: function(){
@@ -321,18 +347,37 @@ function eliminar_sector(e,id){
 						//$(this).prop('disabled',false);
 					},
 					success: function(response){
-						dialog = BootstrapDialog.show({
-				            title: 'Mensaje',
-				            message: 'Se eliminó el sector '+response["nombre_sector"]+ ' del usuario',
-				            type : BootstrapDialog.TYPE_SUCCESS,
-				            buttons: [{
-				                label: 'Entendido',
-				                action: function(dialog) {
-				                    var url = inside_url + "usuarios/mostrar_sectores_usuario/"+usuario_id;
-									window.location = url;
-				                }
-				            }]
-				        });
+
+						if(response["tiene_solicitudes"] == false)
+						{
+							dialog = BootstrapDialog.show({
+					            title: 'Mensaje',
+					            message: 'Se eliminó el sector '+response["nombre_sector"]+ ' del usuario',
+					            type : BootstrapDialog.TYPE_SUCCESS,
+					            buttons: [{
+					                label: 'Entendido',
+					                action: function(dialog) {
+					                    var url = inside_url + "usuarios/mostrar_sectores_usuario/"+usuario_id;
+										window.location = url;
+					                }
+					            }]
+					        });
+						}else
+						{
+							dialog = BootstrapDialog.show({
+					            title: 'Mensaje',
+					            message: 'No se pudo eliminar el sector. Existen solicitudes pendientes o procesando sobre este sector.',
+					            type : BootstrapDialog.TYPE_DANGER,
+					            buttons: [{
+					                label: 'Entendido',
+					                action: function(dialog) {
+					                    var url = inside_url + "usuarios/mostrar_sectores_usuario/"+usuario_id;
+										window.location = url;
+					                }
+					            }]
+					        });
+						}
+						
 						
 					},
 					error: function(){

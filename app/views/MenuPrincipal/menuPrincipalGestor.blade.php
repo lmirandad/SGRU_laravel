@@ -69,7 +69,6 @@
 											<th class="text-nowrap text-center">Tipo</th>
 											<th class="text-nowrap text-center">Herramienta</th>
 											<th class="text-nowrap text-center">SLA</th>
-											<th class="text-nowrap text-center">Dias Laborables</th>
 											<th class="text-nowrap text-center">SEMÁFORO</th>
 											<th class="text-nowrap text-center">Requerimientos</th>
 										</tr>
@@ -100,7 +99,7 @@
 											</td>
 											<td class="text-nowrap text-center">
 												{{$diferencia_fechas_trabajo_pendiente[$index]}}									
-											</td>											 
+											</td>
 											<td class="text-nowrap text-center">
 												@if( $diferencia_fechas_trabajo_pendiente[$index] < $slas_data_pendiente[$index]->sla_pendiente )
 												 	<!-- VERDE -->
@@ -158,7 +157,6 @@
 											<th class="text-nowrap text-center">Tipo</th>
 											<th class="text-nowrap text-center">Herramienta</th>
 											<th class="text-nowrap text-center">SLA</th>
-											<th class="text-nowrap text-center">Días Laborables</th>
 											<th class="text-nowrap text-center">SEMÁFORO</th>
 										</tr>
 									</thead>

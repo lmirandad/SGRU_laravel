@@ -799,7 +799,7 @@ class SolicitudController extends BaseController {
 					'tipo_solicitud_general' => 'required',
 					'estado_solicitud' => 'required',
 					'tipo_solicitud' => 'required',
-					'asunto' => 'alpha_num_spaces_slash_dash_enter|max:200|required',
+					'asunto' => 'alpha_num_spaces_slash_dash|max:200|required',
 					'sector' => 'required',
 					'canal' => 'required',
 					'entidad' => 'required',
@@ -915,6 +915,51 @@ class SolicitudController extends BaseController {
 					
 					Session::flash('message', 'Se creó la solicitud con éxito.');					
 					return Redirect::to('solicitudes/listar_solicitudes');
+				}
+			}else{
+				return View::make('error/error',$data);
+			}
+
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function submit_anular_solicitud()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 2){
+				// Validate the info, create rules for the inputs
+				$idsolicitud = Input::get('solicitud_id');
+
+				$attributes = array(
+					'motivo_anulacion' => 'Motivo Anulación',
+				);
+
+				$messages = array();
+
+				$rules = array(
+					'motivo_anulacion' => 'alpha_num_spaces_slash_dash_enter|max:200',
+				);
+				// Run the validation rules on the inputs from the form
+				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);
+				// If the validator fails, redirect back to the form
+				if($validator->fails()){
+					return Redirect::to('solicitudes/mostrar_solicitud/'.$idsolicitud)->withErrors($validator)->withInput(Input::all());
+				}else{
+					
+					$solicitud = Solicitud::find($idsolicitud);
+					$solicitud->motivo_anulacion = Input::get('motivo_anulacion');
+					$solicitud->idestado_solicitud = 6;
+
+					$solicitud->save();
+
+					Session::flash('message', 'Se realizó correctamente la anulación.');
+					
+					return Redirect::to('solicitudes/mostrar_solicitud/'.$idsolicitud);
 				}
 			}else{
 				return View::make('error/error',$data);

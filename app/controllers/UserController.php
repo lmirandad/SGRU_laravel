@@ -110,7 +110,7 @@ class UserController extends BaseController {
 							'genero' => 'required',
 							'fecha_nacimiento' => 'required',
 							'email' => 'required|email|max:45',							
-							'telefono' => 'required|min:7|max:20|alpha_num_dash',
+							'telefono' => 'required|numeric',
 							'rol' => 'required',
 						);
 				// Run the validation rules on the inputs from the form
@@ -136,9 +136,7 @@ class UserController extends BaseController {
 					$user->fecha_nacimiento = date('Y-m-d H:i:s',strtotime(Input::get('fecha_nacimiento')));
 					$user->iduser_created_by = $data["user"]->id;
 					$user->save();					
-					Session::flash('message', 'Se registró correctamente al usuario.');
-					
-					return Redirect::to('usuarios/crear_usuario');
+					return Redirect::to('usuarios/listar_usuarios')->with('message', 'Se creó correctamente el usuario');
 				}
 			}else{
 				return View::make('error/error',$data);
@@ -292,7 +290,7 @@ class UserController extends BaseController {
 							'genero' => 'required',
 							'fecha_nacimiento' => 'required',
 							'email' => 'required|email|max:45',							
-							'telefono' => 'required|min:7|max:20|alpha_num_dash',
+							'telefono' => 'required|numeric',
 							'rol' => 'required',
 						);
 				// Run the validation rules on the inputs from the form
@@ -369,6 +367,8 @@ class UserController extends BaseController {
 				}
 
 				$data["herramientas"] = HerramientaXUser::buscarHerramientasPorIdUsuario($data["usuario"]->id)->get();
+
+				$data["sectores"] = UsersXSector::buscarSectoresPorIdUsuario($data["usuario"]->id)->get();
 
 				return View::make('Mantenimientos/usuarios/mostrarUsuario',$data);
 
@@ -540,11 +540,17 @@ class UserController extends BaseController {
 				    echo '</pre>';*/
 				    if($res_checkbox == 1)
 				    {
-				    	//quiere decir que se desea agregar uno nuevo
-				    	$usersxsector = new UsersXSector;
-				    	$usersxsector->idsector = $arr_idsectores[$i];
-				    	$usersxsector->iduser = $usuario_id;
-				    	$usersxsector->save();
+				    	//validar si ya existe (en caso exista se hace un restore)
+				    	$us = UsersXSector::buscarPorIdSectorIdUsuario($arr_idsectores[$i],$usuario_id)->get();
+				    	if($us!= null && !$us->isEmpty() && count($us)>0)
+				    		$us[0]->restore();
+				    	else
+				    	{
+				    		$usersxsector = new UsersXSector;
+					    	$usersxsector->idsector = $arr_idsectores[$i];
+					    	$usersxsector->iduser = $usuario_id;
+					    	$usersxsector->save();
+				    	}				    	
 				    	$flag_seleccion = true;
 				    }
 			    }

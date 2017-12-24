@@ -39,6 +39,7 @@ class Sector extends Eloquent implements UserInterface, RemindableInterface {
 					$subquery->leftJoin('usersxsector','sector.idsector','=','usersxsector.idsector');
 					$subquery->from(with(new Sector)->getTable());
 					$subquery->where('usersxsector.iduser','=',$search_criteria);
+					$subquery->where('usersxsector.deleted_at','=',NULL);
 					$subquery->select('sector.idsector')->distinct();
 		});
 

@@ -151,6 +151,15 @@ class EntidadController extends BaseController {
 					$idcanal = Input::get('canal');
 					
 					$entidad = Entidad::find($entidad_id);
+
+					if($entidad->idcanal != $idcanal)
+					{
+						$solicitudes = Solicitud::buscarSolicitudesPorEntidad($entidad->identidad)->get();
+						if($solicitudes!=null && !$solicitudes->isEmpty() && count($solicitudes) > 0 )
+						{
+							return Redirect::to('entidades/editar_entidad'.'/'.$entidad_id)->with('error', 'No se puede cambiar la información de la entidad. La entidad ya cuenta con solicitudes asociadas');
+						}
+					}
 					
 					$entidad->nombre = $nombre_entidad;
 					$entidad->codigo_enve = $codigo_enve;

@@ -215,9 +215,15 @@
 													<td class="text-nowrap text-center">
 														{{$index+1}}
 													</td>
-													<td class="text-nowrap text-center">
-														<a href="{{URL::to('/sectores/mostrar_sector/')}}/{{$sector->idsector}}">{{$sector->nombre}}</a>
-													</td>
+													@if($user->idrol == 1)
+														<td class="text-nowrap text-center">
+															<a href="{{URL::to('/sectores/mostrar_sector/')}}/{{$sector->idsector}}">{{$sector->nombre}}</a>
+														</td>
+													@else
+														<td class="text-nowrap text-center">
+															{{$sector->nombre}}
+														</td>
+													@endif
 												</tr>
 												@endforeach
 											</tbody>										
@@ -262,8 +268,8 @@
 					</div>
 				@endif
 			@else
-				<div class="form-group col-md-2 col-md-offset-8">
-					<a class="btn btn-default btn-block" href="{{URL::to('/principal')}}"><i class="lnr lnr-arrow-left"></i>&nbspSalir</a>
+				<div class="form-group col-md-2 col-md-offset-10">
+					<a class="btn btn-default btn-block" href="{{URL::to('/principal_gestor')}}"><i class="lnr lnr-arrow-left"></i>&nbspSalir</a>
 				</div>
 			@endif
 		</div>

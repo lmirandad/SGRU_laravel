@@ -35,6 +35,15 @@ class UsersXSector extends Eloquent implements UserInterface, RemindableInterfac
 		return $query;
 	}
 
+	public function scopeBuscarPorIdSectorIdUsuario($query,$idsector,$idusuario)
+	{
+		$query->withTrashed()
+			  ->where('usersxsector.idsector','=',$idsector)
+			  ->where('usersxsector.iduser','=',$idusuario);
+		$query->select('usersxsector.*');
+		return $query;
+	}
+
 	
 
 	

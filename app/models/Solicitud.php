@@ -40,7 +40,7 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 
 	public function scopeBuscarSolicitudesPendientesProcesandoPorIdUsuario($query,$idusuario)
 	{
-		$query->join('asignacion','solicitud.idasignacion','=','asignacion.idasignacion');
+		$query->join('asignacion','solicitud.idsolicitud','=','asignacion.idsolicitud');
 		$query->where('asignacion.iduser_asignado','=',$idusuario)
 		      ->whereNested(function($query){
 		      	$query->where('solicitud.idestado_solicitud','=',3)
@@ -56,7 +56,7 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 
 	public function scopeBuscarSolicitudesPendientesProcesandoPorIdSla($query,$idsla)
 	{
-		$query->join('asignacion','solicitud.idasignacion','=','asignacion.idasignacion');
+		$query->join('asignacion','solicitud.idsolicitud','=','asignacion.idsolicitud');
 		$query->where('solicitud.idsla','=',$idsla)
 		      ->whereNested(function($query){
 		      	$query->where('solicitud.idestado_solicitud','=',3)
@@ -253,6 +253,92 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			' and year(solicitud.fecha_solicitud) = '.$anho.
 			' group by sector.nombre
 			order by nombre_sector DESC');
+	}
+
+	public function scopeBuscarSolicitudesPendientesProcesandoPorHerramientaUsuario($query,$idherramienta,$idusuario)
+	{
+		$query->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+			  ->join('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
+		$query->where('solicitud.idherramienta','=',$idherramienta);
+		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
+		$query->where('usuariosxasignacion.idusuario_asignado','=',$idusuario);
+		$query->whereNested(function($query){
+		      	$query->where('solicitud.idestado_solicitud','=',3)
+		      		  ->orWhere('solicitud.idestado_solicitud','=',4);
+		      });
+		$query->select('solicitud.*');
+		return $query;
+
+	}
+
+	public function scopeBuscarSolicitudesPendientesProcesandoPorSectorUsuario($query,$idsector,$idusuario)
+	{
+		$query->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+			  ->join('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion')
+			  ->join('entidad','entidad.identidad','=','solicitud.identidad')
+			  ->join('canal','canal.idcanal','=','entidad.idcanal')
+			  ->join('sector','sector.idsector','=','canal.idsector');
+		$query->where('sector.idsector','=',$idsector);
+		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
+		$query->where('usuariosxasignacion.idusuario_asignado','=',$idusuario);
+		$query->whereNested(function($query){
+		      	$query->where('solicitud.idestado_solicitud','=',3)
+		      		  ->orWhere('solicitud.idestado_solicitud','=',4);
+		      });
+		$query->select('solicitud.*');
+		return $query;
+
+	}
+
+	public function scopeBuscarSolicitudesPendientesProcesandoPorSector($query,$idsector)
+	{
+		$query->join('entidad','entidad.identidad','=','solicitud.identidad')
+			  ->join('canal','canal.idcanal','=','entidad.idcanal')
+			  ->join('sector','sector.idsector','=','canal.idsector');
+		$query->where('sector.idsector','=',$idsector);
+		$query->whereNested(function($query){
+		      	$query->where('solicitud.idestado_solicitud','=',3)
+		      		  ->orWhere('solicitud.idestado_solicitud','=',4);
+		      });
+		$query->select('solicitud.*');
+		return $query;
+
+	}
+
+	public function scopeBuscarSolicitudesPorCanal($query,$idcanal)
+	{
+		$query->join('entidad','entidad.identidad','=','solicitud.identidad')
+			  ->join('canal','canal.idcanal','=','entidad.idcanal');
+		$query->where('canal.idcanal','=',$idcanal);
+		
+		$query->select('solicitud.*');
+		return $query;
+
+	}
+
+	public function scopeBuscarSolicitudesPorEntidad($query,$identidad)
+	{
+		
+		$query->where('solicitud.identidad','=',$identidad);
+		
+		$query->select('solicitud.*');
+		return $query;
+
+	}
+
+	public function scopeBuscarSolicitudesPendientesProcesandoPorHerramientaSector($query,$idherramienta,$idsector)
+	{
+		$query->join('entidad','entidad.identidad','=','solicitud.identidad')
+			  ->join('canal','canal.idcanal','=','entidad.idcanal')
+			  ->join('sector','sector.idsector','=','canal.idsector');
+		$query->where('sector.idsector','=',$idsector);
+		$query->where('solicitud.idherramienta','=',$idherramienta);
+		$query->whereNested(function($query){
+		      	$query->where('solicitud.idestado_solicitud','=',3)
+		      		  ->orWhere('solicitud.idestado_solicitud','=',4);
+		      });
+		$query->select('solicitud.*');
+		return $query;
 	}
 
 }

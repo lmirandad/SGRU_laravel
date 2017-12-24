@@ -24,7 +24,16 @@ class HerramientaController extends BaseController {
 			if($herramienta==null)
 				return Response::json(array( 'success' => false),200);
 
+			//validar si tiene solicitudes asignadas
+			$solicitudes = Solicitud::buscarSolicitudesPendientesProcesandoPorHerramientaUsuario($herramientaUsuario->idherramienta,$herramientaUsuario->iduser)->get();
 			
+			if($solicitudes != null && !$solicitudes->isEmpty())
+				return Response::json(array( 'success' => true,'tiene_solicitudes'=>true,'idherramientaxusers' => null,'nombre_herramienta'=>null),200);
+
+			if(count($solicitudes) > 0 )
+				return Response::json(array( 'success' => true,'tiene_solicitudes'=>true,'idherramientaxusers' => null,'nombre_herramienta'=>null),200);
+
+
 			$accionesHerramientaUsuario = HerramientaXTipoSolicitudXUser::listarTipoSolicitudUsuario($usuario_id,$herramienta->idherramienta)->get();
 			
 			if($accionesHerramientaUsuario == null || $accionesHerramientaUsuario->isEmpty()){
@@ -39,7 +48,7 @@ class HerramientaController extends BaseController {
 			$herramientaUsuario->delete();
 			
 
-			return Response::json(array( 'success' => true,'idherramientaxusers' => $idherramientaxusers,'nombre_herramienta'=>$herramienta->nombre),200);
+			return Response::json(array( 'success' => true,'tiene_solicitudes'=>false,'idherramientaxusers' => $idherramientaxusers,'nombre_herramienta'=>$herramienta->nombre),200);
 			
 		}else{
 			return Response::json(array( 'success' => false),200);
@@ -68,7 +77,19 @@ class HerramientaController extends BaseController {
 			if($herramienta==null)
 				return Response::json(array( 'success' => false),200);
 
-			
+			//Validar si tiene SLA's vigentes en el sector
+			$sla = Sla::buscarSlaVigentePorIdHerramientaXSector($idherramientaxsector)->get();
+
+			if($sla!=null && !$sla->isEmpty() && count($sla)>0)
+				return Response::json(array( 'success' => true,'tiene_sla'=>true,'tiene_solicitudes'=>false,'idherramientaxsector' => $idherramientaxsector,'nombre_herramienta'=>$herramienta->nombre),200);
+
+			//Validar si tiene solicitudes pendientes o procesando
+			$solicitudes = Solicitud::buscarSolicitudesPendientesProcesandoPorHerramientaSector($herramientaSector->idherramienta,$herramientaSector->idsector)->get();
+
+			if($solicitudes!=null && !$solicitudes->isEmpty() && count($solicitudes)>0)
+				return Response::json(array( 'success' => true,'tiene_sla'=>false,'tiene_solicitudes'=>true,'idherramientaxsector' => $idherramientaxsector,'nombre_herramienta'=>$herramienta->nombre),200);
+
+
 			$accionesHerramientaSector = HerramientaXSectorXTipoSolicitud::listarTipoSolicitudSector($sector_id,$herramienta->idherramienta)->get();
 			
 			if($accionesHerramientaSector == null || $accionesHerramientaSector->isEmpty()){
@@ -83,7 +104,7 @@ class HerramientaController extends BaseController {
 			$herramientaSector->delete();
 			
 
-			return Response::json(array( 'success' => true,'idherramientaxsector' => $idherramientaxsector,'nombre_herramienta'=>$herramienta->nombre),200);
+			return Response::json(array( 'success' => true,'tiene_sla'=>false,'tiene_solicitudes'=>false,'idherramientaxsector' => $idherramientaxsector,'nombre_herramienta'=>$herramienta->nombre),200);
 			
 		}else{
 			return Response::json(array( 'success' => false),200);
@@ -221,9 +242,7 @@ class HerramientaController extends BaseController {
 						$herramientaxtipo_solicitud->save();
 					}
 
-					Session::flash('message', 'Se registró correctamente la herramienta.');
-					
-					return Redirect::to('herramientas/crear_herramienta');
+					return Redirect::to('herramientas/listar_herramientas')->with('message', 'Se registró correctamente la herramienta.');
 				}
 			}else{
 				return View::make('error/error',$data);

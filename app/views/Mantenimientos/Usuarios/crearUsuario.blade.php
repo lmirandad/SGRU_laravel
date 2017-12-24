@@ -20,6 +20,27 @@
 				</div>
 			@endif
 		</div>
+
+		<div class="row">
+			@if ($errors->has())
+			<div class="alert alert-danger" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<p>{{ $errors->first('username') }}</p>				
+				<p>{{ $errors->first('nombre') }}</p>
+				<p>{{ $errors->first('apellido_paterno') }}</p>
+				<p>{{ $errors->first('apellido_materno') }}</p>
+				<p>{{ $errors->first('tipo_doc_identidad') }}</p>
+				<p>{{ $errors->first('documento_identidad') }}</p>
+				<p>{{ $errors->first('genero') }}</p>
+				<p>{{ $errors->first('fecha_nacimiento') }}</p>
+				<p>{{ $errors->first('idrol') }}</p>
+				<p>{{ $errors->first('genero') }}</p>
+				<p>{{ $errors->first('email') }}</p>
+				<p>{{ $errors->first('telefono') }}</p>
+				<p>{{ $errors->first('rol') }}</p>
+			</div>
+			@endif
+		</div>
 		{{ Form::open(array('url'=>'/usuarios/submit_crear_usuario' ,'role'=>'form','id'=>'submit-crear')) }}
 		<!-- OVERVIEW -->		
 		<div class="row">
@@ -29,23 +50,6 @@
 						<h3 class="panel-title">Datos Generales</h3>
 					</div>
 					<div class="panel-body">
-						<div class="row">
-							@if ($errors->has())
-							<div class="alert alert-danger" role="alert">
-								<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-								<p>{{ $errors->first('username') }}</p>				
-								<p>{{ $errors->first('nombre') }}</p>
-								<p>{{ $errors->first('apellido_paterno') }}</p>
-								<p>{{ $errors->first('apellido_materno') }}</p>
-								<p>{{ $errors->first('tipo_doc_identidad') }}</p>
-								<p>{{ $errors->first('documento_identidad') }}</p>
-								<p>{{ $errors->first('genero') }}</p>
-								<p>{{ $errors->first('fecha_nacimiento') }}</p>
-								<p>{{ $errors->first('idrol') }}</p>
-								<p>{{ $errors->first('genero') }}</p>
-							</div>
-							@endif
-						</div>
 						<div class="row">
 							<div class="form-group col-md-3 @if($errors->first('username')) has-error has-feedback @endif"">
 								{{ Form::label('username','Nombre del Usuario')}}
@@ -98,16 +102,7 @@
 					<div class="panel-heading">
 						<h3 class="panel-title">Datos de Contacto</h3>
 					</div>
-					<div class="panel-body">
-						<div class="row">
-							@if ($errors->has())
-							<div class="alert alert-danger" role="alert">
-								<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-								<p>{{ $errors->first('email') }}</p>
-								<p>{{ $errors->first('telefono') }}</p>
-							</div>
-							@endif
-						</div>					
+					<div class="panel-body">		
 						<div class="row">
 							<div class="form-group col-md-6 @if($errors->first('email')) has-error has-feedback @endif">
 								{{ Form::label('email','Correo Electrónico')}}
@@ -115,7 +110,7 @@
 							</div>
 							<div class="form-group col-md-6 @if($errors->first('telefono')) has-error has-feedback @endif">
 								{{ Form::label('telefono','Telefono')}}
-								{{ Form::text('telefono',Input::old('telefono'),array('class'=>'form-control','placeholder'=>'Ingrese número de teléfono')) }}
+								{{ Form::text('telefono',Input::old('telefono'),array('class'=>'form-control','placeholder'=>'Ingrese número de teléfono', 'id'=>'telefono_contacto')) }}
 							</div>
 						</div>				
 					</div>
@@ -127,14 +122,7 @@
 						<h3 class="panel-title">Perfil del Usuario</h3>
 					</div>
 					<div class="panel-body">
-						<div class="row">
-							@if ($errors->has())
-							<div class="alert alert-danger" role="alert">
-								<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>								
-								<p>{{ $errors->first('rol') }}</p>
-							</div>
-							@endif
-						</div>		
+							
 						<div class="row">
 							<div class="form-group col-md-6 @if($errors->first('rol')) has-error has-feedback @endif">
 								{{ Form::label('rol','Perfil de Usuario (Rol)')}}

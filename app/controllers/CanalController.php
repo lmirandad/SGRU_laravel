@@ -129,15 +129,23 @@ class CanalController extends BaseController {
 				}else{	
 					$canal_id = Input::get('canal_id');
 					
-					/*echo '<pre>';
-					var_dump($canal_id);
-					echo '</pre>';*/
 
 					$nombre_canal = Input::get('nombre_canal');
 					$descripcion = Input::get('descripcion');
 					$idsector = Input::get('sector');
 					
 					$canal = Canal::find($canal_id);
+
+					if($idsector != $canal->idsector)
+					{
+						//validar si este canal ya tenia solicitudes creadas
+						$solicitudes = Solicitud::buscarSolicitudesPorCanal($canal->idcanal)->get();
+						if($solicitudes != null && !$solicitudes->isEmpty() && count($solicitudes) > 0 )
+						{
+							return Redirect::to('canales/editar_canal'.'/'.$canal_id)->with('error', 'No se puede cambiar la información del canal . El canal ya cuenta con solicitudes asociadas');
+						} 
+
+					}
 					
 					$canal->nombre = $nombre_canal;
 					$canal->descripcion = $descripcion;

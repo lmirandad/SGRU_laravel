@@ -111,18 +111,51 @@ function eliminar_herramienta(e,id){
 						//$(this).prop('disabled',false);
 					},
 					success: function(response){
-						dialog = BootstrapDialog.show({
-				            title: 'Mensaje',
-				            message: 'Se eliminó la herramienta '+response["nombre_herramienta"]+ ' del sector',
-				            type : BootstrapDialog.TYPE_SUCCESS,
-				            buttons: [{
-				                label: 'Entendido',
-				                action: function(dialog) {
-				                    var url = inside_url + "sectores/mostrar_herramientas_sector/"+sector_id;
-									window.location = url;
-				                }
-				            }]
-				        });
+						if(response["tiene_sla"] == true)
+						{
+							dialog = BootstrapDialog.show({
+					            title: 'Mensaje',
+					            message: 'Error al eliminar el aplicativo del sector. El aplicativo cuenta con Sla\'s vigentes.' ,
+					            type : BootstrapDialog.TYPE_DANGER,
+					            buttons: [{
+					                label: 'Entendido',
+					                action: function(dialog) {
+					                    var url = inside_url + "sectores/mostrar_herramientas_sector/"+sector_id;
+										window.location = url;
+					                }
+					            }]
+					        });
+						}
+						else if(response["tiene_solicitudes"] == true)
+						{
+							dialog = BootstrapDialog.show({
+					            title: 'Mensaje',
+					            message: 'Error al eliminar el aplicativo del sector. El aplicativo cuenta con solicitudes pendientes y/o procesando.',
+					            type : BootstrapDialog.TYPE_DANGER,
+					            buttons: [{
+					                label: 'Entendido',
+					                action: function(dialog) {
+					                    var url = inside_url + "sectores/mostrar_herramientas_sector/"+sector_id;
+										window.location = url;
+					                }
+					            }]
+					        });
+						}else
+						{
+							dialog = BootstrapDialog.show({
+					            title: 'Mensaje',
+					            message: 'Se eliminó la herramienta '+response["nombre_herramienta"]+ ' del sector',
+					            type : BootstrapDialog.TYPE_SUCCESS,
+					            buttons: [{
+					                label: 'Entendido',
+					                action: function(dialog) {
+					                    var url = inside_url + "sectores/mostrar_herramientas_sector/"+sector_id;
+										window.location = url;
+					                }
+					            }]
+					        });
+						}
+						
 						
 					},
 					error: function(){

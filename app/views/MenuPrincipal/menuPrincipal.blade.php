@@ -56,11 +56,11 @@
 				<div class="col-md-4">
 					<div class="panel panel-headline">
 						<div class="panel-heading">
-							<h3 class="panel-title">Vistas Resumen</h3>
+							<h3 class="panel-title" style="text-align:center">Vistas Resumen General</h3>
 						</div>
-						<div class="panel-body" style="margin-top:45px">
+						<div class="panel-body">
 							<div class="row" >														
-								<div class="form-group col-md-12">									
+								<div class="form-group col-md-12" style="margin-top:-20px">									
 									<a class="btn btn-success btn-block"  href="{{URL::to('principal/resumen_usuarios')}}"><i class="fa fa-users"></i>&nbspTickets por Usuarios</a>		
 								</div>
 							</div>
@@ -192,6 +192,15 @@
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_herramienta}}
 											</td>
+											<td class="text-nowrap text-center">
+												-
+											</td>
+											<td class="text-nowrap text-center">
+												-
+											</td>
+											<td class="text-nowrap text-center">
+												-
+											</td>
 										</tr>
 									@endforeach
 									</tbody>
@@ -218,6 +227,15 @@
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_herramienta}}
+											</td>
+											<td class="text-nowrap text-center">
+												-
+											</td>
+											<td class="text-nowrap text-center">
+												-
+											</td>
+											<td class="text-nowrap text-center">
+												-
 											</td>
 										</tr>
 									@endforeach
@@ -370,6 +388,15 @@
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_herramienta}}
 											</td>
+											<td class="text-nowrap text-center">
+												-
+											</td>
+											<td class="text-nowrap text-center">
+												-
+											</td>
+											<td class="text-nowrap text-center">
+												-
+											</td>
 										</tr>
 									@endforeach
 									</tbody>
@@ -396,6 +423,15 @@
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_herramienta}}
+											</td>
+											<td class="text-nowrap text-center">
+												-
+											</td>
+											<td class="text-nowrap text-center">
+												-
+											</td>
+											<td class="text-nowrap text-center">
+												-
 											</td>
 										</tr>
 									@endforeach

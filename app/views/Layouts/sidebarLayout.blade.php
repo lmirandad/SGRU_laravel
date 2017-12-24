@@ -8,7 +8,9 @@
 					<div id="subPagesSolicitudes" class="collapse ">
 						<ul class="nav">
 							<li><a href="{{URL::to('solicitudes/listar_solicitudes')}}" class="">Buscar Solicitudes</a></li>
-							<li><a href="{{URL::to('solicitudes/cargar_solicitudes')}}" class="">Cargar/Asignar Solicitudes</a></li>							
+							@if($user->idrol == 1)
+								<li><a href="{{URL::to('solicitudes/cargar_solicitudes')}}" class="">Cargar/Asignar Solicitudes</a></li>	
+							@endif						
 						</ul>
 					</div>
 				</li>
@@ -21,7 +23,7 @@
 						</ul>
 					</div>
 				</li>
-				
+				@if($user->idrol == 1)
 				<li> <!-- SUBMENÚ MANTENIMIENTOS -->
 					<a href="#subPagesMantenimientos" data-toggle="collapse" class="collapsed"><i class="lnr lnr-construction"></i> <span>Mantenimientos</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
 					<div id="subPagesMantenimientos" class="collapse ">
@@ -33,13 +35,15 @@
 							<li><a href="{{URL::to('equivalencias_tipo_solicitud/listar_equivalencias')}}"><i class="fa fa-exchange"></i><span>Equivalencias Acción Solicitud</span> </a>
 							</li>
 							<li><a href="{{URL::to('feriados/listar_feriados')}}"><i class="fa fa-calendar"></i><span>Feriados</span> </a>
-							<li><a href="#"><i class="lnr lnr-cross-circle"></i><span>Lista Vena / Observados</span> </a>
+							<li><a href="{{URL::to('usuarios_observados_vena/cargar_usuarios_observados_vena')}}"><i class="lnr lnr-cross-circle"></i><span>Lista Vena / Observados</span> </a>
 							</li>
 						</ul>
 					</div>
 				</li>
-				
+				@endif
+				@if($user->idrol == 1)
 				<li><a href="#" class=""><i class="lnr lnr-chart-bars"></i> <span>Indicadores</span></a></li>
+				@endif
 			</ul>
 		</nav>
 	</div>

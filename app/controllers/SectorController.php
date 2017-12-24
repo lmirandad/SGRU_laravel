@@ -24,10 +24,19 @@ class SectorController extends BaseController {
 			if($sector==null)
 				return Response::json(array( 'success' => false),200);
 
-			$hu->forceDelete();
+			//validar si tiene solicitudes asignadas
+			$solicitudes = Solicitud::buscarSolicitudesPendientesProcesandoPorSectorUsuario($hu->idsector,$hu->iduser)->get();
+			
+			if($solicitudes != null && !$solicitudes->isEmpty())
+				return Response::json(array( 'success' => true,'tiene_solicitudes'=>true,'idusersxsector' => null,'nombre_sector'=>null),200);
+
+			if(count($solicitudes) > 0 )
+				return Response::json(array( 'success' => true,'tiene_solicitudes'=>true,'idusersxsector' => null,'nombre_sector'=>null),200);
+
+			$hu->delete();
 			
 
-			return Response::json(array( 'success' => true,'idusersxsector' => $idusersxsector,'nombre_sector'=>$sector->nombre),200);
+			return Response::json(array( 'success' => true,'tiene_solicitudes'=>false,'idusersxsector' => $idusersxsector,'nombre_sector'=>$sector->nombre),200);
 			
 		}else{
 			return Response::json(array( 'success' => false),200);
@@ -89,7 +98,7 @@ class SectorController extends BaseController {
 
 					Session::flash('message', 'Se registró correctamente el sector.');
 					
-					return Redirect::to('sectores/crear_sector');
+					return Redirect::to('entidades_canales_sectores/listar/1');
 				}
 			}else{
 				return View::make('error/error',$data);
@@ -252,7 +261,16 @@ class SectorController extends BaseController {
 						return Redirect::to($url);
 					}
 					else
+					{
+
+						$solicitudes = Solicitud::buscarSolicitudesPendientesProcesandoPorSector($sector_id)->get();
+						if($solicitudes != null && !$solicitudes->isEmpty() && count($solicitudes)>0)
+						{
+							Session::flash('error', 'No se puede inhabilitar el sector. El sector cuenta con solicitudes pendientes y/o procesando.');
+							return Redirect::to($url);
+						}
 						$sector->delete();						
+					}
 				}
 
 

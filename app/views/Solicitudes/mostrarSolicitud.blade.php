@@ -9,6 +9,7 @@
 				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<p>{{ $errors->first('usuario_disponible') }}</p>		
 				<p>{{ $errors->first('motivo_reasignacion') }}</p>
+				<p>{{ $errors->first('motivo_anulacion') }}</p>
 			</div>
 		@endif
 
@@ -87,7 +88,24 @@
 					</div>
 				</div>
 			</div>
+		</div>
+		@if($solicitud->idestado_solicitud == 6)
+			<!-- OVERVIEW -->
+		<div class="panel panel-headline">
+			<div class="panel-heading">
+				<h3 class="panel-title">Motivo de Anulación</h3>
+			</div>
+			<div class="panel-body">				
+				<div class="row">
+					<div class="row">
+	         			<div class="col-md-12">
+							{{Form::textarea('motivo_anulacion',$solicitud->motivo_anulacion,array('class'=>'form-control','placeholder'=>'Ingrese motivo','rows'=>3,'style'=>'resize:none','disabled'=>'disabled'))}}
+						</div>					
+					</div>
+				</div>
+			</div>
 		</div>	
+		@endif	
 		<div class="panel  panel-headline">	
 			<div class="panel-heading">
 				<h3 class="panel-title">Requerimientos Asociados</h3>
@@ -114,35 +132,38 @@
 			</div>
 		</div>
 		<div class="row">
-			@if( $usuario_asignado->deleted_at != null )
-				@if(($solicitud->idestado_solicitud == 3 || $solicitud->idestado_solicitud == 4) )
-					<div class="col-md-2">
-						<button class="btn btn-success btn-block" onclick="mostrar_usuarios_disponibles(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-redo"></i> Reasignación</button>
-					</div>	
-					<div class="col-md-2 col-md-offset-6">
-						<a class="btn btn-info btn-block" href="#"> <i class="lnr lnr-plus-circle"></i> Crear Requerimiento</a>
-					</div>			
-					<div class="form-group col-md-2">
-						<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
-					</div>
-				@else
-					<div class="col-md-2">
-						<button class="btn btn-success btn-block" onclick="mostrar_usuarios_disponibles(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-redo"></i> Reasignación</button>
-					</div>	
-					<div class="col-md-2 col-md-offset-6">
-						<a class="btn btn-info btn-block" href="#"> <i class="lnr lnr-plus-circle"></i> Crear Requerimiento</a>
-					</div>			
-					<div class="form-group col-md-2">
+			@if($user->idrol == 1)
+				@if( $usuario_asignado->deleted_at != null )
+					@if(($solicitud->idestado_solicitud == 3 || $solicitud->idestado_solicitud == 4) )
+						<div class="col-md-2">
+							<button class="btn btn-success btn-block" onclick="mostrar_usuarios_disponibles(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-redo"></i> Reasignación</button>
+						</div>		
+						<div class="form-group col-md-2 col-md-offset-8">
+							<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
+						</div>
+					@else
+						<div class="form-group col-md-2 col-md-offset-10">
+							<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
+						</div>
+					@endif
+				@else		
+					<div class="form-group col-md-2 col-md-offset-10">
 						<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
 					</div>
 				@endif
 			@else
-				<div class="col-md-2 col-md-offset-8">
-						<a class="btn btn-info btn-block" href="#"> <i class="lnr lnr-plus-circle"></i> Crear Requerimiento</a>
-				</div>			
-				<div class="form-group col-md-2">
-					<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
-				</div>
+				@if(($solicitud->idestado_solicitud == 3 || $solicitud->idestado_solicitud == 4))
+					<div class="col-md-2">
+						<button class="btn btn-danger btn-block" onclick="mostrar_modal_anular(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-thumbs-down"></i> Anular Solicitud</button>
+					</div>		
+					<div class="form-group col-md-2 col-md-offset-8">
+						<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
+					</div>
+				@else
+					<div class="form-group col-md-2 col-md-offset-10">
+						<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
+					</div>
+				@endif
 			@endif
 		</div>
 		
@@ -176,6 +197,41 @@
 					<div class="row">
 						<div class="col-md-6" style="margin-top:26px">
 							<button type="submit" class="btn btn-info"><i class="fa fa-floppy-o "></i>&nbsp&nbspReasignar</button>
+						</div>
+					</div>
+				</div>
+				{{ Form::close() }}
+			</div>
+	        <div class="modal-footer">
+	          
+	        </div>
+      </div>      
+    </div>
+  </div>
+ </div>
+ <div class="container" >
+  <!-- Modal -->
+  <div class="modal fade" id="modal_anulacion"  role="dialog">
+    <div class="modal-dialog modal-md">    
+      <!-- Modal content-->
+      <div class="modal-content" >
+	        <div class="modal-header bg-primary">
+	          <button type="button" class="close" id="btnCerrarModal" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title">Anular Solicitud - {{$solicitud->codigo_solicitud}}</h4>
+	        </div>
+	        <div class="modal-body" id="modal_text_equivalencias">
+	         	<div class="container-fluid">	        
+	         	{{ Form::open(array('url'=>'/solicitudes/submit_anular_solicitud' ,'role'=>'form','id'=>'submit-anular')) }}	
+	         	{{ Form::hidden('solicitud_id', $solicitud->idsolicitud, array('id'=>'solicitud_id')) }} 		
+					<div class="row">
+	         			<div class="col-md-12">
+							{{ Form::label('motivo_anulacion','Motivo Anulación:')}}
+							{{Form::textarea('motivo_anulacion',Input::old('motivo_anulacion'),array('class'=>'form-control','placeholder'=>'Ingrese motivo','rows'=>3,'style'=>'resize:none'))}}
+						</div>					
+					</div>
+					<div class="row">
+						<div class="col-md-6" style="margin-top:26px">
+							<button type="submit" class="btn btn-info"><i class="lnr lnr-location "></i>&nbsp&nbspAnular</button>
 						</div>
 					</div>
 				</div>

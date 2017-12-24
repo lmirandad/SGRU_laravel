@@ -77,11 +77,7 @@ class SlaController extends BaseController {
 						break;
 					}
 				}
-
-				echo '<pre>';
-				var_dump($flag_datos_consistentes);
-				echo '</pre>';
-
+				
 				if($flag_datos_consistentes==false){
 					Session::flash('error', 'Error en el registro. Existen Sla\'s de solicitudes pendientes que son mayores a los de solicitudes en proceso .');
 					return Redirect::to('slas/crear_sla/'.$idherramientaxsector);
