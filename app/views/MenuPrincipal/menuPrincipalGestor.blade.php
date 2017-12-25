@@ -92,7 +92,11 @@
 												{{$solicitud_data->nombre_tipo_solicitud}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_herramienta}}
+												@if($solicitud_data->idherramienta != null)
+													{{$solicitud_data->nombre_herramienta}}
+												@else
+													NO DETECTADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												{{$slas_data_pendiente[$index]->sla_pendiente}}									
@@ -179,7 +183,11 @@
 												{{$solicitud_data->nombre_tipo_solicitud}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_herramienta}}
+												@if($solicitud_data->idherramienta != null)
+													{{$solicitud_data->nombre_herramienta}}
+												@else
+													NO DETECTADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												{{$slas_data_procesando[$index]->sla_procesando}}

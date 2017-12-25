@@ -77,7 +77,7 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->join('entidad','entidad.identidad','=','solicitud.identidad')
 			  ->join('canal','canal.idcanal','=','entidad.idcanal')
 			  ->join('sector','sector.idsector','=','canal.idsector')
-			  ->join('herramienta','herramienta.idherramienta','=','solicitud.idherramienta')
+			  ->leftjoin('herramienta','herramienta.idherramienta','=','solicitud.idherramienta')
 			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
 
 		$query->where('solicitud.codigo_solicitud','LIKE',$codigo_solicitud);
@@ -135,7 +135,7 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->join('entidad','entidad.identidad','=','solicitud.identidad')
 			  ->join('canal','canal.idcanal','=','entidad.idcanal')
 			  ->join('sector','sector.idsector','=','canal.idsector')
-			  ->join('herramienta','herramienta.idherramienta','=','solicitud.idherramienta')
+			  ->leftjoin('herramienta','herramienta.idherramienta','=','solicitud.idherramienta')
 			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
 
 		$query->where('solicitud.idestado_solicitud','=',$idestado_solicitud);
@@ -157,7 +157,7 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->join('entidad','entidad.identidad','=','solicitud.identidad')
 			  ->join('canal','canal.idcanal','=','entidad.idcanal')
 			  ->join('sector','sector.idsector','=','canal.idsector')
-			  ->join('herramienta','herramienta.idherramienta','=','solicitud.idherramienta')
+			  ->leftjoin('herramienta','herramienta.idherramienta','=','solicitud.idherramienta')
 			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
 			  ->join('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
 

@@ -198,8 +198,23 @@
 																		{{$resumen_sector[$i]->cantidad_total}}
 																	</td>
 																</tr>
+																<tr style="background-color:#e3e7e7">	
+																	<td class="text-nowrap text-center"  colspan="2">
+																		<strong>TOTAL {{$resumen_sector[$i]->nombre_sector}}</strong>
+																	</td>
+																	<td class="text-nowrap text-center">
+																		<strong>{{$resumen_sector_total[$contador_sector_total]->cantidad_pendientes}}</strong>
+																	</td>	
+																	<td class="text-nowrap text-center">
+																		<strong>{{$resumen_sector_total[$contador_sector_total]->cantidad_procesando}}</strong>
+																	</td>	
+																	<td class="text-nowrap text-center">
+																		<strong>{{$resumen_sector_total[$contador_sector_total]->cantidad_total}}</strong>
+																	</td>	
+																	<div style="display:none">{{++$contador_sector_total}}</div>
+																</tr>
 															@else
-																<tr>
+																<tr>	
 																	<td style="border:0px"></td>
 																	<td class="text-nowrap text-center">
 																		{{$resumen_sector[$i]->nombre_usuario}}
@@ -251,7 +266,9 @@
 														@endif
 													@else
 														<tr>
-															<td class="text-nowrap text-center">{{$resumen_sector[$i]->nombre_sector}}</td>
+															<td class="text-nowrap text-center">
+																{{$resumen_sector[$i]->nombre_sector}}
+															</td>
 															<td class="text-nowrap text-center">
 																{{$resumen_sector[$i]->nombre_usuario}}
 															</td>
@@ -265,21 +282,23 @@
 																{{$resumen_sector[$i]->cantidad_total}}
 															</td>
 														</tr>
-														<tr style="background-color:#e3e7e7">	
-															<td class="text-nowrap text-center"  colspan="2">
-																<strong>TOTAL {{$resumen_sector[$i]->nombre_sector}}</strong>
-															</td>
-															<td class="text-nowrap text-center">
-																<strong>{{$resumen_sector_total[$contador_sector_total]->cantidad_pendientes}}</strong>
-															</td>	
-															<td class="text-nowrap text-center">
-																<strong>{{$resumen_sector_total[$contador_sector_total]->cantidad_procesando}}</strong>
-															</td>	
-															<td class="text-nowrap text-center">
-																<strong>{{$resumen_sector_total[$contador_sector_total]->cantidad_total}}</strong>
-															</td>	
-															<div style="display:none">{{++$contador_sector_total}}</div>
-														</tr>
+														@if(count($resumen_sector) == 1)
+															<tr style="background-color:#e3e7e7">	
+																<td class="text-nowrap text-center"  colspan="2">
+																	<strong>TOTAL {{$resumen_sector[$i]->nombre_sector}}</strong>
+																</td>
+																<td class="text-nowrap text-center">
+																	<strong>{{$resumen_sector_total[$contador_sector_total]->cantidad_pendientes}}</strong>
+																</td>	
+																<td class="text-nowrap text-center">
+																	<strong>{{$resumen_sector_total[$contador_sector_total]->cantidad_procesando}}</strong>
+																</td>	
+																<td class="text-nowrap text-center">
+																	<strong>{{$resumen_sector_total[$contador_sector_total]->cantidad_total}}</strong>
+																</td>	
+																<div style="display:none">{{++$contador_sector_total}}</div>
+															</tr>
+														@endif
 													@endif
 												</tbody>
 												@endfor

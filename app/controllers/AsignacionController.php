@@ -59,7 +59,12 @@ class AsignacionController extends BaseController {
 					//a. Herramienta
 
 					$idherramienta = $idherramientas[$i];
-					$solicitud->idherramienta = $idherramienta;
+
+					//PRIMER CAMBIO
+					if($idherramienta == 0)
+						$solicitud->idherramienta = null;
+					else
+						$solicitud->idherramienta = $idherramienta;
 
 					//b. Sector
 					$entidad = Entidad::find($ids_entidad[$i]);
@@ -70,7 +75,11 @@ class AsignacionController extends BaseController {
 					//c. Accion
 					$idaccion = $idstipo_solicitud[$i];
 
-					$sla = TipoSolicitudXSla::buscarSlaPorSectorHerramientaAccion($idsector,$idherramienta,$idaccion)->get();
+					//En caso que no se tiene un SLA para una herramienta no detectada se asumará el SLA como si existieran varios aplicativos
+					if($idherramienta == 0)
+						$sla = TipoSolicitudXSla::buscarSlaPorSectorHerramientaAccion($idsector,39,$idaccion)->get();
+					else
+						$sla = TipoSolicitudXSla::buscarSlaPorSectorHerramientaAccion($idsector,$idherramienta,$idaccion)->get();
 
 					if($sla==null || $sla->isEmpty())
 					{
@@ -85,8 +94,8 @@ class AsignacionController extends BaseController {
 
 					//En caso solo se tenga varias herramientas, se debe buscar a los usuarios del sector, que tengan menos solicitudes pendientes y en proceso.
 					$usuario_apto = null;
-					if($idherramienta == 39){
-						//herramienta representada para "VARIOS"
+					if($idherramienta == 39 || $idherramienta == 0){
+						//herramienta representada para "VARIOS" o "NO DETECTADO"
 						
 						$usuarios = User::buscarUsuariosAsignacionPorSector($sector->idsector);	
 				

@@ -70,7 +70,7 @@ $( document ).ready(function(){
 	$('#btnAsignar').click(function(){
 		BootstrapDialog.confirm({
 			title: 'Mensaje de Confirmación',
-			message: '¿Está seguro que desea realizar la asignación? Esto puede tardar unos minutos, dependiendo del volumen de solicitudes por asignar.', 
+			message: '¿Está seguro que desea realizar la asignación? Esto puede tardar unos minutos, dependiendo del volumen de solicitudes por asignar.\n Considerar que para las solicitudes que no tienen aplicativo detectado, se procederán a asignar por usuarios del sector.', 
 			type: BootstrapDialog.TYPE_INFO,
 			btnCancelLabel: 'Cancelar', 
 	    	btnOKLabel: 'Aceptar', 

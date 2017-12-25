@@ -188,9 +188,13 @@
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
-											</td>
+											</td>											
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_herramienta}}
+												@if($solicitud_data->idherramienta != null)
+													{{$solicitud_data->nombre_herramienta}}
+												@else
+													NO DETECTADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												-
@@ -226,7 +230,11 @@
 												{{$solicitud_data->nombre_estado_solicitud}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_herramienta}}
+												@if($solicitud_data->idherramienta != null)
+													{{$solicitud_data->nombre_herramienta}}
+												@else
+													NO DETECTADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												-
@@ -262,7 +270,11 @@
 												{{$solicitud_data->nombre_estado_solicitud}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_herramienta}}
+												@if($solicitud_data->idherramienta != null)
+													{{$solicitud_data->nombre_herramienta}}
+												@else
+													NO DETECTADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												@if($solicitud_data->idestado_solicitud == 3) <!-- PENDIENTE -->
@@ -324,7 +336,11 @@
 												{{$solicitud_data->nombre_estado_solicitud}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_herramienta}}
+												@if($solicitud_data->idherramienta != null)
+													{{$solicitud_data->nombre_herramienta}}
+												@else
+													NO DETECTADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												@if($solicitud_data->idestado_solicitud == 3) <!-- PENDIENTE -->
@@ -386,7 +402,11 @@
 												{{$solicitud_data->nombre_estado_solicitud}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_herramienta}}
+												@if($solicitud_data->idherramienta != null)
+													{{$solicitud_data->nombre_herramienta}}
+												@else
+													NO DETECTADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												-
@@ -422,7 +442,11 @@
 												{{$solicitud_data->nombre_estado_solicitud}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_herramienta}}
+												@if($solicitud_data->idherramienta != null)
+													{{$solicitud_data->nombre_herramienta}}
+												@else
+													NO DETECTADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												-

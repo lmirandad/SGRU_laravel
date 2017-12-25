@@ -84,7 +84,11 @@
 					</div>
 					<div class="col-md-6">						
 						{{ Form::label('herramienta','Aplicativo:')}}
-						{{ Form::text('herramienta',$herramienta->nombre,array('class'=>'form-control','disabled'=>'disabled')) }}
+						@if($solicitud->idherramienta != null)
+							{{ Form::text('herramienta',$herramienta->nombre,array('class'=>'form-control','disabled'=>'disabled')) }}
+						@else
+							{{ Form::text('herramienta_no_detectada','NO DETECTADO',array('class'=>'form-control','disabled'=>'disabled')) }}
+						@endif
 					</div>
 				</div>
 			</div>

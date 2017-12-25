@@ -286,7 +286,7 @@ class SolicitudController extends BaseController {
 
 					//VALIDACION TIPO DE ACCION
 					/*******************SUJETO A CAMBIO DE ALGORITMO***********************/
-					$idtipo_accion = SolicitudController::obtener_tipo_solicitud($asunto);
+					$idtipo_accion = SolicitudController::obtener_tipo_solicitud_2($asunto);
 					/**********************************************************************/
 					if($idtipo_accion == 0){
 						$obj_log["descripcion"] = "La solicitud no describe ninguna acción registrada en el sistema.";
@@ -347,9 +347,12 @@ class SolicitudController extends BaseController {
 					{
 						$obj_log["descripcion"] = "El sistema no puede detectar la herramienta(s) solicitadas.";
 						array_push($logs_errores,$obj_log);
-						continue;
-					}else
+						//continue;
+						$nombre_herramienta = "NO DETECTADO";
+					}else{
 						$herramienta = Herramienta::find($idherramienta);
+						$nombre_herramienta = $herramienta->nombre;
+					}
 
 					//2.5 Luego de estas validaciones se deberá revisar si la solicitud ya existe 
 					$solicitud = Solicitud::buscarPorCodigoSolicitud($codigo_solicitud_ingresar)->get();
@@ -378,7 +381,7 @@ class SolicitudController extends BaseController {
 						"idtipo_solicitud_general" => $tipo_solicitud_obj[0]->idtipo_solicitud_general,
 						"idestado_solicitud" => $estado_solicitud_obj[0]->idestado_solicitud,
 						"asunto" => $asunto,
-						"nombre_herramienta" => $herramienta->nombre,
+						"nombre_herramienta" => $nombre_herramienta,
 					];
 
 					$obj_log["descripcion"] = "solicitud correcta";
@@ -439,6 +442,71 @@ class SolicitudController extends BaseController {
 	    return 0;
 	}
 
+	public function obtener_tipo_solicitud_2($cadena)
+	{
+		$palabras = explode(' ',$cadena);
+	    $tamano = count($palabras);
+	    $tipos = TipoSolicitud::listarTiposSolicitud()->get();
+	    $cantidad_tipo = count($tipos);
+	    $accion_encontrada = false;
+	    $array_tipos = array();
+	   for($i=0;$i<$tamano;$i++)
+	    {
+	    	
+	    	$palabra = strtolower($palabras[$i]);
+
+	    	$tamano_palabras = count($palabras);
+
+	    	for($j=0;$j<$cantidad_tipo;$j++)
+	    	{
+	    		$equivalencias = EquivalenciaTipoSolicitud::buscarEquivalenciasPorIdTipoSolicitud($tipos[$j]->idtipo_solicitud)->get();
+	    		$cantidad_equivalencias = count($equivalencias);
+	    		for($z=0;$z<$cantidad_equivalencias;$z++)
+	    		{
+	    			similar_text(strtolower($palabra), strtolower($equivalencias[$z]->nombre_equivalencia),$porcentaje);
+    				//si es mayor a 90% entonces contamos con una herramienta
+    				
+
+    				$obj_tipo = [
+    					"porcentaje" => $porcentaje,
+    					"palabra" => $palabra,
+    					"idtipo_solicitud" =>$tipos[$j]->idtipo_solicitud,
+    				];
+
+    				array_push($array_tipos, $obj_tipo);
+
+	    			if($porcentaje>90)
+	    			{
+	    				$accion_encontrada = true;
+	    				//break;
+	    				
+	    			}	
+
+	    		}
+
+	    		if($accion_encontrada == true)
+    			{
+    				//return $tipos[$j];
+	    		} 
+	    	}
+
+	    	
+	    }
+
+
+	    usort($array_tipos,array($this,'cmp') );
+	    return $array_tipos[0]["idtipo_solicitud"];
+	}
+
+
+	public static function cmp($a, $b) 
+	{
+	    if ($a == $b) 
+	 	       return 0;
+	    						
+	    return ($a < $b) ? 1 : -1;
+	}
+
 	public function obtener_herramienta($cadena,$herramientas)
 	{
 		$contador_aplicativos = 0;
@@ -464,12 +532,14 @@ class SolicitudController extends BaseController {
 	    				
 	    			}	
     			}
+
     			if($aplicativo_encontrado == true)
     			{
     				$contador_aplicativos++;
     				if($contador_aplicativos == 1)
 	    				$resultados = $herramientas[$z]->idherramienta;
 	    		}
+
     			
     		}
     	}   	
@@ -820,7 +890,7 @@ class SolicitudController extends BaseController {
 					$asunto = Input::get('asunto');
 					$idsector = Input::get('sector');
 					$idcanal = Input::get('canal');
-					$identidad = Input::get('canal');
+					$identidad = Input::get('entidad');
 					$idherramienta = Input::get('herramienta');
 
 					$solicitud = new Solicitud;
