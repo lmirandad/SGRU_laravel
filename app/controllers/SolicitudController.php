@@ -923,7 +923,7 @@ class SolicitudController extends BaseController {
 					if($sla==null || $sla->isEmpty())
 					{
 						Session::flash('error', 'No existe un SLA en el sistema para realizar la creación.');				
-						//return Redirect::to('solicitudes/crear_solicitud');
+						return Redirect::to('solicitudes/crear_solicitud');
 					}
 
 					$solicitud->idsla = $sla[0]->idsla;
