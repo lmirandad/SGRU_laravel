@@ -4,11 +4,8 @@ $( document ).ready(function(){
 		ignoreReadonly:true,
 		format:'DD-MM-YYYY',
 		locale:'es',
+		maxDate: 'now',
 	});
-
-	$("#datetimepicker1").on("dp.change", function (e) {
-            $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
-        });
 
 
 

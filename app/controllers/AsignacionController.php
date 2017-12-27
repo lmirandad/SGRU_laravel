@@ -96,8 +96,10 @@ class AsignacionController extends BaseController {
 					$usuario_apto = null;
 					if($idherramienta == 39 || $idherramienta == 0){
 						//herramienta representada para "VARIOS" o "NO DETECTADO"
-						
-						$usuarios = User::buscarUsuariosAsignacionPorSector($sector->idsector);	
+
+						$usuario_apto = AsignacionController::buscarUsuarioAptoPorSector($sector->idsector);
+
+						/*$usuarios = User::buscarUsuariosAsignacionPorSector($sector->idsector);	
 				
 						if(is_array($usuarios) == true) //hay usuarios
 						{
@@ -105,13 +107,20 @@ class AsignacionController extends BaseController {
 						}else
 						{
 							$usuario_apto = null;
-						}
+						}*/
 						
 					}else{
 
 						//como solo tiene una sola herramienta, buscamos a los usuarios especializados y que tengan menos solicitudes pendientes y en proceso.
 
-						$usuarios = User::buscarUsuariosAsignacionPorHerramienta($idherramienta,$idaccion);	
+						$usuario_apto = AsignacionController::buscarUsuarioAptoPorHerramienta($idherramienta,$idaccion);
+
+						if($usuario_apto == null)
+						{
+							$usuario_apto = AsignacionController::buscarUsuarioAptoPorSector($sector->idsector);
+						}
+
+						/*$usuarios = User::buscarUsuariosAsignacionPorHerramienta($idherramienta,$idaccion);	
 
 						if(is_array($usuarios) == true) //hay usuarios
 						{
@@ -119,7 +128,7 @@ class AsignacionController extends BaseController {
 						}else
 						{
 							$usuario_apto = null;
-						}	
+						}	*/
 						
 					}
 
@@ -181,4 +190,34 @@ class AsignacionController extends BaseController {
 		}
 	}
 	
+	public function buscarUsuarioAptoPorSector($idsector)
+	{
+		$usuarios = User::buscarUsuariosAsignacionPorSector($idsector);	
+				
+		if(is_array($usuarios) == true) //hay usuarios
+		{
+			$usuario_apto = User::find($usuarios[0]->id_usuario);
+		}else
+		{
+			$usuario_apto = null;
+		}
+
+		return $usuario_apto;
+	}
+
+	public function buscarUsuarioAptoPorHerramienta($idherramienta,$idaccion)
+	{
+		$usuarios = User::buscarUsuariosAsignacionPorHerramienta($idherramienta,$idaccion);	
+
+		if(is_array($usuarios) == true) //hay usuarios
+		{
+			$usuario_apto = User::find($usuarios[0]->id_usuario);
+		}else
+		{
+			$usuario_apto = null;
+		}
+
+		return $usuario_apto;	
+	}
+
 }

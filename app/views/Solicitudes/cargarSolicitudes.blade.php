@@ -147,10 +147,7 @@
 			<div class="form-group col-md-2">				
 				<a class="btn btn-info btn-block" id="btnAsignar" > <i class="lnr lnr-location"></i>&nbsp&nbspAsignación</a>
 			</div>
-			<div class="form-group col-md-3 col-md-offset-5">
-				<a class="btn btn-primary btn-block" href="{{URL::to('solicitudes/crear_solicitud')}}"><i class="lnr lnr-plus-circle"></i>&nbspCrear Solicitud Manual</a>		
-			</div>
-			<div class="form-group col-md-2">
+			<div class="form-group col-md-2 col-md-offset-8">
 				<a class="btn btn-default btn-block" href="{{URL::to('/principal_admin')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>		
 			</div>
 		{{Form::close()}}

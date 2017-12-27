@@ -21,7 +21,8 @@ class SolicitudController extends BaseController {
 			// Verifico si el usuario es un WEBMASTER (ADMINISTRADOR DEL SISTEMA)
 			if($data["user"]->idrol == 1 || $data["user"]->idrol == 2){
 				$data["search_solicitud"] = null;
-				$data["fecha_solicitud"] = null;
+				$data["fecha_solicitud_desde"] = null;
+				$data["fecha_solicitud_hasta"] = null;
 				$data["search_tipo_solicitud"] = null;
 				$data["search_estado_solicitud"] = null;
 				$data["search_sector"] = null;
@@ -134,6 +135,7 @@ class SolicitudController extends BaseController {
 					$obj_log = [
 						"numero" => $i,
 						"descripcion" => null,
+						"accion" => "no detectada",
 						"entidad" => "no existe",
 						"canal" => "no existe",
 						"sector" => "no existe",
@@ -294,8 +296,11 @@ class SolicitudController extends BaseController {
 						
 						continue; //NO PROCEDE porque no existe la creacion (NO SE ACEPTARA MAS DE UNA ACCION) - LOGS
 					}
-					else		
+					else{						
 						$tipo_accion = TipoSolicitud::find($idtipo_accion);
+						$obj_log["accion"] = $tipo_accion->nombre;
+					}	
+						
 					
 					//9. VALIDACION DE LA APLICACION
 					/*******************SUJETO A CAMBIO DE ALGORITMO*************************************/
@@ -346,7 +351,7 @@ class SolicitudController extends BaseController {
 					if($idherramienta == 0)
 					{
 						$obj_log["descripcion"] = "El sistema no puede detectar la herramienta(s) solicitadas.";
-						array_push($logs_errores,$obj_log);
+						//array_push($logs_errores,$obj_log);
 						//continue;
 						$nombre_herramienta = "NO DETECTADO";
 					}else{
@@ -414,7 +419,7 @@ class SolicitudController extends BaseController {
 		$cadena = '';
 		for($i=0;$i<$tamano_log;$i++)
 		{
-			$cadena=$cadena.$logs[$i]["descripcion"].'/'.$logs[$i]["entidad"].'/'.$logs[$i]["canal"].'/'.$logs[$i]["sector"].'?';
+			$cadena=$cadena.$logs[$i]["descripcion"].'/'.$logs[$i]["accion"].'/'.$logs[$i]["entidad"].'/'.$logs[$i]["canal"].'/'.$logs[$i]["sector"].'?';
 		}
 		return $cadena;
 	}
@@ -623,7 +628,7 @@ class SolicitudController extends BaseController {
 				$value = Excel::create('Reporte Logs '.$result, function($excel) {
 						$excel->sheet('Reporte', function($sheet)  {
 							$sheet->row(1, array(
-								     'N° Registro','Resultado','Nombre Entidad (Socio)','Nombre Canal','Nombre Sector'
+								     'N° Registro','Resultado','Acción','Nombre Entidad (Socio)','Nombre Canal','Nombre Sector'
 								));
 							$logs = Input::get('logs');
 							
@@ -633,7 +638,7 @@ class SolicitudController extends BaseController {
 							for($i = 0;$i<$tamano_logs;$i++){
 								$partes = explode('/',$registros[$i]);
 								$sheet->row($i+2, array(
-								     $i+1, $partes[0], $partes[1],$partes[2],$partes[3]
+								     $i+1, $partes[0], $partes[1],$partes[2],$partes[3],$partes[4]
 								));
 							}
 
@@ -931,21 +936,23 @@ class SolicitudController extends BaseController {
 					if($idherramienta == 39){
 						//herramienta representada para "VARIOS"
 						
-						$usuarios = User::buscarUsuariosAsignacionPorSector($idsector);	
-				
+						/*$usuarios = User::buscarUsuariosAsignacionPorSector($idsector);	
+					
 						if(is_array($usuarios) == true) //hay usuarios
 						{
 							$usuario_apto = User::find($usuarios[0]->id_usuario);
 						}else
 						{
 							$usuario_apto = null;
-						}
+						}*/
+
+						$usuario_apto = SolicitudController::buscarUsuarioAptoPorSector($idsector);
 						
 					}else{
 
 						//como solo tiene una sola herramienta, buscamos a los usuarios especializados y que tengan menos solicitudes pendientes y en proceso.
 
-						$usuarios = User::buscarUsuariosAsignacionPorHerramienta($idherramienta,$idaccion);	
+						/*$usuarios = User::buscarUsuariosAsignacionPorHerramienta($idherramienta,$idaccion);	
 
 						if(is_array($usuarios) == true) //hay usuarios
 						{
@@ -953,6 +960,13 @@ class SolicitudController extends BaseController {
 						}else
 						{
 							$usuario_apto = null;
+						}*/
+
+						$usuario_apto = SolicitudController::buscarUsuarioAptoPorHerramienta($idherramienta,$idaccion);
+
+						if($usuario_apto == null)
+						{
+							$usuario_apto = SolicitudController::buscarUsuarioAptoPorSector($idsector);
 						}	
 						
 					}
@@ -1040,4 +1054,34 @@ class SolicitudController extends BaseController {
 		}
 	}
 	
+
+	public function buscarUsuarioAptoPorSector($idsector)
+	{
+		$usuarios = User::buscarUsuariosAsignacionPorSector($idsector);	
+				
+		if(is_array($usuarios) == true) //hay usuarios
+		{
+			$usuario_apto = User::find($usuarios[0]->id_usuario);
+		}else
+		{
+			$usuario_apto = null;
+		}
+
+		return $usuario_apto;
+	}
+
+	public function buscarUsuarioAptoPorHerramienta($idherramienta,$idaccion)
+	{
+		$usuarios = User::buscarUsuariosAsignacionPorHerramienta($idherramienta,$idaccion);	
+
+		if(is_array($usuarios) == true) //hay usuarios
+		{
+			$usuario_apto = User::find($usuarios[0]->id_usuario);
+		}else
+		{
+			$usuario_apto = null;
+		}
+
+		return $usuario_apto;	
+	}
 }

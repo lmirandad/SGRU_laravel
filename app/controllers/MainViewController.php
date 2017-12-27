@@ -292,9 +292,11 @@ class MenuPrincipalController extends BaseController {
 				$data["search_fecha"] = Input::get('search_fecha');
 				$mes_busqueda = null;
 				$anho_busqueda = null;
+
 				if(Input::get('search_usuario') == null && $data["search_fecha"] == null){
 					return Redirect::to('/principal_admin');
 				}
+
 				if($data["search_fecha"] != null){
 					$mes_busqueda = date('m',strtotime(DateTime::createFromFormat('d-m-Y','01-'.$data["search_fecha"])->format('d-m-Y')));
 					$anho_busqueda = date('Y',strtotime(DateTime::createFromFormat('d-m-Y','01-'.$data["search_fecha"])->format('d-m-Y')));
@@ -310,30 +312,45 @@ class MenuPrincipalController extends BaseController {
 					$idusuario = $usuario[0]->id;
 				}
 				
-				$data["solicitudes_atendidos"] = Solicitud::buscarPorIdEstadoPorUsuario(1, $idusuario,$mes_busqueda,$anho_busqueda)->get(); 
+				$data["solicitudes_atendidos"] = Solicitud::buscarPorIdEstado(1,$mes_busqueda,$anho_busqueda)->get(); 
+
 				if($data["solicitudes_atendidos"] == null || $data["solicitudes_atendidos"]->isEmpty()){
 					$data["solicitudes_atendidos"] = array();
-				}else				{
-					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_atendidos"][$i]->fecha_asignacion);				
-					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
-					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_atendidos"][$i]->fecha_solicitud);				
-					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-					$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
-					array_push($data["diferencia_fechas_atendidos"],$diferencia_dias);
+				}else				
+				{
+					
+					$data["diferencia_fechas_atendidos"] = array();
+					$cantidad_solicitudes = count($data["solicitudes_atendidos"]);					
+					for($i=0;$i<$cantidad_solicitudes;$i++)
+					{
+						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_atendidos"][$i]->fecha_asignacion);				
+						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_atendidos"][$i]->fecha_solicitud);				
+						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+						$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
+						array_push($data["diferencia_fechas_atendidos"],$diferencia_dias);
+					}
 				}
-				$data["solicitudes_cerrados"] = Solicitud::buscarPorIdEstadoPorUsuario(2, $idusuario,$mes_busqueda,$anho_busqueda)->get();
+
+				$data["solicitudes_cerrados"] = Solicitud::buscarPorIdEstado(2,$mes_busqueda,$anho_busqueda)->get(); 
 				if($data["solicitudes_cerrados"] == null || $data["solicitudes_cerrados"]->isEmpty())
 					$data["solicitudes_cerrados"] = array();
 				else
 				{
-					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_cerrados"][$i]->fecha_asignacion);				
-					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
-					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_cerrados"][$i]->fecha_solicitud);				
-					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-					$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
-					array_push($data["diferencia_fechas_cerrados"],$diferencia_dias);
+					$data["diferencia_fechas_cerrados"] = array();
+					$cantidad_solicitudes = count($data["solicitudes_cerrados"]);					
+					for($i=0;$i<$cantidad_solicitudes;$i++)
+					{
+						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_cerrados"][$i]->fecha_asignacion);				
+						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_cerrados"][$i]->fecha_solicitud);				
+						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+						$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
+						array_push($data["diferencia_fechas_cerrados"],$diferencia_dias);
+					}
+					
 				}
-				$data["solicitudes_pendientes"] = Solicitud::buscarPorIdEstadoPorUsuario(3, $idusuario,$mes_busqueda,$anho_busqueda)->get();
+				$data["solicitudes_pendientes"] = Solicitud::buscarPorIdEstado(3,$mes_busqueda,$anho_busqueda)->get();
 				$data["slas_data_pendiente"] = array();
 				$data["diferencia_fechas_pendiente"] = array();
 				$data["diferencia_fechas_trabajo_pendiente"] = array();
@@ -376,7 +393,7 @@ class MenuPrincipalController extends BaseController {
 					}
 				}
 				
-				$data["solicitudes_procesando"] = Solicitud::buscarPorIdEstadoPorUsuario(4, $idusuario,$mes_busqueda,$anho_busqueda)->get();
+				$data["solicitudes_procesando"] = Solicitud::buscarPorIdEstado(4,$mes_busqueda,$anho_busqueda)->get();
 				$data["slas_data_procesando"] = array();
 				$data["diferencia_fechas_procesando"] = array();
 				$data["diferencia_fechas_trabajo_procesando"] = array(); 
@@ -394,7 +411,7 @@ class MenuPrincipalController extends BaseController {
 						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_procesando"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-						$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
+						$diferencia_dias = $fecha_solicitud_formateada->diff($fecha_asignacion_formateada);
 						array_push($data["diferencia_fechas_procesando"],$diferencia_dias);
 						//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
 						$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
@@ -418,28 +435,42 @@ class MenuPrincipalController extends BaseController {
 						array_push($data["diferencia_fechas_trabajo_procesando"],$diferencia_dias_fecha_trabajo);
 					}
 				}
-				$data["solicitudes_rechazadas"] = Solicitud::buscarPorIdEstadoPorUsuario(5, $idusuario,$mes_busqueda,$anho_busqueda)->get();
+
+				$data["diferencia_fechas_rechazadas"] = array();
+				$data["solicitudes_rechazadas"] = Solicitud::buscarPorIdEstado(5,$mes_busqueda,$anho_busqueda)->get(); 
 				if($data["solicitudes_rechazadas"] == null || $data["solicitudes_rechazadas"]->isEmpty()){
 					$data["solicitudes_rechazadas"] = array();
 				}else
 				{
-					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_rechazadas"][$i]->fecha_asignacion);				
-					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
-					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_rechazadas"][$i]->fecha_solicitud);				
-					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-					$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
-					array_push($data["diferencia_fechas_rechazadas"],$diferencia_dias);
+					$cantidad_solicitudes = count($data["solicitudes_rechazadas"]);
+					for($i=0;$i<$cantidad_solicitudes;$i++)
+					{
+						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_rechazadas"][$i]->fecha_asignacion);				
+						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_rechazadas"][$i]->fecha_solicitud);				
+						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+						$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
+						array_push($data["diferencia_fechas_rechazadas"],$diferencia_dias);
+					}
+					
 				}
-				$data["solicitudes_anuladas"] = Solicitud::buscarPorIdEstadoPorUsuario(6, $idusuario,$mes_busqueda,$anho_busqueda)->get();
+
+				$data["diferencia_fechas_anuladas"] = array();
+				$data["solicitudes_anuladas"] = Solicitud::buscarPorIdEstado(6,$mes_busqueda,$anho_busqueda)->get(); 
 				if($data["solicitudes_anuladas"] == null || $data["solicitudes_anuladas"]->isEmpty()){
 					$data["solicitudes_anuladas"] = array();
 				}else{
-					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_anuladas"][$i]->fecha_asignacion);				
-					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
-					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_anuladas"][$i]->fecha_solicitud);				
-					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-					$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
-					array_push($data["diferencia_fechas_anuladas"],$diferencia_dias);
+					$cantidad_solicitudes = count($data["solicitudes_anuladas"]);
+					for($i=0;$i<$cantidad_solicitudes;$i++)
+					{
+						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_anuladas"][$i]->fecha_asignacion);				
+						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_anuladas"][$i]->fecha_solicitud);				
+						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+						$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
+						array_push($data["diferencia_fechas_anuladas"],$diferencia_dias);
+					}
+					
 				}
 				$data["idusuario"] = $idusuario;
 				$data["origen"] = 2; //1: sin usuario //2: con usuario

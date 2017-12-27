@@ -384,59 +384,6 @@ class SectorController extends BaseController {
 				    		}
 				    	}
 
-				    	/*//SE AGREGA ESTA NUEVA HERRAMIENTA PARA LOS USUARIOS ASIGNADOS
-				    	$usuarios_sector = User::buscarUsuariosPorIdSector($sector_id)->get();
-
-				    	if($usuarios_sector != null && !$usuarios_sector->isEmpty())
-				    	{
-
-				    		//procedo a agregar esta herramienta los usuarios.
-				    		$cantidad_usuarios = count($usuarios_sector);
-				    		for($z=0;$z<$cantidad_usuarios;$z++)
-				    		{
-				    			//Validar si ya existe:
-					    		$herramientaxuser = HerramientaXUser::buscarHerramientasPorIdUsuarioIdHerramienta($usuarios_sector[$z]->id,$arr_idherramienta[$i])->get();
-					    		if($herramientaxuser == null || $herramientaxuser->isEmpty())
-					    		{
-					    			//es una nueva herramienta para el usuario
-					    			$herramientaxuser = new HerramientaXUser;
-					    			$herramientaxuser->idherramienta = $arr_idherramienta[$i];
-					    			$herramientaxuser->iduser = $usuarios_sector[$z]->id;
-					    			$herramientaxuser->estado = 1;
-					    			$herramientaxuser->save();
-					    			
-					    		
-					    			//Agregar todos los tipos de acciones:
-							    	$herramientaxtipo_solicitud = HerramientaXTipoSolicitud::listarTipoSolicitudHerramienta($arr_idherramienta[$i])->get();
-							    	if(!$herramientaxtipo_solicitud->isEmpty()){
-
-							    		$size_tipos = count($herramientaxtipo_solicitud);
-							    		for($j=0;$j<$size_tipos;$j++){
-							    			$herramientaxtipo_solicitudxuser = new HerramientaXTipoSolicitudXUser;
-							    			$herramientaxtipo_solicitudxuser->idherramientaxtipo_solicitud = $herramientaxtipo_solicitud[$j]->idherramientaxtipo_solicitud;
-							    			$herramientaxtipo_solicitudxuser->iduser = $usuarios_sector[$z]->id;
-							    			$herramientaxtipo_solicitudxuser->save();
-							    		}
-							    	}
-
-					    		}else
-					    		{
-					    			//quiere decir que ya existe ahora validemos si esta eliminado o no
-					    			if($herramientaxuser[0]->deleted_at != null){
-					    				$herramientaxuser[0]->restore();
-					    				$accionesHerramientaUsuario = HerramientaXTipoSolicitudXUser::listarTipoSolicitudUsuario($usuarios_sector[$z]->id,$arr_idherramienta[$i])->get();
-							    		$size_acciones = count($accionesHerramientaUsuario);
-							    		for($j=0;$j<$size_acciones;$j++){
-							    			$accionesHerramientaUsuario[$j]->restore();
-							    		}
-					    			}
-					    			
-					    		}
-				    		}
-
-				    		
-				    	}*/
-
 				    	$flag_seleccion = true;
 				    }
 			    }
@@ -444,7 +391,7 @@ class SectorController extends BaseController {
 			  	if($size_ids > 0)
 			    {
 			    	if($flag_seleccion)
-			    		return Redirect::to('sectores/mostrar_herramientas_sector/'.$sector_id)->with('message', 'Se actualizaron correctamente los aplicativos al sector');	
+			    		return Redirect::to('sectores/mostrar_herramientas_sector/'.$sector_id)->with('message', 'Se actualizaron correctamente los aplicativos al sector. <strong> Para hacer posible la asignación a estas herramientas, agregar los SLA\'s a cada herramienta agregada. </strong>');	
 			    	else
 			    		return Redirect::to('sectores/mostrar_herramientas_sector/'.$sector_id)->with('error', 'No se seleccionó ningún aplicativo.');	
 			    }else

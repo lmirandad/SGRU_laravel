@@ -10,6 +10,7 @@
 							<li><a href="{{URL::to('solicitudes/listar_solicitudes')}}" class="">Buscar Solicitudes</a></li>
 							@if($user->idrol == 1)
 								<li><a href="{{URL::to('solicitudes/cargar_solicitudes')}}" class="">Cargar/Asignar Solicitudes</a></li>	
+								<li><a href="{{URL::to('solicitudes/crear_solicitud')}}" class="">Creación Manual de Solicitud</a></li>	
 							@endif						
 						</ul>
 					</div>

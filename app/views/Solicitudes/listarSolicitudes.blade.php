@@ -32,7 +32,7 @@
 					<div class="col-md-3">
 						{{ Form::label('fecha_solicitud_desde','Fecha de solicitud desde') }}
 						<div id="search_datetimepicker1" class="form-group input-group date @if($errors->first('fecha_solicitud_desde')) has-error has-feedback @endif">
-							{{ Form::text('fecha_solicitud_desde',Input::old('fecha_solicitud_desde'),array('class'=>'form-control','placeholder'=>'Fecha de Solicitud Desde')) }}
+							{{ Form::text('fecha_solicitud_desde',$fecha_solicitud_desde,array('class'=>'form-control','placeholder'=>'Fecha de Solicitud Desde')) }}
 							<span class="input-group-addon">
 		                        <span class="glyphicon glyphicon-calendar"></span>
 		                    </span>
@@ -41,7 +41,7 @@
 					<div class="col-md-3">
 						{{ Form::label('fecha_solicitud_hasta','Fecha de solicitud hasta') }}
 						<div id="search_datetimepicker2" class="form-group input-group date @if($errors->first('fecha_solicitud_hasta')) has-error has-feedback @endif">
-							{{ Form::text('fecha_solicitud_hasta',Input::old('fecha_solicitud_hasta'),array('class'=>'form-control','placeholder'=>'Fecha de Solicitud Hasta')) }}
+							{{ Form::text('fecha_solicitud_hasta',$fecha_solicitud_hasta,array('class'=>'form-control','placeholder'=>'Fecha de Solicitud Hasta')) }}
 							<span class="input-group-addon">
 		                        <span class="glyphicon glyphicon-calendar"></span>
 		                    </span>
@@ -120,7 +120,12 @@
 				</div>
 			</div>
 		</div>
-		
+		@if($search_solicitud || $fecha_solicitud_desde || $fecha_solicitud_hasta || $search_tipo_solicitud || $search_estado_solicitud || $search_sector)
+			{{ $solicitudes_data->appends(array('search_solicitud' => $search_solicitud,'fecha_solicitud_desde'=>$fecha_solicitud_desde,
+			'fecha_solicitud_hasta'=>$fecha_solicitud_hasta,'search_tipo_solicitud'=>$search_tipo_solicitud,'search_estado_solicitud' => $search_estado_solicitud,'search_sector' => $search_sector))->links() }}
+		@else
+			{{ $solicitudes_data->links() }}
+		@endif
 	</div>
 </div>
 @stop

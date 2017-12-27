@@ -32,9 +32,7 @@ $( document ).ready(function(){
         });
      }
 
-     $("#datetimepicker_creacion_solicitud").on("dp.change", function (e) {
-            $('#datetimepicker_creacion_solicitud').data("DateTimePicker").maxDate(e.date);
-        });
+     
 
     $('#btnMostrarFormularioReasingacion').click(function(){
     	mostrar_usuarios_disponibles();
@@ -45,7 +43,9 @@ $( document ).ready(function(){
      		ignoreReadonly: true,
      		format:'DD-MM-YYYY',
      		locale:'es',
+     		maxDate: 'now',
      	});
+
      }
 
 	$('#btnCargar').click(function(){
