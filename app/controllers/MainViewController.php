@@ -312,7 +312,7 @@ class MenuPrincipalController extends BaseController {
 					$idusuario = $usuario[0]->id;
 				}
 				
-				$data["solicitudes_atendidos"] = Solicitud::buscarPorIdEstado(1,$mes_busqueda,$anho_busqueda)->get(); 
+				$data["solicitudes_atendidos"] = Solicitud::buscarPorIdEstadoPorUsuario(1,$idusuario,$mes_busqueda,$anho_busqueda)->get(); 
 
 				if($data["solicitudes_atendidos"] == null || $data["solicitudes_atendidos"]->isEmpty()){
 					$data["solicitudes_atendidos"] = array();
@@ -332,7 +332,7 @@ class MenuPrincipalController extends BaseController {
 					}
 				}
 
-				$data["solicitudes_cerrados"] = Solicitud::buscarPorIdEstado(2,$mes_busqueda,$anho_busqueda)->get(); 
+				$data["solicitudes_cerrados"] = Solicitud::buscarPorIdEstadoPorUsuario(2,$idusuario,$mes_busqueda,$anho_busqueda)->get(); 
 				if($data["solicitudes_cerrados"] == null || $data["solicitudes_cerrados"]->isEmpty())
 					$data["solicitudes_cerrados"] = array();
 				else
@@ -350,7 +350,7 @@ class MenuPrincipalController extends BaseController {
 					}
 					
 				}
-				$data["solicitudes_pendientes"] = Solicitud::buscarPorIdEstado(3,$mes_busqueda,$anho_busqueda)->get();
+				$data["solicitudes_pendientes"] = Solicitud::buscarPorIdEstadoPorUsuario(3,$idusuario,$mes_busqueda,$anho_busqueda)->get(); 
 				$data["slas_data_pendiente"] = array();
 				$data["diferencia_fechas_pendiente"] = array();
 				$data["diferencia_fechas_trabajo_pendiente"] = array();
@@ -393,7 +393,7 @@ class MenuPrincipalController extends BaseController {
 					}
 				}
 				
-				$data["solicitudes_procesando"] = Solicitud::buscarPorIdEstado(4,$mes_busqueda,$anho_busqueda)->get();
+				$data["solicitudes_procesando"] = Solicitud::buscarPorIdEstadoPorUsuario(4,$idusuario,$mes_busqueda,$anho_busqueda)->get(); 
 				$data["slas_data_procesando"] = array();
 				$data["diferencia_fechas_procesando"] = array();
 				$data["diferencia_fechas_trabajo_procesando"] = array(); 
@@ -437,7 +437,7 @@ class MenuPrincipalController extends BaseController {
 				}
 
 				$data["diferencia_fechas_rechazadas"] = array();
-				$data["solicitudes_rechazadas"] = Solicitud::buscarPorIdEstado(5,$mes_busqueda,$anho_busqueda)->get(); 
+				$data["solicitudes_rechazadas"] = Solicitud::buscarPorIdEstadoPorUsuario(5,$idusuario,$mes_busqueda,$anho_busqueda)->get(); 
 				if($data["solicitudes_rechazadas"] == null || $data["solicitudes_rechazadas"]->isEmpty()){
 					$data["solicitudes_rechazadas"] = array();
 				}else
@@ -456,7 +456,7 @@ class MenuPrincipalController extends BaseController {
 				}
 
 				$data["diferencia_fechas_anuladas"] = array();
-				$data["solicitudes_anuladas"] = Solicitud::buscarPorIdEstado(6,$mes_busqueda,$anho_busqueda)->get(); 
+				$data["solicitudes_anuladas"] = Solicitud::buscarPorIdEstadoPorUsuario(6,$idusuario,$mes_busqueda,$anho_busqueda)->get(); 
 				if($data["solicitudes_anuladas"] == null || $data["solicitudes_anuladas"]->isEmpty()){
 					$data["solicitudes_anuladas"] = array();
 				}else{

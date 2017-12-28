@@ -23,6 +23,12 @@ class AsignacionController extends BaseController {
 				
 				$cantidad_registros = count($codigos_solicitud);
 
+				if($cantidad_registros == 0)
+				{
+					Session::flash('error','No hay solicitudes por asignar.');
+					return Redirect::to('solicitudes/cargar_solicitudes');
+				}
+
 				// 1. Registrar la carga del archivo
 				$carga_archivo = new CargaArchivo;
 				$carga_archivo->fecha_carga_archivo = date('Y-m-d H:i:s');
@@ -37,6 +43,8 @@ class AsignacionController extends BaseController {
 				$array_codigos_procesados = array();
 
 				// Por cada solicitud realizar los pasos 2 y 3
+				$herramienta_varios = Herramienta::buscarPorNombre('VARIOS')->get();
+				
 
 				for($i=0; $i<$cantidad_registros; $i++)
 				{
@@ -74,10 +82,10 @@ class AsignacionController extends BaseController {
 
 					//c. Accion
 					$idaccion = $idstipo_solicitud[$i];
-
+					$herramienta_varios = Herramienta::buscarPorNombre('VARIOS')->get();
 					//En caso que no se tiene un SLA para una herramienta no detectada se asumará el SLA como si existieran varios aplicativos
 					if($idherramienta == 0)
-						$sla = TipoSolicitudXSla::buscarSlaPorSectorHerramientaAccion($idsector,39,$idaccion)->get();
+						$sla = TipoSolicitudXSla::buscarSlaPorSectorHerramientaAccion($idsector,$herramienta_varios[0]->idherramienta,$idaccion)->get();
 					else
 						$sla = TipoSolicitudXSla::buscarSlaPorSectorHerramientaAccion($idsector,$idherramienta,$idaccion)->get();
 
@@ -94,20 +102,11 @@ class AsignacionController extends BaseController {
 
 					//En caso solo se tenga varias herramientas, se debe buscar a los usuarios del sector, que tengan menos solicitudes pendientes y en proceso.
 					$usuario_apto = null;
-					if($idherramienta == 39 || $idherramienta == 0){
+					
+					if($idherramienta == $herramienta_varios[0]->idherramienta || $idherramienta == 0){
 						//herramienta representada para "VARIOS" o "NO DETECTADO"
 
 						$usuario_apto = AsignacionController::buscarUsuarioAptoPorSector($sector->idsector);
-
-						/*$usuarios = User::buscarUsuariosAsignacionPorSector($sector->idsector);	
-				
-						if(is_array($usuarios) == true) //hay usuarios
-						{
-							$usuario_apto = User::find($usuarios[0]->id_usuario);
-						}else
-						{
-							$usuario_apto = null;
-						}*/
 						
 					}else{
 
@@ -120,16 +119,6 @@ class AsignacionController extends BaseController {
 							$usuario_apto = AsignacionController::buscarUsuarioAptoPorSector($sector->idsector);
 						}
 
-						/*$usuarios = User::buscarUsuariosAsignacionPorHerramienta($idherramienta,$idaccion);	
-
-						if(is_array($usuarios) == true) //hay usuarios
-						{
-							$usuario_apto = User::find($usuarios[0]->id_usuario);
-						}else
-						{
-							$usuario_apto = null;
-						}	*/
-						
 					}
 
 					

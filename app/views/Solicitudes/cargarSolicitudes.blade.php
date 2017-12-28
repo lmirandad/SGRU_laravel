@@ -85,7 +85,7 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-md-12">
-						<div class="table-responsive">
+						<div class="table-responsive" id="tabla_solicitudes">
 							<table class="table table-hover">
 								<thead>
 									<tr>

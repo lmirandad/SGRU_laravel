@@ -107,6 +107,19 @@ class SolicitudController extends BaseController {
 
 				$herramientas = Herramienta::listarHerramientas()->get();
 				$logs_errores = array();
+
+				//VALIDACIONES INICIALES
+				if($cantidad_registros_totales == 0)
+				{
+					Session::flash('error', 'Archivo vacío.');
+					return Redirect::to('solicitudes/cargar_solicitudes');
+				}
+
+				if(count($lista_solicitudes[0]) != 8 )
+				{
+					Session::flash('error', 'No es posible realizar la lectura del archivo puesto que la cantidad de campos no es correcta.');
+					return Redirect::to('solicitudes/cargar_solicitudes');
+				}
 				
 				
 				for($i = 1; $i < $cantidad_registros_totales-1; $i++)
@@ -135,6 +148,7 @@ class SolicitudController extends BaseController {
 					$obj_log = [
 						"numero" => $i,
 						"descripcion" => null,
+						"aplicativo" => "NO DETECTADO",
 						"accion" => "no detectada",
 						"entidad" => "no existe",
 						"canal" => "no existe",
@@ -305,41 +319,11 @@ class SolicitudController extends BaseController {
 					//9. VALIDACION DE LA APLICACION
 					/*******************SUJETO A CAMBIO DE ALGORITMO*************************************/
 					$resultado = SolicitudController::obtener_herramienta($asunto,$herramientas);
-					/************************************************************************************/
-					/************************CAMBIO DE CODIGO (SE USARÁ ÑLA HERRAMIENTA "VARIOS")*************/
-					/*$codigos_herramientas = '';
-					if(count($array_herramientas)>1)
-					{
-						
-						//quiere decir que hay mas de una herramienta
-						$tamano =count($array_herramientas);
-						$nombre_herramienta = "VARIOS";
-						for($p=0; $p<$tamano; $p++)
-						{
-							if($p<$tamano-1)
-								$codigos_herramientas = $codigos_herramientas.$array_herramientas[$p]->idherramienta.'|';
-							else
-								$codigos_herramientas = $codigos_herramientas.$array_herramientas[$p]->idherramienta;
-						}
-						
-						$nombre_herramienta[0]->
-
-						
-
-					}else if(count($array_herramientas) == 1)
-					{
-						//solo existe 1
-						$nombre_herramienta = $array_herramientas[0]->nombre;
-						$codigos_herramientas = $array_herramientas[0]->idherramienta;
-					}else
-					{
-						//quiere decir que no existen herramientas
-						$nombre_herramienta = "NO DETECTADO";
-					}*/
 					/***********************************NUEVO CODIGO***************************************************/
 					if($resultado == 0)
 					{
-						$idherramienta = 39; //REPRESENTA LA HERRAMIENTA VARIOS
+						$herramienta_varios = Herramienta::buscarPorNombre('VARIOS')->get();
+						$idherramienta = $herramienta_varios[0]->idherramienta; //REPRESENTA LA HERRAMIENTA VARIOS
 					}else if($resultado == -1)
 					{
 						$idherramienta = 0; //REPRESENTA NO DETECCION DE HERRAMIENTA
@@ -350,14 +334,13 @@ class SolicitudController extends BaseController {
 
 					if($idherramienta == 0)
 					{
-						$obj_log["descripcion"] = "El sistema no puede detectar la herramienta(s) solicitadas.";
-						//array_push($logs_errores,$obj_log);
-						//continue;
 						$nombre_herramienta = "NO DETECTADO";
 					}else{
 						$herramienta = Herramienta::find($idherramienta);
 						$nombre_herramienta = $herramienta->nombre;
 					}
+
+					$obj_log["aplicativo"] = $nombre_herramienta;
 
 					//2.5 Luego de estas validaciones se deberá revisar si la solicitud ya existe 
 					$solicitud = Solicitud::buscarPorCodigoSolicitud($codigo_solicitud_ingresar)->get();
@@ -419,7 +402,7 @@ class SolicitudController extends BaseController {
 		$cadena = '';
 		for($i=0;$i<$tamano_log;$i++)
 		{
-			$cadena=$cadena.$logs[$i]["descripcion"].'/'.$logs[$i]["accion"].'/'.$logs[$i]["entidad"].'/'.$logs[$i]["canal"].'/'.$logs[$i]["sector"].'?';
+			$cadena=$cadena.$logs[$i]["descripcion"].'/'.$logs[$i]["aplicativo"].'/'.$logs[$i]["accion"].'/'.$logs[$i]["entidad"].'/'.$logs[$i]["canal"].'/'.$logs[$i]["sector"].'?';
 		}
 		return $cadena;
 	}
@@ -488,11 +471,6 @@ class SolicitudController extends BaseController {
 	    			}	
 
 	    		}
-
-	    		if($accion_encontrada == true)
-    			{
-    				//return $tipos[$j];
-	    		} 
 	    	}
 
 	    	
@@ -502,7 +480,6 @@ class SolicitudController extends BaseController {
 	    usort($array_tipos,array($this,'cmp') );
 	    return $array_tipos[0]["idtipo_solicitud"];
 	}
-
 
 	public static function cmp($a, $b) 
 	{
@@ -628,7 +605,7 @@ class SolicitudController extends BaseController {
 				$value = Excel::create('Reporte Logs '.$result, function($excel) {
 						$excel->sheet('Reporte', function($sheet)  {
 							$sheet->row(1, array(
-								     'N° Registro','Resultado','Acción','Nombre Entidad (Socio)','Nombre Canal','Nombre Sector'
+								     'N° Registro','Resultado','Aplicativo','Acción','Nombre Entidad (Socio)','Nombre Canal','Nombre Sector'
 								));
 							$logs = Input::get('logs');
 							
@@ -638,7 +615,7 @@ class SolicitudController extends BaseController {
 							for($i = 0;$i<$tamano_logs;$i++){
 								$partes = explode('/',$registros[$i]);
 								$sheet->row($i+2, array(
-								     $i+1, $partes[0], $partes[1],$partes[2],$partes[3],$partes[4]
+								     $i+1, $partes[0], $partes[1],$partes[2],$partes[3],$partes[4],$partes[5]
 								));
 							}
 
@@ -724,8 +701,8 @@ class SolicitudController extends BaseController {
 
 			$idherramienta = $solicitud->idherramienta;
 			$idaccion = $solicitud->idtipo_solicitud;
-
-			if($idherramienta == 39){
+			$herramienta_varios = Herramienta::buscarPorNombre('VARIOS')->get();
+			if($idherramienta == $herramienta_varios[0]->idherramienta){
 				//herramienta representada para "VARIOS"
 				$usuarios = User::buscarUsuariosAsignacionPorSector($sector->idsector);	
 				
@@ -933,7 +910,8 @@ class SolicitudController extends BaseController {
 
 					//En caso solo se tenga varias herramientas, se debe buscar a los usuarios del sector, que tengan menos solicitudes pendientes y en proceso.
 					$usuario_apto = null;
-					if($idherramienta == 39){
+					$herramienta_varios = Herramienta::buscarPorNombre('VARIOS')->get();
+					if($idherramienta == $herramienta_varios[0]->idherramienta){
 						//herramienta representada para "VARIOS"
 						
 						/*$usuarios = User::buscarUsuariosAsignacionPorSector($idsector);	

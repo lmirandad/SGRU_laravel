@@ -1,6 +1,6 @@
 
-$( document ).ready(function(){	
-	
+$( document ).ready(function(){
+
 	if($('#input-file').length){
 		$("#input-file").fileinput({
 		    language: "es",
@@ -49,6 +49,7 @@ $( document ).ready(function(){
      }
 
 	$('#btnCargar').click(function(){
+		
 		BootstrapDialog.confirm({
 			title: 'Mensaje de Confirmación',
 			message: '¿Está seguro que desea realizar esta acción?', 
@@ -57,6 +58,9 @@ $( document ).ready(function(){
 	    	btnOKLabel: 'Aceptar', 
 			callback: function(result){
 		        if(result) {
+		        	$('#tabla_solicitudes').loading({
+			    		message: 'Cargando..',
+			      	});
 					document.getElementById("submit-cargar").submit();
 				}
 			}
@@ -76,7 +80,7 @@ $( document ).ready(function(){
 	    	btnOKLabel: 'Aceptar', 
 			callback: function(result){
 		        if(result) {
-					document.getElementById("submit-asignar").submit();
+		        	document.getElementById("submit-asignar").submit();
 				}
 			}
 		});
@@ -97,7 +101,7 @@ $( document ).ready(function(){
 	$('#slcSector').on('change',function(){
 		$('#slcCanal')[0].options.length = 0;
 		$('#slcEntidad')[0].options.length = 0;
-		$('#slcEntidad')[0].options.add(new Option("Seleccione",""));
+		$('#slcEntidad')[0].options.add(new Option("Seleccione",""));		
 		$('#slcHerramienta')[0].options.length = 0;
 		idsector = $('#slcSector').val(); 
 		if( idsector != ''){
