@@ -283,13 +283,24 @@ class EntidadController extends BaseController {
 				$entidad_id = Input::get('entidad_id');
 				$url = "entidades/mostrar_entidad"."/".$entidad_id;
 				$entidad = Entidad::find($entidad_id);
-				
 				//Validar si la entidad posee solicitudes pendientes o en proceso
 				$solicitudes = Solicitud::buscarSolicitudesPendientesProcesando($entidad->identidad)->get();
 
 				if($solicitudes == null || $solicitudes->isEmpty()){
 					//Esta vacio, se puede eliminar la entidad
-					$entidad->delete();
+					$puntos_venta = PuntoVenta::buscarPuntosVentaPorEntidad($entidad->identidad)->get();
+						
+					if($puntos_venta == null || $puntos_venta->isEmpty())
+					{
+						$entidad->delete();
+					}else{
+						if(count($puntos_venta) > 0){
+							Session::flash('error', 'No se puede inhabilitar la entidad. La entidad cuenta con puntos de venta activo.');
+							return Redirect::to($url);
+						}else{
+							$entidad->delete();
+						}	
+					}
 				}else
 				{
 					//Por seguridad, se vuelve a revalidar la cantidad de solicitudes pendientes o procesando
@@ -298,11 +309,7 @@ class EntidadController extends BaseController {
 						Session::flash('error', 'No se puede inhabilitar la entidad. La entidad cuenta con solicitudes pendientes y en proceso.');
 						return Redirect::to($url);
 					}
-					else
-						$entidad->delete();						
 				}
-
-
 				Session::flash('message', 'Se inhabilitó correctamente la entidad.');
 				return Redirect::to($url);
 			}else{

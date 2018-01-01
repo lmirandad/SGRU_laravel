@@ -69,15 +69,21 @@ class UsuariosObservadosVenaController extends BaseController {
 					return Redirect::to('usuarios_observados_vena/cargar_usuarios_observados_vena');	
 				}
 				
-				$file_handle = fopen($file_name, 'r');
+				/*$file_handle = fopen($file_name, 'r');
 			    
 			    while (!feof($file_handle) ) {
 			        $line_of_text[] = fgetcsv($file_handle, 1024,"|");
 			    }
-			    fclose($file_handle);
+			    fclose($file_handle);*/
+
+			    $lista_observados = Excel::load($file_name)->get();
+
+			    /*echo '<pre>';
+			    var_dump($lista_observados);
+			    echo '</pre>';*/
 
 			    //inicio del algoritmo
-			    $lista_observados = $line_of_text;
+			    
 				$cantidad_registros_totales = count($lista_observados);
 				$cantidad_registros_procesados = 0;
 
@@ -97,8 +103,10 @@ class UsuariosObservadosVenaController extends BaseController {
 					Session::flash('error', 'No es posible realizar la lectura del archivo puesto que la cantidad de campos no es correcta.');
 					return Redirect::to('usuarios_observados_vena/cargar_usuarios_observados_vena');
 				}
+
+				$logs_errores = array();
 				
-				for($i = 1; $i < $cantidad_registros_totales-1; $i++)
+				for($i = 0; $i < $cantidad_registros_totales; $i++)
 				{
 					//2.1. Leer Valores
 					$fecha_bloqueo = $lista_observados[$i][0];
@@ -125,9 +133,9 @@ class UsuariosObservadosVenaController extends BaseController {
 					//ALGORITMO DE VALIDACION
 
 					//1. VALIDACION FECHA DE BLOQUEO
-					if(strcmp($fecha_bloqueo,'') != 0)
+					if( $fecha_bloqueo != null && strcmp($fecha_bloqueo,'') != 0 )
 					{
-						if(DateTime::createFromFormat('d/m/Y', $fecha_bloqueo) == false)
+						if(DateTime::createFromFormat('Y-m-d H:i:s', $fecha_bloqueo) == false)
 						{
 							$obj_log["descripcion"] = "La fecha de bloqueo no cuenta con el formato de fecha correcto";
 							array_push($logs_errores,$obj_log);
@@ -135,8 +143,7 @@ class UsuariosObservadosVenaController extends BaseController {
 							continue; //(LOGS)
 						} 
 						else{	
-							$partes = explode("/",$fecha_bloqueo);
-							$fecha_bloqueo_date = date('Y-m-d',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));
+							$fecha_bloqueo_date = $fecha_bloqueo;
 						}
 					}else //NO PROCEDE
 					{
@@ -145,72 +152,11 @@ class UsuariosObservadosVenaController extends BaseController {
 						continue; //(LOGS)
 					}
 
-					//2. VALIDACION HERRAMIENTA
-					/*$codigos_herramientas = '';
-					if(strcmp($sistema,'') != 0)
+					if($numero_documento == null || strcmp($numero_documento, '') == 0 || strcmp($numero_documento, '99999999')==0)
 					{
-						$idherramienta = UsuariosObservadosVenaController::obtener_herramienta($sistema,$herramientas);
-						if($idherramienta > 0)
-						{
-							$codigos_herramientas = $idherramienta;
-						}else
-						{
-							//quiere decir que no existen herramientas
-							$obj_log["descripcion"] = "El campo Sistema no es reconocido.";
-							array_push($logs_errores,$obj_log);
-							continue; //(LOGS)
-						}	
-					}else
-					{
-						//quiere decir que no existen herramientas
-						$obj_log["descripcion"] = "El campo Sistema está vacío.";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
+						continue;
 					}
 
-					//3.VALIDACION DEL CODIGO USUARIO
-					if(strcmp($codigo_usuario,'') == 0)
-					{
-						//quiere decir que no existen herramientas
-						$obj_log["descripcion"] = "El campo código de usuario está vacío.";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
-					}
-
-					//4.VALIDACION DE NOMBRE DE USUARIO
-					if(strcmp($nombre_usuario,'') == 0)
-					{
-						//quiere decir que no existen herramientas
-						$obj_log["descripcion"] = "El campo nombre de usuario está vacío.";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
-					}
-
-					//4.VALIDACION DEL TIPO DE DOCUMENTO
-					if(strcmp($tipo_documento,'') == 0)
-					{
-						//quiere decir que no existen herramientas
-						$obj_log["descripcion"] = "El campo tipo de documento está vacío.";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
-					}
-
-					//5.VALIDACION DEL TIPO DE DOCUMENTO
-					if(strcmp($numero_documento,'') == 0)
-					{
-						//quiere decir que no existen herramientas
-						$obj_log["descripcion"] = "El campo tipo de documento está vacío.";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
-					}else
-					{
-						if(!ctype_digit($numero_documento))
-						{
-							$obj_log["descripcion"] = "El campo numero de documento está vacío.";
-							array_push($logs_errores,$obj_log);
-							continue; //(LOGS)
-						}
-					}*/
 
 					$cantidad_registros_procesados++;
 					$observados_arreglos = [
@@ -229,7 +175,7 @@ class UsuariosObservadosVenaController extends BaseController {
 				$data["vista_previa_ejecutado_vena"] = 0;
 				
 				$data["cantidad_procesados_observados"] = $cantidad_registros_procesados;
-				$data["cantidad_total_observados"] = $cantidad_registros_totales-2;
+				$data["cantidad_total_observados"] = $cantidad_registros_totales;
 
 				//validar si existen usuarios cargados en el día de hoy:
 				$fecha_actual = date('Y-m-d');
@@ -242,7 +188,7 @@ class UsuariosObservadosVenaController extends BaseController {
 
 				if($buscar_usuario_vena != null){
 					$data["usuarios_vena_ya_cargados"] = 1;
-				}
+				}	
 
 				return View::make('Mantenimientos/UsuariosObservados_Vena/cargarUsuariosObservadosVena',$data);
 			}else{
@@ -255,37 +201,6 @@ class UsuariosObservadosVenaController extends BaseController {
 	}
 	
 	
-	public function obtener_herramienta($sistema,$herramientas)
-	{
-		$resultados = null;    	
-    	$cantidad_herramientas = count($herramientas);
-
-		for($z=0;$z<$cantidad_herramientas;$z++)
-		{
-			$equivalencias = HerramientaEquivalencia::buscarEquivalenciasPorIdHerramienta($herramientas[$z]->idherramienta)->get();
-			$cantidad_equivalencias = count($equivalencias);
-			$aplicativo_encontrado = false;
-			for($w=0;$w<$cantidad_equivalencias;$w++)
-			{
-				similar_text(strtolower($sistema), strtolower($equivalencias[$w]->nombre_equivalencia),$porcentaje);
-				//si es mayor a 90% entonces contamos con una herramienta
-    			if($porcentaje>90)
-    			{
-    				$aplicativo_encontrado = true;
-    				break;
-    				
-    			}	
-			}
-			if($aplicativo_encontrado == true)
-			{
-				return $herramientas[$z]->idherramienta;
-    		}
-			
-		}
-
-    	return 0;
-
-	}
 
 	public function submit_cargar_vena()
 	{
@@ -312,15 +227,15 @@ class UsuariosObservadosVenaController extends BaseController {
 					return Redirect::to('usuarios_observados_vena/cargar_usuarios_observados_vena');	
 				}
 				
-				$file_handle = fopen($file_name, 'r');
+				/*$file_handle = fopen($file_name, 'r');
 			    
 			    while (!feof($file_handle) ) {
 			        $line_of_text[] = fgetcsv($file_handle, 1024,"|");
 			    }
-			    fclose($file_handle);
+			    fclose($file_handle);*/
 
 			    //inicio del algoritmo
-			    $lista_vena = $line_of_text;
+			    $lista_vena = Excel::selectSheets('DATA')->load($file_name)->get();
 				$cantidad_registros_totales = count($lista_vena);
 				$cantidad_registros_procesados = 0;
 
@@ -346,7 +261,7 @@ class UsuariosObservadosVenaController extends BaseController {
 				$logs_errores = array();
 				
 				
-				for($i = 1; $i < $cantidad_registros_totales-1; $i++)
+				for($i = 0; $i < $cantidad_registros_totales; $i++)
 				{
 					//2.1. Leer Valores
 					$numero_documento = $lista_vena[$i][2];
@@ -373,92 +288,6 @@ class UsuariosObservadosVenaController extends BaseController {
 						continue; //(LOGS)
 					}
 
-					/*if(strcmp($fecha_bloqueo,'') != 0)
-					{
-						if(DateTime::createFromFormat('d/m/Y', $fecha_bloqueo) == false)
-						{
-							$obj_log["descripcion"] = "La fecha de bloqueo no cuenta con el formato de fecha correcto";
-							array_push($logs_errores,$obj_log);
-							//FECHA CON FORMATO ERRADO
-							continue; //(LOGS)
-						} 
-						else{	
-							$partes = explode("/",$fecha_bloqueo);
-							$fecha_bloqueo_date = date('Y-m-d',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));
-						}
-					}else //NO PROCEDE
-					{
-						$obj_log["descripcion"] = "El campo Fecha de Bloqueo está vacío.";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
-					}*/
-
-					//2. VALIDACION HERRAMIENTA
-					/*$codigos_herramientas = '';
-					if(strcmp($sistema,'') != 0)
-					{
-						$idherramienta = UsuariosObservadosVenaController::obtener_herramienta($sistema,$herramientas);
-						if($idherramienta > 0)
-						{
-							$codigos_herramientas = $idherramienta;
-						}else
-						{
-							//quiere decir que no existen herramientas
-							$obj_log["descripcion"] = "El campo Sistema no es reconocido.";
-							array_push($logs_errores,$obj_log);
-							continue; //(LOGS)
-						}	
-					}else
-					{
-						//quiere decir que no existen herramientas
-						$obj_log["descripcion"] = "El campo Sistema está vacío.";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
-					}
-
-					//3.VALIDACION DEL CODIGO USUARIO
-					if(strcmp($codigo_usuario,'') == 0)
-					{
-						//quiere decir que no existen herramientas
-						$obj_log["descripcion"] = "El campo código de usuario está vacío.";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
-					}
-
-					//4.VALIDACION DE NOMBRE DE USUARIO
-					if(strcmp($nombre_usuario,'') == 0)
-					{
-						//quiere decir que no existen herramientas
-						$obj_log["descripcion"] = "El campo nombre de usuario está vacío.";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
-					}
-
-					//4.VALIDACION DEL TIPO DE DOCUMENTO
-					if(strcmp($tipo_documento,'') == 0)
-					{
-						//quiere decir que no existen herramientas
-						$obj_log["descripcion"] = "El campo tipo de documento está vacío.";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
-					}
-
-					//5.VALIDACION DEL TIPO DE DOCUMENTO
-					if(strcmp($numero_documento,'') == 0)
-					{
-						//quiere decir que no existen herramientas
-						$obj_log["descripcion"] = "El campo tipo de documento está vacío.";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
-					}else
-					{
-						if(!ctype_digit($numero_documento))
-						{
-							$obj_log["descripcion"] = "El campo numero de documento está vacío.";
-							array_push($logs_errores,$obj_log);
-							continue; //(LOGS)
-						}
-					}*/
 
 					$cantidad_registros_procesados++;
 					$observados_arreglos = [
@@ -480,7 +309,7 @@ class UsuariosObservadosVenaController extends BaseController {
 				$data["vista_previa_ejecutado_vena"] = 1;
 				
 				$data["cantidad_procesados_vena"] = $cantidad_registros_procesados;
-				$data["cantidad_total_vena"] = $cantidad_registros_totales-2;
+				$data["cantidad_total_vena"] = $cantidad_registros_totales;
 
 				$data["usuarios_vena_ya_cargados"] = 0;
 				$data["usuarios_observados_ya_cargados"] = 0;

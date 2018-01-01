@@ -33,6 +33,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	public function scopeListarGestores($query)
+	{
+		$query->withTrashed()
+			  ->where('users.idrol','=',2)
+			  ->select('users.*');
+		return $query;	
+	}
+
 	public function scopeBuscarUsuarioPorUsername($query,$search_username)
 	{
 		$query->withTrashed()	

@@ -39,11 +39,12 @@
 								<p>{{ $errors->first('descripcion') }}</p>
 								<p>{{ $errors->first('flag_seguridad') }}</p>
 								<p>{{ $errors->first('denominacion_herramienta') }}</p>
+								<p>{{ $errors->first('tipo_requerimiento') }}</p>
 							</div>
 							@endif
 						</div>
 						<div class="row">
-							<div class="form-group col-md-3 col-md-offset-1 @if($errors->first('nombre_herramienta')) has-error has-feedback @endif"">
+							<div class="form-group col-md-3 @if($errors->first('nombre_herramienta')) has-error has-feedback @endif"">
 								{{ Form::label('nombre_herramienta','Nombre del Aplicativo')}}
 								{{ Form::text('nombre_herramienta',Input::old('nombre_herramienta'),array('class'=>'form-control','placeholder'=>'Ingrese nombre del aplicativo')) }}
 							</div>
@@ -54,6 +55,10 @@
 							<div class="form-group col-md-3 @if($errors->first('denominacion_herramienta')) has-error has-feedback @endif">
 								{{ Form::label('denominacion_herramienta','Categoría Aplicativo:')}}
 								{{ Form::select('denominacion_herramienta',array(''=>'Seleccione')+$denominaciones,Input::old('denominacion_herramienta'),array('class'=>'form-control')) }}
+							</div>
+							<div class="form-group col-md-3 @if($errors->first('tipo_requerimiento')) has-error has-feedback @endif">
+								{{ Form::label('tipo_requerimiento','Tipo Atención Requerimiento:')}}
+								{{ Form::select('tipo_requerimiento',array(''=>'Seleccione')+$tipos_requerimiento,Input::old('tipo_requerimiento'),array('class'=>'form-control')) }}
 							</div>
 						</div>
 						<div class="row">

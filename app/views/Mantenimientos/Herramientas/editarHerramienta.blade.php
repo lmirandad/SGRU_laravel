@@ -15,6 +15,7 @@
 						<p>{{ $errors->first('flag_seguridad') }}</p>
 						<p>{{ $errors->first('denominacion_herramienta') }}</p>
 						<p>{{ $errors->first('nombre_equivalencia') }}</p>
+						<p>{{ $errors->first('tipo_requerimiento') }}</p>
 					</div>
 				@endif
 			</div>
@@ -47,17 +48,21 @@
 							
 						</div>
 						<div class="row">
-							<div class="form-group col-md-4 @if($errors->first('nombre_herramienta')) has-error has-feedback @endif"">
-								{{ Form::label('nombre_herramienta','Nombre del Aplicativo')}}
+							<div class="form-group col-md-3 @if($errors->first('nombre_herramienta')) has-error has-feedback @endif"">
+								{{ Form::label('nombre_herramienta','Nombre')}}
 								{{ Form::text('nombre_herramienta',$herramienta->nombre,array('class'=>'form-control','placeholder'=>'Ingrese nombre del aplicativo')) }}
 							</div>
-							<div class="form-group col-md-4 @if($errors->first('flag_seguridad')) has-error has-feedback @endif"">
+							<div class="form-group col-md-3 @if($errors->first('flag_seguridad')) has-error has-feedback @endif"">
 								{{ Form::label('flag_seguridad','Valida Seguridad:')}}
 								{{ Form::select('flag_seguridad', [''=>'Seleccione','0'=>'No','1'=>'Si','2'=>'Por Validar'],$herramienta->flag_seguridad,['class' => 'form-control']) }}
 							</div>
-							<div class="form-group col-md-4 @if($errors->first('denominacion_herramienta')) has-error has-feedback @endif">
+							<div class="form-group col-md-3 @if($errors->first('denominacion_herramienta')) has-error has-feedback @endif">
 								{{ Form::label('denominacion_herramienta','Categoría Aplicativo:')}}
 								{{ Form::select('denominacion_herramienta',array(''=>'Seleccione')+$denominaciones,$herramienta->iddenominacion_herramienta,array('class'=>'form-control')) }}
+							</div>
+							<div class="form-group col-md-3 @if($errors->first('tipo_requerimiento')) has-error has-feedback @endif">
+								{{ Form::label('tipo_requerimiento','Tipo Atención:')}}
+								{{ Form::select('tipo_requerimiento',array(''=>'Seleccione')+$tipos_requerimiento,$herramienta->idtipo_requerimiento,array('class'=>'form-control')) }}
 							</div>
 						</div>
 						<div class="row">

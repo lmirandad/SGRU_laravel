@@ -231,7 +231,20 @@ class CanalController extends BaseController {
 
 				if($entidades == null || $entidades->isEmpty()){
 					//Esta vacio, se puede eliminar el canal
-					$canal->delete();
+					$cargos_canal = CargoCanal::buscarCargosPorCanal($canal->idcanal)->get();
+						
+					if($cargos_canal == null || $cargos_canal->isEmpty())
+					{
+						$canal->delete();
+					}else{
+						if(count($cargos_canal) > 0){
+							Session::flash('error', 'No se puede inhabilitar el canal. El canal cuenta con tipos de cargos activo.');
+							return Redirect::to($url);
+						}else{
+							$canal->delete();
+						}	
+					}
+
 				}else
 				{
 					//Por seguridad, se vuelve a revalidar si el sector posee canales.

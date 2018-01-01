@@ -27,6 +27,7 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 	public function scopeListarHerramientasDisponibles($query,$search_criteria)
 	{
 		$query->join('denominacion_herramienta','herramienta.iddenominacion_herramienta','=','denominacion_herramienta.iddenominacion_herramienta');
+		$query->join('tipo_requerimiento','tipo_requerimiento.idtipo_requerimiento','=','herramienta.idtipo_requerimiento');
 		$query->whereNotIn('herramienta.idherramienta',function($subquery) use ($search_criteria){
 					$subquery->leftJoin('herramientaxusers','herramienta.idherramienta','=','herramientaxusers.idherramienta');
 					$subquery->from(with(new Herramienta)->getTable());
@@ -35,7 +36,7 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 					$subquery->select('herramienta.idherramienta')->distinct();
 		});
 
-		$query->select('herramienta.*','denominacion_herramienta.nombre as nombre_denominacion');
+		$query->select('herramienta.*','denominacion_herramienta.nombre as nombre_denominacion','tipo_requerimiento.nombre as nombre_tipo');
 
 		return $query;
 	}
@@ -43,6 +44,7 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 	public function scopeListarHerramientasDisponiblesSector($query,$search_criteria)
 	{
 		$query->join('denominacion_herramienta','herramienta.iddenominacion_herramienta','=','denominacion_herramienta.iddenominacion_herramienta');
+		$query->join('tipo_requerimiento','tipo_requerimiento.idtipo_requerimiento','=','herramienta.idtipo_requerimiento');
 		$query->whereNotIn('herramienta.idherramienta',function($subquery) use ($search_criteria){
 					$subquery->leftJoin('herramientaxsector','herramienta.idherramienta','=','herramientaxsector.idherramienta');
 					$subquery->from(with(new Herramienta)->getTable());
@@ -51,7 +53,7 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 					$subquery->select('herramienta.idherramienta')->distinct();
 		});
 
-		$query->select('herramienta.*','denominacion_herramienta.nombre as nombre_denominacion');
+		$query->select('herramienta.*','denominacion_herramienta.nombre as nombre_denominacion','tipo_requerimiento.nombre as nombre_tipo');
 
 		return $query;
 	}
@@ -59,8 +61,8 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 	public function scopeListarHerramientas($query)
 	{
 		$query->join('denominacion_herramienta','herramienta.iddenominacion_herramienta','=','denominacion_herramienta.iddenominacion_herramienta');
-
-		$query->select('herramienta.*','denominacion_herramienta.nombre as nombre_denominacion');
+		$query->join('tipo_requerimiento','tipo_requerimiento.idtipo_requerimiento','=','herramienta.idtipo_requerimiento');
+		$query->select('herramienta.*','denominacion_herramienta.nombre as nombre_denominacion','tipo_requerimiento.nombre as nombre_tipo');
 
 		return $query;
 	}
@@ -68,7 +70,8 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 	public function scopeBuscarHerramientas($query,$search_criteria,$search_denominacion_herramienta)
 	{
 		$query->withTrashed()
-			  ->join('denominacion_herramienta','denominacion_herramienta.iddenominacion_herramienta','=','herramienta.iddenominacion_herramienta')			  
+			  ->join('denominacion_herramienta','denominacion_herramienta.iddenominacion_herramienta','=','herramienta.iddenominacion_herramienta')
+			  ->join('tipo_requerimiento','tipo_requerimiento.idtipo_requerimiento','=','herramienta.idtipo_requerimiento')	  
 			  ->whereNested(function($query) use($search_criteria,$search_denominacion_herramienta){
 			  		$query->where('herramienta.nombre','LIKE',"%$search_criteria%");
 			  });
@@ -77,7 +80,7 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 			  	$query->where('herramienta.iddenominacion_herramienta','=',$search_denominacion_herramienta);
 			  }
 
-			  $query->select('denominacion_herramienta.nombre as nombre_denominacion','herramienta.*');
+			  $query->select('denominacion_herramienta.nombre as nombre_denominacion','herramienta.*','tipo_requerimiento.nombre as nombre_tipo');
 			  
 		return $query;
 	}

@@ -54,13 +54,16 @@
 										<th class="text-nowrap text-center">Nombre de Aplicativo</th>
 										<th class="text-nowrap text-center">Denominación Aplicativo</th>
 										<th class="text-nowrap text-center">¿Valida Seguridad?</th>
+										<th class="text-nowrap text-center">Tipo Atención Requerimiento</th>
 										<th class="text-nowrap text-center">Editar</th>
+										<!--<th class="text-nowrap text-center">Ver Perfiles</th>
+										-->
 										<th class="text-nowrap text-center">Estado</th>
 									</tr>
 								</thead>
 								<tbody>	
 									@foreach($herramientas_data as $herramienta_data)
-									<tr class="@if($herramienta_data->deleted_at) bg-danger @endif">
+									<tr>
 										<td class="text-nowrap text-center">
 											<a href="{{URL::to('/herramientas/mostrar_herramienta/')}}/{{$herramienta_data->idherramienta}}">{{$herramienta_data->nombre}}</a>
 										</td>
@@ -75,6 +78,9 @@
 											@endif
 										</td>
 										<td class="text-nowrap text-center">
+											{{$herramienta_data->nombre_tipo}}
+										</td>
+										<td class="text-nowrap text-center">
 											@if($user->idrol == 1)
 												@if($herramienta_data->deleted_at != null)
 													-
@@ -87,6 +93,16 @@
 												-
 											@endif											
 										</td>
+										<!--
+										<td class="text-nowrap text-center">
+												@if($herramienta_data->deleted_at == null)	
+													<a class="btn btn-info btn-sm" href="{{URL::to('/perfiles_aplicativos/listar_perfiles_aplicativos')}}/{{$herramienta_data->idherramienta}}">
+													<span class="fa fa-search"></span></a>
+												@else
+													-
+												@endif
+											</td>
+										-->
 										<td class="text-nowrap text-center">
 												@if($herramienta_data->deleted_at != null)
 													Inactivo

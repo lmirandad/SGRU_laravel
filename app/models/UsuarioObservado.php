@@ -30,4 +30,11 @@ class UsuarioObservado extends Eloquent implements UserInterface, RemindableInte
 		$query->select('usuario_observado.*');
 		return $query;
 	}
+
+	public function scopeBuscarUsuarioPorDocumento($query,$documento)
+	{
+		$query->where('usuario_observado.numero_documento','=',"$documento");
+		$query->select('usuario_observado.*');
+		return $query;	
+	}
 }

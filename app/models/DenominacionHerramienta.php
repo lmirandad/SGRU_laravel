@@ -17,6 +17,7 @@ class DenominacionHerramienta extends Eloquent implements UserInterface, Reminda
 	 */
 	protected $table = 'denominacion_herramienta';
 	protected $softDelete = true;
+	protected $primaryKey = 'iddenominacion_herramienta';
 
 	/**
 	 * The attributes excluded from the model's JSON form.

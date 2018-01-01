@@ -98,10 +98,18 @@
 											{{date('d-m-Y',strtotime($solicitud_data->fecha_solicitud))}}
 										</td>
 										<td class="text-nowrap text-center">
-											{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion 	))}}
+											@if($solicitud_data->fecha_asignacion != null)
+												{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion 	))}}
+											@else
+												NO ASIGNADO
+											@endif
 										</td>
 										<td class="text-nowrap text-center">
-											{{$solicitud_data->nombre_tipo_solicitud}}
+											@if($solicitud_data->nombre_tipo_solicitud != null)
+												{{$solicitud_data->nombre_tipo_solicitud }}
+											@else
+												-
+											@endif
 										</td>
 										<td class="text-nowrap text-center">
 											{{$solicitud_data->nombre_estado_solicitud}}

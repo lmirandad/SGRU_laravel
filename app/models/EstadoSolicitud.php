@@ -31,6 +31,12 @@ class EstadoSolicitud extends Eloquent implements UserInterface, RemindableInter
 		$query->select('estado_solicitud.*');
 		return $query;
 	}
+
+	public function scopeListarEstados($query)
+	{
+		$query->select('estado_solicitud.*');
+		return $query;
+	}
 	
 
 }

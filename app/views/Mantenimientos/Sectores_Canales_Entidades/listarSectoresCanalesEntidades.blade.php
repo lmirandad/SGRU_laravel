@@ -194,6 +194,9 @@
 											<th class="text-nowrap text-center">Nombre del Canal</th>
 											<th class="text-nowrap text-center">Sector</th>
 											<th class="text-nowrap text-center">Editar</th>
+											<!--
+												<th class="text-nowrap text-center">Ver Cargos</th>
+											-->
 											<th class="text-nowrap text-center">Estado</th>
 										</tr>
 									</thead>
@@ -216,6 +219,16 @@
 													-
 												@endif												
 											</td>
+											<!--
+											<td class="text-nowrap text-center">
+												@if($canal_data->deleted_at == null)	
+													<a class="btn btn-info btn-sm" href="{{URL::to('/cargos_canal/listar_cargos_canal')}}/{{$canal_data->idcanal}}">
+													<span class="fa fa-search"></span></a>
+												@else
+													-
+												@endif
+											</td>
+											-->
 											<td class="text-nowrap text-center">
 												@if($canal_data->deleted_at == null)	
 													Activo
@@ -303,6 +316,7 @@
 											<th class="text-nowrap text-center">Canal</th>
 											<th class="text-nowrap text-center">Sector</th>
 											<th class="text-nowrap text-center">Editar</th>
+											<th class="text-nowrap text-center">Ver Puntos de Venta</th>
 											<th class="text-nowrap text-center">Estado</th>
 										</tr>
 									</thead>
@@ -329,6 +343,14 @@
 													-
 												@endif
 
+											</td>
+											<td class="text-nowrap text-center">
+												@if($entidad_data->deleted_at == null)	
+													<a class="btn btn-info btn-sm" href="{{URL::to('/puntos_venta/listar_puntos_venta')}}/{{$entidad_data->identidad}}">
+													<span class="fa fa-search"></span></a>
+												@else
+													-
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												@if($entidad_data->deleted_at == null)	

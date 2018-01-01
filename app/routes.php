@@ -24,7 +24,34 @@ Route::group(array('before'=>'auth'),function(){
 	Route::get('/principal_admin','MenuPrincipalController@home_admin');
 	Route::get('/principal_gestor','MenuPrincipalController@home_gestor');
 
+	/*DASHBOARD*/
+	Route::get('/dashboard/{id}','DashboardController@mostrar_dashboard');
+	Route::post('/mostrar_dashboard_prueba','DashboardController@mostrar_dashboard_prueba');
+	Route::post('/mostrar_dashboard_anual_estados','DashboardController@mostrar_dashboard_anual_estados');
+	Route::post('/mostrar_dashboard_anual_usuario_estados','DashboardController@mostrar_dashboard_anual_usuario_estados');
+	Route::post('/mostrar_dashboard_anual_sectores','DashboardController@mostrar_dashboard_anual_sectores');
+	Route::post('/mostrar_dashboard_anual_usuario_sectores','DashboardController@mostrar_dashboard_anual_usuario_sectores');
+	Route::post('/mostrar_dashboard_anual_aplicativos','DashboardController@mostrar_dashboard_anual_aplicativos');
+	Route::post('/mostrar_dashboard_anual_usuario_aplicativos','DashboardController@mostrar_dashboard_anual_usuario_aplicativos');
+	Route::post('/mostrar_dashboard_anual_requerimientos','DashboardController@mostrar_dashboard_anual_requerimientos');
+	Route::post('/mostrar_dashboard_anual_usuario_requerimientos','DashboardController@mostrar_dashboard_anual_usuario_requerimientos');
+
+	Route::post('/mostrar_dashboard_mes_estados','DashboardController@mostrar_dashboard_mes_estados');
+	Route::post('/mostrar_dashboard_mes_sectores','DashboardController@mostrar_dashboard_mes_sectores');
+	Route::post('/mostrar_dashboard_mes_aplicativos','DashboardController@mostrar_dashboard_mes_aplicativos');
+	Route::post('/mostrar_dashboard_mes_requerimientos','DashboardController@mostrar_dashboard_mes_requerimientos');
+	Route::post('/mostrar_dashboard_mes_estados_usuario','DashboardController@mostrar_dashboard_mes_estados_usuario');
+	Route::post('/mostrar_dashboard_mes_sectores_usuario','DashboardController@mostrar_dashboard_mes_sectores_usuario');
+	Route::post('/mostrar_dashboard_mes_aplicativos_usuario','DashboardController@mostrar_dashboard_mes_aplicativos_usuario');
+	Route::post('/mostrar_dashboard_mes_requerimientos_usuario','DashboardController@mostrar_dashboard_mes_requerimientos_usuario');
+
+	/*REPORTERIA*/
+	Route::get('/reportes','ReporteriaController@mostrar_reporteria');
+	Route::get('/generar_reporte_solicitudes','ReporteriaController@generar_reporte_solicitudes');
 });
+
+
+
 
 Route::group(array('prefix'=>'principal','before'=>'auth'),function(){
 	Route::get('/mostrar_solicitudes_estado/{id}','MenuPrincipalController@mostrar_solicitudes_estado');
@@ -124,6 +151,26 @@ Route::group(array('prefix'=>'entidades', 'before'=>'auth'),function(){
 	Route::post('/submit_inhabilitar_entidad','EntidadController@submit_inhabilitar_entidad');
 });
 
+/*PUNTOS DE VENTA*/
+Route::group(array('prefix'=>'puntos_venta', 'before'=>'auth'),function(){
+	Route::get('/listar_puntos_venta/{id}','PuntoVentaController@listar_puntos_venta');
+	Route::post('/submit_crear_punto_venta','PuntoVentaController@submit_crear_punto_venta');
+	Route::post('/submit_editar_punto_venta','PuntoVentaController@submit_editar_punto_venta');	
+});
+
+/*CARGOS DE CANAL*/
+Route::group(array('prefix'=>'cargos_canal', 'before'=>'auth'),function(){
+	Route::get('/listar_cargos_canal/{id}','CargoCanalController@listar_cargos_canal');
+	Route::post('/submit_crear_cargo_canal','CargoCanalController@submit_crear_cargo_canal');
+	Route::post('/submit_editar_cargo_canal','CargoCanalController@submit_editar_cargo_canal');	
+});
+
+/*PERFILES APLICATIVOS*/
+Route::group(array('prefix'=>'perfiles_aplicativos', 'before'=>'auth'),function(){
+	Route::get('/listar_perfiles_aplicativos/{id}','PerfilAplicativoController@listar_perfiles_aplicativos');
+	Route::post('/submit_crear_perfil_aplicativo','PerfilAplicativoController@submit_crear_perfil_aplicativo');
+	Route::post('/submit_editar_perfil_aplicativo','PerfilAplicativoController@submit_editar_perfil_aplicativo');	
+});
 
 /*SLA's*/
 Route::group(array('prefix'=>'slas', 'before'=>'auth'),function(){
@@ -152,6 +199,17 @@ Route::group(array('prefix'=>'solicitudes', 'before'=>'auth'),function(){
 	Route::post('/submit_crear_solicitud','SolicitudController@submit_crear_solicitud');	
 	Route::post('/submit_anular_solicitud','SolicitudController@submit_anular_solicitud');	
 	
+});
+
+/*REQUERIMIENTOS*/
+Route::group(array('prefix'=>'requerimientos', 'before'=>'auth'),function(){
+	Route::post('/cargar_requerimientos','RequerimientoController@cargar_requerimientos');
+	Route::post('/mostrar_lista_requerimientos','RequerimientoController@mostrar_lista_requerimientos');
+	Route::post('/ver_observacion','RequerimientoController@ver_observacion');
+	Route::post('/submit_actualizar_codigos','RequerimientoController@submit_actualizar_codigos');
+	Route::post('/rechazar_requerimiento','RequerimientoController@rechazar_requerimiento');
+	Route::post('/submit_rechazar_requerimiento','RequerimientoController@submit_rechazar_requerimiento');
+	Route::post('/submit_finalizar_requerimiento','RequerimientoController@submit_finalizar_requerimiento');
 });
 
 /*TIPOS_SOLICITUD*/

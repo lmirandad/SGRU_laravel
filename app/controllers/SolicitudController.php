@@ -9,6 +9,7 @@ class SolicitudController extends BaseController {
 		$data["resultados"] = null;
 		$data["cantidad_procesados"] = null;
 		$data["cantidad_total"] = null;
+		$data["solicitudes_por_rechazar"] = null;
 		$data["logs"] = null;
 		return View::make('Solicitudes/cargarSolicitudes',$data);
 	}
@@ -91,19 +92,16 @@ class SolicitudController extends BaseController {
 					return Redirect::to('solicitudes/cargar_solicitudes');	
 				}
 				
-				$file_handle = fopen($file_name, 'r');
-			    
-			    while (!feof($file_handle) ) {
-			        $line_of_text[] = fgetcsv($file_handle, 1024,"|");
-			    }
-			    fclose($file_handle);
+				
+			    $lista_solicitudes = Excel::load($file_name)->get();
 
 			    //inicio del algoritmo
-			    $lista_solicitudes = $line_of_text;
+			     //$lista_solicitudes = $line_of_text;
 				$cantidad_registros_totales = count($lista_solicitudes);
 				$cantidad_registros_procesados = 0;
 
 				$data["resultados"] = array();
+				$data["solicitudes_por_rechazar"] = array();
 
 				$herramientas = Herramienta::listarHerramientas()->get();
 				$logs_errores = array();
@@ -122,13 +120,13 @@ class SolicitudController extends BaseController {
 				}
 				
 				
-				for($i = 1; $i < $cantidad_registros_totales-1; $i++)
+				for($i = 0; $i < $cantidad_registros_totales; $i++)
 				{
 					//2.1. Leer Valores
 					$codigo_entidad = $lista_solicitudes[$i][0];
 					$nombre_entidad = $lista_solicitudes[$i][1];
 					$tipo_solicitud_gral = $lista_solicitudes[$i][2];
-					$codigo_solicitud = $lista_solicitudes[$i][3];
+					$codigo_solicitud = strval($lista_solicitudes[$i][3]);
 					$asunto = $lista_solicitudes[$i][4];
 					$fecha_solicitud = $lista_solicitudes[$i][5];
 					$estado_solicitud = $lista_solicitudes[$i][6];
@@ -157,10 +155,12 @@ class SolicitudController extends BaseController {
 					
 					$array_log_text = '';
 
+					
 					//1. VALIDACION DEL CODIGO DE ENTIDAD
 					if(strcmp($codigo_entidad,'') != 0)
 					{
 						//validar si existe el codigo
+						$codigo_entidad = explode(' ',$codigo_entidad)[0];
 						$entidad = Entidad::buscarPorCodigoEntidad($codigo_entidad)->get();
 						if($entidad == null || $entidad->isEmpty()){
 							//NO PROCEDE
@@ -247,17 +247,12 @@ class SolicitudController extends BaseController {
 					else
 						$codigo_solicitud_ingresar = (int)$codigo_solicitud;
 
-					//5. VALIDACION DEL ASUNTO
-					if(strcmp($asunto,'') == 0){
-						$obj_log["descripcion"] = "El campo asunto no existe.";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
-					}
 
-					//6. VALIDACION DE LA FECHA DE SOLICITUD
+
+					//5. VALIDACION DE LA FECHA DE SOLICITUD
 					if(strcmp($fecha_solicitud,'') != 0)
 					{
-						if(DateTime::createFromFormat('d/m/Y', $fecha_solicitud) == false)
+						if(DateTime::createFromFormat('Y-m-d H:i:s', $fecha_solicitud) == false)
 						{
 							$obj_log["descripcion"] = "La fecha de solicitud no cuenta con el formato de fecha correcto";
 							array_push($logs_errores,$obj_log);
@@ -265,8 +260,7 @@ class SolicitudController extends BaseController {
 							continue; //(LOGS)
 						} 
 						else{	
-							$partes = explode("/",$fecha_solicitud);
-							$fecha_solicitud_date = date('Y-m-d',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));
+							$fecha_solicitud_date = $fecha_solicitud;
 						}
 					}else //NO PROCEDE
 					{
@@ -275,11 +269,24 @@ class SolicitudController extends BaseController {
 						continue; //(LOGS)
 					}
 					
+					//6. VALIDACION DEL ASUNTO
+					if(strcmp($asunto,'') == 0){
+						$obj_log["descripcion"] = "El campo asunto no existe.";
+						array_push($logs_errores,$obj_log);
+						$solicitud_arreglo_rechazo = [
+							"codigo" => $codigo_solicitud_ingresar,
+							"fecha_solicitud" => $fecha_solicitud_date,
+							"identidad" => $entidad[0]->identidad,
+							"idtipo_solicitud_general" => $tipo_solicitud_obj[0]->idtipo_solicitud_general,
+						];
+						array_push($data["solicitudes_por_rechazar"], $solicitud_arreglo_rechazo);
+						continue; //(LOGS)
+					}
 
 					//7. VALIDACION DE LA FECHA DE ESTADO
 					if(strcmp($fecha_estado,'') != 0)
 					{
-						if(DateTime::createFromFormat('d/m/Y', $fecha_estado) == false) //FECHA CON FORMATO ERRADO
+						if(DateTime::createFromFormat('Y-m-d H:i:s', $fecha_estado) == false) //FECHA CON FORMATO ERRADO
 						{
 							$obj_log["descripcion"] = "La fecha de estado no cuenta con el formato de fecha correcto.";
 							array_push($logs_errores,$obj_log);
@@ -287,8 +294,7 @@ class SolicitudController extends BaseController {
 							continue; //(LOGS)
 						}
 						else{
-							$partes = explode("/",$fecha_estado);
-							$fecha_estado_date = date('Y-m-d',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));
+							$fecha_estado_date = $fecha_estado;
 						}
 					}else //NO PROCEDE (LOGS)
 					{	
@@ -383,8 +389,8 @@ class SolicitudController extends BaseController {
 
 				
 				$data["cantidad_procesados"] = $cantidad_registros_procesados;
-				$data["cantidad_total"] = $cantidad_registros_totales-2;				
-
+				$data["cantidad_total"] = $cantidad_registros_totales;				
+				
 				
 				return View::make('Solicitudes/cargarSolicitudes',$data);
 			}else{
@@ -651,23 +657,32 @@ class SolicitudController extends BaseController {
 				$data["tipos_solicitud_general"] = TipoSolicitudGeneral::lists('nombre','idtipo_solicitud_general');
 				$data["entidad"] = Entidad::find($data["solicitud"]->identidad);
 
-				$data["asignacion"] = Asignacion::buscarPorIdSolicitud($data["solicitud"]->idsolicitud)->get();
+				if($data["solicitud"]->idestado_solicitud != 5)
+				{
+					$data["asignacion"] = Asignacion::buscarPorIdSolicitud($data["solicitud"]->idsolicitud)->get();
 
-				if($data["asignacion"]==null){
-					return Redirect::to('solicitudes/listar_solicitudes');
+					if($data["asignacion"]==null){
+						return Redirect::to('solicitudes/listar_solicitudes');
+					}
+
+					$usuario_asignado_actual = UsuariosXAsignacion::buscarUsuarioActual($data["asignacion"][0]->idasignacion)->get();
+
+					if($usuario_asignado_actual==null){
+						return Redirect::to('solicitudes/listar_solicitudes');
+					}
+
+					$data["usuario_asignado"] = User::withTrashed()->find($usuario_asignado_actual[0]->idusuario_asignado);
+
+					$data["herramienta"] = Herramienta::find($data["solicitud"]->idherramienta);
+
+					$data["requerimientos"] = Requerimiento::buscarRequerimientosPorSolicitud($data["solicitud"]->idsolicitud)->get();				
+				}else
+				{
+					$data["asignacion"] = null;
+					$data["usuario_asignado"] = null;
+					$data["herramienta"] = null;
+					$data["requerimientos"] = array();
 				}
-
-				$usuario_asignado_actual = UsuariosXAsignacion::buscarUsuarioActual($data["asignacion"][0]->idasignacion)->get();
-
-				if($usuario_asignado_actual==null){
-					return Redirect::to('solicitudes/listar_solicitudes');
-				}				
-
-				$data["usuario_asignado"] = User::withTrashed()->find($usuario_asignado_actual[0]->idusuario_asignado);
-
-				$data["herramienta"] = Herramienta::find($data["solicitud"]->idherramienta);
-
-				
 
 				return View::make('Solicitudes/mostrarSolicitud',$data);
 			}else{
@@ -702,8 +717,9 @@ class SolicitudController extends BaseController {
 			$idherramienta = $solicitud->idherramienta;
 			$idaccion = $solicitud->idtipo_solicitud;
 			$herramienta_varios = Herramienta::buscarPorNombre('VARIOS')->get();
-			if($idherramienta == $herramienta_varios[0]->idherramienta){
+			if($idherramienta == null || $idherramienta == $herramienta_varios[0]->idherramienta){
 				//herramienta representada para "VARIOS"
+
 				$usuarios = User::buscarUsuariosAsignacionPorSector($sector->idsector);	
 				
 				if(is_array($usuarios) == true) //hay usuarios
@@ -725,7 +741,18 @@ class SolicitudController extends BaseController {
 					return Response::json(array( 'success' => true,'usuarios'=>$usuarios),200);
 				}else
 				{
-					return Response::json(array( 'success' => true,'usuarios'=>null),200);
+					//Si no encuentra por herramienta, empezará a buscar por sector.
+
+					$usuarios = User::buscarUsuariosAsignacionPorSector($sector->idsector);	
+				
+					if(is_array($usuarios) == true) //hay usuarios
+					{
+						return Response::json(array( 'success' => true,'usuarios'=>$usuarios),200);
+					}else
+					{
+						return Response::json(array( 'success' => true,'usuarios'=>null),200);
+					}
+					
 				}			
 			}	
 			
@@ -883,6 +910,7 @@ class SolicitudController extends BaseController {
 					$solicitud->identidad = $identidad;
 					$solicitud->idtipo_solicitud_general = $idtipo_solicitud_general;
 					$solicitud->idtipo_solicitud = $idaccion;
+					$solicitud->fur_cargado = 0;
 
 					if($idestado_solicitud != 3)
 					{
@@ -1015,6 +1043,7 @@ class SolicitudController extends BaseController {
 					
 					$solicitud = Solicitud::find($idsolicitud);
 					$solicitud->motivo_anulacion = Input::get('motivo_anulacion');
+					$solicitud->fecha_cierre = date('Y-m-d H:i:s');
 					$solicitud->idestado_solicitud = 6;
 
 					$solicitud->save();

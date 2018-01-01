@@ -167,6 +167,7 @@ class HerramientaController extends BaseController {
 			if($data["user"]->idrol == 1){
 
 				$data["denominaciones"] = DenominacionHerramienta::lists('nombre','iddenominacion_herramienta');
+				$data["tipos_requerimiento"] = TipoRequerimiento::lists('nombre','idtipo_requerimiento');
 				
 				
 				return View::make('Mantenimientos/Herramientas/crearHerramienta',$data);
@@ -192,6 +193,7 @@ class HerramientaController extends BaseController {
 					'descripcion' => 'Descripcion',
 					'flag_seguridad' => 'Valida Seguridad',
 					'denominacion_herramienta' => 'Categoría Aplicativo',
+					'tipo_requerimiento' => 'Tipo Atención Requerimientos',
 				);
 
 				$messages = array();
@@ -201,6 +203,7 @@ class HerramientaController extends BaseController {
 							'descripcion' => 'alpha_num_spaces_slash_dash_enter|max:200',
 							'flag_seguridad' => 'required',
 							'denominacion_herramienta' => 'required',
+							'tipo_requerimiento' => 'required',
 						);
 				// Run the validation rules on the inputs from the form
 				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);
@@ -212,6 +215,8 @@ class HerramientaController extends BaseController {
 					$descripcion = Input::get('descripcion');
 					$flag_seguridad = Input::get('flag_seguridad');
 					$denominacion_herramienta = Input::get('denominacion_herramienta');
+					$tipo_requerimiento = Input::get('tipo_requerimiento');
+
 
 					$tipos_solicitud = TipoSolicitud::listarTiposSolicitud()->get();
 					
@@ -227,6 +232,7 @@ class HerramientaController extends BaseController {
 						$herramienta->descripcion = $descripcion;
 					$herramienta->flag_seguridad = $flag_seguridad;
 					$herramienta->iddenominacion_herramienta = $denominacion_herramienta;
+					$herramienta->idtipo_requerimiento = $tipo_requerimiento;
 					$herramienta->iduser_created_by = $data["user"]->id;
 					
 
@@ -264,7 +270,8 @@ class HerramientaController extends BaseController {
 				$data["denominaciones"] = DenominacionHerramienta::lists('nombre','iddenominacion_herramienta');
 				$data["herramienta"] = Herramienta::withTrashed()->find($idherramienta);
 				$data["equivalencias"] = HerramientaEquivalencia::buscarEquivalenciasPorIdHerramienta($idherramienta)->get();
-				
+				$data["tipos_requerimiento"] = TipoRequerimiento::lists('nombre','idtipo_requerimiento');
+
 				if($data["herramienta"]==null){
 					return Redirect::to('herramientas/listar_herramientas');
 				}
@@ -293,6 +300,7 @@ class HerramientaController extends BaseController {
 					'descripcion' => 'Descripcion',
 					'flag_seguridad' => 'Valida Seguridad',
 					'denominacion_herramienta' => 'Categoría Aplicativo',
+					'tipo_requerimiento' => 'Tipo Atención Requerimientos',
 				);
 
 				$messages = array();
@@ -302,6 +310,7 @@ class HerramientaController extends BaseController {
 					'descripcion' => 'alpha_num_spaces_slash_dash_enter|max:200',
 					'flag_seguridad' => 'required',
 					'denominacion_herramienta' => 'required',
+					'tipo_requerimiento' => 'required',
 				);
 				// Run the validation rules on the inputs from the form
 				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);
@@ -318,6 +327,7 @@ class HerramientaController extends BaseController {
 					$descripcion = Input::get('descripcion');
 					$flag_seguridad = Input::get('flag_seguridad');
 					$denominacion_herramienta = Input::get('denominacion_herramienta');
+					$tipo_requerimiento = Input::get('tipo_requerimiento');
 					
 					$tipos_solicitud = TipoSolicitud::listarTiposSolicitud()->get();
 					
@@ -333,6 +343,7 @@ class HerramientaController extends BaseController {
 						$herramienta->descripcion = $descripcion;
 					$herramienta->flag_seguridad = $flag_seguridad;
 					$herramienta->iddenominacion_herramienta = $denominacion_herramienta;
+					$herramienta->idtipo_requerimiento = $tipo_requerimiento;
 					$herramienta->iduser_updated_by = $data["user"]->id;
 					
 					$herramienta->save();	
@@ -404,7 +415,7 @@ class HerramientaController extends BaseController {
 			// Verifico si el usuario es un Webmaster
 			if(($data["user"]->idrol == 1) && $idherramienta)
 			{	
-				$data["herramienta"] = Herramienta::find($idherramienta);
+				$data["herramienta"] = Herramienta::withTrashed()->find($idherramienta);
 				
 				if($data["herramienta"]==null){
 					return Redirect::to('herramientas/listar_herramientas');
@@ -414,7 +425,7 @@ class HerramientaController extends BaseController {
 				$data["usuarios"] = HerramientaXUser::buscarUsuariosPorIdHerramienta($data["herramienta"]->idherramienta)->get();
 				$data["denominaciones"] = DenominacionHerramienta::lists('nombre','iddenominacion_herramienta');
 				$data["equivalencias"] = HerramientaEquivalencia::buscarEquivalenciasPorIdHerramienta($idherramienta)->get();
-
+				$data["tipos_requerimiento"] = TipoRequerimiento::lists('nombre','idtipo_requerimiento');
 				return View::make('Mantenimientos/Herramientas/mostrarHerramienta',$data);
 			}else{
 				return View::make('error/error',$data);
@@ -435,15 +446,28 @@ class HerramientaController extends BaseController {
 				$url = "herramientas/mostrar_herramienta"."/".$herramienta_id;
 				$herramienta = Herramienta::find($herramienta_id);
 				
-				//Validar si la entidad posee solicitudes pendientes o en proceso
+				//Validar si la herramienta posee solicitudes pendientes o en proceso
 
 				$sectores = HerramientaXSector::buscarSectorPorIdHerramienta($herramienta_id)->get();
 				$usuarios = HerramientaXUser::buscarUsuariosPorIdHerramienta($herramienta_id)->get();
 				
 
 				if( ($sectores == null || $sectores->isEmpty()) && ($usuarios == null || $usuarios->isEmpty()) ){
-					//Esta vacio, se puede eliminar la entidad					
-					$herramienta->delete();
+					//Esta vacio, se puede eliminar la herramienta					
+					$perfiles = PerfilAplicativo::buscarPerfilesPorHerramienta($herramienta->idherramienta)->get();
+						
+					if($perfiles == null || $perfiles->isEmpty())
+					{
+						$herramienta->delete();
+					}else{
+						if(count($perfiles) > 0){
+							Session::flash('error', 'No se puede inhabilitar la herramienta. La herramienta cuenta con perfiles activo.');
+							return Redirect::to($url);
+						}else{
+							$herramienta->delete();
+						}	
+					}
+
 				}else
 				{
 					//Por seguridad, se vuelve a revalidar la cantidad de solicitudes pendientes o procesando

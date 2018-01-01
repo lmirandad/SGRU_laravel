@@ -44,7 +44,7 @@ class AsignacionController extends BaseController {
 
 				// Por cada solicitud realizar los pasos 2 y 3
 				$herramienta_varios = Herramienta::buscarPorNombre('VARIOS')->get();
-				
+			
 
 				for($i=0; $i<$cantidad_registros; $i++)
 				{
@@ -60,6 +60,7 @@ class AsignacionController extends BaseController {
 					$partes = explode('-',$fechas_solicitud[$i]);
 					$solicitud->fecha_solicitud = date('Y-m-d H:i:s',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));
 					$solicitud->idtipo_solicitud_general = $idstipo_solicitud_general[$i];
+					$solicitud->fur_cargado = 0;
 
 
 					//Determinar SLA
@@ -82,18 +83,24 @@ class AsignacionController extends BaseController {
 
 					//c. Accion
 					$idaccion = $idstipo_solicitud[$i];
+
 					$herramienta_varios = Herramienta::buscarPorNombre('VARIOS')->get();
+
 					//En caso que no se tiene un SLA para una herramienta no detectada se asumará el SLA como si existieran varios aplicativos
 					if($idherramienta == 0)
 						$sla = TipoSolicitudXSla::buscarSlaPorSectorHerramientaAccion($idsector,$herramienta_varios[0]->idherramienta,$idaccion)->get();
 					else
 						$sla = TipoSolicitudXSla::buscarSlaPorSectorHerramientaAccion($idsector,$idherramienta,$idaccion)->get();
 
+
 					if($sla==null || $sla->isEmpty())
 					{
 						array_push($array_codigos_no_procesados, $solicitud->codigo_solicitud);
+						
 						continue;
+
 					}
+
 
 					$solicitud->idsla = $sla[0]->idsla;
 
@@ -149,15 +156,52 @@ class AsignacionController extends BaseController {
 					array_push($array_codigos_procesados,$solicitud->codigo_solicitud);
 				}
 
+				//Para los rechazados
+				$codigos_rechazo = Input::get('codigos_solicitud_rechazo');
+				$ids_entidad_rechazo = Input::get('ids_entidad_rechazo');
+				$idstipo_solicitud_general_rechazo = Input::get('idstipo_solicitud_general_rechazo');
+				$fechas_solicitud_rechazo = Input::get('fechas_solicitud_rechazo');
+				$cantidad_registros_rechazados = count($codigos_rechazo);
 
+				for($i = 0; $i< $cantidad_registros_rechazados; $i++)
+				{
+					$solicitud = new Solicitud;
+					$solicitud->codigo_solicitud = $codigos_rechazo[$i];
+					$solicitud->identidad = $ids_entidad_rechazo[$i];
+					$solicitud->idtipo_solicitud_general = $idstipo_solicitud_general_rechazo[$i];					
+					$partes = explode('-',$fechas_solicitud_rechazo[$i]);
+					$solicitud->fecha_solicitud = date('Y-m-d H:i:s',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));
+					$solicitud->idestado_solicitud = 5;
+					$solicitud->iduser_created_by = $data["user"]->id;
+					$solicitud->save();
+				}
+
+				$texto_no_procesados = '';
+				$texto_final_no_procesado = '';
+				$texto_rechazados = '';
+				$texto_final_rechazado = '';
 				if(count($array_codigos_no_procesados) > 0){
-					$texto = '';
+					
 					for($i=0;$i<count($array_codigos_no_procesados);$i++){
-						$texto=$texto.$array_codigos_no_procesados[$i].'<br>';
+						$texto_no_procesados=$texto_no_procesados.$array_codigos_no_procesados[$i].'<br>';
 					}
-					Session::flash('error','No se realizaron las asignaciones para los siguientes códigos:'.'<br>'.$texto
-						.'<br>'.'Posibles Motivos:'.'<br>'.'1. El aplicativo de la solicitud no cuenta con un SLA definido.<br>'.
-						'2. No existen usuarios aptos o disponibles para la asignación a la solicitud.');
+
+					$texto_final_no_procesado = '<strong> SOLICITUDES NO PROCESADAS </strong>:<br>No se realizaron las asignaciones para los siguientes códigos:'.'<br>'.$texto_no_procesados
+					.'<br>'.'Posibles Motivos:'.'<br>'.'1. El aplicativo de la solicitud no cuenta con un SLA definido.<br>'.
+					'2. No existen usuarios aptos o disponibles para la asignación a la solicitud.<br><br>';
+				}
+
+				if(count($codigos_rechazo) > 0){
+					for($i=0;$i<count($codigos_rechazo);$i++){
+						$texto_rechazados=$texto_rechazados.$codigos_rechazo[$i].'<br>';
+					}
+					$texto_final_rechazado = '<strong> SOLICITUDES RECHAZADAS </strong>:<br>Se rechazaron los siguientes códgios:'.'<br>'.$texto_rechazados
+						.'<br>'.'Motivo:'.'<br>'.'El canal no ha ingresado el asunto de la solicitud.<br><br>';
+				}
+
+				if( strcmp($texto_final_no_procesado,'') != 0 || strcmp($texto_final_rechazado, '') != 0 )
+				{
+					Session::flash('error',$texto_final_no_procesado.$texto_final_rechazado);	
 				}
 
 				if(count($array_codigos_procesados) > 0){

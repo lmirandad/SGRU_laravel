@@ -32,6 +32,8 @@ class Asignacion extends Eloquent implements UserInterface, RemindableInterface 
 
 		return $query;
 	}
+
+	
 	
 
 }

@@ -69,6 +69,7 @@
 											<th class="text-nowrap text-center">Tipo</th>
 											<th class="text-nowrap text-center">Herramienta</th>
 											<th class="text-nowrap text-center">SLA</th>
+											<th class="text-nowrap text-center">Días Laborales</th>
 											<th class="text-nowrap text-center">SEMÁFORO</th>
 											<th class="text-nowrap text-center">Requerimientos</th>
 										</tr>
@@ -118,8 +119,7 @@
 											</td>
 											<td class="text-nowrap text-center">
 												<div style="text-align:center">
-													<button class="btn btn-success btn-sm" onclick="cargar_base(event,{{$solicitud_data->idsolicitud}})" type="button"></button>
-													<button class="btn btn-info btn-sm" onclick="mostrar_datos_req(event,{{$solicitud_data->idsolicitud}})" type="button"></button>
+													<button class="btn btn-success btn-sm" onclick="cargar_base(event,{{$solicitud_data->idsolicitud}})" type="button"><i class="fa fa-download"></i> Cargar Base</button>
 												</div>
 											</td>
 										</tr>
@@ -161,7 +161,9 @@
 											<th class="text-nowrap text-center">Tipo</th>
 											<th class="text-nowrap text-center">Herramienta</th>
 											<th class="text-nowrap text-center">SLA</th>
+											<th class="text-nowrap text-center">Días Laborales</th>
 											<th class="text-nowrap text-center">SEMÁFORO</th>
+											<th class="text-nowrap text-center">Requerimientos</th>
 										</tr>
 									</thead>
 									@foreach($solicitudes_procesando_data as $index => $solicitud_data)
@@ -207,6 +209,11 @@
 													<span style=" padding: 2px 11px; border-radius: 100%;background-color: #ff4444;"></span>
 												@endif
 											</td>
+											<td class="text-nowrap text-center">
+												<div style="text-align:center">
+													<button class="btn btn-success btn-sm" onclick="mostrar_datos_req(event,{{$solicitud_data->idsolicitud}})" type="button"><i class="fa fa-search"></i> Ver Requerimientos</button>
+												</div>
+											</td>
 										</tr>
 									</tbody>
 									@endforeach
@@ -220,25 +227,27 @@
 	</div>
 	<!-- END MAIN CONTENT -->
 </div>
+{{ Form::open(array('url'=>'/requerimientos/cargar_requerimientos' ,'role'=>'form','id'=>'submit-cargar','enctype'=>'multipart/form-data')) }}
 <div class="container" >
   <!-- Modal -->
   <div class="modal fade" id="modal_requerimientos_carga"  role="dialog">
-    <div class="modal-dialog modal-md">    
+    <div class="modal-dialog modal-lg">    
       <!-- Modal content-->
       <div class="modal-content" >
 	        <div class="modal-header" id="modal_header_requerimientos_carga">
 	          <button type="button" class="close" id="btnCerrarModal" data-dismiss="modal">&times;</button>
-	          <h4 class="modal-title">Cargar Base FUR</h4>
+	          <h4 class="modal-title">Cargar Base FUR Estandarizado</h4>
+	          {{ Form::hidden('solicitud_id', null,array('id'=>'solicitud_id')) }}	
 	        </div>
 	        <div class="modal-body" id="modal_text_acciones">
 	         	<div class="container-fluid">
 	         		<div class="row">
-						<div class="col-md-8">
+						<div class="col-md-7">
 							<label class="control-label">Seleccione Archivo .CSV</label>
-							<input id="input-file" type="file" name="file">
+							<input id="input-file-fur" type="file" name="file">
 						</div>
-						<div class="col-md-4" style="padding-top:26px">				
-							<a class="btn btn-info btn-block" id="btnCargar" type="submit"> <i class="fa fa-upload"></i> Cargar FUR</a>
+						<div class="col-md-5" style="padding-top:26px">				
+							<a class="btn btn-info btn-block" id="btnCargar" type="submit"> <i class="fa fa-upload"></i> Cargar Requerimientos</a>
 						</div>
 					</div>
 				</div>
@@ -247,33 +256,42 @@
     </div>
   </div>
  </div>  
+ {{ Form::close() }}
+{{ Form::open(array('url'=>'/requerimientos/submit_actualizar_codigos' ,'role'=>'form','id'=>'submit-actualizar','enctype'=>'multipart/form-data')) }}
  <div class="container" >
   <!-- Modal -->
   <div class="modal fade" id="modal_requerimientos_mostrar"  role="dialog">
-    <div class="modal-dialog modal-lg" style="width:85%">    
+    <div class="modal-dialog modal-lg" style="width:100%">    
       <!-- Modal content-->
       <div class="modal-content" >
 	        <div class="modal-header" id="modal_header_requerimientos_mostrar">
 	          <button type="button" class="close" id="btnCerrarModal" data-dismiss="modal">&times;</button>
 	          <h4 class="modal-title">Requerimientos Registrados</h4>
+	          {{ Form::hidden('solicitud_id_mostrar', null,array('id'=>'solicitud_id_mostrar')) }}	
 	        </div>
 	        <div class="modal-body" id="modal_text_acciones">
 	         	<div class="container-fluid">
 	         		<div class="row">
 						<div class="table-responsive" >
-							<table class="table table-hover" id="tabla_acciones_disponibles">
+							<table class="table table-hover" id="table_requerimientos">
 								<thead>
 									<tr>
 										<th class="text-nowrap text-center">N°</th>
 										<th class="text-nowrap text-center">Código Requerimiento</th>
 										<th class="text-nowrap text-center">Acción</th>
-										<th class="text-nowrap text-center">Tipo</th>
-										<th class="text-nowrap text-center">Cantidad de Usuarios</th>
+										<th class="text-nowrap text-center">Aplicativo</th>
+										<th class="text-nowrap text-center">Aplicativo Agrupado</th>
+										<th class="text-nowrap text-center">Tipo Gestión</th>
+										<th class="text-nowrap text-center">Canal</th>
+										<th class="text-nowrap text-center">Entidad</th>
+										<th class="text-nowrap text-center">Punto de Venta</th>
+										<th class="text-nowrap text-center">Cargo</th>
+										<th class="text-nowrap text-center">Perfil</th>
 										<th class="text-nowrap text-center">DNI Usuario</th>
-										<th class="text-nowrap text-center">Fecha Ingreso Req.</th>
-										<th class="text-nowrap text-center">Fecha Aprobación Req.</th>
-										<th class="text-nowrap text-center">Responsable</th>
 										<th class="text-nowrap text-center">Estado</th>
+										<th class="text-nowrap text-center">Observaciones</th>
+										<th class="text-nowrap text-center">Finalizar Req.</th>
+										<th class="text-nowrap text-center">Rechazar Req.</th>
 									</tr>
 								</thead>
 								<tbody >	
@@ -285,10 +303,49 @@
 				</div>
 			</div>
 	        <div class="modal-footer">
-	          <button type="button" class="btn btn-danger" id="btnAgregarAccionSubmit" data-dismiss="modal"><i class="lnr lnr-users "></i>&nbsp&nbspValidarUsuarios</button>
+	        	<div class="form-group col-md-3 col-md-offset-9">
+					<a class="btn btn-primary btn-block" id="btnActualizarCodigos"><i class="fa fa-floppy-o"></i>&nbsp Actualizar Codigos Requerimientos</a>				
+				</div>
 	        </div>
       </div>      
     </div>
   </div>
- </div>  
+ </div> 
+ {{ Form::close() }} 
+
+ {{ Form::open(array('url'=>'/requerimientos/submit_rechazar_requerimiento' ,'role'=>'form','id'=>'submit-rechazar','enctype'=>'multipart/form-data')) }}
+ <div class="container" >
+  <!-- Modal -->
+  <div class="modal fade" id="modal_requerimientos_rechazar"  role="dialog">
+    <div class="modal-dialog modal-md" >    
+      <!-- Modal content-->
+      <div class="modal-content" >
+	        <div class="modal-header" id="modal_header_requerimientos_rechazar">
+	          <button type="button" class="close" id="btnCerrarModal" data-dismiss="modal">&times;</button>
+	          <h4 class="modal-title">Rechazar Solicitud: </h4> 
+	          {{ Form::hidden('requerimiento_id_rechazar', null,array('id'=>'requerimiento_id_rechazar')) }}	
+	        </div>
+	        <div class="modal-body" id="modal_text_acciones">
+	         	<div class="container-fluid">
+	         		<div class="row">
+						<div class="form-group col-md-9 col-md-offset-1 @if($errors->first('observacion')) has-error has-feedback @endif"">
+							{{ Form::label('observacion','Observaciones:')}}
+							{{ Form::textarea('observacion',null,array('class'=>'form-control','placeholder'=>'Ingrese las observaciones','rows'=>5,'style'=>'resize:none','id'=>'observacion_rechazo')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+	        <div class="modal-footer">
+	        	<div class="form-group col-md-4 col-md-offset-7">
+					<a class="btn btn-primary btn-block" id="btnRechazarRequerimiento"><i class="fa fa-floppy-o"></i>&nbsp Rechazar Solicitud</a>				
+				</div>
+	        </div>
+      </div>      
+    </div>
+  </div>
+ </div> 
+ {{ Form::close() }} 
+  {{ Form::open(array('url'=>'/requerimientos/submit_finalizar_requerimiento' ,'role'=>'form','id'=>'submit-finalizar','enctype'=>'multipart/form-data')) }}
+    {{ Form::hidden('requerimiento_id_finalizar', null,array('id'=>'requerimiento_id_finalizar')) }}	
+   {{ Form::close() }} 
 @stop

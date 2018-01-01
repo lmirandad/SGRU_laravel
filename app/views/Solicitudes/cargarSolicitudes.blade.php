@@ -140,6 +140,42 @@
 						</div>
 					</div>
 				</div>
+				<div class="row" style="display:none">
+					<div class="col-md-12">
+						<div class="table-responsive" id="tabla_solicitudes">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th class="text-nowrap text-center">Código Solicitud</th>
+										<th class="text-nowrap text-center">IdEntidad</th>
+										<th class="text-nowrap text-center">Tipo Solicitud</th>
+										<th class="text-nowrap text-center">Fecha Solicitud</th>
+									</tr>
+								</thead>
+								<tbody>
+								@if (is_array($solicitudes_por_rechazar) || is_object($solicitudes_por_rechazar))
+									@foreach($solicitudes_por_rechazar as $solicitudes)
+									<tr>
+										<td class="text-nowrap text-center">
+											<input style="display:none" name='codigos_solicitud_rechazo[]' value='{{ $solicitudes["codigo"]}}' readonly/>
+										</td>										
+										<td class="text-nowrap text-center">
+											<input style="display:none" name='ids_entidad_rechazo[]' value='{{ $solicitudes["identidad"]}}' readonly/>
+										</td>
+										<td class="text-nowrap text-center">
+											<input style="display:none" name='idstipo_solicitud_general_rechazo[]' value='{{ $solicitudes["idtipo_solicitud_general"]}}' readonly/>
+										</td>
+										<td class="text-nowrap text-center">
+											<input style="display:none" name='fechas_solicitud_rechazo[]' value="{{date('d-m-Y',strtotime($solicitudes["fecha_solicitud"]))}}" readonly/>
+										</td>
+									</tr>
+									@endforeach
+								@endif
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		

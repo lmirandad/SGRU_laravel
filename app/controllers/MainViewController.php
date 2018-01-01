@@ -1,5 +1,6 @@
 <?php
 class MenuPrincipalController extends BaseController {
+	
 	public function home_admin()
 	{
 		if(Auth::check()){
@@ -12,6 +13,8 @@ class MenuPrincipalController extends BaseController {
 				$data["solicitudes_data"] = array();
 				$data["idusuario"] = null;
 				$data["search_fecha"] = null;
+				$data["usuario_busqueda"] = null;
+				$data["fecha_busqueda"] = null;
 				$mes_actual = date('m');
 				$anho_actual = date('Y');
 
@@ -114,7 +117,7 @@ class MenuPrincipalController extends BaseController {
 						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_procesando"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-						$diferencia_dias = $fecha_solicitud_formateada->diff($fecha_asignacion_formateada);
+						$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
 						array_push($data["diferencia_fechas_procesando"],$diferencia_dias);
 						//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
 						$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
@@ -124,7 +127,7 @@ class MenuPrincipalController extends BaseController {
 						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_actual)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
-						{
+						{	
 							$tamano = count($feriados);											
 							for($j=0;$j<$tamano;$j++)
 							{
@@ -138,9 +141,10 @@ class MenuPrincipalController extends BaseController {
 						array_push($data["diferencia_fechas_trabajo_procesando"],$diferencia_dias_fecha_trabajo);
 					}
 				}
-
-				$data["diferencia_fechas_rechazadas"] = array();
+				
+				$data["diferencia_fechas_rechazadas"] = null;
 				$data["solicitudes_rechazadas"] = Solicitud::buscarPorIdEstado(5,$mes_actual,$anho_actual)->get(); 
+
 				if($data["solicitudes_rechazadas"] == null || $data["solicitudes_rechazadas"]->isEmpty()){
 					$data["solicitudes_rechazadas"] = array();
 				}else
@@ -148,12 +152,12 @@ class MenuPrincipalController extends BaseController {
 					$cantidad_solicitudes = count($data["solicitudes_rechazadas"]);
 					for($i=0;$i<$cantidad_solicitudes;$i++)
 					{
-						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_rechazadas"][$i]->fecha_asignacion);				
-						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+						//$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_rechazadas"][$i]->fecha_asignacion);				
+						//$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_rechazadas"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-						$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
-						array_push($data["diferencia_fechas_rechazadas"],$diferencia_dias);
+						//$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
+						
 					}
 					
 				}
@@ -185,6 +189,7 @@ class MenuPrincipalController extends BaseController {
 		}
 		
 	}
+
 	public function home_gestor(){
 		if(Auth::check()){
 			$data["inside_url"] = Config::get('app.inside_url');
@@ -192,8 +197,8 @@ class MenuPrincipalController extends BaseController {
 			// Verifico si el usuario es un Webmaster
 			if($data["user"]->idrol == 2)
 			{
-				$mes_actual = date('m');
-				$anho_actual = date('Y');
+				$mes_actual = null;
+				$anho_actual = null;
 				$data["solicitudes_pendiente_data"] = Solicitud::buscarPorIdEstadoPorUsuario(3,$data["user"]->id,$mes_actual,$anho_actual)->get();
 				
 				$data["solicitudes_procesando_data"] = Solicitud::buscarPorIdEstadoPorUsuario(4,$data["user"]->id,$mes_actual,$anho_actual)->get();
@@ -280,6 +285,7 @@ class MenuPrincipalController extends BaseController {
 			return View::make('error/error',$data);
 		}
 	}
+
 	public function buscar_solicitudes_usuario()
 	{
 		if(Auth::check()){
@@ -292,6 +298,8 @@ class MenuPrincipalController extends BaseController {
 				$data["search_fecha"] = Input::get('search_fecha');
 				$mes_busqueda = null;
 				$anho_busqueda = null;
+				$data["fecha_busqueda"] = null;
+				$data["usuario_busqueda"] = null;
 
 				if(Input::get('search_usuario') == null && $data["search_fecha"] == null){
 					return Redirect::to('/principal_admin');
@@ -300,17 +308,37 @@ class MenuPrincipalController extends BaseController {
 				if($data["search_fecha"] != null){
 					$mes_busqueda = date('m',strtotime(DateTime::createFromFormat('d-m-Y','01-'.$data["search_fecha"])->format('d-m-Y')));
 					$anho_busqueda = date('Y',strtotime(DateTime::createFromFormat('d-m-Y','01-'.$data["search_fecha"])->format('d-m-Y')));
+					$mes_busqueda_nombre = $mes_busqueda;
+					$data["fecha_busqueda"] = $mes_busqueda_nombre.'-'.$anho_busqueda;
 				}else{
-					$mes_busqueda = date('m');
-					$anho_busqueda = date('Y');
+					if($data["search_usuario"] == null)
+					{
+						$mes_busqueda = date('m');
+						$anho_busqueda = date('Y');	
+						$mes_busqueda_nombre = $mes_busqueda;
+						$data["fecha_busqueda"] = $mes_busqueda_nombre.'-'.$anho_busqueda;
+					}else
+					{
+						$mes_busqueda = null;
+						$anho_busqueda = null;
+					}
+					
 				}
 				
 				if($data["search_usuario"] == null){
 					$idusuario = null;
 				}else{
 					$usuario = User::buscarPorNombre($data["search_usuario"])->get();
-					$idusuario = $usuario[0]->id;
-				}
+					if($usuario!=null && !$usuario->isEmpty())
+					{
+						$idusuario = $usuario[0]->id;
+						$data["usuario_busqueda"] = $usuario[0]->nombre.' '.$usuario[0]->apellido_paterno.' '.$usuario[0]->apellido_materno;	
+					}else
+						$idusuario = null;
+					
+				}		
+
+
 				
 				$data["solicitudes_atendidos"] = Solicitud::buscarPorIdEstadoPorUsuario(1,$idusuario,$mes_busqueda,$anho_busqueda)->get(); 
 
@@ -411,7 +439,7 @@ class MenuPrincipalController extends BaseController {
 						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_procesando"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-						$diferencia_dias = $fecha_solicitud_formateada->diff($fecha_asignacion_formateada);
+						$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
 						array_push($data["diferencia_fechas_procesando"],$diferencia_dias);
 						//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
 						$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
@@ -438,6 +466,7 @@ class MenuPrincipalController extends BaseController {
 
 				$data["diferencia_fechas_rechazadas"] = array();
 				$data["solicitudes_rechazadas"] = Solicitud::buscarPorIdEstadoPorUsuario(5,$idusuario,$mes_busqueda,$anho_busqueda)->get(); 
+				//echo '<pre>'; var_dump($data["solicitudes_rechazadas"]); echo '</pre>';
 				if($data["solicitudes_rechazadas"] == null || $data["solicitudes_rechazadas"]->isEmpty()){
 					$data["solicitudes_rechazadas"] = array();
 				}else
@@ -473,7 +502,7 @@ class MenuPrincipalController extends BaseController {
 					
 				}
 				$data["idusuario"] = $idusuario;
-				$data["origen"] = 2; //1: sin usuario //2: con usuario
+				
 				
 				return View::make('MenuPrincipal/menuPrincipal',$data);
 			}else
@@ -483,6 +512,7 @@ class MenuPrincipalController extends BaseController {
 		}
 		
 	}
+
 	public function buscar_solicitud_codigo()
 	{
 		if(Auth::check()){
@@ -620,6 +650,7 @@ class MenuPrincipalController extends BaseController {
 			return View::make('error/error',$data);
 		}
 	}
+
 	public function resumen_usuarios()
 	{
 		if(Auth::check()){
@@ -640,6 +671,7 @@ class MenuPrincipalController extends BaseController {
 			return View::make('error/error',$data);
 		}
 	}
+
 	public function resumen_usuarios_mes()
 	{
 		if(Auth::check()){
@@ -667,4 +699,5 @@ class MenuPrincipalController extends BaseController {
 			return View::make('error/error',$data);
 		}
 	}
+
 }

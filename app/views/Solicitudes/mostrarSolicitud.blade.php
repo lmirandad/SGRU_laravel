@@ -48,7 +48,11 @@
 					</div>
 					<div class="col-md-3">
 						{{ Form::label('tipo_solicitud','Tipo de Accion')}}
-						{{ Form::select('tipo_solicitud',array('0'=>'Seleccione')+$tipos_solicitud,$solicitud->idtipo_solicitud,array('class'=>'form-control','disabled'=>'disabled')) }}
+						@if($solicitud->idtipo_solicitud != null)
+							{{ Form::select('tipo_solicitud',array('0'=>'Seleccione')+$tipos_solicitud,$solicitud->idtipo_solicitud,array('class'=>'form-control','disabled'=>'disabled')) }}
+						@else
+							{{ Form::text('tipo_solicitud','NO DETECTADO',array('class'=>'form-control','placeholder'=>'Ingrese nombre del usuario','disabled'=>'disabled')) }}
+						@endif
 					</div>
 					<div class="col-md-3">
 						{{ Form::label('estado_solicitud','Estado Solicitud')}}
@@ -66,7 +70,11 @@
 					</div>
 					<div class="col-md-3">
 						{{ Form::label('usuario_asignado','Usuario Asignado')}}
-						{{ Form::text('usuario_asignado',$usuario_asignado->nombre.' '.$usuario_asignado->apellido_paterno.' '.$usuario_asignado->apellido_materno,array('class'=>'form-control','disabled'=>'disabled')) }}
+						@if($usuario_asignado != null)
+							{{ Form::text('usuario_asignado',$usuario_asignado->nombre.' '.$usuario_asignado->apellido_paterno.' '.$usuario_asignado->apellido_materno,array('class'=>'form-control','disabled'=>'disabled')) }}
+						@else
+							{{ Form::text('usuario_asignado','SIN asignacion',array('class'=>'form-control','disabled'=>'disabled')) }}
+						@endif
 					</div>
 				</div>				
 			</div>
@@ -119,16 +127,129 @@
 					<div class="col-md-12">
 						<div class="table-responsive">
 							<table class="table table-hover">
+								@if(count($requerimientos)>0)
 								<thead>
 									<tr>
-										<th class="text-nowrap text-center">Código Solicitud</th>
-										<th class="text-nowrap text-center">Fecha de Solicitud</th>
-										<th class="text-nowrap text-center">Tipo de Solicitud</th>
-										<th class="text-nowrap text-center">Estado Solicitud</th>
-										<th class="text-nowrap text-center">Ver bitácora</th>
+										<th class="text-nowrap text-center">N°</th>
+										<th class="text-nowrap text-center">Código Requerimiento</th>
+										<th class="text-nowrap text-center">Acción</th>
+										<th class="text-nowrap text-center">Aplicativo</th>
+										<th class="text-nowrap text-center">Aplicativo Agrupado</th>
+										<th class="text-nowrap text-center">Tipo Gestión</th>
+										<th class="text-nowrap text-center">Canal</th>
+										<th class="text-nowrap text-center">Entidad</th>
+										<th class="text-nowrap text-center">Punto de Venta</th>
+										<th class="text-nowrap text-center">Cargo</th>
+										<th class="text-nowrap text-center">Perfil</th>
+										<th class="text-nowrap text-center">DNI Usuario</th>
+										<th class="text-nowrap text-center">Estado</th>
+										<th class="text-nowrap text-center">Observaciones</th>
 									</tr>
 								</thead>
-														
+								<tbody>
+									
+										@foreach($requerimientos as $index => $requerimiento)
+										<tr>	
+											<td class="text-nowrap text-center">
+												{{$index+1}}
+											</td>
+											<td class="text-nowrap text-center">
+												@if($requerimiento->codigo_requerimiento != null)
+													{{$requerimiento->codigo_requerimiento}}
+												@else
+													-
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
+												@if($requerimiento->accion_requerimiento != null)
+													{{$requerimiento->accion_requerimiento}}
+												@else
+													-
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
+												@if($requerimiento->nombre_herramienta != null)
+													{{$requerimiento->nombre_herramienta}}
+												@else
+													-
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
+												@if($requerimiento->nombre_denominacion != null)
+													{{$requerimiento->nombre_denominacion}}
+												@else
+													-
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
+												@if($requerimiento->nombre_tipo_requerimiento != null)
+													{{$requerimiento->nombre_tipo_requerimiento}}
+												@else
+													-
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
+												@if($requerimiento->nombre_canal != null)
+													{{$requerimiento->nombre_canal}}
+												@else
+													-
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
+												@if($requerimiento->nombre_entidad != null)
+													{{$requerimiento->nombre_entidad}}
+												@else
+													-
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
+												@if($requerimiento->nombre_punto_venta != null)
+													{{$requerimiento->nombre_punto_venta}}
+												@else
+													-
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
+												@if($requerimiento->cargo_canal != null)
+													{{$requerimiento->cargo_canal}}
+												@else
+													-
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
+												@if($requerimiento->perfil_aplicativo != null)
+													{{$requerimiento->perfil_aplicativo}}
+												@else
+													-
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
+												@if($requerimiento->numero_documento != null)
+													{{$requerimiento->numero_documento}}
+												@else
+													-
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
+												@if($requerimiento->nombre_estado_requerimiento != null)
+													{{$requerimiento->nombre_estado_requerimiento}}
+												@else
+													-
+												@endif
+											</td>
+											 <td class="text-nowrap">
+											 	<div style="text-align:center">
+											 		<button class="btn btn-info btn-sm" onclick="mostrar_observaciones(event,{{$requerimiento->idrequerimiento}})" type="button"><span class="fa fa-search"></span>
+											 		</button>
+											 	</div>
+											 </td>
+										</tr>
+										@endforeach
+									
+								</tbody>
+							@else
+									<h3 style="text-align:center;height:150px;overflow-y:auto;">SIN REGISTROS</h3>
+							@endif						
 							</table>
 						</div>
 					</div>
@@ -137,7 +258,7 @@
 		</div>
 		<div class="row">
 			@if($user->idrol == 1)
-				@if( $usuario_asignado->deleted_at != null )
+				@if( $usuario_asignado != null && $usuario_asignado->deleted_at != null )
 					@if(($solicitud->idestado_solicitud == 3 || $solicitud->idestado_solicitud == 4) )
 						<div class="col-md-2">
 							<button class="btn btn-success btn-block" onclick="mostrar_usuarios_disponibles(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-redo"></i> Reasignación</button>
@@ -173,6 +294,7 @@
 		
 	</div>
 </div>
+@if($asignacion != null)
 <div class="container" >
   <!-- Modal -->
   <div class="modal fade" id="modal_reasignacion"  role="dialog">
@@ -213,6 +335,7 @@
     </div>
   </div>
  </div>
+ @endif
  <div class="container" >
   <!-- Modal -->
   <div class="modal fade" id="modal_anulacion"  role="dialog">

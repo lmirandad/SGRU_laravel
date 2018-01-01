@@ -15,15 +15,6 @@
 						</ul>
 					</div>
 				</li>
-				<li>
-					<a href="#subPagesRequerimientos" data-toggle="collapse" class="collapsed"><i class="lnr lnr-list"></i> <span>Requerimientos</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
-					<div id="subPagesRequerimientos" class="collapse">
-						<ul class="nav">
-							<li><a href="#" class="">Buscar Requerimientos</a></li>
-							<li><a href="#" class="">Registrar Requerimientos</a></li>
-						</ul>
-					</div>
-				</li>
 				@if($user->idrol == 1)
 				<li> <!-- SUBMENÚ MANTENIMIENTOS -->
 					<a href="#subPagesMantenimientos" data-toggle="collapse" class="collapsed"><i class="lnr lnr-construction"></i> <span>Mantenimientos</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
@@ -43,7 +34,15 @@
 				</li>
 				@endif
 				@if($user->idrol == 1)
-				<li><a href="#" class=""><i class="lnr lnr-chart-bars"></i> <span>Indicadores</span></a></li>
+				<li>
+					<a href="#subPagesReporteria" data-toggle="collapse" class="collapsed"><i class="lnr lnr-chart-bars"></i> <span>Reportería</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
+					<div id="subPagesReporteria" class="collapse ">
+						<ul class="nav"> 
+							<li><a href="{{URL::to('/reportes')}}"><i class="fa fa-file-text-o "></i><span>Reportes</span></a></li> 
+							<li><a href="{{URL::to('/dashboard/0')}}"><i class="lnr lnr-pie-chart"></i><span>Dashboard</span></a></li>
+						</ul>
+					</div>
+				</li>
 				@endif
 			</ul>
 		</nav>

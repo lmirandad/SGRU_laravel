@@ -4,7 +4,7 @@ $( document ).ready(function(){
 	if($('#input-file-observados').length){
 		$("#input-file-observados").fileinput({
 		    language: "es",
-		    allowedFileExtensions: ["csv","txt"],
+		    allowedFileExtensions: ["xls","xlsx"],
 		    showPreview: false,
 		    showUpload: false,
 		});
@@ -15,7 +15,7 @@ $( document ).ready(function(){
 	if($('#input-file-vena').length){
 		$("#input-file-vena").fileinput({
 		    language: "es",
-		    allowedFileExtensions: ["csv","txt"],
+		    allowedFileExtensions: ["xlsx","xsl"],
 		    showPreview: false,
 		    showUpload: false,
 		});

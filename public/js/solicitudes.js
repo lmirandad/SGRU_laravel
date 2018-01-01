@@ -4,7 +4,7 @@ $( document ).ready(function(){
 	if($('#input-file').length){
 		$("#input-file").fileinput({
 		    language: "es",
-		    allowedFileExtensions: ["csv","txt"],
+		    allowedFileExtensions: ["csv","txt","xls","xlsx"],
 		    showPreview: false,
 		    showUpload: false,
 		});
@@ -291,5 +291,70 @@ function mostrar_modal_anular(e,idsolicitud)
 		}
 	});
 
+}
+
+function mostrar_observaciones(e,id)
+{
+
+	e.preventDefault();
+	$.ajax({
+		url: inside_url+'requerimientos/ver_observacion',
+		type: 'POST',
+		data: { 
+			'idrequerimiento' : id,
+		},
+		beforeSend: function(){
+			$(".loader_container").show();
+		},
+		complete: function(){
+			//$(this).prop('disabled',false);
+		},
+		success: function(response){
+			if(response["requerimiento"] != null)
+			{
+				if(response["requerimiento"].observaciones != null)
+					dialog = BootstrapDialog.show({
+				        title: 'Mensaje',
+				        message: response["requerimiento"].observaciones,
+				        type : BootstrapDialog.TYPE_PRIMARY,
+				        buttons: [{
+				            label: 'Entendido',
+				            action: function(dialog) {
+				            	dialog.close();   
+				            }
+				   		 }]
+				    });
+				else{
+					dialog = BootstrapDialog.show({
+				        title: 'Mensaje',
+				        message: 'Sin observaciones',
+				        type : BootstrapDialog.TYPE_PRIMARY,
+				        buttons: [{
+				            label: 'Entendido',
+				            action: function(dialog) {
+				            	dialog.close();   
+				            }
+				   		 }]
+				    });
+				}
+			}else
+			{
+				dialog = BootstrapDialog.show({
+			        title: 'Mensaje',
+			        message: 'Requerimiento no existe.',
+			        type : BootstrapDialog.TYPE_DANGER,
+			        buttons: [{
+			            label: 'Entendido',
+			            action: function(dialog) {
+			            	dialog.close();   
+			            }
+			   		 }]
+			    });
+			}		
+			
+		},
+		error: function(){
+		}
+	});
 }
 

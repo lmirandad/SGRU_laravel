@@ -19,6 +19,7 @@ class CreateHerramientaTable extends Migration {
 			$table->string('descripcion', 100)->nullable();
 			$table->integer('flag_seguridad')->nullable();
 			$table->integer('iddenominacion_herramienta')->index('fk_herramienta_denominacion_herramienta_idx');
+			$table->integer('idtipo_requerimiento')->index('fk_herramienta_tipo_requerimiento_idx');
 			$table->integer('iduser_created_by')->nullable()->index('fk_herramienta_users1_idx');
 			$table->integer('iduser_updated_by')->nullable()->index('fk_herramienta_users2_idx');
 			$table->timestamps();

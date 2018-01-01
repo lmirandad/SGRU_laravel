@@ -43,18 +43,18 @@
 							@if($usuarios_observados_ya_cargados == 0)
 								@if($vista_previa_ejecutado_observados == 1)
 									<div class="col-md-6">
-										<label class="control-label">Seleccione Archivo .CSV</label>
+										<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
 										<input id="input-file-observados" type="file" name="file" disabled="disabled">
 									</div>
 								@else
 									<div class="col-md-6">
-										<label class="control-label">Seleccione Archivo .CSV</label>
+										<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
 										<input id="input-file-observados" type="file" name="file">
 									</div>
 								@endif
 							@else
 								<div class="col-md-6">
-									<label class="control-label">Seleccione Archivo .CSV</label>
+									<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
 									<input id="input-file-observados" type="file" name="file" disabled="disabled">
 								</div>
 							@endif
@@ -116,18 +116,18 @@
 							@if($usuarios_vena_ya_cargados == 0)
 								@if($vista_previa_ejecutado_vena == 1)
 									<div class="col-md-6">
-										<label class="control-label">Seleccione Archivo .CSV</label>
+										<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
 										<input id="input-file-vena" type="file" name="file" disabled="disabled">
 									</div>
 								@else
 									<div class="col-md-6">
-										<label class="control-label">Seleccione Archivo .CSV</label>
+										<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
 										<input id="input-file-vena" type="file" name="file">
 									</div>
 								@endif
 							@else
 								<div class="col-md-6">
-									<label class="control-label">Seleccione Archivo .CSV</label>
+									<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
 									<input id="input-file-vena" type="file" name="file" disabled="disabled">
 								</div>
 							@endif

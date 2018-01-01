@@ -30,8 +30,8 @@
 							{{ Form::open(array('url'=>'/principal/buscar_solicitudes_usuario','method'=>'get' ,'role'=>'form')) }}
 							<div class="row">
 								<div class="col-md-3">
-									{{ Form::label('search_usuario','Nombre del Usuario')}}
-									{{ Form::text('search_usuario',$search_usuario,array('class'=>'form-control','placeholder'=>'Nombre del usuario','id'=>'search_usuario')) }}
+									{{ Form::label('search_usuario','Nombre Usuario')}}
+									{{ Form::text('search_usuario',$search_usuario,array('class'=>'form-control','placeholder'=>'Username','id'=>'search_usuario')) }}
 								</div>
 								<div class="form-group col-md-3">	
 									{{ Form::label('search_fecha','Mes') }}
@@ -71,8 +71,18 @@
 			@endif
 			<div class="panel panel-headline">
 				<div class="panel-heading">
-					<h3 class="panel-title">Número de Solicitudes</h3>
-					<p class="panel-subtitle">Fecha Actual: {{date('d-m-Y')}}</p>
+					<h3 class="panel-title">Número de Solicitudes: 
+						@if($usuario_busqueda != null) <i>{{$usuario_busqueda}}</i> @endif
+
+					</h3> 
+					
+					<p class="panel-subtitle"> 
+						@if($fecha_busqueda != null) Fecha Búsqueda: <strong>{{$fecha_busqueda}} </strong>
+						@else	Fecha Actual: <strong>{{date('m-Y')}}</strong>
+						@endif
+
+					</p>
+						
 				</div>
 				<div class="panel-body">	
 					<div class="row">
@@ -178,13 +188,25 @@
 												{{date('d-m-Y',strtotime($solicitud_data->fecha_solicitud))}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion))}}
+												@if($solicitud_data->fecha_asignacion != null)
+													{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion))}}
+												@else
+													NO ASIGNADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												{{$diferencia_fechas_atendidos[$index]}}
+												@if($solicitud_data->fecha_asignacion != null)
+													{{$diferencia_fechas_atendidos[$index]}}
+												@else
+													-
+												@endif												
 											</td>
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_tipo_solicitud}}
+												@if($solicitud_data->nombre_tipo_solicitud != null)
+													{{$solicitud_data->nombre_tipo_solicitud}}
+												@else
+													-
+												@endif												
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
@@ -218,13 +240,25 @@
 												{{date('d-m-Y',strtotime($solicitud_data->fecha_solicitud))}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion))}}
+												@if($solicitud_data->fecha_asignacion != null)
+													{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion))}}
+												@else
+													NO ASIGNADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												{{$diferencia_fechas_cerrados[$index]}}
+												@if($solicitud_data->fecha_asignacion != null)
+													{{$diferencia_fechas_cerrados[$index]}}
+												@else
+													-
+												@endif												
 											</td>
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_tipo_solicitud}}
+												@if($solicitud_data->nombre_tipo_solicitud != null)
+													{{$solicitud_data->nombre_tipo_solicitud}}
+												@else
+													-
+												@endif												
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
@@ -258,13 +292,25 @@
 												{{date('d-m-Y',strtotime($solicitud_data->fecha_solicitud))}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion))}}
+												@if($solicitud_data->fecha_asignacion != null)
+													{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion))}}
+												@else
+													NO ASIGNADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												{{$diferencia_fechas_pendiente[$index]}}
+												@if($solicitud_data->fecha_asignacion != null)
+													{{$diferencia_fechas_pendiente[$index]}}
+												@else
+													-
+												@endif												
 											</td>
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_tipo_solicitud}}
+												@if($solicitud_data->nombre_tipo_solicitud != null)
+													{{$solicitud_data->nombre_tipo_solicitud}}
+												@else
+													-
+												@endif												
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
@@ -324,13 +370,25 @@
 												{{date('d-m-Y',strtotime($solicitud_data->fecha_solicitud))}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion))}}
+												@if($solicitud_data->fecha_asignacion != null)
+													{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion))}}
+												@else
+													NO ASIGNADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												{{$diferencia_fechas_procesando[$index]}}
+												@if($solicitud_data->fecha_asignacion != null)
+													{{$diferencia_fechas_procesando[$index]}}
+												@else
+													-
+												@endif												
 											</td>
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_tipo_solicitud}}
+												@if($solicitud_data->nombre_tipo_solicitud != null)
+													{{$solicitud_data->nombre_tipo_solicitud}}
+												@else
+													-
+												@endif												
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
@@ -390,13 +448,21 @@
 												{{date('d-m-Y',strtotime($solicitud_data->fecha_solicitud))}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion))}}
+												@if($solicitud_data->fecha_asignacion != null)
+													{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion))}}
+												@else
+													NO ASIGNADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												{{$diferencia_fechas_rechazadas[$index]}}
+												-												
 											</td>
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_tipo_solicitud}}
+												@if($solicitud_data->nombre_tipo_solicitud != null)
+													{{$solicitud_data->nombre_tipo_solicitud}}
+												@else
+													-
+												@endif												
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
@@ -430,13 +496,25 @@
 												{{date('d-m-Y',strtotime($solicitud_data->fecha_solicitud))}}
 											</td>
 											<td class="text-nowrap text-center">
-												{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion))}}
+												@if($solicitud_data->fecha_asignacion != null)
+													{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion))}}
+												@else
+													NO ASIGNADO
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												{{$diferencia_fechas_anuladas[$index]}}
+												@if($solicitud_data->fecha_asignacion != null)
+													{{$diferencia_fechas_anuladas[$index]}}
+												@else
+													-
+												@endif												
 											</td>
 											<td class="text-nowrap text-center">
-												{{$solicitud_data->nombre_tipo_solicitud}}
+												@if($solicitud_data->nombre_tipo_solicitud != null)
+													{{$solicitud_data->nombre_tipo_solicitud}}
+												@else
+													-
+												@endif												
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
