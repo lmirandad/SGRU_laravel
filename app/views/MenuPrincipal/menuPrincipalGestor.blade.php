@@ -276,7 +276,7 @@
 							<table class="table table-hover" id="table_requerimientos">
 								<thead>
 									<tr>
-										<th class="text-nowrap text-center">N°</th>
+										<th class="text-nowrap text-center">ID Transacción</th>
 										<th class="text-nowrap text-center">Código Requerimiento</th>
 										<th class="text-nowrap text-center">Acción</th>
 										<th class="text-nowrap text-center">Aplicativo</th>
@@ -322,7 +322,7 @@
       <div class="modal-content" >
 	        <div class="modal-header" id="modal_header_requerimientos_rechazar">
 	          <button type="button" class="close" id="btnCerrarModal" data-dismiss="modal">&times;</button>
-	          <h4 class="modal-title">Rechazar Solicitud: </h4> 
+	          <h4 class="modal-title">Rechazar Transacción: </h4> 
 	          {{ Form::hidden('requerimiento_id_rechazar', null,array('id'=>'requerimiento_id_rechazar')) }}	
 	        </div>
 	        <div class="modal-body" id="modal_text_acciones">
@@ -336,8 +336,8 @@
 				</div>
 			</div>
 	        <div class="modal-footer">
-	        	<div class="form-group col-md-4 col-md-offset-7">
-					<a class="btn btn-primary btn-block" id="btnRechazarRequerimiento"><i class="fa fa-floppy-o"></i>&nbsp Rechazar Solicitud</a>				
+	        	<div class="form-group col-md-5 col-md-offset-6">
+					<a class="btn btn-primary btn-block" id="btnRechazarRequerimiento"><i class="lnr lnr-cross"></i>&nbsp Rechazar Transacción</a>				
 				</div>
 	        </div>
       </div>      

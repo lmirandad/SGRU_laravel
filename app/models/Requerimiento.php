@@ -51,6 +51,22 @@ class Requerimiento extends Eloquent implements UserInterface, RemindableInterfa
 		return $query;
 	}
 
+	public function scopebuscarRequerimientosPorCodigoRequerimiento($query,$codigo,$idsolicitud)
+	{
+		$query->where('requerimiento.codigo_requerimiento','=',"$codigo");
+		$query->where('requerimiento.idsolicitud','=',$idsolicitud);
+		$query->select('requerimiento.*');
+		return $query;
+	}
+
+	public function scopeBuscarRequerimientosNoRechazados($query,$idsolicitud)
+	{
+		$query->where('requerimiento.idsolicitud','=',$idsolicitud);
+		$query->where('requerimiento.idestado_solicitud','!=',2);
+		$query->select('requerimiento.*');
+		return $query;
+	}
+
 	public function scopeBuscarRequerimientosPorEstadoPorIdSolicitud($query,$idsolicitud,$idestado)
 	{
 		$query->where('requerimiento.idsolicitud','=',$idsolicitud);

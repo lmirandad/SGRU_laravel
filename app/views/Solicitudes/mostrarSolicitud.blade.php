@@ -127,7 +127,7 @@
 					<div class="col-md-12">
 						<div class="table-responsive">
 							<table class="table table-hover">
-								@if(count($requerimientos)>0)
+								@if(count($transacciones)>0)
 								<thead>
 									<tr>
 										<th class="text-nowrap text-center">N°</th>
@@ -148,98 +148,98 @@
 								</thead>
 								<tbody>
 									
-										@foreach($requerimientos as $index => $requerimiento)
+										@foreach($transacciones as $index => $transaccion)
 										<tr>	
 											<td class="text-nowrap text-center">
 												{{$index+1}}
 											</td>
 											<td class="text-nowrap text-center">
-												@if($requerimiento->codigo_requerimiento != null)
-													{{$requerimiento->codigo_requerimiento}}
+												@if($transaccion->codigo_requerimiento != null)
+													{{$transaccion->codigo_requerimiento}}
 												@else
 													-
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												@if($requerimiento->accion_requerimiento != null)
-													{{$requerimiento->accion_requerimiento}}
+												@if($transaccion->accion_requerimiento != null)
+													{{$transaccion->accion_requerimiento}}
 												@else
 													-
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												@if($requerimiento->nombre_herramienta != null)
-													{{$requerimiento->nombre_herramienta}}
+												@if($transaccion->nombre_herramienta != null)
+													{{$transaccion->nombre_herramienta}}
 												@else
 													-
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												@if($requerimiento->nombre_denominacion != null)
-													{{$requerimiento->nombre_denominacion}}
+												@if($transaccion->nombre_denominacion != null)
+													{{$transaccion->nombre_denominacion}}
 												@else
 													-
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												@if($requerimiento->nombre_tipo_requerimiento != null)
-													{{$requerimiento->nombre_tipo_requerimiento}}
+												@if($transaccion->nombre_tipo_requerimiento != null)
+													{{$transaccion->nombre_tipo_requerimiento}}
 												@else
 													-
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												@if($requerimiento->nombre_canal != null)
-													{{$requerimiento->nombre_canal}}
+												@if($transaccion->nombre_canal != null)
+													{{$transaccion->nombre_canal}}
 												@else
 													-
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												@if($requerimiento->nombre_entidad != null)
-													{{$requerimiento->nombre_entidad}}
+												@if($transaccion->nombre_entidad != null)
+													{{$transaccion->nombre_entidad}}
 												@else
 													-
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												@if($requerimiento->nombre_punto_venta != null)
-													{{$requerimiento->nombre_punto_venta}}
+												@if($transaccion->nombre_punto_venta != null)
+													{{$transaccion->nombre_punto_venta}}
 												@else
 													-
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												@if($requerimiento->cargo_canal != null)
-													{{$requerimiento->cargo_canal}}
+												@if($transaccion->cargo_canal != null)
+													{{$transaccion->cargo_canal}}
 												@else
 													-
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												@if($requerimiento->perfil_aplicativo != null)
-													{{$requerimiento->perfil_aplicativo}}
+												@if($transaccion->perfil_aplicativo != null)
+													{{$transaccion->perfil_aplicativo}}
 												@else
 													-
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												@if($requerimiento->numero_documento != null)
-													{{$requerimiento->numero_documento}}
+												@if($transaccion->numero_documento != null)
+													{{$transaccion->numero_documento}}
 												@else
 													-
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
-												@if($requerimiento->nombre_estado_requerimiento != null)
-													{{$requerimiento->nombre_estado_requerimiento}}
+												@if($transaccion->nombre_estado_transaccion != null)
+													{{$transaccion->nombre_estado_transaccion}}
 												@else
 													-
 												@endif
 											</td>
 											 <td class="text-nowrap">
 											 	<div style="text-align:center">
-											 		<button class="btn btn-info btn-sm" onclick="mostrar_observaciones(event,{{$requerimiento->idrequerimiento}})" type="button"><span class="fa fa-search"></span>
+											 		<button class="btn btn-info btn-sm" onclick="mostrar_observaciones(event,{{$transaccion->idtransaccion}})" type="button"><span class="fa fa-search"></span>
 											 		</button>
 											 	</div>
 											 </td>

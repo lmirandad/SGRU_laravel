@@ -675,13 +675,13 @@ class SolicitudController extends BaseController {
 
 					$data["herramienta"] = Herramienta::find($data["solicitud"]->idherramienta);
 
-					$data["requerimientos"] = Requerimiento::buscarRequerimientosPorSolicitud($data["solicitud"]->idsolicitud)->get();				
+					$data["transacciones"] = Transaccion::buscarTransaccionesPorSolicitud($data["solicitud"]->idsolicitud)->get();				
 				}else
 				{
 					$data["asignacion"] = null;
 					$data["usuario_asignado"] = null;
 					$data["herramienta"] = null;
-					$data["requerimientos"] = array();
+					$data["transacciones"] = array();
 				}
 
 				return View::make('Solicitudes/mostrarSolicitud',$data);

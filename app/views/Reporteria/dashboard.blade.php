@@ -23,7 +23,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-8 col-md-offset-2">
+			<div class="col-md-9 col-md-offset-2">
 				<div class="container-fluid">				
 					<div class="panel panel-headline">
 						<div class="panel-heading">
@@ -31,12 +31,19 @@
 						</div>	
 						<div class="panel-body" style="margin-top:-40px">
 							<div class="row">
-								<div class="col-md-4 col-md-offset-2">
+								<div class="col-md-3">
 									<a class="btn btn-default btn-block" href="{{URL::to('dashboard/1')}}" style='margin-top:25px;'></span>1. Dashboard Anual</a>
 								</div>
-								<div class="col-md-4">
+								<div class="col-md-3">
 									<a class="btn btn-default btn-block" href="{{URL::to('dashboard/2')}}" style='margin-top:25px;'>2. Dashboard Mensual</a>
 								</div>
+								<div class="col-md-3">
+									<a class="btn btn-default btn-block" href="{{URL::to('dashboard/1')}}" style='margin-top:25px;'></span>3. Dashboard Semanal</a>
+								</div>
+								<div class="col-md-3">
+									<a class="btn btn-default btn-block" href="{{URL::to('dashboard/2')}}" style='margin-top:25px;'>4. Dashboard Gestor</a>
+								</div>
+
 							</div>
 						</div>
 					</div>
@@ -79,7 +86,7 @@
 			</div>
 			
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
 							<h3 class="panel-title"><strong>CANTIDAD DE TICKETS POR ESTADO DE SOLICITUD</strong></h3>
@@ -93,7 +100,9 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-md-6">
+			</div>
+			<div class="row">
+				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
 							<h3 class="panel-title"><strong>CANTIDAD DE TICKETS POR SECTOR</strong></h3>
@@ -102,36 +111,6 @@
 							<div class="row">
 								<div class="col-md-12"  id="divEvolutivoPorSector">
 									<canvas id="evolutivoPorSector"></canvas>
-								</div>	
-							</div>	
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<div class="panel">
-						<div class="panel-heading">
-							<h3 class="panel-title"><strong>CANTIDAD DE TICKETS POR APLICATIVO</strong></h3>
-						</div>
-						<div class="panel-body">
-							<div class="row">
-								<div class="col-md-12"  id="divEvolutivoPorAplicativo">
-									<canvas id="evolutivoPorAplicativo" height="400"></canvas>
-								</div>	
-							</div>	
-						</div>
-					</div>
-				</div>
-				<div class="col-md-6">
-					<div class="panel">
-						<div class="panel-heading">
-							<h3 class="panel-title"><strong>CANTIDAD DE REQUERIMIENTOS POR ESTADO</strong></h3>
-						</div>
-						<div class="panel-body">
-							<div class="row">
-								<div class="col-md-12"  id="divEvolutivoPorEstadoRequerimiento">
-									<canvas id="evolutivoPorEstadoRequerimiento"></canvas>
 								</div>	
 							</div>	
 						</div>
@@ -174,7 +153,7 @@
 			</div>
 			
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
 							<h3 class="panel-title"><strong>CANTIDAD DE TICKETS POR ESTADO DE SOLICITUD</strong></h3>
@@ -188,7 +167,9 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-md-6">
+			</div>
+			<div class="row">
+				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
 							<h3 class="panel-title"><strong>CANTIDAD DE TICKETS POR SECTOR</strong></h3>
@@ -197,36 +178,6 @@
 							<div class="row">
 								<div class="col-md-12" id="divMesSector">
 									<canvas id="mesSector"></canvas>
-								</div>	
-							</div>	
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-6">
-					<div class="panel">
-						<div class="panel-heading">
-							<h3 class="panel-title"><strong>CANTIDAD DE TICKETS POR APLICATIVO</strong></h3>
-						</div>
-						<div class="panel-body">
-							<div class="row" >
-								<div class="col-md-12" id="divMesAplicativo">
-									<canvas id="mesAplicativo"></canvas>
-								</div>	
-							</div>	
-						</div>
-					</div>
-				</div>
-				<div class="col-md-6">
-					<div class="panel">
-						<div class="panel-heading">
-							<h3 class="panel-title"><strong>CANTIDAD DE REQUERIMIENTOS POR ESTADO</strong></h3>
-						</div>
-						<div class="panel-body">
-							<div class="row">
-								<div class="col-md-12" id="divMesEstadoRequerimiento">
-									<canvas id="mesEstadoRequerimiento"></canvas>
 								</div>	
 							</div>	
 						</div>

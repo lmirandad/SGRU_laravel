@@ -15,7 +15,6 @@ $( document ).ready(function(){
 	}
 
 	$('#btnLimpiarCodigo').click(function(){
-		alert("hola");
 		$('#search_codigo_solicitud').val(null);
 	});
 
@@ -94,9 +93,9 @@ function mostrar_datos_req(e,id)
 			//$(this).prop('disabled',false);
 		},
 		success: function(response){
-			if(response["tiene_requerimientos"])
+			if(response["tiene_transacciones"])
 			{
-				arr_requerimientos = response["requerimientos"];
+				arr_requerimientos = response["transacciones"];
 				cantidad_requerimientos = arr_requerimientos.length;
 				for (i=0;i<cantidad_requerimientos;i++){
 					
@@ -113,16 +112,16 @@ function mostrar_datos_req(e,id)
 						numero_documento = arr_requerimientos[i].numero_documento;
 
 
-					boton_atender = "<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-success btn-sm\" onclick=\"finalizar_requerimiento(event,"+arr_requerimientos[i].idrequerimiento+")\" type=\"button\"><span class=\"lnr lnr-thumbs-up\"></span></button></div></td>";
-					boton_rechazar = "<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-danger btn-sm\" onclick=\"rechazar_requerimiento(event,"+arr_requerimientos[i].idrequerimiento+")\" type=\"button\"><span class=\"lnr lnr-thumbs-down\"></span></button></div></td></tr>";
+					boton_atender = "<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-success btn-sm\" onclick=\"finalizar_requerimiento(event,"+arr_requerimientos[i].idtransaccion+")\" type=\"button\"><span class=\"lnr lnr-thumbs-up\"></span></button></div></td>";
+					boton_rechazar = "<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-danger btn-sm\" onclick=\"rechazar_requerimiento(event,"+arr_requerimientos[i].idtransaccion+")\" type=\"button\"><span class=\"lnr lnr-thumbs-down\"></span></button></div></td></tr>";
 
 					data = "<tr>"
-			                +"<td class=\"text-nowrap text-center\">"+(i+1)+"</td>"
-			                +"<td class=\"text-nowrap text-center\" style=\"display:none\" id=\"idrequerimiento"+i+"\">"+arr_requerimientos[i].idrequerimiento+"</td>"	
+			                +"<td class=\"text-nowrap text-center\">"+arr_requerimientos[i].idtransaccion+"</td>"
+			                +"<td class=\"text-nowrap text-center\" style=\"display:none\" id=\"idtransaccion"+i+"\">"+arr_requerimientos[i].idtransaccion+"</td>"	
 			                +"<td class=\"text-nowrap text-center\" style=\"display:none\"><input type=\"text\" class=\"form-control\" name=\"idrequerimientos[]\"  value = "+arr_requerimientos[i].idrequerimiento+"></td>";
 			                
 
-			        if(arr_requerimientos[i].idestado_requerimiento == 3)
+			        if(arr_requerimientos[i].idestado_transaccion == 3)
 			        	data = data +  "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\"  id=\"codigo_requerimiento"+arr_requerimientos[i].idrequerimiento+"\" value = "+arr_requerimientos[i].codigo_requerimiento+"></td>";       
 			        else
 			        	data = data + "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\" readonly id=\"codigo_requerimiento"+arr_requerimientos[i].idrequerimiento+"\" value = "+arr_requerimientos[i].codigo_requerimiento+"></td>";       
@@ -137,10 +136,10 @@ function mostrar_datos_req(e,id)
 			                +"<td class=\"text-nowrap text-center\">"+arr_requerimientos[i].cargo_canal+"</td>"
 			                +"<td class=\"text-nowrap text-center\">"+arr_requerimientos[i].perfil_aplicativo+"</td>"
 			                +"<td class=\"text-nowrap text-center\">"+numero_documento+"</td>"
-			                +"<td class=\"text-nowrap text-center\"><strong>"+arr_requerimientos[i].nombre_estado_requerimiento+"</strong></td>"
-			                +"<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-info btn-sm\" onclick=\"mostrar_observaciones(event,"+arr_requerimientos[i].idrequerimiento+")\" type=\"button\"><span class=\"fa fa-search\"></span></button></div></td>";
+			                +"<td class=\"text-nowrap text-center\"><strong>"+arr_requerimientos[i].nombre_estado_transaccion+"</strong></td>"
+			                +"<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-info btn-sm\" onclick=\"mostrar_observaciones(event,"+arr_requerimientos[i].idtransaccion+")\" type=\"button\"><span class=\"fa fa-search\"></span></button></div></td>";
 
-			        if(arr_requerimientos[i].idestado_requerimiento == 3)
+			        if(arr_requerimientos[i].idestado_transaccion == 3)
 			        	data = data + boton_atender + boton_rechazar;
 			        else
 			        	data = data 
@@ -183,13 +182,14 @@ function mostrar_datos_req(e,id)
 
 function mostrar_observaciones(e,id)
 {
+
 	e.preventDefault();
 	$('#modal_requerimientos_mostrar').modal('hide');
 	$.ajax({
 		url: inside_url+'requerimientos/ver_observacion',
 		type: 'POST',
 		data: { 
-			'idrequerimiento' : id,
+			'idtransaccion' : id,
 		},
 		beforeSend: function(){
 			$(".loader_container").show();
@@ -198,25 +198,46 @@ function mostrar_observaciones(e,id)
 			//$(this).prop('disabled',false);
 		},
 		success: function(response){
-			if(response["requerimiento"] != null)
+
+			if(response["transaccion"] != null)
 			{
-				dialog = BootstrapDialog.show({
-			        title: 'Mensaje',
-			        message: response["requerimiento"].observaciones,
-			        type : BootstrapDialog.TYPE_DANGER,
-			        buttons: [{
-			            label: 'Entendido',
-			            action: function(dialog) {
-			            	$('#modal_requerimientos_mostrar').modal('show');
-			             	dialog.close();   
-			            }
-			   		 }]
-			    });
+				
+				if(response["transaccion"].observaciones != null)
+				{
+					observaciones = response["transaccion"].observaciones.split('|');
+
+					dialog = BootstrapDialog.show({
+				        title: 'Mensaje',
+				        message: observaciones[0],
+				        type : BootstrapDialog.TYPE_DANGER,
+				        buttons: [{
+				            label: 'Entendido',
+				            action: function(dialog) {
+				            	$('#modal_requerimientos_mostrar').modal('show');
+				             	dialog.close();   
+				            }
+				   		 }]
+				    });
+				}else
+				{
+					dialog = BootstrapDialog.show({
+				        title: 'Mensaje',
+				        message: 'Transacción sin observaciones',
+				        type : BootstrapDialog.TYPE_DANGER,
+				        buttons: [{
+				            label: 'Entendido',
+				            action: function(dialog) {
+				            	$('#modal_requerimientos_mostrar').modal('show');
+				             	dialog.close();   
+				            }
+				   		 }]
+				    });
+				}
 			}else
 			{
 				dialog = BootstrapDialog.show({
 			        title: 'Mensaje',
-			        message: 'Requerimiento no existe.',
+			        message: 'Transaccion no existe.',
 			        type : BootstrapDialog.TYPE_DANGER,
 			        buttons: [{
 			            label: 'Entendido',
@@ -234,7 +255,7 @@ function mostrar_observaciones(e,id)
 	});
 }
 
-function rechazar_requerimiento(e,idrequerimiento)
+function rechazar_requerimiento(e,idtransaccion)
 {
 	e.preventDefault();
 	$('#modal_requerimientos_mostrar').modal('hide');
@@ -242,7 +263,7 @@ function rechazar_requerimiento(e,idrequerimiento)
 		url: inside_url+'requerimientos/rechazar_requerimiento',
 		type: 'POST',
 		data: { 
-			'idrequerimiento' : idrequerimiento,
+			'idtransaccion' : idtransaccion,
 		},
 		beforeSend: function(){
 			$(".loader_container").show();
@@ -251,19 +272,19 @@ function rechazar_requerimiento(e,idrequerimiento)
 			//$(this).prop('disabled',false);
 		},
 		success: function(response){
-			if(response["requerimiento"] != null)
+			if(response["transaccion"] != null)
 			{	
-				$('#requerimiento_id_rechazar').val(response["requerimiento"].idrequerimiento);
+				$('#requerimiento_id_rechazar').val(response["transaccion"].idtransaccion);
 				$('#modal_requerimientos_rechazar').modal('show');
 				$('#modal_header_requerimientos_rechazar').removeClass();
 				$('#modal_header_requerimientos_rechazar').addClass("modal-header ");
 				$('#modal_header_requerimientos_rechazar').addClass("bg-primary");
-				$('#observacion_rechazo').val(response["requerimiento"].observaciones);
+				$('#observacion_rechazo').val(response["transaccion"].observaciones);
 			}else
 			{
 				dialog = BootstrapDialog.show({
 			        title: 'Mensaje',
-			        message: 'Requerimiento no existe.',
+			        message: 'Transacción no existe.',
 			        type : BootstrapDialog.TYPE_DANGER,
 			        buttons: [{
 			            label: 'Entendido',
@@ -281,9 +302,9 @@ function rechazar_requerimiento(e,idrequerimiento)
 	});
 }
 
-function finalizar_requerimiento(e,idrequerimiento)
+function finalizar_requerimiento(e,idtransaccion)
 {
-	$('#requerimiento_id_finalizar').val(idrequerimiento);
+	$('#requerimiento_id_finalizar').val(idtransaccion);
 	BootstrapDialog.confirm({
 			title: 'Mensaje de Confirmación',
 			message: '¿Está seguro que desea realizar esta acción?', 

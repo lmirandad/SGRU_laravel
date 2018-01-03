@@ -301,7 +301,7 @@ function mostrar_observaciones(e,id)
 		url: inside_url+'requerimientos/ver_observacion',
 		type: 'POST',
 		data: { 
-			'idrequerimiento' : id,
+			'idtransaccion' : id,
 		},
 		beforeSend: function(){
 			$(".loader_container").show();
@@ -310,12 +310,13 @@ function mostrar_observaciones(e,id)
 			//$(this).prop('disabled',false);
 		},
 		success: function(response){
-			if(response["requerimiento"] != null)
+			if(response["transaccion"] != null)
 			{
-				if(response["requerimiento"].observaciones != null)
+				if(response["transaccion"].observaciones != null){
+					observaciones = response["transaccion"].observaciones.split('|');
 					dialog = BootstrapDialog.show({
 				        title: 'Mensaje',
-				        message: response["requerimiento"].observaciones,
+				        message: observaciones[0],
 				        type : BootstrapDialog.TYPE_PRIMARY,
 				        buttons: [{
 				            label: 'Entendido',
@@ -324,6 +325,7 @@ function mostrar_observaciones(e,id)
 				            }
 				   		 }]
 				    });
+				}					
 				else{
 					dialog = BootstrapDialog.show({
 				        title: 'Mensaje',

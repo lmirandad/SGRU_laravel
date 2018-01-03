@@ -48,6 +48,7 @@ Route::group(array('before'=>'auth'),function(){
 	/*REPORTERIA*/
 	Route::get('/reportes','ReporteriaController@mostrar_reporteria');
 	Route::get('/generar_reporte_solicitudes','ReporteriaController@generar_reporte_solicitudes');
+	Route::get('/generar_reporte_requerimientos','ReporteriaController@generar_reporte_requerimientos');
 });
 
 

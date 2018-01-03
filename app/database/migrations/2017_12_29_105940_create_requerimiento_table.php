@@ -19,11 +19,7 @@ class CreateRequerimientoTable extends Migration {
 			$table->datetime('fecha_registro');
 			$table->datetime('fecha_cierre')->nullable();
 			$table->integer('idherramienta')->nullable()->index('fk_requerimiento_herramienta_idx');
-			$table->string('cargo_canal',200)->nullable();
-			$table->string('perfil_aplicativo',200)->nullable();
 			$table->integer('idpunto_venta')->nullable()->index('fk_requerimiento_punto_venta_idx');
-			$table->string('numero_documento',10)->nullable();
-			$table->string('nombre_usuario',200)->nullable();
 			$table->string('observaciones',400)->nullable();
 			$table->integer('idestado_requerimiento')->nullable()->index('fk_requerimiento_estado_requerimiento_idx');
 			$table->integer('idsolicitud')->nullable()->index('fk_requerimiento_solicitud_idx');

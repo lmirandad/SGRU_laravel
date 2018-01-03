@@ -278,6 +278,9 @@ class MenuPrincipalController extends BaseController {
 					array_push($data["diferencia_fechas_trabajo_procesando"],$diferencia_dias_fecha_trabajo);
 				}
 				$data["search_codigo_solicitud"] = null;
+				/*echo '<pre>';
+				var_dump(Transaccion::buscarTransaccionesPorSolicitud(1)->get());
+				echo '</pre>';*/
 				return View::make('MenuPrincipal/menuPrincipalGestor',$data);
 			}else
 				return View::make('error/error',$data);
