@@ -29,21 +29,17 @@ Route::group(array('before'=>'auth'),function(){
 	Route::post('/mostrar_dashboard_prueba','DashboardController@mostrar_dashboard_prueba');
 	Route::post('/mostrar_dashboard_anual_estados','DashboardController@mostrar_dashboard_anual_estados');
 	Route::post('/mostrar_dashboard_anual_usuario_estados','DashboardController@mostrar_dashboard_anual_usuario_estados');
-	Route::post('/mostrar_dashboard_anual_sectores','DashboardController@mostrar_dashboard_anual_sectores');
-	Route::post('/mostrar_dashboard_anual_usuario_sectores','DashboardController@mostrar_dashboard_anual_usuario_sectores');
+	Route::post('/mostrar_dashboard_anual_canales','DashboardController@mostrar_dashboard_anual_canales');
+	Route::post('/mostrar_dashboard_anual_usuarios_canales','DashboardController@mostrar_dashboard_anual_usuarios_canales');
 	Route::post('/mostrar_dashboard_anual_aplicativos','DashboardController@mostrar_dashboard_anual_aplicativos');
-	Route::post('/mostrar_dashboard_anual_usuario_aplicativos','DashboardController@mostrar_dashboard_anual_usuario_aplicativos');
-	Route::post('/mostrar_dashboard_anual_requerimientos','DashboardController@mostrar_dashboard_anual_requerimientos');
-	Route::post('/mostrar_dashboard_anual_usuario_requerimientos','DashboardController@mostrar_dashboard_anual_usuario_requerimientos');
+	Route::post('/mostrar_dashboard_anual_usuarios_aplicativos','DashboardController@mostrar_dashboard_anual_usuarios_aplicativos');
+
+
 
 	Route::post('/mostrar_dashboard_mes_estados','DashboardController@mostrar_dashboard_mes_estados');
 	Route::post('/mostrar_dashboard_mes_sectores','DashboardController@mostrar_dashboard_mes_sectores');
-	Route::post('/mostrar_dashboard_mes_aplicativos','DashboardController@mostrar_dashboard_mes_aplicativos');
-	Route::post('/mostrar_dashboard_mes_requerimientos','DashboardController@mostrar_dashboard_mes_requerimientos');
 	Route::post('/mostrar_dashboard_mes_estados_usuario','DashboardController@mostrar_dashboard_mes_estados_usuario');
 	Route::post('/mostrar_dashboard_mes_sectores_usuario','DashboardController@mostrar_dashboard_mes_sectores_usuario');
-	Route::post('/mostrar_dashboard_mes_aplicativos_usuario','DashboardController@mostrar_dashboard_mes_aplicativos_usuario');
-	Route::post('/mostrar_dashboard_mes_requerimientos_usuario','DashboardController@mostrar_dashboard_mes_requerimientos_usuario');
 
 	/*REPORTERIA*/
 	Route::get('/reportes','ReporteriaController@mostrar_reporteria');

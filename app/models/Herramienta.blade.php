@@ -91,6 +91,30 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 		$query->select('herramienta.*');
 		return $query;
 	}
+
+	public function scopeBuscarTransaccionesPorAnho($query,$anho)
+	{
+		$query->join('requerimiento','requerimiento.idherramienta','=','herramienta.idherramienta');
+		$query->whereYear('requerimiento.fecha_registro','=',$anho);
+		$query->select('herramienta.*');
+		$query->distinct();
+		return $query;
+	}
+
+	public function scopeBuscarTransaccionesPorAnhoPorUsuario($query,$anho,$usuario)
+	{
+		$query->join('requerimiento','requerimiento.idherramienta','=','herramienta.idherramienta')
+			  ->join('solicitud','solicitud.idsolicitud','=','requerimiento.idsolicitud')
+			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+			  ->join('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
+
+		$query->whereYear('requerimiento.fecha_registro','=',$anho);
+		$query->where('usuariosxasignacion.idusuario_asignado','=',$usuario);
+		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
+		$query->select('herramienta.*');
+		$query->distinct();
+		return $query;
+	}
 	
 
 }

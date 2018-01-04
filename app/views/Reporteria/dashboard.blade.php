@@ -31,7 +31,7 @@
 						</div>	
 						<div class="panel-body" style="margin-top:-40px">
 							<div class="row">
-								<div class="col-md-3">
+								<div class="col-md-3 col-md-offset-1">
 									<a class="btn btn-default btn-block" href="{{URL::to('dashboard/1')}}" style='margin-top:25px;'></span>1. Dashboard Anual</a>
 								</div>
 								<div class="col-md-3">
@@ -40,10 +40,6 @@
 								<div class="col-md-3">
 									<a class="btn btn-default btn-block" href="{{URL::to('dashboard/1')}}" style='margin-top:25px;'></span>3. Dashboard Semanal</a>
 								</div>
-								<div class="col-md-3">
-									<a class="btn btn-default btn-block" href="{{URL::to('dashboard/2')}}" style='margin-top:25px;'>4. Dashboard Gestor</a>
-								</div>
-
 							</div>
 						</div>
 					</div>
@@ -84,7 +80,6 @@
 					</div>
 				</div>
 			</div>
-			
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel">
@@ -105,12 +100,28 @@
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>CANTIDAD DE TICKETS POR SECTOR</strong></h3>
+							<h3 class="panel-title"><strong>CANTIDAD DE TICKETS POR CANAL</strong></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
-								<div class="col-md-12"  id="divEvolutivoPorSector">
-									<canvas id="evolutivoPorSector"></canvas>
+								<div class="col-md-12"  id="divEvolutivoPorCanal">
+									<canvas id="evolutivoPorCanal"></canvas>
+								</div>	
+							</div>	
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="panel">
+						<div class="panel-heading">
+							<h3 class="panel-title"><strong>TRANSACCIONES POR HERRAMIENTA</strong></h3>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-md-12"  id="divEvolutivoAplicativo">
+									<canvas id="evolutivoAplicativo"></canvas>
 								</div>	
 							</div>	
 						</div>
@@ -150,8 +161,7 @@
 						</div>
 					</div>
 				</div>
-			</div>
-			
+			</div>			
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel">

@@ -44,14 +44,18 @@ $( document ).ready(function(){
 	 		{
 	 			$('#evolutivoPorEstado').remove();
 	 			$('#divEvolutivoPorEstado').append('<canvas id="evolutivoPorEstado"></canvas>');
-				$('#evolutivoPorSector').remove();
-				$('#divEvolutivoPorSector').append('<canvas id="evolutivoPorSector"></canvas>');
+				$('#evolutivoPorCanal').remove();
+				$('#divEvolutivoPorCanal').append('<canvas id="evolutivoPorCanal"></canvas>');
+				$('#evolutivoAplicativo').remove();
+				$('#divEvolutivoAplicativo').append('<canvas id="evolutivoAplicativo"></canvas>');
 				poblar_charts_anual(anho);
 	 		}else{
 	 			$('#evolutivoPorEstado').remove();
 				$('#divEvolutivoPorEstado').append('<canvas id="evolutivoPorEstado"></canvas>');
-				$('#evolutivoPorSector').remove();
-				$('#divEvolutivoPorSector').append('<canvas id="evolutivoPorSector"></canvas>');
+				$('#evolutivoPorCanal').remove();
+				$('#divEvolutivoPorCanal').append('<canvas id="evolutivoPorCanal"></canvas>');
+				$('#evolutivoAplicativo').remove();
+				$('#divEvolutivoAplicativo').append('<canvas id="evolutivoAplicativo"></canvas>');
 				poblar_charts_anual_usuario(anho,usuario);
 	 		}
 	 	}
@@ -86,14 +90,10 @@ $( document ).ready(function(){
 	 		{
 	 			$('#mesEstado').remove();
 	        	$('#divMesEstado').append('<canvas id="mesEstado"></canvas>');
-	        	$('#mesSector').remove();
-	        	$('#divMesSector').append('<canvas id="mesSector"></canvas>');
 	        	poblar_charts_mes(mes,anho);
 	 		}else{
 	 			$('#mesEstado').remove();
 	        	$('#divMesEstado').append('<canvas id="mesEstado"></canvas>');
-	        	$('#mesSector').remove();
-	        	$('#divMesSector').append('<canvas id="mesSector"></canvas>');
 	        	poblar_charts_mes_usuario(mes,anho,usuario);
 	 		}
 	 	}
@@ -213,9 +213,10 @@ function poblar_charts_anual(anho)
         }
     });
 
-	//GRAFICO 2: EVOLUTIVO POR SECTOR ASOCIADO
+
+    //GRAFICO 2: EVOLUTIVO POR CANAL ASOCIADO
 	$.ajax({
-        url: inside_url+'mostrar_dashboard_anual_sectores',
+        url: inside_url+'mostrar_dashboard_anual_canales',
         type: 'POST',
         data: {'anho':anho},
         beforeSend: function(){
@@ -228,10 +229,10 @@ function poblar_charts_anual(anho)
             if(response.success){    	
             	var colors = ['#ff4444', '#ffbb33', '#00C851', '#33b5e5', '#2BBBAD', '#aa66cc', '#81d4fa', '#eeff41', '#1b5e20'];
             	resumen = response["resumen"];
-            	sectores = response["sectores"];
+            	canales = response["canales"];
             	meses = response["meses"];
 
-            	cantidad_sectores = sectores.length;
+            	cantidad_canales = canales.length;
             	cantidad_meses = meses.length;
             	array_datasets = new Array();
             	array_nombres = new Array();
@@ -239,9 +240,9 @@ function poblar_charts_anual(anho)
 
             	
 
-            	for(i = 0;i<cantidad_sectores;i++)
+            	for(i = 0;i<cantidad_canales;i++)
             	{
-            		array_nombres.push(sectores[i].nombre);
+            		array_nombres.push(canales[i].nombre);
             		//creamos el dataset
             		array_cantidades = new Array();
             		for(j=0; j<cantidad_meses; j++)
@@ -254,35 +255,51 @@ function poblar_charts_anual(anho)
             			}
             		}
 
+            		color = colors[Math.floor(Math.random() * colors.length)];
+
             		object_dataset = {
             			//agarro la data de cada mes
-            			label: sectores[i].nombre,
+            			label: canales[i].nombre,
             			data: array_cantidades,
-            			backgroundColor: colors[Math.floor(Math.random() * colors.length)],
-            			borderWidth: 1
+            			backgroundColor: color,
+            			borderColor: color,
+            			borderWidth: 3,
+            			fill : 1
             		};	
 
             		array_datasets.push(object_dataset);
             	}
 
             	
-            	var ctx = document.getElementById("evolutivoPorSector").getContext('2d');
+            	var ctx = document.getElementById("evolutivoPorCanal").getContext('2d');
 
 				var myChart = new Chart(ctx, {
-				    type: 'bar',
+				    type: 'line',
 				    data: {
 				        labels: nombre_meses,
 				        datasets: array_datasets,
 				    },
 				    options: {
-				        scales: {
-	                        xAxes: [{
-	                            stacked: true,
-	                        }],
-	                        yAxes: [{
-	                            stacked: true
-	                        }]
-	                    }
+				        maintainAspectRatio: false,
+						spanGaps: false,
+						elements: {
+							line: {
+								tension: 0.000001
+							}
+						},
+						plugins: {
+							filler: {
+								propagate: false
+							}
+						},
+						scales: {
+							xAxes: [{	
+								ticks: {
+									autoSkip: false,
+									maxRotation: 0
+								}
+							}]
+						}
 				    }
 				});
             	
@@ -296,7 +313,87 @@ function poblar_charts_anual(anho)
         }
     });
 
-    
+    //GRAFICO 3: EVOLUTIVO POR APLICATIVO ASOCIADO
+	$.ajax({
+        url: inside_url+'mostrar_dashboard_anual_aplicativos',
+        type: 'POST',
+        data: {'anho':anho
+    			},
+        beforeSend: function(){
+            $(".loader_container").show();
+        },
+        complete: function(){
+            $(".loader_container").hide();
+        },
+        success: function(response){
+            if(response.success){    	
+            	var colors = ['#ff4444', '#ffbb33', '#00C851', '#33b5e5', '#2BBBAD', '#aa66cc', '#81d4fa', '#eeff41', '#1b5e20'];
+            	resumen = response["resumen"];
+
+            	cantidad_herramientas = resumen.length;
+            	array_datasets = new Array();
+            	array_nombres = new Array();
+            	array_atendidos = new Array();
+            	array_rechazados = new Array();
+            	array_pendientes = new Array();
+            	
+
+            	for(i = 0;i<cantidad_herramientas;i++)
+            	{
+            		array_nombres.push(resumen[i].nombre_herramienta);
+            		//creamos el dataset
+            		array_atendidos.push(resumen[i].cantidad_atendidos);
+            		array_rechazados.push(resumen[i].cantidad_rechazados);
+            		array_pendientes.push(resumen[i].cantidad_pendientes);
+
+            	}
+
+            	
+            	var ctx = document.getElementById("evolutivoAplicativo").getContext('2d');
+
+				var myChart = new Chart(ctx, {
+				    type: 'bar',
+				    data: {
+				        labels: array_nombres,
+				        datasets: [{
+				        	label: 'atendidos',			            
+				            data: array_atendidos,
+				            backgroundColor:colors[2],
+				            borderWidth: 1
+				        },
+				        {
+				        	label: 'rechazados',			            
+				            data: array_rechazados,
+				            backgroundColor:colors[1],
+				            borderWidth: 1
+				        },
+				        {
+				        	label: 'pendientes',			            
+				            data: array_pendientes,
+				            backgroundColor:colors[0],
+				            borderWidth: 1
+				        }]
+				    },
+				    options: {
+				        scales: {
+				            yAxes: [{
+				                ticks: {
+				                    beginAtZero:true
+				                }
+				            }]
+				        }
+				    }
+				});
+            	
+            }else{
+            	
+                alert('La petición no se pudo completar, inténtelo de nuevo.');
+            }
+        },
+        error: function(){
+            alert('La petición no se pudo completar, inténtelo de nuevo.');
+        }
+    });
 
 }
 
@@ -416,13 +513,11 @@ function poblar_charts_anual_usuario(anho,usuario)
         }
     });
 
-	//GRAFICO 2: EVOLUTIVO POR SECTOR ASOCIADO
+	//GRAFICO 2: EVOLUTIVO POR CANAL ASOCIADO
 	$.ajax({
-        url: inside_url+'mostrar_dashboard_anual_usuario_sectores',
+        url: inside_url+'mostrar_dashboard_anual_usuarios_canales',
         type: 'POST',
-        data: {'anho':anho,
-        		'usuario': usuario
-    			},
+        data: {'anho':anho, 'usuario':usuario},
         beforeSend: function(){
             $(".loader_container").show();
         },
@@ -433,10 +528,10 @@ function poblar_charts_anual_usuario(anho,usuario)
             if(response.success){    	
             	var colors = ['#ff4444', '#ffbb33', '#00C851', '#33b5e5', '#2BBBAD', '#aa66cc', '#81d4fa', '#eeff41', '#1b5e20'];
             	resumen = response["resumen"];
-            	sectores = response["sectores"];
+            	canales = response["canales"];
             	meses = response["meses"];
 
-            	cantidad_sectores = sectores.length;
+            	cantidad_canales = canales.length;
             	cantidad_meses = meses.length;
             	array_datasets = new Array();
             	array_nombres = new Array();
@@ -444,9 +539,9 @@ function poblar_charts_anual_usuario(anho,usuario)
 
             	
 
-            	for(i = 0;i<cantidad_sectores;i++)
+            	for(i = 0;i<cantidad_canales;i++)
             	{
-            		array_nombres.push(sectores[i].nombre);
+            		array_nombres.push(canales[i].nombre);
             		//creamos el dataset
             		array_cantidades = new Array();
             		for(j=0; j<cantidad_meses; j++)
@@ -459,36 +554,51 @@ function poblar_charts_anual_usuario(anho,usuario)
             			}
             		}
 
+            		color = colors[Math.floor(Math.random() * colors.length)];
+
             		object_dataset = {
             			//agarro la data de cada mes
-            			label: sectores[i].nombre,
+            			label: canales[i].nombre,
             			data: array_cantidades,
-            			backgroundColor: colors[Math.floor(Math.random() * colors.length)],
-            			borderWidth: 1
+            			backgroundColor: color,
+            			borderColor: color,
+            			borderWidth: 3,
+            			fill : 1
             		};	
 
             		array_datasets.push(object_dataset);
             	}
 
             	
-            	
-            	var ctx = document.getElementById("evolutivoPorSector").getContext('2d');
+            	var ctx = document.getElementById("evolutivoPorCanal").getContext('2d');
 
 				var myChart = new Chart(ctx, {
-				    type: 'bar',
+				    type: 'line',
 				    data: {
 				        labels: nombre_meses,
 				        datasets: array_datasets,
 				    },
 				    options: {
-				        scales: {
-	                        xAxes: [{
-	                            stacked: true,
-	                        }],
-	                        yAxes: [{
-	                            stacked: true
-	                        }]
-	                    }
+				        maintainAspectRatio: false,
+						spanGaps: false,
+						elements: {
+							line: {
+								tension: 0.000001
+							}
+						},
+						plugins: {
+							filler: {
+								propagate: false
+							}
+						},
+						scales: {
+							xAxes: [{	
+								ticks: {
+									autoSkip: false,
+									maxRotation: 0
+								}
+							}]
+						}
 				    }
 				});
             	
@@ -502,7 +612,87 @@ function poblar_charts_anual_usuario(anho,usuario)
         }
     });
 
-    
+    //GRAFICO 3: EVOLUTIVO POR APLICATIVO ASOCIADO
+	$.ajax({
+        url: inside_url+'mostrar_dashboard_anual_usuarios_aplicativos',
+        type: 'POST',
+        data: {'anho':anho, 'usuario':usuario
+    			},
+        beforeSend: function(){
+            $(".loader_container").show();
+        },
+        complete: function(){
+            $(".loader_container").hide();
+        },
+        success: function(response){
+            if(response.success){    	
+            	var colors = ['#ff4444', '#ffbb33', '#00C851', '#33b5e5', '#2BBBAD', '#aa66cc', '#81d4fa', '#eeff41', '#1b5e20'];
+            	resumen = response["resumen"];
+
+            	cantidad_herramientas = resumen.length;
+            	array_datasets = new Array();
+            	array_nombres = new Array();
+            	array_atendidos = new Array();
+            	array_rechazados = new Array();
+            	array_pendientes = new Array();
+            	
+
+            	for(i = 0;i<cantidad_herramientas;i++)
+            	{
+            		array_nombres.push(resumen[i].nombre_herramienta);
+            		//creamos el dataset
+            		array_atendidos.push(resumen[i].cantidad_atendidos);
+            		array_rechazados.push(resumen[i].cantidad_rechazados);
+            		array_pendientes.push(resumen[i].cantidad_pendientes);
+
+            	}
+
+            	
+            	var ctx = document.getElementById("evolutivoAplicativo").getContext('2d');
+
+				var myChart = new Chart(ctx, {
+				    type: 'bar',
+				    data: {
+				        labels: array_nombres,
+				        datasets: [{
+				        	label: 'atendidos',			            
+				            data: array_atendidos,
+				            backgroundColor:colors[2],
+				            borderWidth: 1
+				        },
+				        {
+				        	label: 'rechazados',			            
+				            data: array_rechazados,
+				            backgroundColor:colors[1],
+				            borderWidth: 1
+				        },
+				        {
+				        	label: 'pendientes',			            
+				            data: array_pendientes,
+				            backgroundColor:colors[0],
+				            borderWidth: 1
+				        }]
+				    },
+				    options: {
+				        scales: {
+				            yAxes: [{
+				                ticks: {
+				                    beginAtZero:true
+				                }
+				            }]
+				        }
+				    }
+				});
+            	
+            }else{
+            	
+                alert('La petición no se pudo completar, inténtelo de nuevo.');
+            }
+        },
+        error: function(){
+            alert('La petición no se pudo completar, inténtelo de nuevo.');
+        }
+    });
 
 }
 

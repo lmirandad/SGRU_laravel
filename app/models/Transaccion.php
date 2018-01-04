@@ -66,4 +66,24 @@ class Transaccion extends Eloquent implements UserInterface, RemindableInterface
 		return $query;
 	}
 
+	public function scopeMostrarTransaccionPorEstadoAnualAplicativo($query,$estado,$anho,$idherramienta)
+	{
+		return DB::select('select sum(CASE WHEN herramienta.idherramienta = '.$idherramienta.' and YEAR(transaccion.fecha_registro) = '.$anho.' and transaccion.idestado_transaccion = '.$estado.' THEN 1 ELSE 0 END) as cantidad 
+					from transaccion
+					inner join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
+					right join herramienta on (requerimiento.idherramienta = herramienta.idherramienta)');
+	}
+
+
+	public function scopeMostrarTransaccionPorEstadoAnualAplicativoUsuario($query,$estado,$anho,$idherramienta,$idusuario)
+	{
+		return DB::select('select sum(CASE WHEN herramienta.idherramienta = '.$idherramienta.' and YEAR(transaccion.fecha_registro) = '.$anho.' and transaccion.idestado_transaccion = '.$estado.' and 
+							usuariosxasignacion.idusuario_asignado = '.$idusuario.' and usuariosxasignacion.estado_usuario_asignado = 1 THEN 1 ELSE 0 END) as cantidad 
+							from transaccion
+							inner join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
+							right join herramienta on (requerimiento.idherramienta = herramienta.idherramienta)
+							inner join solicitud on (solicitud.idsolicitud = requerimiento.idsolicitud)
+							inner join asignacion on (asignacion.idsolicitud = solicitud.idsolicitud)
+							inner join usuariosxasignacion on (usuariosxasignacion.idasignacion = asignacion.idasignacion)');
+	}
 }

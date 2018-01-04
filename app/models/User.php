@@ -171,4 +171,18 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			order by cantidad_solicitudes');
 	}
 
+	/*************************DASHBOARD *****************************************/
+	public function scopeBuscarUsuariosConSolicitudSemaforo($query,$anho)
+	{
+		$query->join('usuariosxasignacion','usuariosxasignacion.idusuario_asignado','=','users.id')
+			  ->join('asignacion','asignacion.idasignacion','=','usuariosxasignacion.idusuario_asignado')
+			  ->join('solicitud','solicitud.idsolicitud','=','asignacion.idsolicitud');
+		$query->where('solicitud.idestado_solicitud','!=',5)
+			  ->whereYear('solicitud.fecha_solicitud','=',$anho)
+			  ->where('usuariosxasignacion.estado_usuario_asignado','=',1);
+		$query->select('users.*');
+		$query->distinct();
+		return $query;
+	}
+
 }

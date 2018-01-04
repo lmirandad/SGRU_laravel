@@ -38,6 +38,22 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	public function scopeBuscarSolicitudSemaforo($query,$anho,$idusuario)
+	{
+		$query->leftJoin('sla','sla.idsla','=','solicitud.idsla')
+			  ->leftJoin('tipo_solicitudxsla','tipo_solicitudxsla.idsla','=','sla.idsla')
+			  ->leftJoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+			  ->leftJoin('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
+
+		$query->where('solicitud.idestado_solicitud','!=',5)
+			  ->where('usuariosxasignacion.idusuario_asignado','=',$idusuario)
+			  ->where('usuariosxasignacion.estado_usuario_asignado','=',1)
+			  ->whereYear('solicitud.fecha_solicitud','=',$anho);
+
+		$query->select('solicitud.idsolicitud','solicitud.idestado_solicitud','tipo_solicitudxsla.sla_pendiente','tipo_solicitudxsla.sla_procesando','asignacion.fecha_asignacion','solicitud.fecha_inicio_procesando','solicitud.fecha_cierre');
+
+	}
+
 	public function scopeBuscarSolicitudesPendientesProcesandoPorIdUsuario($query,$idusuario)
 	{
 		$query->join('asignacion','solicitud.idsolicitud','=','asignacion.idsolicitud');
@@ -351,12 +367,18 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+
+
 	public function scopeMostrarSolicitudPorEstado($query,$idestado)
 	{
 		return DB::select('Select sum(CASE when solicitud.idestado_solicitud = '.$idestado.' then 1 else 0 END) as cantidad, meses.idmes from solicitud
 							right join meses on (MONTH(solicitud.fecha_solicitud) = meses.idmes)
 							group by meses.idmes');
 	}
+
+	/* DASHBOARD ANUAL */
+
+	/* ESTADO */
 
 	public function scopeMostrarSolicitudPorEstadoAnual($query,$idestado,$anho)
 	{
@@ -375,6 +397,8 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 							left join usuariosxasignacion on (asignacion.idasignacion = usuariosxasignacion.idasignacion)
 							group by meses.idmes');
 	}
+
+	/* SECTOR */
 
 	public function scopeMostrarSolicitudPorSectorAnual($query,$idsector,$anho)
 	{
@@ -406,6 +430,38 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 							group by meses.idmes');
 	}
 
+	/* CANAL */
+
+	public function scopeMostrarSolicitudPorCanalAnual($query,$idcanal,$anho)
+	{
+		return DB::select('Select sum(CASE 
+							when YEAR(solicitud.fecha_solicitud) = '.$anho.' and canal.idcanal = '.$idcanal.'
+							then 1 else 0 END) as cantidad, 
+							meses.idmes from solicitud
+							right join meses on (MONTH(solicitud.fecha_solicitud) = meses.idmes)
+							left join asignacion on (solicitud.idsolicitud = asignacion.idsolicitud)
+							left join usuariosxasignacion on (asignacion.idasignacion = usuariosxasignacion.idasignacion)
+							left join entidad on (entidad.identidad = solicitud.identidad)
+							left join canal on (canal.idcanal= entidad.idcanal)
+							group by meses.idmes');
+	}
+
+	public function scopeMostrarSolicitudPorCanalAnualUsuario($query,$idcanal,$anho,$usuario)
+	{
+		return DB::select('Select sum(CASE 
+							when YEAR(solicitud.fecha_solicitud) = '.$anho.' and canal.idcanal = '.$idcanal.' and usuariosxasignacion.idusuario_asignado = '.$usuario.' and usuariosxasignacion.estado_usuario_asignado = 1 
+							then 1 else 0 END) as cantidad, 
+							meses.idmes from solicitud
+							right join meses on (MONTH(solicitud.fecha_solicitud) = meses.idmes)
+							left join asignacion on (solicitud.idsolicitud = asignacion.idsolicitud)
+							left join usuariosxasignacion on (asignacion.idasignacion = usuariosxasignacion.idasignacion)
+							left join entidad on (entidad.identidad = solicitud.identidad)
+							left join canal on (canal.idcanal= entidad.idcanal)
+							group by meses.idmes');
+	}
+
+	/* ESTADO */
+
 	public function scopeListarHerramientasEnSolicitudes($query)
 	{
 		$query->join('herramienta','herramienta.idherramienta','=','solicitud.idherramienta')
@@ -414,54 +470,6 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->distinct();
 
 		return $query;
-	}
-
-	public function scopeMostrarSolicitudPorAplicativoAnual($query,$idherramienta,$anho)
-	{
-		return DB::select('Select sum(CASE 
-			when YEAR(solicitud.fecha_solicitud) = '.$anho.' and herramienta.idherramienta = '.$idherramienta.'THEN 1 else 0 end) as cantidad,meses.idmes
-			from solicitud
-							right join meses on (MONTH(solicitud.fecha_solicitud) = meses.idmes)
-							left join asignacion on (solicitud.idsolicitud = asignacion.idsolicitud)
-							left join usuariosxasignacion on (asignacion.idasignacion = usuariosxasignacion.idasignacion)
-							left join herramienta on (solicitud.idherramienta= herramienta.idherramienta)
-							group by meses.idmes');
-	}
-
-	public function scopeMostrarSolicitudPorAplicativoNoDetectadoAnual($query,$anho)
-	{
-		return DB::select('Select sum(CASE 
-			when  YEAR(solicitud.fecha_solicitud) = '.$anho.' and herramienta.idherramienta IS NULL THEN 1 else 0 end) as cantidad,meses.idmes
-			from solicitud
-							right join meses on (MONTH(solicitud.fecha_solicitud) = meses.idmes)
-							left join asignacion on (solicitud.idsolicitud = asignacion.idsolicitud)
-							left join usuariosxasignacion on (asignacion.idasignacion = usuariosxasignacion.idasignacion)
-							left join herramienta on (solicitud.idherramienta= herramienta.idherramienta)
-							group by meses.idmes');
-	}
-
-	public function scopeMostrarSolicitudPorAplicativoAnualUsuario($query,$idherramienta,$anho,$usuario)
-	{
-		return DB::select('Select sum(CASE 
-			when  YEAR(solicitud.fecha_solicitud) = '.$anho.' and herramienta.idherramienta = '.$idherramienta.' and usuariosxasignacion.idusuario_asignado = '.$usuario.' and usuariosxasignacion.estado_usuario_asignado = 1 THEN 1 else 0 end) as cantidad,meses.idmes
-			from solicitud
-							right join meses on (MONTH(solicitud.fecha_solicitud) = meses.idmes)
-							left join asignacion on (solicitud.idsolicitud = asignacion.idsolicitud)
-							left join usuariosxasignacion on (asignacion.idasignacion = usuariosxasignacion.idasignacion)
-							left join herramienta on (solicitud.idherramienta= herramienta.idherramienta)
-							group by meses.idmes');
-	}
-
-	public function scopeMostrarSolicitudPorAplicativoNoDetectadoAnualUsuario($query,$anho,$usuario)
-	{
-		return DB::select('Select sum(CASE 
-			when YEAR(solicitud.fecha_solicitud) = '.$anho.' and herramienta.idherramienta IS NULL and usuariosxasignacion.idusuario_asignado = '.$usuario.' and usuariosxasignacion.estado_usuario_asignado = 1 THEN 1 else 0 end) as cantidad,meses.idmes
-			from solicitud
-							right join meses on (MONTH(solicitud.fecha_solicitud) = meses.idmes)
-							left join asignacion on (solicitud.idsolicitud = asignacion.idsolicitud)
-							left join usuariosxasignacion on (asignacion.idasignacion = usuariosxasignacion.idasignacion)
-							left join herramienta on (solicitud.idherramienta= herramienta.idherramienta)
-							group by meses.idmes');
 	}
 
 	/*DASHBOARD MENSUAL*/
@@ -495,19 +503,6 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
-	public function scopeMostrarCantidadSolicitudMesAplicativo($query,$mes,$anho,$idherramienta)
-	{
-		return DB::select('Select sum(CASE when (solicitud.idherramienta = '.$idherramienta.' and YEAR(solicitud.fecha_solicitud) = '.$anho.' and MONTH(						solicitud.fecha_solicitud) = '.$mes.'
-						)then 1 else 0 END) as cantidad from solicitud
-						');
-	}
-
-	public function scopeMostrarSolicitudPorAplicativoNoDetectadoMes($query,$mes,$anho)
-	{
-		return DB::select('Select sum(CASE when (solicitud.idherramienta IS NULL and YEAR(solicitud.fecha_solicitud) = '.$anho.' and MONTH(						solicitud.fecha_solicitud) = '.$mes.'
-						)then 1 else 0 END) as cantidad from solicitud
-						');	
-	}
 
 	/*--------------------------*/
 
@@ -532,22 +527,6 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	
-	public function scopeMostrarCantidadSolicitudMesAplicativoUsuario($query,$mes,$anho,$idherramienta,$usuario)
-	{
-		return DB::select('Select sum(CASE when (solicitud.idherramienta = '.$idherramienta.' and YEAR(solicitud.fecha_solicitud) = '.$anho.' and MONTH(solicitud.fecha_solicitud) = '.$mes.'			 and usuariosxasignacion.idusuario_asignado = '.$usuario.' and usuariosxasignacion.estado_usuario_asignado = 1	)then 1 else 0 END) as cantidad from solicitud
-						left join asignacion on (solicitud.idsolicitud = asignacion.idsolicitud)
-						left join usuariosxasignacion on (asignacion.idasignacion = usuariosxasignacion.idasignacion)');
-	}
-
-	public function scopeMostrarSolicitudPorAplicativoNoDetectadoMesUsuario($query,$mes,$anho,$usuario)
-	{
-		return DB::select('Select sum(CASE when (solicitud.idherramienta IS NULL and YEAR(solicitud.fecha_solicitud) = '.$anho.' and MONTH(solicitud.fecha_solicitud) = '.$mes.' 
-						  and usuariosxasignacion.idusuario_asignado = '.$usuario.' and usuariosxasignacion.estado_usuario_asignado = 1)then 1 else 0 END) as cantidad from solicitud
-						left join asignacion on (solicitud.idsolicitud = asignacion.idsolicitud)
-						left join usuariosxasignacion on (asignacion.idasignacion = usuariosxasignacion.idasignacion)
-						');	
-	}
-
 	public function scopeBuscarSolicitudesPorFechas($query,$fecha_desde,$fecha_hasta)
 	{
 		$query->leftjoin('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','solicitud.idtipo_solicitud')
