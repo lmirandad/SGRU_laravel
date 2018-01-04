@@ -28,7 +28,7 @@ class AddForeignKeyToLogCargaFurTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::table('transaccion', function(Blueprint $table)
+		Schema::table('log_carga_fur', function(Blueprint $table)
 		{
 			$table->dropForeign('fk_log_carga_fur_requerimiento');
 			$table->dropForeign('fk_log_carga_fur_users');
