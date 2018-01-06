@@ -35,6 +35,34 @@ class Canal extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	public function scopeListarCanalesConSolicitudesMesAnho($query,$mes,$anho)
+	{
+		$query->join('entidad','entidad.idcanal','=','canal.idcanal')
+		      ->join('solicitud','solicitud.identidad','=','entidad.identidad');
+
+		$query->whereYear('solicitud.fecha_solicitud','=',$anho);
+		$query->whereMonth('solicitud.fecha_solicitud','=',$mes);
+		$query->select('canal.*');
+		$query->distinct();
+		return $query;
+	}
+
+	public function scopeListarCanalesConSolicitudesMesAnhoUsuario($query,$mes,$anho,$usuario)
+	{
+		$query->join('entidad','entidad.idcanal','=','canal.idcanal')
+		      ->join('solicitud','solicitud.identidad','=','entidad.identidad')
+		      ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+		      ->join('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
+
+		$query->whereYear('solicitud.fecha_solicitud','=',$anho);
+		$query->whereMonth('solicitud.fecha_solicitud','=',$mes);
+		$query->where('usuariosxasignacion.idusuario_asignado','=',$usuario);
+		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
+		$query->select('canal.*');
+		$query->distinct();
+		return $query;
+	}
+
 	public function scopeBuscarCanalesPorIdSector($query,$idsector){
 		$query->where('canal.idsector','=',$idsector);
 		$query->select('canal.*');

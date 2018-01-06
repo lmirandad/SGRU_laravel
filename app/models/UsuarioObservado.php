@@ -31,10 +31,12 @@ class UsuarioObservado extends Eloquent implements UserInterface, RemindableInte
 		return $query;
 	}
 
-	public function scopeBuscarUsuarioPorDocumento($query,$documento)
+	public function scopeContarUsuarioCargadoHoy($query,$fecha_actual)
 	{
-		$query->where('usuario_observado.numero_documento','=',"$documento");
+		$query->where('usuario_observado.fecha_registro','=',date('Y-m-d',strtotime($fecha_actual)));
 		$query->select('usuario_observado.*');
-		return $query;	
+		return $query->count();
 	}
+
+	
 }

@@ -17,7 +17,7 @@ class DashboardController extends BaseController {
 				$data["flag_seleccion"] = $flag_seleccion;
 
 
-				$ddate = "2018-05-20";
+				/*$ddate = "2018-05-20";
 				$datem = "2018-05-01";
 				$date = new DateTime($ddate);
 				$week = $date->format("W");
@@ -27,12 +27,12 @@ class DashboardController extends BaseController {
 
 				echo 'Weeknummer: '.($week - $weekm+1);
 				$fecha_actual = new Datetime();
-				$fecha_actual->modify('2018W02');
+				$fecha_actual->modify('2018W02');*/
 
-				//echo '<pre>';var_dump(getWee); echo '</pre>';
+				//echo '<pre>';var_dump(Transaccion::mostrarTransaccionPorEstadoMesUsuarioAplicativoGestionSeguridad(0,1,2018,3)); echo '</pre>';
 
 				
-				//return View::make('Reporteria/dashboard',$data);
+				return View::make('Reporteria/dashboard',$data);
 			}else{
 				return View::make('error/error',$data);
 			}
@@ -40,8 +40,9 @@ class DashboardController extends BaseController {
 			return View::make('error/error',$data);
 		}
 	}
-
-	/* ******************** DASHBOARD ANUAL ****************************************************/
+	/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	/* *********************************DASHBOARD ANUAL *****************************************/
+	/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 	public function mostrar_dashboard_anual_estados()
 	{
@@ -266,8 +267,7 @@ class DashboardController extends BaseController {
 		}
 	}
 
-	/*
-	public function mostrar_dashboard_semaforo_anual()
+	public function mostrar_dashboard_anual_gestion_seguridad()
 	{
 		if(!Request::ajax() || !Auth::check()){
 			return Response::json(array( 'success' => false ),200);
@@ -278,93 +278,92 @@ class DashboardController extends BaseController {
 		if($data["user"]->idrol == 1){
 			// Check if the current user is the "System Admin"
 			$anho = Input::get('anho');
-			$usuarios = User::buscarUsuariosConSolicitudSemaforo($anho)->get();
-
-			if($usuarios == null || $usuarios->isEmpty())
-				return Response::json(array( 'success' => true,'tiene_solicitudes'=>false),200);
-
-			$cantidad_usuarios = count($usuarios);
-
-			for($i=0;$i<$cantidad_usuarios;$i++)
-			{
-				//POR CADA USUARIO EXTRAER TODOS SUS SOLICITUDES E INICIAR EL CONTEO
-				$obj_usuario_solicitud = [
-					"nombre_usuario" => $usuarios[$i]->nombre.' '.$usuarios[$i]->apellido_paterno.' '.$usuarios[$i]->apellido_materno,
-					"cantidad_semaforo_rojo_pendiente" => 0,
-					"cantidad_semaforo_amarillo_pendiente" => 0,
-					"cantidad_semaforo_verde_pendiente" => 0,
-					"cantidad_semaforo_rojo_procesando" => 0,
-					"cantidad_semaforo_amarillo_procesando" => 0,
-					"cantidad_semaforo_verde_procesando" => 0
-				];
-
-				$solicitudes = Solicitud::buscarSolicitudSemaforo($anho,$usuarios[$i]->id)->get();
-
-				if($solicitudes == null || $solicitudes->isEmpty())
-					return Response::json(array( 'success' => true,'tiene_solicitudes'=>false),200);
-
-				$cantidad_solicitudes = count($solicitudes);
-
-				for( $j=0; $j < $cantidad_solicitudes; $j++ )
-				{
-					$solicitud = $solicitudes[$j];
-					$fecha_fin = null; $fecha_inicio = null;
-					//ESTADO PENDIENTE
-					if($solicitud->idestado_solicitud == 3){
-
-						$fecha_inicio = $solicitud->fecha_asignacion;
-						//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
-						$fecha_fin = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
-						$diferencia_dias_fecha_trabajo= $fecha_inicio->diffInWeekdays($fecha_fin);
-						
-						//Obtener los dias feriados entre la fecha de hoy y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_inicio,$fecha_fin)->get();
-						$cantidad_dias = 0;
-						if($feriados != null )
-						{
-							$tamano = count($feriados);											
-							for($j=0;$j<$tamano;$j++)
-							{
-								$dia = date('N',strtotime($feriados[$j]->valor_fecha));
-								//Validar si el feriado coincide con un fin de semana para no contar dos veces
-								if($dia == 6 || $dia == 7)
-									$cantidad_dias++;							
-							}
-						}
-						$diferencia_dias_fecha_trabajo -= $cantidad_dias;
-
-						if($diferencia_dias_fecha_trabajo < $solicitud->sla_pendiente)
-							$obj_usuario_solicitud["cantidad_semaforo_verde_pendiente"]++;
-						else if($diferencia_dias_fecha_trabajo == $solicitud->sla_pendiente)
-							$obj_usuario_solicitud["cantidad_semaforo_amarillo_pendiente"]++;
-						else
-							$obj_usuario_solicitud["cantidad_semaforo_rojo_pendiente"]++;
-
-					}else if( $solicitud->idestado_solicitud == 4)
-					{
-						$fecha_fin = $solicitud->fecha_inicio_procesando;
-						$fecha_inicio = $solicitud->fecha_asignacion;
+			$transacciones_seg_si = Transaccion::mostrarTransaccionPorEstadoAnualAplicativoGestionSeguridad(1,$anho);
+			$transacciones_seg_no = Transaccion::mostrarTransaccionPorEstadoAnualAplicativoGestionSeguridad(0,$anho);
+			$transacciones_seg_validar = Transaccion::mostrarTransaccionPorEstadoAnualAplicativoGestionSeguridad(2,$anho);
+			$mes = Meses::listarMeses()->get();
 
 
-					}else{
-
-					}
-
-				}
-
-			}
-
-			
-			return Response::json(array( 'success' => true,'atendidos'=>$solicitudes_atendidos,'cerrados'=>$solicitudes_cerrados,'pendientes'=>$solicitudes_pendientes,'procesando'=>$solicitudes_procesando,'rechazados'=>$solicitudes_rechazados,'anulados'=>$solicitudes_anulados,
-				'meses'=>$mes),200);
+			return Response::json(array( 'success' => true,'flag_si'=>$transacciones_seg_si,'flag_no'=>$transacciones_seg_no,'flag_validar'=>$transacciones_seg_validar,'meses'=>$mes),200);
 			
 		}else{
 			return Response::json(array( 'success' => false),200);
 		}
 	}
-	*/
-	
-	/*****************************************DASHBOARDO MENSUAL ************************************************/
+
+	public function mostrar_dashboard_anual_usuarios_gestion_seguridad()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			$anho = Input::get('anho');
+			$usuario = Input::get('usuario');
+			$transacciones_seg_si = Transaccion::mostrarTransaccionPorEstadoAnualUsuarioAplicativoGestionSeguridad(1,$anho,$usuario);
+			$transacciones_seg_no = Transaccion::mostrarTransaccionPorEstadoAnualUsuarioAplicativoGestionSeguridad(0,$anho,$usuario);
+			$transacciones_seg_validar = Transaccion::mostrarTransaccionPorEstadoAnualUsuarioAplicativoGestionSeguridad(2,$anho,$usuario);
+			$mes = Meses::listarMeses()->get();
+
+
+			return Response::json(array( 'success' => true,'flag_si'=>$transacciones_seg_si,'flag_no'=>$transacciones_seg_no,'flag_validar'=>$transacciones_seg_validar,'meses'=>$mes),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
+
+	public function mostrar_dashboard_anual_dias()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			$anho = Input::get('anho');
+			$resumen = Solicitud::mostrarSolicitudAnualDia($anho);
+			$dia = Dia::listarDias()->get();
+
+
+			return Response::json(array( 'success' => true,'resumen'=>$resumen,'dias'=>$dia),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
+
+	public function mostrar_dashboard_anual_dias_usuarios()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			$anho = Input::get('anho');
+			$usuario = Input::get('usuario');
+			$resumen = Solicitud::mostrarSolicitudAnualDiaUsuario($anho,$usuario);
+			$dia = Dia::listarDias()->get();
+
+
+			return Response::json(array( 'success' => true,'resumen'=>$resumen,'dias'=>$dia),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
+
+	/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	/* *********************************DASHBOARD MENSUAL *****************************************/
+	/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 	public function mostrar_dashboard_mes_estados()
 	{
@@ -392,44 +391,6 @@ class DashboardController extends BaseController {
 			return Response::json(array( 'success' => false),200);
 		}
 	}
-
-	public function mostrar_dashboard_mes_sectores()
-	{
-		if(!Request::ajax() || !Auth::check()){
-			return Response::json(array( 'success' => false ),200);
-		}
-		$id = Auth::id();
-		$data["inside_url"] = Config::get('app.inside_url');
-		$data["user"] = Session::get('user');
-		if($data["user"]->idrol == 1){
-			// Check if the current user is the "System Admin"
-			$mes = Input::get('mes');
-			$anho = Input::get('anho');
-
-			$sectores = Sector::listarSectores()->get();
-			
-			
-			if($sectores == null || $sectores->isEmpty())
-			{
-				return Response::json(array( 'success' => true,'tiene_sectores'=>false),200);				
-			}
-
-			$solicitudes_atendidos = Solicitud::mostrarSolicitudPorSectorMes(1,$mes,$anho);
-			$solicitudes_cerrados = Solicitud::mostrarSolicitudPorSectorMes(2,$mes,$anho);
-			$solicitudes_pendientes = Solicitud::mostrarSolicitudPorSectorMes(3,$mes,$anho);
-			$solicitudes_procesando = Solicitud::mostrarSolicitudPorSectorMes(4,$mes,$anho);
-			$solicitudes_rechazados = Solicitud::mostrarSolicitudPorSectorMes(5,$mes,$anho);
-			$solicitudes_anulados = Solicitud::mostrarSolicitudPorSectorMes(6,$mes,$anho);
-			
-
-			return Response::json(array( 'success' => true,'tiene_sectores'=>true,'sectores'=>$sectores,'atendidos'=>$solicitudes_atendidos,'cerrados'=>$solicitudes_cerrados,'pendientes'=>$solicitudes_pendientes,'procesando'=>$solicitudes_procesando,'rechazados'=>$solicitudes_rechazados,'anulados'=>$solicitudes_anulados),200);
-			
-		}else{
-			return Response::json(array( 'success' => false),200);
-		}
-	}
-
-	
 
 	public function mostrar_dashboard_mes_estados_usuario()
 	{
@@ -459,7 +420,7 @@ class DashboardController extends BaseController {
 		}
 	}
 
-	public function mostrar_dashboard_mes_sectores_usuario()
+	public function mostrar_dashboard_mes_canales()
 	{
 		if(!Request::ajax() || !Auth::check()){
 			return Response::json(array( 'success' => false ),200);
@@ -469,33 +430,259 @@ class DashboardController extends BaseController {
 		$data["user"] = Session::get('user');
 		if($data["user"]->idrol == 1){
 			// Check if the current user is the "System Admin"
-			$mes = Input::get('mes');
 			$anho = Input::get('anho');
-			$usuario = Input::get('usuario');
+			$mes = Input::get('mes');
+			$canales = Canal::listarCanalesConSolicitudesMesAnho($mes,$anho)->get();
+			
 
-			$sectores = Sector::listarSectores()->get();
-			
-			
-			if($sectores == null || $sectores->isEmpty())
+			if($canales == null || $canales->isEmpty())
 			{
-				return Response::json(array( 'success' => true,'tiene_sectores'=>false),200);				
+				return Response::json(array( 'success' => true,'tiene_canales'=>false),200);				
 			}
 
-			$solicitudes_atendidos = Solicitud::mostrarSolicitudPorSectorMesUsuario(1,$mes,$anho,$usuario);
-			$solicitudes_cerrados = Solicitud::mostrarSolicitudPorSectorMesUsuario(2,$mes,$anho,$usuario);
-			$solicitudes_pendientes = Solicitud::mostrarSolicitudPorSectorMesUsuario(3,$mes,$anho,$usuario);
-			$solicitudes_procesando = Solicitud::mostrarSolicitudPorSectorMesUsuario(4,$mes,$anho,$usuario);
-			$solicitudes_rechazados = Solicitud::mostrarSolicitudPorSectorMesUsuario(5,$mes,$anho,$usuario);
-			$solicitudes_anulados = Solicitud::mostrarSolicitudPorSectorMesUsuario(6,$mes,$anho,$usuario);
+			$cantidad_canales = count($canales);
+			$array_cantidades_canales = array();
+			for($i = 0;$i<$cantidad_canales;$i++)
+			{
+				$cantidad_canal = Solicitud::mostrarSolicitudPorCanalMes($canales[$i]->idcanal,$mes,$anho);
+				array_push($array_cantidades_canales,$cantidad_canal[0]);
+			}
+			return Response::json(array( 'success' => true,'tiene_canales' => true,'resumen'=>$array_cantidades_canales, 'canales'=>$canales,
+				'meses'=>$mes),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
+	
+	public function mostrar_dashboard_mes_usuarios_canales()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			$anho = Input::get('anho');
+			$mes = Input::get('mes');
+			$usuario = Input::get('usuario');
+			$canales = Canal::listarCanalesConSolicitudesMesAnhoUsuario($mes,$anho,$usuario)->get();
 			
 
-			return Response::json(array( 'success' => true,'tiene_sectores'=>true,'sectores'=>$sectores,'atendidos'=>$solicitudes_atendidos,'cerrados'=>$solicitudes_cerrados,'pendientes'=>$solicitudes_pendientes,'procesando'=>$solicitudes_procesando,'rechazados'=>$solicitudes_rechazados,'anulados'=>$solicitudes_anulados),200);
+			if($canales == null || $canales->isEmpty())
+			{
+				return Response::json(array( 'success' => true,'tiene_canales'=>false),200);				
+			}
+
+			$cantidad_canales = count($canales);
+			$array_cantidades_canales = array();
+			for($i = 0;$i<$cantidad_canales;$i++)
+			{
+				$cantidad_canal = Solicitud::mostrarSolicitudPorCanalMesUsuario($canales[$i]->idcanal,$mes,$anho,$usuario);
+				array_push($array_cantidades_canales,$cantidad_canal[0]);
+			}
+			return Response::json(array( 'success' => true,'tiene_canales' => true,'resumen'=>$array_cantidades_canales, 'canales'=>$canales),200);
 			
 		}else{
 			return Response::json(array( 'success' => false),200);
 		}
 	}
 
+	public function mostrar_dashboard_mes_aplicativos()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			$anho = Input::get('anho');
+			$mes = Input::get('mes');
+			$herramientas_con_transacciones = Herramienta::buscarTransaccionesPorAnhoMes($anho,$mes)->get();
+
+			if($herramientas_con_transacciones == null || $herramientas_con_transacciones->isEmpty())
+				return Response::json(array( 'success' => true, 'tiene_herramientas'=>false),200);
+
+			$array_cantidades_herramientas = array();
+
+			$cantidad_herramientas = count($herramientas_con_transacciones);
+
+			if($cantidad_herramientas > 10)
+				$cantidad_herramientas = 10;
+
+			for($i=0;$i<$cantidad_herramientas;$i++)
+			{
+				//por cada herramienta extraer sus tipos de estado de transaccion
+				$transacciones_atendidas = Transaccion::mostrarTransaccionPorEstadoMesAplicativo(1,$mes,$anho,$herramientas_con_transacciones[$i]->idherramienta);
+				$transacciones_rechazadas = Transaccion::mostrarTransaccionPorEstadoMesAplicativo(2,$mes,$anho,$herramientas_con_transacciones[$i]->idherramienta);
+				$transacciones_pendientes = Transaccion::mostrarTransaccionPorEstadoMesAplicativo(3,$mes,$anho,$herramientas_con_transacciones[$i]->idherramienta);
+
+				$obj_cantidad_herramientas = [
+					"nombre_herramienta" => $herramientas_con_transacciones[$i]->nombre,
+					"cantidad_atendidos" => $transacciones_atendidas[0]->cantidad,
+					"cantidad_rechazados" => $transacciones_rechazadas[0]->cantidad,
+					"cantidad_pendientes" => $transacciones_pendientes[0]->cantidad
+				];
+
+				array_push($array_cantidades_herramientas,$obj_cantidad_herramientas);
+			}
+
+
+			return Response::json(array( 'success' => true,'tiene_herramientas'=>false,"resumen"=>$array_cantidades_herramientas),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
+
+	public function mostrar_dashboard_mes_usuarios_aplicativos()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			$anho = Input::get('anho');
+			$mes = Input::get('mes');
+			$usuario = Input::get('usuario');
+			$herramientas_con_transacciones = Herramienta::buscarTransaccionesPorAnhoMesPorUsuario($mes,$anho,$usuario)->get();
+
+			if($herramientas_con_transacciones == null || $herramientas_con_transacciones->isEmpty())
+				return Response::json(array( 'success' => true, 'tiene_herramientas'=>false),200);
+
+			$array_cantidades_herramientas = array();
+
+			$cantidad_herramientas = count($herramientas_con_transacciones);
+
+			if($cantidad_herramientas > 10)
+				$cantidad_herramientas = 10;
+
+			for($i=0;$i<$cantidad_herramientas;$i++)
+			{
+				//por cada herramienta extraer sus tipos de estado de transaccion
+				$transacciones_atendidas = Transaccion::mostrarTransaccionPorEstadoMesAplicativoUsuario(1,$mes,$anho,$herramientas_con_transacciones[$i]->idherramienta,$usuario);
+				$transacciones_rechazadas = Transaccion::mostrarTransaccionPorEstadoMesAplicativoUsuario(2,$mes,$anho,$herramientas_con_transacciones[$i]->idherramienta,$usuario);
+				$transacciones_pendientes = Transaccion::mostrarTransaccionPorEstadoMesAplicativoUsuario(3,$mes,$anho,$herramientas_con_transacciones[$i]->idherramienta,$usuario);
+
+				$obj_cantidad_herramientas = [
+					"nombre_herramienta" => $herramientas_con_transacciones[$i]->nombre,
+					"cantidad_atendidos" => $transacciones_atendidas[0]->cantidad,
+					"cantidad_rechazados" => $transacciones_rechazadas[0]->cantidad,
+					"cantidad_pendientes" => $transacciones_pendientes[0]->cantidad
+				];
+
+				array_push($array_cantidades_herramientas,$obj_cantidad_herramientas);
+			}
+
+
+			return Response::json(array( 'success' => true,'tiene_herramientas'=>false,"resumen"=>$array_cantidades_herramientas),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
 	
+	public function mostrar_dashboard_mes_gestion_seguridad()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			$anho = Input::get('anho');
+			$mes = Input::get('mes');
+			$transacciones_seg_si = Transaccion::mostrarTransaccionPorEstadoMesAplicativoGestionSeguridad(1,$mes,$anho);
+			$transacciones_seg_no = Transaccion::mostrarTransaccionPorEstadoMesAplicativoGestionSeguridad(0,$mes,$anho);
+			$transacciones_seg_validar = Transaccion::mostrarTransaccionPorEstadoMesAplicativoGestionSeguridad(2,$mes,$anho);
+			
+
+			return Response::json(array( 'success' => true,'flag_si'=>$transacciones_seg_si,'flag_no'=>$transacciones_seg_no,'flag_validar'=>$transacciones_seg_validar),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
+
+	public function mostrar_dashboard_mes_usuarios_gestion_seguridad()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			$anho = Input::get('anho');
+			$mes = Input::get('mes');
+			$usuario = Input::get('usuario');
+			$transacciones_seg_si = Transaccion::mostrarTransaccionPorEstadoMesUsuarioAplicativoGestionSeguridad(1,$mes,$anho,$usuario);
+			$transacciones_seg_no = Transaccion::mostrarTransaccionPorEstadoMesUsuarioAplicativoGestionSeguridad(0,$mes,$anho,$usuario);
+			$transacciones_seg_validar = Transaccion::mostrarTransaccionPorEstadoMesUsuarioAplicativoGestionSeguridad(2,$mes,$anho,$usuario);
+			
+
+
+			return Response::json(array( 'success' => true,'flag_si'=>$transacciones_seg_si,'flag_no'=>$transacciones_seg_no,'flag_validar'=>$transacciones_seg_validar),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
+
+	public function mostrar_dashboard_mes_dias()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			$anho = Input::get('anho');
+			$mes = Input::get('mes');
+			$resumen = Solicitud::mostrarSolicitudMesDia($mes,$anho);
+			$dia = Dia::listarDias()->get();
+
+
+			return Response::json(array( 'success' => true,'resumen'=>$resumen,'dias'=>$dia),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
+
+	public function mostrar_dashboard_mes_dias_usuarios()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			$anho = Input::get('anho');
+			$mes = Input::get('mes');
+			$usuario = Input::get('usuario');
+			$resumen = Solicitud::mostrarSolicitudMesDiaUsuario($mes,$anho,$usuario);
+			$dia = Dia::listarDias()->get();
+
+			return Response::json(array( 'success' => true,'resumen'=>$resumen,'dias'=>$dia),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
 
 }

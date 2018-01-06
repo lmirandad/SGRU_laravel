@@ -14,6 +14,7 @@
 	<link rel="stylesheet" href="{{asset('assets/linearicons/style.css')}}">
 	<link rel="stylesheet" href="{{asset('assets/chartist/css/chartist-custom.css')}}">
 	<link rel="stylesheet" href="../../vendor/kartik-v/bootstrap-fileinput/css/fileinput.min.css">
+	<link rel="stylesheet" href="{{asset('assets/jquery/jquery.loading.min.css')}}">
 	<!-- MAIN CSS -->
 	<link rel="stylesheet" href="{{asset('assets/css/main.css')}}">
 	<!-- GOOGLE FONTS -->
@@ -24,6 +25,7 @@
 	<!-- Javascript -->
 	<script src="{{asset('assets/jquery/jquery.min.js')}}"></script>
 	<script src="{{asset('assets/bootstrap/js/bootstrap.min.js')}}"></script>	
+	<script src="{{asset('assets/jquery/jquery.loading.min.js')}}"></script>
 	<script src="{{asset('assets/bootstrap/js/bootstrap-dialog.min.js')}}"></script>
 	<script src="{{asset('assets/jquery-slimscroll/jquery.slimscroll.min.js')}}"></script>
 	<script src="{{asset('assets/jquery.easy-pie-chart/jquery.easypiechart.min.js')}}"></script>

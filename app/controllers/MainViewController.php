@@ -60,6 +60,7 @@ class MenuPrincipalController extends BaseController {
 				$data["slas_data_pendiente"] = array();
 				$data["diferencia_fechas_pendiente"] = array();
 				$data["diferencia_fechas_trabajo_pendiente"] = array();
+
 				if($data["solicitudes_pendientes"] == null || $data["solicitudes_pendientes"]->isEmpty()){
 					$data["solicitudes_pendientes"] = array();					
 				}
@@ -180,6 +181,26 @@ class MenuPrincipalController extends BaseController {
 					
 				}
 				$data["origen"] = 1; //1: sin usuario //2: con usuario
+				$mensaje = '';
+				$fecha_actual = date ('Y-m-d');
+				$usuarios_observados = UsuarioObservado::buscarUsuarioCargadoHoy($fecha_actual)->get();
+				
+				if($usuarios_observados == null || $usuarios_observados->isEmpty())
+					$mensaje = $mensaje.'Lista de Usuarios Observados no ha sido cargada hoy.<br>';
+				else
+					if(count($usuarios_observados) == 0)
+						$mensaje = $mensaje.'Lista de Usuarios Observados no ha sido cargada hoy.<br>';
+
+				$usuarios_vena = UsuarioVena::buscarUsuarioCargadoHoy($fecha_actual)->get();
+
+				if($usuarios_vena == null || $usuarios_vena->isEmpty())
+					$mensaje = $mensaje.'Lista de Usuarios Vena no ha sido cargada hoy.<br>';
+				else
+					if(count($usuarios_vena) == 0)
+						$mensaje = $mensaje.'Lista de Usuarios Vena no ha sido cargada hoy.<br>';
+
+				if(strcmp($mensaje,'')!=0)
+					Session::flash('error','<strong>AVISO</strong><br>'.$mensaje);
 				
 				return View::make('MenuPrincipal/menuPrincipal',$data);
 			}else

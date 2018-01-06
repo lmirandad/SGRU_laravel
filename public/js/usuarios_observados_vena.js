@@ -32,6 +32,9 @@ $( document ).ready(function(){
 	    	btnOKLabel: 'Aceptar', 
 			callback: function(result){
 		        if(result) {
+		        	$('body').loading({
+			    		message: 'Cargando..',
+			      	});
 					document.getElementById("submit-cargar-observados").submit();
 				}
 			}
@@ -47,6 +50,9 @@ $( document ).ready(function(){
 	    	btnOKLabel: 'Aceptar', 
 			callback: function(result){
 		        if(result) {
+		        	$('body').loading({
+			    		message: 'Cargando..',
+			      	});
 					document.getElementById("submit-cargar-vena").submit();
 				}
 			}
@@ -62,6 +68,9 @@ $( document ).ready(function(){
 	    	btnOKLabel: 'Aceptar', 
 			callback: function(result){
 		        if(result) {
+		        	$('body').loading({
+			    		message: 'Cargando..',
+			      	});
 					document.getElementById("submit-upload-observados").submit();
 				}
 			}
@@ -77,6 +86,9 @@ $( document ).ready(function(){
 	    	btnOKLabel: 'Aceptar', 
 			callback: function(result){
 		        if(result) {
+		        	$('body').loading({
+			    		message: 'Cargando..',
+			      	});
 					document.getElementById("submit-upload-vena").submit();
 				}
 			}

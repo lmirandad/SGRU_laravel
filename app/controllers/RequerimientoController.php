@@ -274,9 +274,12 @@ class RequerimientoController extends BaseController {
 		    					$requerimientos[$i]->save();
 		    				}
 		    			}
-		    		}
-
-		    		
+		    		}		    		
+		    	}else{
+		    		$solicitud->idestado_solicitud = 3;
+    				$solicitud->fecha_inicio_procesando = null;
+    				$solicitud->save();
+    				return Redirect::to('/principal_gestor')->with('error','No Se procedieron a cargar los requerimientos de la solicitud '.$solicitud->codigo_solicitud.'.<br>Posibles motivos:<br>- No existen los puntos de venta asociados.<br>- Los aplicativos no existen en el sistema.');
 		    	}
 
 		    	//ahora comparamos la cantidad de requerimientos rechazadas vs los totales

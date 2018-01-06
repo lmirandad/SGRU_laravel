@@ -33,13 +33,22 @@ Route::group(array('before'=>'auth'),function(){
 	Route::post('/mostrar_dashboard_anual_usuarios_canales','DashboardController@mostrar_dashboard_anual_usuarios_canales');
 	Route::post('/mostrar_dashboard_anual_aplicativos','DashboardController@mostrar_dashboard_anual_aplicativos');
 	Route::post('/mostrar_dashboard_anual_usuarios_aplicativos','DashboardController@mostrar_dashboard_anual_usuarios_aplicativos');
-
+	Route::post('/mostrar_dashboard_anual_gestion_seguridad','DashboardController@mostrar_dashboard_anual_gestion_seguridad');
+	Route::post('/mostrar_dashboard_anual_usuarios_gestion_seguridad','DashboardController@mostrar_dashboard_anual_usuarios_gestion_seguridad');
+	Route::post('/mostrar_dashboard_anual_dias','DashboardController@mostrar_dashboard_anual_dias');
+	Route::post('/mostrar_dashboard_anual_dias_usuarios','DashboardController@mostrar_dashboard_anual_dias_usuarios');
 
 
 	Route::post('/mostrar_dashboard_mes_estados','DashboardController@mostrar_dashboard_mes_estados');
-	Route::post('/mostrar_dashboard_mes_sectores','DashboardController@mostrar_dashboard_mes_sectores');
 	Route::post('/mostrar_dashboard_mes_estados_usuario','DashboardController@mostrar_dashboard_mes_estados_usuario');
-	Route::post('/mostrar_dashboard_mes_sectores_usuario','DashboardController@mostrar_dashboard_mes_sectores_usuario');
+	Route::post('/mostrar_dashboard_mes_canales','DashboardController@mostrar_dashboard_mes_canales');
+	Route::post('/mostrar_dashboard_mes_usuarios_canales','DashboardController@mostrar_dashboard_mes_usuarios_canales');
+	Route::post('/mostrar_dashboard_mes_aplicativos','DashboardController@mostrar_dashboard_mes_aplicativos');
+	Route::post('/mostrar_dashboard_mes_usuarios_aplicativos','DashboardController@mostrar_dashboard_mes_usuarios_aplicativos');
+	Route::post('/mostrar_dashboard_mes_gestion_seguridad','DashboardController@mostrar_dashboard_mes_gestion_seguridad');
+	Route::post('/mostrar_dashboard_mes_usuarios_gestion_seguridad','DashboardController@mostrar_dashboard_mes_usuarios_gestion_seguridad');
+	Route::post('/mostrar_dashboard_mes_dias','DashboardController@mostrar_dashboard_mes_dias');
+	Route::post('/mostrar_dashboard_mes_dias_usuarios','DashboardController@mostrar_dashboard_mes_dias_usuarios');	
 
 	/*REPORTERIA*/
 	Route::get('/reportes','ReporteriaController@mostrar_reporteria');

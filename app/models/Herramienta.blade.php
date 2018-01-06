@@ -107,8 +107,33 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 			  ->join('solicitud','solicitud.idsolicitud','=','requerimiento.idsolicitud')
 			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
 			  ->join('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
+		$query->whereYear('requerimiento.fecha_registro','=',$anho);
+		$query->where('usuariosxasignacion.idusuario_asignado','=',$usuario);
+		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
+		$query->select('herramienta.*');
+		$query->distinct();
+		return $query;
+	}
+
+	public function scopeBuscarTransaccionesPorAnhoMes($query,$anho,$mes)
+	{
+		$query->join('requerimiento','requerimiento.idherramienta','=','herramienta.idherramienta');
+		$query->whereYear('requerimiento.fecha_registro','=',$anho);
+		$query->whereMonth('requerimiento.fecha_registro','=',$mes);
+		$query->select('herramienta.*');
+		$query->distinct();
+		return $query;
+	}
+
+	public function scopeBuscarTransaccionesPorAnhoMesPorUsuario($query,$mes,$anho,$usuario)
+	{
+		$query->join('requerimiento','requerimiento.idherramienta','=','herramienta.idherramienta')
+			  ->join('solicitud','solicitud.idsolicitud','=','requerimiento.idsolicitud')
+			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+			  ->join('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
 
 		$query->whereYear('requerimiento.fecha_registro','=',$anho);
+		$query->whereMonth('requerimiento.fecha_registro','=',$mes);
 		$query->where('usuariosxasignacion.idusuario_asignado','=',$usuario);
 		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
 		$query->select('herramienta.*');
