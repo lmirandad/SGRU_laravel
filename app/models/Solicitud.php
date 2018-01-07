@@ -104,6 +104,8 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	/**********************************************ADMIN******************************************************************/
+
 	public function scopeListarSolicitudes($query)
 	{
 		$query->leftjoin('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','solicitud.idtipo_solicitud')
@@ -122,6 +124,57 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->leftjoin('canal','canal.idcanal','=','entidad.idcanal')
 			  ->leftjoin('sector','sector.idsector','=','canal.idsector')
 			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
+
+		if($codigo_solicitud != null)
+			$query->where('solicitud.codigo_solicitud','LIKE',$codigo_solicitud);
+		
+		if($fecha_solicitud_desde != "")
+			$query->where('solicitud.fecha_solicitud','>=',date('Y-m-d H:i:s',strtotime($fecha_solicitud_desde)));
+		
+		if($fecha_solicitud_hasta != "")
+			$query->where('solicitud.fecha_solicitud','<=',date('Y-m-d H:i:s',strtotime($fecha_solicitud_hasta)));
+
+		if($idtipo_solicitud != 0)
+			$query->where('solicitud.idtipo_solicitud','=',$idtipo_solicitud);
+
+		if($idestado_solicitud != 0)
+			$query->where('solicitud.idestado_solicitud','=',$idestado_solicitud);
+
+		if($idsector != 0)
+			$query->where('sector.idsector','=',$idsector);
+
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');
+		return $query;
+	}
+
+	/**********************************************************GESTOR**********************************************************************/
+
+	public function scopeListarSolicitudesGestor($query,$idusuario)
+	{
+		$query->leftjoin('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','solicitud.idtipo_solicitud')
+			  ->leftjoin('estado_solicitud','estado_solicitud.idestado_solicitud','=','solicitud.idestado_solicitud')
+			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+			  ->leftJoin('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
+
+		$query->where('usuariosxasignacion.idusuario_asignado','=',$idusuario);
+			  $query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
+
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');
+		return $query;
+	}
+
+	public function scopeBuscarSolicitudesGestor($query,$idusuario,$codigo_solicitud,$fecha_solicitud_desde,$fecha_solicitud_hasta,$idtipo_solicitud,$idestado_solicitud,$idsector)
+	{
+		$query->leftjoin('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','solicitud.idtipo_solicitud')
+			  ->leftjoin('estado_solicitud','estado_solicitud.idestado_solicitud','=','solicitud.idestado_solicitud')
+			  ->leftjoin('entidad','entidad.identidad','=','solicitud.identidad')
+			  ->leftjoin('canal','canal.idcanal','=','entidad.idcanal')
+			  ->leftjoin('sector','sector.idsector','=','canal.idsector')
+			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+			  ->leftJoin('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
+
+		$query->where('usuariosxasignacion.idusuario_asignado','=',$idusuario);
+		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
 
 		if($codigo_solicitud != null)
 			$query->where('solicitud.codigo_solicitud','LIKE',$codigo_solicitud);
@@ -576,7 +629,7 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			$query->where('solicitud.fecha_solicitud','>=',date('Y-m-d H:i:s',strtotime($fecha_desde)));
 		
 		if($fecha_hasta != "")
-			$query->where('solicitud.fecha_solicitud','<=',date('Y-m-d H:i:s',strtotime($fecha_hasta)));
+			$query->where('solicitud.fecha_solicitud','<=',date('Y-m-d H:i:s',strtotime('+23 hours +59 minutes +59 seconds',strtotime($fecha_hasta))));
 
 
 		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud');

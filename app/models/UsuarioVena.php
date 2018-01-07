@@ -38,11 +38,6 @@ class UsuarioVena extends Eloquent implements UserInterface, RemindableInterface
 		return $query;	
 	}
 
-	public function scopeContarUsuarioCargadoHoy($query,$fecha_actual)
-	{
-		$query->where('usuario_vena.fecha_registro','=',date('Y-m-d',strtotime($fecha_actual)));
-		$query->select('usuario_vena.*');
-		return $query->count();
-	}
+	
 
 }

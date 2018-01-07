@@ -66,14 +66,18 @@
 					</div>					
 					<div class="col-md-3">
 						{{ Form::label('entidad','Entidad (Socio)')}}
-						{{ Form::text('entidad',$entidad->nombre,array('class'=>'form-control','disabled'=>'disabled')) }}
+						@if($solicitud->identidad != null)
+							{{ Form::text('entidad',$entidad->nombre,array('class'=>'form-control','disabled'=>'disabled')) }}
+						@else
+							{{ Form::text('entidad','SOLICITUD SIN ENTIDAD',array('class'=>'form-control','disabled'=>'disabled')) }}
+						@endif
 					</div>
 					<div class="col-md-3">
 						{{ Form::label('usuario_asignado','Usuario Asignado')}}
 						@if($usuario_asignado != null)
 							{{ Form::text('usuario_asignado',$usuario_asignado->nombre.' '.$usuario_asignado->apellido_paterno.' '.$usuario_asignado->apellido_materno,array('class'=>'form-control','disabled'=>'disabled')) }}
 						@else
-							{{ Form::text('usuario_asignado','SIN asignacion',array('class'=>'form-control','disabled'=>'disabled')) }}
+							{{ Form::text('usuario_asignado','SIN ASIGNACION',array('class'=>'form-control','disabled'=>'disabled')) }}
 						@endif
 					</div>
 				</div>				
@@ -88,7 +92,11 @@
 				<div class="row">
 					<div class="col-md-6">
 						{{ Form::label('asunto','Asunto')}}
-						{{ Form::text('asunto',$solicitud->asunto,array('class'=>'form-control','placeholder'=>'Ingrese nombre del usuario','id'=>'asunto_detectar','disabled'=>'disabled')) }}
+						@if($solicitud->asunto != null)
+							{{ Form::text('asunto',$solicitud->asunto,array('class'=>'form-control','placeholder'=>'Ingrese nombre del usuario','id'=>'asunto_detectar','disabled'=>'disabled')) }}
+						@else
+							{{ Form::text('asunto','SOLICITUD SIN ASUNTO',array('class'=>'form-control','placeholder'=>'Ingrese nombre del usuario','id'=>'asunto_detectar','disabled'=>'disabled')) }}
+						@endif
 					</div>
 					<div class="col-md-6">						
 						{{ Form::label('herramienta','Aplicativo:')}}
@@ -144,6 +152,9 @@
 										<th class="text-nowrap text-center">DNI Usuario</th>
 										<th class="text-nowrap text-center">Estado</th>
 										<th class="text-nowrap text-center">Observaciones</th>
+										@if($user->idrol == 1)
+											<th class="text-nowrap text-center">Reactivar Requerimiento</th>
+										@endif
 									</tr>
 								</thead>
 								<tbody>
@@ -243,6 +254,18 @@
 											 		</button>
 											 	</div>
 											 </td>
+											 @if($user->idrol == 1)
+											 <td class="text-nowrap text-center">													
+										 		@if($transaccion->idestado_transaccion == 2 || $transaccion->idestado_transaccion == 1)
+											 		<div style="text-align:center">											 	
+												 		<button class="btn btn-success btn-sm" onclick="reactivar_transaccion(event,{{$transaccion->idtransaccion}})" type="button"><span class="lnr lnr-undo"></span>
+												 		</button>
+												 	</div>
+											 	@else
+											 		-
+											 	@endif
+											 </td>
+											@endif
 										</tr>
 										@endforeach
 									
@@ -271,7 +294,10 @@
 							<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
 						</div>
 					@endif
-				@else		
+				@else
+					<div class="col-md-2">
+							<button class="btn btn-success btn-block" onclick="mostrar_usuarios_disponibles(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-redo"></i> Reasignación</button>
+						</div>		
 					<div class="form-group col-md-2 col-md-offset-10">
 						<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
 					</div>

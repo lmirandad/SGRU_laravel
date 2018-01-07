@@ -357,24 +357,32 @@ function poblar_charts_anual(anho)
             if(response.success){    	
             	var colors = ['#ff4444', '#ffbb33', '#00C851', '#33b5e5', '#2BBBAD', '#aa66cc', '#81d4fa', '#eeff41', '#1b5e20'];
             	resumen = response["resumen"];
-
-            	cantidad_herramientas = resumen.length;
-            	array_datasets = new Array();
             	array_nombres = new Array();
             	array_atendidos = new Array();
             	array_rechazados = new Array();
             	array_pendientes = new Array();
             	
-
-            	for(i = 0;i<cantidad_herramientas;i++)
+            	if(response["tiene_herramientas"] == true)
             	{
-            		array_nombres.push(resumen[i].nombre_herramienta);
-            		//creamos el dataset
-            		array_atendidos.push(resumen[i].cantidad_atendidos);
-            		array_rechazados.push(resumen[i].cantidad_rechazados);
-            		array_pendientes.push(resumen[i].cantidad_pendientes);
+            		cantidad_herramientas = resumen.length;
+	            	
+	            	for(i = 0;i<cantidad_herramientas;i++)
+	            	{
+	            		array_nombres.push(resumen[i].nombre_herramienta);
+	            		//creamos el dataset
+	            		array_atendidos.push(resumen[i].cantidad_atendidos);
+	            		array_rechazados.push(resumen[i].cantidad_rechazados);
+	            		array_pendientes.push(resumen[i].cantidad_pendientes);
 
+	            	}	
+            	}else{
+            		array_nombres.push('SIN REQUERIMIENTOS REGISTRADOS');
+            		array_atendidos.push(0);
+            		array_rechazados.push(0);
+            		array_pendientes.push(0);
             	}
+
+            	
 
             	
             	var ctx = document.getElementById("evolutivoAplicativo").getContext('2d');
@@ -469,13 +477,13 @@ function poblar_charts_anual(anho)
 				        datasets: [{
 				        	label: 'con gestion de seguridad',			            
 				            data: array_si,
-				            backgroundColor:colors[2],
+				            backgroundColor:colors[0],
 				            borderWidth: 1
 				        },
 				        {
 				        	label: 'sin gestion de seguridad',			            
 				            data: array_no,
-				            backgroundColor:colors[0],
+				            backgroundColor:colors[2],
 				            borderWidth: 1
 				        },
 				        {
@@ -832,23 +840,32 @@ function poblar_charts_anual_usuario(anho,usuario)
             	var colors = ['#ff4444', '#ffbb33', '#00C851', '#33b5e5', '#2BBBAD', '#aa66cc', '#81d4fa', '#eeff41', '#1b5e20'];
             	resumen = response["resumen"];
 
-            	cantidad_herramientas = resumen.length;
-            	array_datasets = new Array();
             	array_nombres = new Array();
             	array_atendidos = new Array();
             	array_rechazados = new Array();
             	array_pendientes = new Array();
             	
-
-            	for(i = 0;i<cantidad_herramientas;i++)
+            	if(response["tiene_herramientas"] == true)
             	{
-            		array_nombres.push(resumen[i].nombre_herramienta);
-            		//creamos el dataset
-            		array_atendidos.push(resumen[i].cantidad_atendidos);
-            		array_rechazados.push(resumen[i].cantidad_rechazados);
-            		array_pendientes.push(resumen[i].cantidad_pendientes);
+            		cantidad_herramientas = resumen.length;
+	            	
+	            	for(i = 0;i<cantidad_herramientas;i++)
+	            	{
+	            		array_nombres.push(resumen[i].nombre_herramienta);
+	            		//creamos el dataset
+	            		array_atendidos.push(resumen[i].cantidad_atendidos);
+	            		array_rechazados.push(resumen[i].cantidad_rechazados);
+	            		array_pendientes.push(resumen[i].cantidad_pendientes);
 
+	            	}	
+            	}else{
+            		array_nombres.push('SIN REQUERIMIENTOS REGISTRADOS');
+            		array_atendidos.push(0);
+            		array_rechazados.push(0);
+            		array_pendientes.push(0);
             	}
+
+            	
 
             	
             	var ctx = document.getElementById("evolutivoAplicativo").getContext('2d');
@@ -943,13 +960,13 @@ function poblar_charts_anual_usuario(anho,usuario)
 				        datasets: [{
 				        	label: 'con gestion de seguridad',			            
 				            data: array_si,
-				            backgroundColor:colors[2],
+				            backgroundColor:colors[0],
 				            borderWidth: 1
 				        },
 				        {
 				        	label: 'sin gestion de seguridad',			            
 				            data: array_no,
-				            backgroundColor:colors[0],
+				            backgroundColor:colors[2],
 				            borderWidth: 1
 				        },
 				        {
@@ -1232,22 +1249,29 @@ function poblar_charts_mes(mes,anho)
             	var colors = ['#ff4444', '#ffbb33', '#00C851', '#33b5e5', '#2BBBAD', '#aa66cc', '#81d4fa', '#eeff41', '#1b5e20'];
             	resumen = response["resumen"];
 
-            	cantidad_herramientas = resumen.length;
-            	array_datasets = new Array();
             	array_nombres = new Array();
             	array_atendidos = new Array();
             	array_rechazados = new Array();
             	array_pendientes = new Array();
             	
-
-            	for(i = 0;i<cantidad_herramientas;i++)
+            	if(response["tiene_herramientas"] == true)
             	{
-            		array_nombres.push(resumen[i].nombre_herramienta);
-            		//creamos el dataset
-            		array_atendidos.push(resumen[i].cantidad_atendidos);
-            		array_rechazados.push(resumen[i].cantidad_rechazados);
-            		array_pendientes.push(resumen[i].cantidad_pendientes);
+            		cantidad_herramientas = resumen.length;
+	            	
+	            	for(i = 0;i<cantidad_herramientas;i++)
+	            	{
+	            		array_nombres.push(resumen[i].nombre_herramienta);
+	            		//creamos el dataset
+	            		array_atendidos.push(resumen[i].cantidad_atendidos);
+	            		array_rechazados.push(resumen[i].cantidad_rechazados);
+	            		array_pendientes.push(resumen[i].cantidad_pendientes);
 
+	            	}	
+            	}else{
+            		array_nombres.push('SIN REQUERIMIENTOS REGISTRADOS');
+            		array_atendidos.push(0);
+            		array_rechazados.push(0);
+            		array_pendientes.push(0);
             	}
 
             	
@@ -1327,7 +1351,7 @@ function poblar_charts_mes(mes,anho)
 				        datasets: [{
 				        	label: 'Transacciones',			            
 				            data: [cantidad_si[0].cantidad*100,cantidad_no[0].cantidad*100,cantidad_validar[0].cantidad*100],
-				            backgroundColor:[colors[2],colors[0],colors[1]],
+				            backgroundColor:[colors[0],colors[2],colors[1]],
 				            borderWidth: 1
 				        }]
 				    },
@@ -1594,22 +1618,29 @@ function poblar_charts_mes_usuario(mes,anho,usuario)
             	var colors = ['#ff4444', '#ffbb33', '#00C851', '#33b5e5', '#2BBBAD', '#aa66cc', '#81d4fa', '#eeff41', '#1b5e20'];
             	resumen = response["resumen"];
 
-            	cantidad_herramientas = resumen.length;
-            	array_datasets = new Array();
             	array_nombres = new Array();
             	array_atendidos = new Array();
             	array_rechazados = new Array();
             	array_pendientes = new Array();
             	
-
-            	for(i = 0;i<cantidad_herramientas;i++)
+            	if(response["tiene_herramientas"] == true)
             	{
-            		array_nombres.push(resumen[i].nombre_herramienta);
-            		//creamos el dataset
-            		array_atendidos.push(resumen[i].cantidad_atendidos);
-            		array_rechazados.push(resumen[i].cantidad_rechazados);
-            		array_pendientes.push(resumen[i].cantidad_pendientes);
+            		cantidad_herramientas = resumen.length;
+	            	
+	            	for(i = 0;i<cantidad_herramientas;i++)
+	            	{
+	            		array_nombres.push(resumen[i].nombre_herramienta);
+	            		//creamos el dataset
+	            		array_atendidos.push(resumen[i].cantidad_atendidos);
+	            		array_rechazados.push(resumen[i].cantidad_rechazados);
+	            		array_pendientes.push(resumen[i].cantidad_pendientes);
 
+	            	}	
+            	}else{
+            		array_nombres.push('SIN REQUERIMIENTOS REGISTRADOS POR EL GESTOR');
+            		array_atendidos.push(0);
+            		array_rechazados.push(0);
+            		array_pendientes.push(0);
             	}
 
             	
@@ -1687,7 +1718,7 @@ function poblar_charts_mes_usuario(mes,anho,usuario)
 				        datasets: [{
 				        	label: 'Transacciones',			            
 				            data: [cantidad_si[0].cantidad*100,cantidad_no[0].cantidad*100,cantidad_validar[0].cantidad*100],
-				            backgroundColor:[colors[2],colors[0],colors[1]],
+				            backgroundColor:[colors[0],colors[2],colors[1]],
 				            borderWidth: 1
 				        }]
 				    },

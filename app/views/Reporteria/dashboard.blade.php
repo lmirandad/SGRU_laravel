@@ -23,7 +23,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-10 col-md-offset-1">
+			<div class="col-md-9 col-md-offset-2">
 				<div class="container-fluid">				
 					<div class="panel panel-headline">
 						<div class="panel-heading">
@@ -31,14 +31,11 @@
 						</div>	
 						<div class="panel-body" style="margin-top:-40px">
 							<div class="row">
-								<div class="col-md-3 col-md-offset-2">
+								<div class="col-md-3 col-md-offset-3">
 									<a class="btn btn-default btn-block" href="{{URL::to('dashboard/1')}}" style='margin-top:25px;'></span>1. Dashboard Anual</a>
 								</div>
 								<div class="col-md-3">
 									<a class="btn btn-default btn-block" href="{{URL::to('dashboard/2')}}" style='margin-top:25px;'>2. Dashboard Mensual</a>
-								</div>
-								<div class="col-md-3">
-									<a class="btn btn-default btn-block" href="{{URL::to('dashboard/0')}}" style='margin-top:25px;'></span>3. Dashboard Semanal</a>
 								</div>
 							</div>
 						</div>

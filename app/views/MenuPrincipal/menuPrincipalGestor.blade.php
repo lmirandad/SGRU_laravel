@@ -303,15 +303,22 @@
 				</div>
 			</div>
 	        <div class="modal-footer">
-	        	<div class="form-group col-md-3 col-md-offset-9">
+	        	 {{ Form::close() }} 
+	        	<div class="form-group col-md-3">
 					<a class="btn btn-primary btn-block" id="btnActualizarCodigos"><i class="fa fa-floppy-o"></i>&nbsp Actualizar Codigos Requerimientos</a>				
 				</div>
+				{{ Form::open(array('url'=>'/requerimientos/submit_eliminar_base' ,'role'=>'form','id'=>'submit-eliminar','enctype'=>'multipart/form-data')) }}
+				{{ Form::hidden('solicitud_id_eliminar_base', null,array('id'=>'solicitud_id_eliminar_base')) }}	
+				<div class="form-group col-md-3 col-md-offset-6">
+					<button class="btn btn-danger btn-md" onclick="eliminar_requerimientos(event,{{$solicitud_data->idsolicitud}})" type="button"><i class="lnr lnr-cross"></i> Eliminar Base Requerimientos</button>		
+				</div>
+				 {{ Form::close() }}
 	        </div>
       </div>      
     </div>
   </div>
  </div> 
- {{ Form::close() }} 
+
 
  {{ Form::open(array('url'=>'/requerimientos/submit_rechazar_requerimiento' ,'role'=>'form','id'=>'submit-rechazar','enctype'=>'multipart/form-data')) }}
  <div class="container" >

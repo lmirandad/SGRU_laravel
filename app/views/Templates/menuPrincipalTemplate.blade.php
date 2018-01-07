@@ -13,7 +13,7 @@
 	<link rel="stylesheet" href="{{asset('assets/font-awesome/css/font-awesome.min.css')}}">
 	<link rel="stylesheet" href="{{asset('assets/linearicons/style.css')}}">
 	<link rel="stylesheet" href="{{asset('assets/chartist/css/chartist-custom.css')}}">
-	<link rel="stylesheet" href="../vendor/kartik-v/bootstrap-fileinput/css/fileinput.min.css">
+	<link rel="stylesheet" href="{{asset('assets/kartik-v/bootstrap-fileinput/css/fileinput.min.css')}}">
 	<link rel="stylesheet" href="{{asset('assets/jquery/jquery.loading.min.css')}}">
 	<!-- MAIN CSS -->
 	<link rel="stylesheet" href="{{asset('assets/css/main.css')}}">
@@ -34,8 +34,8 @@
 	<script src="{{asset('assets/bootstrap/js/moment.min.js')}}"></script>		
 	<script src="{{asset('assets/bootstrap/js/bootstrap-datetimepicker.min.js')}}"></script>
 	<script src="{{asset('assets/bootstrap/js/locale-es.js')}}"></script>
-	<script src="../vendor/kartik-v/bootstrap-fileinput/js/fileinput.min.js"></script>
-	<script src="../vendor/kartik-v/bootstrap-fileinput/js/locales/es.js"></script>	
+	<script src="{{asset('assets/kartik-v/bootstrap-fileinput/js/fileinput.min.js')}}"></script>
+	<script src="{{asset('assets/kartik-v/bootstrap-fileinput/js/locales/es.js')}}"></script>	
 	<script src="{{asset('js/menu_principal_gestor.js')}}"></script>
 	<script src="{{asset('js/menu_principal_admin.js')}}"></script>
 	<script type="text/javascript">

@@ -29,7 +29,10 @@ class SolicitudController extends BaseController {
 				$data["search_sector"] = null;
 				$data["tipos_solicitud"] = TipoSolicitud::lists('nombre','idtipo_solicitud');
 				$data["estados_solicitud"] = EstadoSolicitud::lists('nombre','idestado_solicitud');
-				$data["solicitudes_data"] = Solicitud::withTrashed()->listarSolicitudes()->paginate(10);
+				if($data["user"]->idrol == 1)
+					$data["solicitudes_data"] = Solicitud::withTrashed()->listarSolicitudes()->paginate(10);
+				else
+					$data["solicitudes_data"] = Solicitud::withTrashed()->listarSolicitudesGestor($data["user"]->id)->paginate(10);
 				$data["sectores"] = Sector::lists('nombre','idsector');
 				return View::make('Solicitudes/listarSolicitudes',$data);
 			}else{
@@ -59,11 +62,17 @@ class SolicitudController extends BaseController {
 				$data["sectores"] = Sector::lists('nombre','idsector');
 
 				if($data["search_solicitud"] == null && $data["fecha_solicitud_desde"]== null && $data["fecha_solicitud_hasta"]== null && $data["search_tipo_solicitud"] == 0 && $data["search_estado_solicitud"] == 0 && $data["search_sector"] == 0 ){
-					$data["solicitudes_data"] = Solicitud::withTrashed()->listarSolicitudes()->paginate(10);
+					if($data["user"]->idrol == 1)
+						$data["solicitudes_data"] = Solicitud::withTrashed()->listarSolicitudes()->paginate(10);
+					else
+						$data["solicitudes_data"] = Solicitud::withTrashed()->listarSolicitudesGestor($data["user"]->id)->paginate(10);
 					return View::make('Solicitudes/listarSolicitudes',$data);
 
 				}else{
-					$data["solicitudes_data"] = Solicitud::withTrashed()->buscarSolicitudes($data["search_solicitud"],$data["fecha_solicitud_desde"],$data["fecha_solicitud_hasta"],$data["search_tipo_solicitud"],$data["search_estado_solicitud"],$data["search_sector"])->paginate(10);
+					if($data["user"]->idrol == 1)
+						$data["solicitudes_data"] = Solicitud::withTrashed()->buscarSolicitudesGestor($data["user"]->id,$data["search_solicitud"],$data["fecha_solicitud_desde"],$data["fecha_solicitud_hasta"],$data["search_tipo_solicitud"],$data["search_estado_solicitud"],$data["search_sector"])->paginate(10);
+					else
+						$data["solicitudes_data"] = Solicitud::withTrashed()->buscarSolicitudesGestor($data["user"]->id,$data["search_solicitud"],$data["fecha_solicitud_desde"],$data["fecha_solicitud_hasta"],$data["search_tipo_solicitud"],$data["search_estado_solicitud"],$data["search_sector"])->paginate(10);
 					return View::make('Solicitudes/listarSolicitudes',$data);	
 				}				
 			}else{
@@ -155,8 +164,57 @@ class SolicitudController extends BaseController {
 					
 					$array_log_text = '';
 
+					//1. VALIDACION DE LA FECHA DE SOLICITUD
+					if(strcmp($fecha_solicitud,'') != 0)
+					{
+						if(DateTime::createFromFormat('Y-m-d H:i:s', $fecha_solicitud) == false)
+						{
+							$obj_log["descripcion"] = "La fecha de solicitud no cuenta con el formato de fecha correcto";
+							array_push($logs_errores,$obj_log);
+							//FECHA CON FORMATO ERRADO
+							continue; //(LOGS)
+						} 
+						else{	
+							$fecha_solicitud_date = $fecha_solicitud;
+						}
+					}else //NO PROCEDE
+					{
+						$obj_log["descripcion"] = "El campo Fecha de Solicitud está vacío.";
+						array_push($logs_errores,$obj_log);
+						continue; //(LOGS)
+					}
 					
-					//1. VALIDACION DEL CODIGO DE ENTIDAD
+					//2. VALIDACION DEL CODIGO DE LA SOLICITUD
+					//Validar si el codigo es vacío y posteriomente se valida si es numérico
+					if(strcmp($codigo_solicitud,'') == 0 || !ctype_digit($codigo_solicitud))
+					{
+						$obj_log["descripcion"] = "El código de solicitud no existe o no es numérico";
+						array_push($logs_errores,$obj_log);
+						continue; //(LOGS)
+					}
+					else
+						$codigo_solicitud_ingresar = (int)$codigo_solicitud;
+
+					//3. VALIDACION DEL TIPO DE SOLICITUD GENERAL
+					if(strcmp($tipo_solicitud_gral,'') != 0)
+					{
+						//validar si existe el tipo de solicitud
+						$tipo_solicitud_obj = TipoSolicitudGeneral::buscarPorNombre($tipo_solicitud_gral)->get();
+						if($tipo_solicitud_obj == null || $tipo_solicitud_obj->isEmpty()) 
+						{	
+							array_push($logs_errores,"El tipo de solicitud no existe.");
+							//NO PROCEDE
+							continue; //(LOGS)
+						}
+					}else
+					{   
+						$obj_log["descripcion"] = "El tipo de solicitud no existe.";
+						array_push($logs_errores,$obj_log);
+						//NO PROCEDE
+						continue; //(LOGS)
+					}
+					
+					//3. VALIDACION DEL CODIGO DE ENTIDAD
 					if(strcmp($codigo_entidad,'') != 0)
 					{
 						//validar si existe el codigo
@@ -179,6 +237,14 @@ class SolicitudController extends BaseController {
 						}
 					}else{
 						//NO PROCEDE
+						$solicitud_arreglo_rechazo = [
+							"codigo" => $codigo_solicitud_ingresar,
+							"fecha_solicitud" => $fecha_solicitud_date,
+							"identidad" => null,
+							"idtipo_solicitud_general" => $tipo_solicitud_obj[0]->idtipo_solicitud_general,
+						];
+						array_push($data["solicitudes_por_rechazar"], $solicitud_arreglo_rechazo);
+
 						$obj_log["descripcion"] = "El campo Entidad está vacío.";
 						array_push($logs_errores,$obj_log);
 						continue; //(LOGS)
@@ -217,57 +283,12 @@ class SolicitudController extends BaseController {
 						continue; //(LOGS)
 					}
 
-					//3. VALIDACION DEL TIPO DE SOLICITUD GENERAL
-					if(strcmp($tipo_solicitud_gral,'') != 0)
-					{
-						//validar si existe el tipo de solicitud
-						$tipo_solicitud_obj = TipoSolicitudGeneral::buscarPorNombre($tipo_solicitud_gral)->get();
-						if($tipo_solicitud_obj == null || $tipo_solicitud_obj->isEmpty()) 
-						{	
-							array_push($logs_errores,"El tipo de solicitud no existe.");
-							//NO PROCEDE
-							continue; //(LOGS)
-						}
-					}else
-					{   
-						$obj_log["descripcion"] = "El tipo de solicitud no existe.";
-						array_push($logs_errores,$obj_log);
-						//NO PROCEDE
-						continue; //(LOGS)
-					}
+					
 
-					//4. VALIDACION DEL CODIGO DE LA SOLICITUD
-					//Validar si el codigo es vacío y posteriomente se valida si es numérico
-					if(strcmp($codigo_solicitud,'') == 0 || !ctype_digit($codigo_solicitud))
-					{
-						$obj_log["descripcion"] = "El código de solicitud no existe o no es numérico";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
-					}
-					else
-						$codigo_solicitud_ingresar = (int)$codigo_solicitud;
+					
 
 
 
-					//5. VALIDACION DE LA FECHA DE SOLICITUD
-					if(strcmp($fecha_solicitud,'') != 0)
-					{
-						if(DateTime::createFromFormat('Y-m-d H:i:s', $fecha_solicitud) == false)
-						{
-							$obj_log["descripcion"] = "La fecha de solicitud no cuenta con el formato de fecha correcto";
-							array_push($logs_errores,$obj_log);
-							//FECHA CON FORMATO ERRADO
-							continue; //(LOGS)
-						} 
-						else{	
-							$fecha_solicitud_date = $fecha_solicitud;
-						}
-					}else //NO PROCEDE
-					{
-						$obj_log["descripcion"] = "El campo Fecha de Solicitud está vacío.";
-						array_push($logs_errores,$obj_log);
-						continue; //(LOGS)
-					}
 					
 					//6. VALIDACION DEL ASUNTO
 					if(strcmp($asunto,'') == 0){

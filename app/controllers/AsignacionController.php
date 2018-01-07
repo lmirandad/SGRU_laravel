@@ -23,11 +23,11 @@ class AsignacionController extends BaseController {
 				
 				$cantidad_registros = count($codigos_solicitud);
 
-				if($cantidad_registros == 0)
+				/*if($cantidad_registros == 0)
 				{
 					Session::flash('error','No hay solicitudes por asignar.');
 					return Redirect::to('solicitudes/cargar_solicitudes');
-				}
+				}*/
 
 				// 1. Registrar la carga del archivo
 				$carga_archivo = new CargaArchivo;
@@ -167,7 +167,10 @@ class AsignacionController extends BaseController {
 				{
 					$solicitud = new Solicitud;
 					$solicitud->codigo_solicitud = $codigos_rechazo[$i];
-					$solicitud->identidad = $ids_entidad_rechazo[$i];
+					if(strcmp($ids_entidad_rechazo[$i],'') ==0 )
+						$solicitud->identidad = null;
+					else
+						$solicitud->identidad = $ids_entidad_rechazo[$i];
 					$solicitud->idtipo_solicitud_general = $idstipo_solicitud_general_rechazo[$i];					
 					$partes = explode('-',$fechas_solicitud_rechazo[$i]);
 					$solicitud->fecha_solicitud = date('Y-m-d H:i:s',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));
@@ -211,6 +214,7 @@ class AsignacionController extends BaseController {
 					}
 					Session::flash('message','Se realizaron las asignaciones para los siguientes códigos:'.'<br>'.$texto);
 				}
+
 								
 				return Redirect::to('solicitudes/listar_solicitudes');
 				

@@ -62,12 +62,12 @@
 			</div>	
 			{{ Form::close() }}	
 
-			{{ Form::open(array('url'=>'/generar_reporte_requerimientos','method'=>'get' ,'role'=>'form', 'id'=>'search-form')) }}
+			{{ Form::open(array('url'=>'/generar_reporte_requerimientos','method'=>'get' ,'role'=>'form', 'id'=>'search-form-req')) }}
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>EXPORTAR BASE DE SOLICITUDES</strong></h3>
+							<h3 class="panel-title"><strong>EXPORTAR BASE DE REQUERIMIENTOS / TRANSACCIONES</strong></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
@@ -93,7 +93,7 @@
 									{{ Form::button('<span class="fa fa-search""></span> Buscar', array('type' => 'submit', 'class' => 'btn btn-info btn-block','style'=>'margin-top:25px;')) }}	
 								</div>
 								<div class="col-md-2">
-									<div class="btn btn-default btn-block" id="btnLimpiar" style='margin-top:25px;'><span class="lnr lnr-sync""></span> Limpiar</div>				
+									<div class="btn btn-default btn-block" id="btnLimpiarReq" style='margin-top:25px;'><span class="lnr lnr-sync""></span> Limpiar</div>				
 								</div>
 							</div>	
 						</div>

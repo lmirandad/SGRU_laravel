@@ -25,9 +25,7 @@ class RequerimientoController extends BaseController {
 
 			    $resultado = Excel::load($file_name)->get();
 
-			 //  $resultado = null;
-			    
-			    $cantidad_requerimientos = count($resultado);
+			 	$cantidad_requerimientos = count($resultado);
 			    $herramientas = Herramienta::listarHerramientas()->get();
 			    $array_log = array();
 			   // echo '<pre>'; var_dump('cantidad_requerimientos '.$cantidad_requerimientos);echo '</pre>';
@@ -657,4 +655,102 @@ class RequerimientoController extends BaseController {
 		}
 	}
 
+	public function reactivar_transaccion()
+	{
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+
+		$id = Auth::id();
+		
+		$data["inside_url"] = Config::get('app.inside_url');
+
+		$data["user"] = Session::get('user');
+
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			
+			$idtransaccion = Input::get('idtransaccion');
+			$transaccion = Transaccion::find($idtransaccion);
+
+			if($transaccion == null)
+				return Response::json(array( 'success' => true,'transaccion' => null),200);
+			
+			$transaccion->idestado_transaccion = 3;
+			$transaccion->observaciones = 'Transacción reactivada.';
+			$transaccion->fecha_cierre = null;
+			$transaccion->save();
+
+
+			return Response::json(array( 'success' => true,'transaccion' => $transaccion),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
+
+	public function submit_eliminar_base()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 2){
+				
+				
+				$solicitud_id = Input::get('solicitud_id_eliminar_base');
+
+				
+				$requerimientos = Requerimiento::buscarRequerimientosPorSolicitud($solicitud_id)->get();
+			    if($requerimientos != null && !$requerimientos->isEmpty())
+			    {  
+			    	$cantidad_requerimientos = count($requerimientos);
+			    	for($i=0;$i<$cantidad_requerimientos;$i++)
+			    	{
+			    		// TRANSACCIONES
+
+			    		$transacciones = Transaccion::buscarTransaccionesPorRequerimiento($requerimientos[$i]->idrequerimiento)->get();
+			    		if($transacciones != null && !$transacciones->isEmpty())
+			    		{
+			    			$cantidad_transacciones = count($transacciones);
+			    			for($j=0;$j<$cantidad_transacciones;$j++)
+			    			{
+			    				$transaccion = Transaccion::find($transacciones[$j]->idtransaccion);
+			    				$transaccion->forceDelete();
+			    			}
+			    		}
+
+			    		//LOG FUR
+			    		$logs = LogCargaFur::buscarLogCargaPorIdRequerimiento($requerimientos[$i]->idrequerimiento)->get();
+						if($logs != null && !$logs->isEmpty())
+			    		{
+			    			$cantidad_logs = count($logs);
+			    			for($j=0;$j<$cantidad_logs;$j++)
+			    			{
+			    				$logs[$j]->forceDelete();
+			    			}
+			    		}			    		
+
+			    		$requerimiento = Requerimiento::find($requerimientos[$i]->idrequerimiento);
+			    		$requerimiento->forceDelete();
+			    	}
+			    }
+
+			    //Regresar el ticket a su estado de pendiente;
+			    $solicitud = Solicitud::find($solicitud_id);
+			    $solicitud->idestado_solicitud = 3;
+			    $solicitud->fecha_inicio_procesando = null;
+			    $solicitud->fur_cargado = 0;
+			    $solicitud->save();
+
+			   return Redirect::to('/principal_gestor')->with('message','Se eliminó la base de requerimientos de la solicitud '.$solicitud->codigo_solicitud);
+
+			}else{
+				return View::make('error/error',$data);
+			}
+
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
 }

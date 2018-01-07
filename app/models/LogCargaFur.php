@@ -23,4 +23,11 @@ class LogCargaFur extends Eloquent implements UserInterface, RemindableInterface
 	 *
 	 * @var array
 	 */
+
+	public function scopeBuscarLogCargaPorIdRequerimiento($query,$idrequerimiento)
+	{
+		$query->where('log_carga_fur.idrequerimiento','=',$idrequerimiento);
+		$query->select('log_carga_fur.*');
+		return $query;
+	}
 }

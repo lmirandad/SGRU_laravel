@@ -44,4 +44,9 @@ $( document ).ready(function(){
 	 	$('#fecha_desde').val(null);
 	 	$('#fecha_hasta').val(null);
 	 });
+
+     $('#btnLimpiarReq').click(function(){
+        $('#fecha_desde_requerimiento').val(null);
+        $('#fecha_hasta_requerimiento').val(null);
+     });
 });

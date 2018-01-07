@@ -212,10 +212,12 @@ Route::group(array('prefix'=>'requerimientos', 'before'=>'auth'),function(){
 	Route::post('/cargar_requerimientos','RequerimientoController@cargar_requerimientos');
 	Route::post('/mostrar_lista_requerimientos','RequerimientoController@mostrar_lista_requerimientos');
 	Route::post('/ver_observacion','RequerimientoController@ver_observacion');
+	Route::post('/reactivar_transaccion','RequerimientoController@reactivar_transaccion');
 	Route::post('/submit_actualizar_codigos','RequerimientoController@submit_actualizar_codigos');
 	Route::post('/rechazar_requerimiento','RequerimientoController@rechazar_requerimiento');
 	Route::post('/submit_rechazar_requerimiento','RequerimientoController@submit_rechazar_requerimiento');
 	Route::post('/submit_finalizar_requerimiento','RequerimientoController@submit_finalizar_requerimiento');
+	Route::post('/submit_eliminar_base','RequerimientoController@submit_eliminar_base');
 });
 
 /*TIPOS_SOLICITUD*/

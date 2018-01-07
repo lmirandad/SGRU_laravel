@@ -60,6 +60,23 @@ $( document ).ready(function(){
 });
 
 
+function eliminar_requerimientos(e,id)
+{
+	e.preventDefault();	
+	$('#solicitud_id_eliminar_base').val(id);
+		BootstrapDialog.confirm({
+			title: 'Mensaje de Confirmación',
+			message: '¿Está seguro que desea realizar esta acción?<br>Se borrarán todos los requerimientos y transacciones asociados a la solicitud.', 
+			type: BootstrapDialog.TYPE_DANGER,
+			btnCancelLabel: 'Cancelar', 
+	    	btnOKLabel: 'Aceptar', 
+			callback: function(result){
+		        if(result) {
+		        	document.getElementById("submit-eliminar").submit();
+				}
+			}
+		});
+}
 
 function cargar_base(e,id)
 {

@@ -17,19 +17,7 @@ class DashboardController extends BaseController {
 				$data["flag_seleccion"] = $flag_seleccion;
 
 
-				/*$ddate = "2018-05-20";
-				$datem = "2018-05-01";
-				$date = new DateTime($ddate);
-				$week = $date->format("W");
-
-				$date = new DateTime($datem);
-				$weekm = $date->format("W");
-
-				echo 'Weeknummer: '.($week - $weekm+1);
-				$fecha_actual = new Datetime();
-				$fecha_actual->modify('2018W02');*/
-
-				//echo '<pre>';var_dump(Transaccion::mostrarTransaccionPorEstadoMesUsuarioAplicativoGestionSeguridad(0,1,2018,3)); echo '</pre>';
+				//echo '<pre>';var_dump( Herramienta::buscarTransaccionesPorAnhoPorUsuario(2018,3)->get()); echo '</pre>';
 
 				
 				return View::make('Reporteria/dashboard',$data);
@@ -211,7 +199,7 @@ class DashboardController extends BaseController {
 			}
 
 
-			return Response::json(array( 'success' => true,'tiene_herramientas'=>false,"resumen"=>$array_cantidades_herramientas),200);
+			return Response::json(array( 'success' => true,'tiene_herramientas'=>true,"resumen"=>$array_cantidades_herramientas),200);
 			
 		}else{
 			return Response::json(array( 'success' => false),200);
@@ -260,7 +248,7 @@ class DashboardController extends BaseController {
 			}
 
 
-			return Response::json(array( 'success' => true,'tiene_herramientas'=>false,"resumen"=>$array_cantidades_herramientas),200);
+			return Response::json(array( 'success' => true,'tiene_herramientas'=>true,"resumen"=>$array_cantidades_herramientas),200);
 			
 		}else{
 			return Response::json(array( 'success' => false),200);

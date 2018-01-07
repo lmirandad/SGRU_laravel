@@ -360,3 +360,65 @@ function mostrar_observaciones(e,id)
 	});
 }
 
+function reactivar_transaccion(e,id)
+{
+
+	e.preventDefault();
+	BootstrapDialog.confirm({
+		title: 'Mensaje de Confirmación',
+		message: '¿Está seguro que desea realizar esta acción?', 
+		type: BootstrapDialog.TYPE_INFO,
+		btnCancelLabel: 'Cancelar', 
+    	btnOKLabel: 'Aceptar', 
+		callback: function(result){
+	        if(result) {
+				$.ajax({
+					url: inside_url+'requerimientos/reactivar_transaccion',
+					type: 'POST',
+					data: { 
+						'idtransaccion' : id,
+					},
+					beforeSend: function(){
+						$(".loader_container").show();
+					},
+					complete: function(){
+						//$(this).prop('disabled',false);
+					},
+					success: function(response){
+						if(response["transaccion"] != null)
+						{
+							dialog = BootstrapDialog.show({
+						        title: 'Mensaje',
+						        message: 'La transaccion ID: '+response["transaccion"].idtransaccion+' ha sido reactivada a estado PENDIENTE.',
+						        type : BootstrapDialog.TYPE_PRIMARY,
+						        buttons: [{
+						            label: 'Entendido',
+						            action: function(dialog) {
+						            	location.reload();   
+						            }
+						   		 }]
+						    });
+						}				
+						else{
+							dialog = BootstrapDialog.show({
+						        title: 'Mensaje',
+						        message: 'Transacción no encontrada.',
+						        type : BootstrapDialog.TYPE_PRIMARY,
+						        buttons: [{
+						            label: 'Entendido',
+						            action: function(dialog) {
+						            	dialog.close();   
+						            }
+						   		 }]
+						    });			
+						}
+						
+					},
+					error: function(){
+					}
+				});
+			}
+		}
+	});
+
+}
