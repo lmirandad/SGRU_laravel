@@ -47,7 +47,7 @@ class Entidad extends Eloquent implements UserInterface, RemindableInterface {
 			  ->join('sector','canal.idsector','=','sector.idsector');
 
 		if($nombre != null )
-			$query->where('entidad.nombre','LIKE','%$nombre%');
+			$query->where('entidad.nombre','LIKE',"%$nombre%");
 
 
 		if($idcanal != null )

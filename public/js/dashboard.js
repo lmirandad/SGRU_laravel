@@ -114,8 +114,8 @@ $( document ).ready(function(){
 				$('#divEvolutivoPorCanal').append('<canvas id="evolutivoPorCanal"></canvas>');
 				$('#evolutivoAplicativo').remove();
 				$('#divEvolutivoAplicativo').append('<canvas id="evolutivoAplicativo"></canvas>');
-				$('#evolutivoSolicitudesDia').remove();
-				$('#divEvolutivoGestionSeguridad').append('<canvas id="evolutivoSolicitudesDia"></canvas>');
+				$('#evolutivoGestionSeguridad').remove();
+				$('#divEvolutivoGestionSeguridad').append('<canvas id="evolutivoGestionSeguridad"></canvas>');
 				$('#evolutivoSolicitudesDia').remove();
 				$('#divEvolutivoSolicitudesDia').append('<canvas id="evolutivoSolicitudesDia"></canvas>');
 	        	poblar_charts_mes_usuario(mes,anho,usuario);
@@ -1401,9 +1401,7 @@ function poblar_charts_mes(mes,anho)
         			nombre_dias.push(dias[i].dia);
         		}
 
-        		array_cantidades = [10,12,5,15,20,0,0];
-
-            	var ctx = document.getElementById("evolutivoSolicitudesDia").getContext('2d');
+        		var ctx = document.getElementById("evolutivoSolicitudesDia").getContext('2d');
 
 				var myChart = new Chart(ctx, {
 				    type: 'line',

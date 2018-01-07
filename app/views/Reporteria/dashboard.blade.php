@@ -81,7 +81,7 @@
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>CANTIDAD DE TICKETS POR ESTADO DE SOLICITUD</strong></h3>
+							<h3 class="panel-title"><strong>TICKETS (SOLICITUDES): CANTIDAD DE TICKETS POR ESTADO DE SOLICITUD</strong></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
@@ -97,7 +97,7 @@
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>CANTIDAD DE TICKETS POR CANAL</strong></h3>
+							<h3 class="panel-title"><strong>TICKETS (SOLICITUDES): CANTIDAD DE TICKETS POR CANAL DE VENTA</strong></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
@@ -113,7 +113,7 @@
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>TRANSACCIONES POR HERRAMIENTA</strong></h3>
+							<h3 class="panel-title"><strong>TRANSACCIONES (REQUERIMIENTOS): CANTIDAD DE TRANSACCIONES POR APLICATIVO (TOP 10)</strong></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
@@ -129,7 +129,7 @@
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>TRANSACCIONES POR GESTION DE SEGURIDAD</strong></h3>
+							<h3 class="panel-title"><strong>TRANSACCIONES (REQUERIMIENTOS): CANTIDAD DE TRANSACCIONES POR GESTIÓN DE SEGURIDAD</strong></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
@@ -145,7 +145,7 @@
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>TENDENCIA DE SOLICITUDES POR DIA</strong></h3>
+							<h3 class="panel-title"><strong>TICKETS (SOLICITUDES): CANTIDAD DE TICKETS RECIBIDOS POR DIA DE LA SEMANA</strong></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
@@ -195,7 +195,7 @@
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>CANTIDAD DE TICKETS POR ESTADO DE SOLICITUD</strong></h3>
+							<h3 class="panel-title"><strong>TICKETS (SOLICITUDES): CANTIDAD DE TICKETS POR ESTADO DE SOLICITUD</strong></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
@@ -211,7 +211,7 @@
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>CANTIDAD DE TICKETS POR CANAL</strong></h3>
+							<h3 class="panel-title"><strong>TICKETS (SOLICITUDES): CANTIDAD DE TICKETS POR CANAL DE VENTA</strong></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
@@ -227,7 +227,7 @@
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>TRANSACCIONES POR HERRAMIENTA</strong></h3>
+							<h3 class="panel-title"><strong>TRANSACCIONES (REQUERIMIENTOS): CANTIDAD DE TRANSACCIONES POR APLICATIVO (TOP 10)</strong></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
@@ -244,7 +244,7 @@
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>TRANSACCIONES POR GESTION DE SEGURIDAD</strong></h3>
+							<h3 class="panel-title"><strong>TRANSACCIONES (REQUERIMIENTOS): CANTIDAD DE TRANSACCIONES POR GESTIÓN DE SEGURIDAD</strong></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
@@ -260,7 +260,7 @@
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>TENDENCIA DE SOLICITUDES POR DIA</strong></h3>
+							<h3 class="panel-title"><strong>TICKETS (SOLICITUDES): CANTIDAD DE TICKETS RECIBIDOS POR DIA DE LA SEMANA</strong></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">

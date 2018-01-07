@@ -199,7 +199,7 @@ class AsignacionController extends BaseController {
 						$texto_rechazados=$texto_rechazados.$codigos_rechazo[$i].'<br>';
 					}
 					$texto_final_rechazado = '<strong> SOLICITUDES RECHAZADAS </strong>:<br>Se rechazaron los siguientes códgios:'.'<br>'.$texto_rechazados
-						.'<br>'.'Motivo:'.'<br>'.'El canal no ha ingresado el asunto de la solicitud.<br><br>';
+						.'<br>'.'Motivos:'.'<br>'.'1. El canal no ha ingresado el asunto de la solicitud (PORTAL DE CANALES).<br>2. La solicitud no posee una entidad asociada (PORTAL DE CANALES).<br>';
 				}
 
 				if( strcmp($texto_final_no_procesado,'') != 0 || strcmp($texto_final_rechazado, '') != 0 )

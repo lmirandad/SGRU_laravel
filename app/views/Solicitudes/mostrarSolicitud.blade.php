@@ -152,7 +152,7 @@
 										<th class="text-nowrap text-center">DNI Usuario</th>
 										<th class="text-nowrap text-center">Estado</th>
 										<th class="text-nowrap text-center">Observaciones</th>
-										@if($user->idrol == 1)
+										@if($user->idrol == 1 && ($solicitud->idestado_solicitud == 3 || $solicitud->idestado_solicitud == 4))
 											<th class="text-nowrap text-center">Reactivar Requerimiento</th>
 										@endif
 									</tr>
@@ -254,7 +254,7 @@
 											 		</button>
 											 	</div>
 											 </td>
-											 @if($user->idrol == 1)
+											 @if($user->idrol == 1 && ($solicitud->idestado_solicitud == 3 || $solicitud->idestado_solicitud == 4))
 											 <td class="text-nowrap text-center">													
 										 		@if($transaccion->idestado_transaccion == 2 || $transaccion->idestado_transaccion == 1)
 											 		<div style="text-align:center">											 	
@@ -281,7 +281,7 @@
 		</div>
 		<div class="row">
 			@if($user->idrol == 1)
-				@if( $usuario_asignado != null && $usuario_asignado->deleted_at != null )
+				@if($usuario_asignado != null)
 					@if(($solicitud->idestado_solicitud == 3 || $solicitud->idestado_solicitud == 4) )
 						<div class="col-md-2">
 							<button class="btn btn-success btn-block" onclick="mostrar_usuarios_disponibles(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-redo"></i> Reasignación</button>
@@ -295,9 +295,6 @@
 						</div>
 					@endif
 				@else
-					<div class="col-md-2">
-							<button class="btn btn-success btn-block" onclick="mostrar_usuarios_disponibles(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-redo"></i> Reasignación</button>
-						</div>		
 					<div class="form-group col-md-2 col-md-offset-10">
 						<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
 					</div>

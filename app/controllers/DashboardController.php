@@ -17,7 +17,7 @@ class DashboardController extends BaseController {
 				$data["flag_seleccion"] = $flag_seleccion;
 
 
-				//echo '<pre>';var_dump( Herramienta::buscarTransaccionesPorAnhoPorUsuario(2018,3)->get()); echo '</pre>';
+				//echo '<pre>';var_dump(Transaccion::mostrarTransaccionPorEstadoMesAplicativo(1,1,2018,1)); echo '</pre>';
 
 				
 				return View::make('Reporteria/dashboard',$data);
@@ -520,7 +520,7 @@ class DashboardController extends BaseController {
 			}
 
 
-			return Response::json(array( 'success' => true,'tiene_herramientas'=>false,"resumen"=>$array_cantidades_herramientas),200);
+			return Response::json(array( 'success' => true,'tiene_herramientas'=>true,"resumen"=>$array_cantidades_herramientas),200);
 			
 		}else{
 			return Response::json(array( 'success' => false),200);
@@ -570,7 +570,7 @@ class DashboardController extends BaseController {
 			}
 
 
-			return Response::json(array( 'success' => true,'tiene_herramientas'=>false,"resumen"=>$array_cantidades_herramientas),200);
+			return Response::json(array( 'success' => true,'tiene_herramientas'=>true,"resumen"=>$array_cantidades_herramientas),200);
 			
 		}else{
 			return Response::json(array( 'success' => false),200);

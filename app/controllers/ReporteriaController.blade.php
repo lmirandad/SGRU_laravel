@@ -174,6 +174,9 @@ class ReporteriaController extends BaseController {
 
 				$data["fecha_desde_requerimiento"] = Input::get('fecha_desde_requerimiento');
 				$data["fecha_hasta_requerimiento"] = Input::get('fecha_hasta_requerimiento');
+
+				$data["fecha_desde_solicitud"] = null;
+				$data["fecha_hasta_solicitud"] = null;
 				
 				if($data["fecha_desde_requerimiento"] == null || $data["fecha_hasta_requerimiento"] == null)
 				{

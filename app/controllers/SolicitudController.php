@@ -70,7 +70,7 @@ class SolicitudController extends BaseController {
 
 				}else{
 					if($data["user"]->idrol == 1)
-						$data["solicitudes_data"] = Solicitud::withTrashed()->buscarSolicitudesGestor($data["user"]->id,$data["search_solicitud"],$data["fecha_solicitud_desde"],$data["fecha_solicitud_hasta"],$data["search_tipo_solicitud"],$data["search_estado_solicitud"],$data["search_sector"])->paginate(10);
+						$data["solicitudes_data"] = Solicitud::withTrashed()->buscarSolicitudes($data["search_solicitud"],$data["fecha_solicitud_desde"],$data["fecha_solicitud_hasta"],$data["search_tipo_solicitud"],$data["search_estado_solicitud"],$data["search_sector"])->paginate(10);
 					else
 						$data["solicitudes_data"] = Solicitud::withTrashed()->buscarSolicitudesGestor($data["user"]->id,$data["search_solicitud"],$data["fecha_solicitud_desde"],$data["fecha_solicitud_hasta"],$data["search_tipo_solicitud"],$data["search_estado_solicitud"],$data["search_sector"])->paginate(10);
 					return View::make('Solicitudes/listarSolicitudes',$data);	
@@ -1066,6 +1066,34 @@ class SolicitudController extends BaseController {
 					$solicitud->motivo_anulacion = Input::get('motivo_anulacion');
 					$solicitud->fecha_cierre = date('Y-m-d H:i:s');
 					$solicitud->idestado_solicitud = 6;
+
+					//A su vez se deben rechazar los requerimientos
+					$requerimientos = Requerimiento::buscarRequerimientosPorSolicitud($solicitud->idsolicitud)->get();
+					if($requerimientos != null && !$requerimientos->isEmpty())
+					{
+						$cantidad_requerimientos = count($requerimientos);
+						for($i = 0; $i<$cantidad_requerimientos;$i++)
+						{
+							$transacciones = Transaccion::buscarTransaccionesPorRequerimiento($requerimientos[$i]->idrequerimiento)->get();
+							if($transacciones!=null && !$transacciones->isEmpty())
+							{
+								$cantidad_transacciones = count($transacciones);
+								for($j=0;$j<$cantidad_transacciones;$j++){
+									$transacciones[$j]->idestado_transaccion = 2;
+									$transacciones[$j]->fecha_cierre = date('Y-m-d H:i:s');
+									if($transacciones[$j]->usuario_bloqueado == 1)
+										$transacciones[$j]->observaciones = 'Usuario Bloqueado - Solicitud anulada por el usuario';
+									else
+										$transacciones[$j]->observaciones = 'Solicitud anulada por el usuario';
+									$transacciones[$j]->save();
+								}
+								$requerimientos[$i]->idestado_requerimiento = 2;
+								$requerimientos[$i]->fecha_cierre = date('Y-m-d H:i:s');
+								$requerimientos[$i]->observaciones = $requerimientos[$i]->observaciones.'Solicitud anulada por el usuario';
+								$requerimientos[$i]->save();
+							}
+						}
+					}
 
 					$solicitud->save();
 

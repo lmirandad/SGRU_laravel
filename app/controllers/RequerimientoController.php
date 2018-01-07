@@ -296,7 +296,7 @@ class RequerimientoController extends BaseController {
 	    		}
 
 						    	
-				return Redirect::to('/principal_gestor')->with('message','Se procedieron a cargar los requerimientos de la solicitud '.$solicitud->codigo_solicitud.'. Revisar el resultado de la carga.');
+				return Redirect::to('/principal_gestor')->with('message','Se procedieron a cargar los requerimientos de la solicitud '.$solicitud->codigo_solicitud);
 			}else{
 				return View::make('error/error',$data);
 			}
