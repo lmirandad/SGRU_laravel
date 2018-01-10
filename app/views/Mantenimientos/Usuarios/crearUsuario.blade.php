@@ -139,7 +139,7 @@
 				<a class="btn btn-info btn-block" id="btnCrear" type="submit"> <i class="lnr lnr-plus-circle"></i> Crear</a>
 			</div>
 			<div class="form-group col-md-2">
-				<a class="btn btn-default btn-block" href="{{URL::to('/principal')}}">Cancelar</a>				
+				<a class="btn btn-default btn-block" href="{{URL::to('/principal_admin')}}">Cancelar</a>				
 			</div>
 		</div>
 

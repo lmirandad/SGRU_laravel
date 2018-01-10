@@ -41,12 +41,14 @@ class PuntoVentaController extends BaseController {
 
 				$attributes = array(
 					'nombre_punto_venta' => 'Nombre del Punto de Venta',
+					'codigo_punto_venta' => 'Código del Punto de Venta'
 				);
 
 				$messages = array();
 
 				$rules = array(
 					'nombre_punto_venta' => 'required|max:200|alpha_num_spaces_slash_dash|unique:punto_venta,nombre',
+					'codigo_punto_venta' => 'required|numeric|unique:punto_venta,codigo_punto_venta',
 				);
 				// Run the validation rules on the inputs from the form
 				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);
@@ -56,8 +58,10 @@ class PuntoVentaController extends BaseController {
 				}else{
 
 					$nombre_punto_venta = Input::get('nombre_punto_venta');
+					$codigo_punto_venta = INput::get('codigo_punto_venta');
 					$punto_venta = new PuntoVenta;
 					$punto_venta->nombre = $nombre_punto_venta;
+					$punto_venta->codigo_punto_venta = $codigo_punto_venta;
 					$punto_venta->identidad = $entidad_id;
 					$punto_venta->iduser_created_by = $data["user"]->id;
 					
@@ -92,12 +96,14 @@ class PuntoVentaController extends BaseController {
 				
 				$attributes = array(
 					'nombre_edicion_punto_venta' => 'Nombre de Punto de Venta',
+					'codigo_edicion_punto_venta' => 'Código del Punto de Venta'
 				);
 
 				$messages = array();
 
 				$rules = array(
 					'nombre_edicion_punto_venta' => 'required|max:200|alpha_num_spaces_slash_dash|unique:punto_venta,nombre,'.$punto_venta_id.',idpunto_venta',
+					'codigo_edicion_punto_venta' => 'required|numeric|unique:punto_venta,codigo_punto_venta,'.$punto_venta_id.',idpunto_venta',
 				);
 				// Run the validation rules on the inputs from the form
 				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);
@@ -113,9 +119,11 @@ class PuntoVentaController extends BaseController {
 					$url = "puntos_venta/listar_puntos_venta"."/".$entidad_id;		
 					
 					$nombre = Input::get('nombre_edicion_punto_venta');
+					$codigo_punto_venta = Input::get('codigo_edicion_punto_venta');
 
 					$punto_venta = PuntoVenta::find($punto_venta_id);
 					$punto_venta->nombre = $nombre;
+					$punto_venta->codigo_punto_venta = $codigo_punto_venta;
 					$punto_venta->iduser_updated_by = $data["user"]->id;
 					
 					$punto_venta->save();	

@@ -2,6 +2,7 @@ $( document ).ready(function(){
 	
 	$('#btnLimpiarPuntoVenta').click(function(){
 		$('#nombre_punto_venta').val(null);
+		$('#codigo_punto_venta').val(null);
 	});
 
 	$('#btnCrearPuntoVenta').click(function(){
@@ -54,13 +55,15 @@ $( document ).ready(function(){
 });
 
 
-function editar_datos(e,nombre,idpunto_venta)
+function editar_datos(e,codigo_punto_venta,nombre,idpunto_venta)
 {
 	e.preventDefault();
 
 	$('#modal_editar_pto_venta').modal('show');
 
 	$('#nombre_edicion_punto_venta').val(nombre);
+
+	$('#codigo_edicion_punto_venta').val(codigo_punto_venta);
 	
 	$('#punto_venta_id').val(idpunto_venta);
 

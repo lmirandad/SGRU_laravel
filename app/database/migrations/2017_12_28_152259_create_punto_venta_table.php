@@ -16,6 +16,7 @@ class CreatePuntoVentaTable extends Migration {
 		{
 			$table->integer('idpunto_venta', true);
 			$table->string('nombre',200);
+			$table->string('codigo_punto_venta',100);
 			$table->integer('identidad')->nullable()->index('fk_punto_venta_entidad_idx');
 			$table->integer('iduser_created_by')->nullable()->index('fk_punto_venta_users1_idx');
 			$table->integer('iduser_updated_by')->nullable()->index('fk_punto_venta_users2_idx');

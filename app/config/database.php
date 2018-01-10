@@ -76,9 +76,9 @@ return array(
 
 		'sqlsrv' => array(
 			'driver'   => 'sqlsrv',
-			'host'     => 'HN015453\SQLEXPRESS',
+			'host'     => 'localhost',
 			'database' => 'SGRU_database',
-			'username' => '',
+			'username' => 'root',
 			'password' => '',
 			'prefix'   => '',
 		),

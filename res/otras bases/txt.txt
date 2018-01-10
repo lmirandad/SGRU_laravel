@@ -1,0 +1,71 @@
+
+SELECT ISNULL(sum(case when herramienta.flag_seguridad = 0 then 1 else 0 end)  / NULLIF(sum(case when herramienta.flag_seguridad IS NOT NULL then 1 else 0 end ),0),0) ,meses.idmes from transaccion
+right join meses on (MONTH(transaccion.fecha_registro) = meses.idmes)
+left join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
+left join herramienta on (herramienta.idherramienta = requerimiento.idherramienta)
+group by meses.idmes
+
+
+SELECT sum(case when herramienta.flag_seguridad = 0 then 1 else 0 end),   sum(case when herramienta.flag_seguridad IS NOT NULL then 1 else 0 end) ,meses.idmes from transaccion
+right join meses on (MONTH(transaccion.fecha_registro) = meses.idmes)
+left join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
+left join herramienta on (herramienta.idherramienta = requerimiento.idherramienta)
+group by meses.idmes
+
+-- QUERY PARA OBTENER EL PORCENTAJE DEL FLAG DE UNA DETERMINADA HERRAMIENTA 
+select ISNULL(CAST(sum(case when herramienta.flag_seguridad = 0 and YEAR(transaccion.fecha_registro) = 2018 and MONTH(transaccion.fecha_registro) = 1 then 1 else 0 end) as float)/ CAST(NULLIF(sum(case when herramienta.flag_seguridad IS NOT NULL and YEAR(transaccion.fecha_registro) = 2018 and MONTH(transaccion.fecha_registro) = 1 then 1 else 0 end),0) as float),CAST(0 as float))
+,meses.idmes 
+from transaccion
+right join meses on (MONTH(transaccion.fecha_registro) = meses.idmes)
+left join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
+left join solicitud on (requerimiento.idsolicitud = solicitud.idsolicitud)
+left join herramienta on (herramienta.idherramienta = requerimiento.idherramienta)
+group by meses.idmes
+
+--QUERY POR USUARIO
+SELECT ISNULL(CAST(sum(case when herramienta.flag_seguridad = 0 and YEAR(transaccion.fecha_registro) = 2018 and MONTH(transaccion.fecha_registro) = 1 and usuariosxasignacion.idusuario_asignado = 4 and usuariosxasignacion.estado_usuario_asignado = 1 then 1 else 0 end) as float)/ CAST(NULLIF(sum(case when herramienta.flag_seguridad IS NOT NULL and YEAR(transaccion.fecha_registro) = 2018 and MONTH(transaccion.fecha_registro) = 1 and usuariosxasignacion.idusuario_asignado = 4 and usuariosxasignacion.estado_usuario_asignado = 1  then 1 else 0 end),0) as float),CAST(0 as float))
+,meses.idmes 
+from transaccion
+right join meses on (MONTH(transaccion.fecha_registro) = meses.idmes)
+left join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
+left join solicitud on (requerimiento.idsolicitud = solicitud.idsolicitud)
+left join asignacion on (asignacion.idsolicitud = solicitud.idsolicitud)
+left join usuariosxasignacion on (usuariosxasignacion.idasignacion = asignacion.idasignacion)
+left join herramienta on (herramienta.idherramienta = requerimiento.idherramienta)
+group by meses.idmes
+
+
+
+-- QUERY PARA OBTENER LA CANTIDAD DE TICKETS QUE LLEGAN AL DIA DE LA SEMANA
+-- AL AÑO
+select SUM( CASE WHEN YEAR(solicitud.fecha_solicitud) = 2018 THEN 1 ELSE 0 END), dia.iddia-- 6
+from solicitud 
+right JOIN dia ON ( DATEPART(dw,solicitud.fecha_solicitud)-1 = dia.iddia)
+GROUP BY dia.iddia
+ORDER BY dia.iddia ASC
+
+-- AL AÑO Y USUARIO
+SELECT SUM( CASE WHEN YEAR(solicitud.fecha_solicitud) = 2018 and usuariosxasignacion.idusuario_asignado = 2 and usuariosxasignacion.estado_usuario_asignado = 1  THEN 1 ELSE 0 END), dia.iddia-- 6
+FROM solicitud 
+right join dia ON ( DATEPART(dw,solicitud.fecha_solicitud)-1 = dia.iddia)
+left join asignacion on (asignacion.idsolicitud = solicitud.idsolicitud)
+left join usuariosxasignacion on (usuariosxasignacion.idasignacion = asignacion.idasignacion)
+GROUP BY dia.iddia
+ORDER BY dia.iddia ASC
+
+-- AL MES
+SELECT SUM( CASE WHEN YEAR(solicitud.fecha_solicitud) = 2018 and MONTH(solicitud.fecha_solicitud) = 1 THEN 1 ELSE 0 END), dia.iddia-- 6
+FROM solicitud 
+right join dia ON ( DATEPART(dw,solicitud.fecha_solicitud)-1 = dia.iddia)
+GROUP BY dia.iddia
+ORDER BY dia.iddia ASC
+
+-- AL MES Y USUARIO
+	SELECT SUM( CASE WHEN YEAR(solicitud.fecha_solicitud) = 2018 and MONTH(solicitud.fecha_solicitud) = 1 and usuariosxasignacion.idusuario_asignado = 2 and usuariosxasignacion.estado_usuario_asignado = 1  THEN 1 ELSE 0 END), dia.iddia-- 6
+	FROM solicitud 
+	right join dia ON ( DATEPART(dw,solicitud.fecha_solicitud)-1 = dia.iddia)
+	left join asignacion on (asignacion.idsolicitud = solicitud.idsolicitud)
+	left join usuariosxasignacion on (usuariosxasignacion.idasignacion = asignacion.idasignacion)
+	GROUP BY dia.iddia
+	ORDER BY dia.iddia ASC
+

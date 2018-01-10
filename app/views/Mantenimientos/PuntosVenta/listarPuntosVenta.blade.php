@@ -13,7 +13,6 @@
 			</div>
 		</div>
 		<div class="row">
-
 			@if (Session::has('message'))
 				<div class="alert alert-success">
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -33,7 +32,7 @@
 		<!-- OVERVIEW -->	
 		{{ Form::hidden('entidad_id', $entidad_id) }}	
 		<div class="row">
-			<div class="col-md-6 col-md-offset-3">
+			<div class="col-md-9 col-md-offset-1">
 				<div class="panel panel-headline">
 					<div class="panel-heading">
 						<h3 class="panel-title">Crear Punto de Venta</h3>
@@ -45,18 +44,24 @@
 								<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 								<p>{{ $errors->first('nombre_punto_venta') }}</p>
 								<p>{{ $errors->first('nombre_edicion_punto_venta') }}</p>
+								<p>{{ $errors->first('codigo_punto_venta') }}</p>
+								<p>{{ $errors->first('codigo_edicion_punto_venta') }}</p>
 							</div>
 							@endif
 						</div>
 						<div class="row">
-							<div class="form-group col-md-6 @if($errors->first('nombre_punto_venta')) has-error has-feedback @endif"">
+							<div class="form-group col-md-4 @if($errors->first('nombre_punto_venta')) has-error has-feedback @endif"">
+								{{ Form::label('codigo_punto_venta','Código Punto de Venta')}}
+								{{ Form::text('codigo_punto_venta',Input::old('codigo_punto_venta'),array('class'=>'form-control','placeholder'=>'Ingrese código del punto de venta','id'=>'codigo_punto_venta')) }}
+							</div>
+							<div class="form-group col-md-4 @if($errors->first('nombre_punto_venta')) has-error has-feedback @endif"">
 								{{ Form::label('nombre_punto_venta','Nombre Punto de Venta')}}
 								{{ Form::text('nombre_punto_venta',Input::old('nombre_punto_venta'),array('class'=>'form-control','placeholder'=>'Ingrese nombre del punto de venta','id'=>'nombre_punto_venta')) }}
 							</div>
-							<div class="form-group col-md-3">				
+							<div class="form-group col-md-2">				
 								<a class="btn btn-info btn-block" id="btnCrearPuntoVenta" style='margin-top:25px;'> <i class="lnr lnr-plus-circle"></i> Crear</a>
 							</div>
-							<div class="form-group col-md-3">
+							<div class="form-group col-md-2">
 								<div class="btn btn-default btn-block" id="btnLimpiarPuntoVenta" style='margin-top:25px;'><span class="lnr lnr-sync""></span> Limpiar</div>				
 							</div>
 						</div>		
@@ -66,7 +71,7 @@
 		</div>
 		{{ Form::close() }}
 		<div class="row">
-			<div class="col-md-6 col-md-offset-3">
+			<div class="col-md-9 col-md-offset-1">
 				<div class="panel">	
 					<div class="panel-heading">
 						<h3 class="panel-title">Puntos de Venta</h3>
@@ -78,6 +83,7 @@
 									<table class="table table-hover">
 										<thead>
 											<tr>
+												<th class="text-nowrap text-center">Código del Punto de Venta</th>
 												<th class="text-nowrap text-center">Nombre del Punto de Venta</th>
 												<th class="text-nowrap text-center">Editar Nombre</th>
 												<!--
@@ -89,13 +95,16 @@
 											@foreach($puntos_venta as $punto_venta)
 											<tr>
 												<td class="text-nowrap text-center">
+													{{$punto_venta->codigo_punto_venta}}
+												</td>
+												<td class="text-nowrap text-center">
 													{{$punto_venta->nombre}}
 												</td>
 												<td class="text-nowrap text-center">
 													@if($punto_venta->deleted_at)
 														-
 													@else
-														<button class="btn btn-warning btn-sm" onclick="editar_datos(event,'{{$punto_venta->nombre}}',{{$punto_venta->idpunto_venta}})" type="button"><span class="lnr lnr-pencil"></span></button>
+														<button class="btn btn-warning btn-sm" onclick="editar_datos(event,'{{$punto_venta->codigo_punto_venta}}','{{$punto_venta->nombre}}',{{$punto_venta->idpunto_venta}})" type="button"><span class="lnr lnr-pencil"></span></button>
 													@endif	
 												</td>
 												<!--
@@ -146,7 +155,11 @@
 					{{ Form::hidden('punto_venta_id', null, array('id'=>'punto_venta_id')) }}
 					{{ Form::hidden('entidad_id_edicion', $entidad_id) }}		
 	         		<div class="row">
-						<div class="col-md-5 col-md-offset-1">
+	         			<div class="col-md-5 col-md-offset-1">
+							{{ Form::label('codigo_edicion_punto_venta','Código Punto de Venta:')}}
+							{{ Form::text('codigo_edicion_punto_venta',Input::old('codigo_edicion_punto_venta'),array('class'=>'form-control','placeholder'=>'Ingresa nuevo código','id'=>'codigo_edicion_punto_venta')) }}
+						</div>
+						<div class="col-md-5">
 							{{ Form::label('nombre_edicion_punto_venta','Nombre Punto de Venta:')}}
 							{{ Form::text('nombre_edicion_punto_venta',Input::old('nombre_edicion_punto_venta'),array('class'=>'form-control','placeholder'=>'Ingresa nuevo nombre','id'=>'nombre_edicion_punto_venta')) }}
 						</div>

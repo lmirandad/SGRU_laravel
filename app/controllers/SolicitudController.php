@@ -219,7 +219,8 @@ class SolicitudController extends BaseController {
 					{
 						//validar si existe el codigo
 						$codigo_entidad = explode(' ',$codigo_entidad)[0];
-						$entidad = Entidad::buscarPorCodigoEntidad($codigo_entidad)->get();
+						$codigo_entidad_numero = (int) $codigo_entidad;
+						$entidad = Entidad::buscarPorCodigoEntidad($codigo_entidad_numero)->get();
 						if($entidad == null || $entidad->isEmpty()){
 							//NO PROCEDE
 							$obj_log["descripcion"] = "La entidad ".$nombre_entidad." del registro no existe";
