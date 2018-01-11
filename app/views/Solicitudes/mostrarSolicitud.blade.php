@@ -109,7 +109,7 @@
 				</div>
 			</div>
 		</div>
-		@if($solicitud->idestado_solicitud == 6)
+		@if($solicitud->idestado_solicitud == 6 || $solicitud->motivo_anulacion != null )
 			<!-- OVERVIEW -->
 		<div class="panel panel-headline">
 			<div class="panel-heading">

@@ -6,8 +6,9 @@
 				left:50%;
 				top:20%;
 				margin:-75px 0 0 ">	
+		<br><br>
 		<div class="col-md-12">
-			<img style="width:100%;align:center;" src="{{ asset('img') }}/warning.png" ></img>
+			<img style="width:100%;align:center;" src="{{asset('assets/img/error-icon.png')}}" ></img>
 		</div>
 		<div class="col-md-12">
 			<h3 style="text-align:center;">Acceso Denegado</h3>

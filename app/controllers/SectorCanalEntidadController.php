@@ -8,7 +8,7 @@ class SectorCanalEntidadController extends BaseController {
 			$data["inside_url"] = Config::get('app.inside_url');
 			$data["user"] = Session::get('user');
 			// Verifico si el usuario es un WEBMASTER (ADMINISTRADOR DEL SISTEMA)
-			if($data["user"]->idrol == 1 || $data["user"]->idrol == 2 ){
+			if($data["user"]->idrol == 1){
 				
 				if($flag_seleccion == 0) //INICIO
 				{
@@ -35,6 +35,7 @@ class SectorCanalEntidadController extends BaseController {
 				}
 				else if($flag_seleccion == 3) //ENTIDAD
 				{
+					$data["codigo_entidad_search"] = null;
 					$data["entidad_search"] = null;					
 					$data["entidad_search_canal"] = null;
 					$data["entidad_search_sector"] = null;

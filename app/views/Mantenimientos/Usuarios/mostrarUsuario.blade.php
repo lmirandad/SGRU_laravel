@@ -5,11 +5,12 @@
 	<div class="container-fluid">
 		<h3 class="page-title"><strong>USUARIO:</strong> {{$usuario->nombre}} {{$usuario->apellido_paterno}} {{$usuario->apellido_materno}} ({{$usuario->username}})</h3>
 
+
 		
 		@if (Session::has('error'))
 			<div class="alert alert-danger alert-dismissible" role="alert">
 				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-				<i class="fa fa-times-circle"></i> {{ Session::get('message') }}
+				<i class="fa fa-times-circle"></i> {{ Session::get('error') }}
 			</div>
 		@endif
 		@if (Session::has('message'))		
@@ -31,19 +32,19 @@
 					<div class="panel-body">
 						<div class="row">
 							@if ($errors->has())
-							<div class="alert alert-danger" role="alert">
-								<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-								<p>{{ $errors->first('username') }}</p>				
-								<p>{{ $errors->first('nombre') }}</p>
-								<p>{{ $errors->first('apellido_paterno') }}</p>
-								<p>{{ $errors->first('apellido_materno') }}</p>
-								<p>{{ $errors->first('tipo_doc_identidad') }}</p>
-								<p>{{ $errors->first('documento_identidad') }}</p>
-								<p>{{ $errors->first('genero') }}</p>
-								<p>{{ $errors->first('fecha_nacimiento') }}</p>
-								<p>{{ $errors->first('idrol') }}</p>
-								<p>{{ $errors->first('genero') }}</p>
-							</div>
+								<div class="alert alert-danger" role="alert">
+									<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									<p>{{ $errors->first('username') }}</p>				
+									<p>{{ $errors->first('nombre') }}</p>
+									<p>{{ $errors->first('apellido_paterno') }}</p>
+									<p>{{ $errors->first('apellido_materno') }}</p>
+									<p>{{ $errors->first('tipo_doc_identidad') }}</p>
+									<p>{{ $errors->first('documento_identidad') }}</p>
+									<p>{{ $errors->first('genero') }}</p>
+									<p>{{ $errors->first('fecha_nacimiento') }}</p>
+									<p>{{ $errors->first('idrol') }}</p>
+									<p>{{ $errors->first('genero') }}</p>
+								</div>
 							@endif
 						</div>
 						<div class="row">

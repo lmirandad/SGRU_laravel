@@ -19,23 +19,29 @@
 				</div>
 			@endif
 			<div class="row">
-				<div class="col-md-7 col-md-offset-3">
+				<div class="col-md-8 col-md-offset-2">
 					<div class="panel panel-headline">
 						<div class="panel-body">	
 							{{ Form::open(array('url'=>'/principal/buscar_solicitud_codigo','method'=>'get' ,'role'=>'form')) }}
 							<div class="row">
-								<div class="col-md-5">
+								<div class="col-md-3">
 									{{ Form::label('search_codigo_solicitud','Código Solicitud:')}}
-									{{ Form::text('search_codigo_solicitud',$search_codigo_solicitud,array('class'=>'form-control','placeholder'=>'Ingresar código solicitud','id'=>'search_codigo_solicitud')) }}
+									{{ Form::text('search_codigo_solicitud',$search_codigo_solicitud,array('class'=>'form-control','placeholder'=>'Ingresar cod. solicitud','id'=>'search_codigo_solicitud')) }}
 								</div>	
 								<div class="form-group col-md-3">
 									{{ Form::button('<span class="fa fa-search""></span> Buscar', array('id'=>'submit-search-form','type' => 'submit', 'class' => 'btn btn-info btn-block','style'=>'margin-top:25px;')) }}	
 								</div>
+							{{Form::close()}}
 								<div class="col-md-3">
 									<div class="btn btn-default btn-block" id="btnLimpiarCodigo" style='margin-top:25px;'><span class="lnr lnr-sync""></span> Limpiar</div>				
-								</div>	
+								</div>
+							{{ Form::open(array('url'=>'/generar_reporte_gestor','method'=>'get' ,'role'=>'form')) }}
+								<div class="form-group col-md-3">
+									{{ Form::button('<span class="fa fa-download""></span> Exportar Base', array('type' => 'submit', 'class' => 'btn btn-success btn-block','style'=>'margin-top:25px;')) }}	
+								</div>
+							{{ Form::close() }}		
 							</div>
-							{{Form::close()}}
+							
 						</div>
 					</div>
 				</div>
@@ -310,7 +316,7 @@
 				{{ Form::open(array('url'=>'/requerimientos/submit_eliminar_base' ,'role'=>'form','id'=>'submit-eliminar','enctype'=>'multipart/form-data')) }}
 				{{ Form::hidden('solicitud_id_eliminar_base', null,array('id'=>'solicitud_id_eliminar_base')) }}	
 				<div class="form-group col-md-3 col-md-offset-6">
-					<button class="btn btn-danger btn-md" onclick="eliminar_requerimientos(event,{{$solicitud_data->idsolicitud}})" type="button"><i class="lnr lnr-cross"></i> Eliminar Base Requerimientos</button>		
+					<button class="btn btn-danger btn-md" onclick="eliminar_requerimientos(event)" type="button"><i class="lnr lnr-cross"></i> Eliminar Base Requerimientos</button>		
 				</div>
 				 {{ Form::close() }}
 	        </div>

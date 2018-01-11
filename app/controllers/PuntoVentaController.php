@@ -48,7 +48,7 @@ class PuntoVentaController extends BaseController {
 
 				$rules = array(
 					'nombre_punto_venta' => 'required|max:200|alpha_num_spaces_slash_dash|unique:punto_venta,nombre',
-					'codigo_punto_venta' => 'required|numeric|unique:punto_venta,codigo_punto_venta',
+					'codigo_punto_venta' => 'required|numeric',
 				);
 				// Run the validation rules on the inputs from the form
 				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);
@@ -103,7 +103,7 @@ class PuntoVentaController extends BaseController {
 
 				$rules = array(
 					'nombre_edicion_punto_venta' => 'required|max:200|alpha_num_spaces_slash_dash|unique:punto_venta,nombre,'.$punto_venta_id.',idpunto_venta',
-					'codigo_edicion_punto_venta' => 'required|numeric|unique:punto_venta,codigo_punto_venta,'.$punto_venta_id.',idpunto_venta',
+					'codigo_edicion_punto_venta' => 'required|numeric',
 				);
 				// Run the validation rules on the inputs from the form
 				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);

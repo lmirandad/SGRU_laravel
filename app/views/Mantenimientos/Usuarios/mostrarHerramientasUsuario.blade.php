@@ -40,36 +40,38 @@
 						<div class="row" style="height:150px;overflow-y:auto; " >
 							<div class="col-md-12">
 								<div class="table-responsive">
-									<table class="table table-hover">
+									<table class="table table-hover" id="tabla_herramientas_disponibles">
 										@if(count($herramientas_disponibles)>0)
 										<thead>
 											<tr>
 												<th class="text-nowrap text-center">N°</th>
 												<th class="text-nowrap text-center">Nombre Aplicativo</th>
 												<th class="text-nowrap text-center">Tipo Aplicativo</th>
-												<th class="text-nowrap text-center">Agregar</th>
+												<th class="text-nowrap text-center">Agregar <input type="checkbox" id="checkboxAllHerramienta" class="form-check-input"></th>
 											</tr>
 										</thead>
 										<tbody >	
 											
 												@foreach($herramientas_disponibles as $index  => $herramienta)
-												<tr>
-													<td class="text-nowrap text-center">
-														<input style="display:none" name='ids_herramientas[]' value='{{ $herramienta->idherramienta }}' readonly/>
-														{{$index+1}}
-													</td>
-													<td class="text-nowrap text-center">
-														{{$herramienta->nombre}}
-													</td>
-													<td class="text-nowrap text-center">
-														{{$herramienta->nombre_denominacion}}
-													</td>
-													<td class="text-nowrap">
-														<div style="text-align:center">
-															{{ Form::checkbox('checkbox'.$index, 1, Input::old('checkbox'.$index), ['class' => 'form-check-input']) }}
-														</div>
-													</td>
-												</tr>
+													@if($herramienta->idherramienta != 95 && $herramienta->idherramienta != 96 &&$herramienta->idherramienta != 97)
+														<tr>
+															<td class="text-nowrap text-center">
+																<input style="display:none" name='ids_herramientas[]' value='{{ $herramienta->idherramienta }}' readonly/>
+																{{$index+1}}
+															</td>
+															<td class="text-nowrap text-center">
+																{{$herramienta->nombre}}
+															</td>
+															<td class="text-nowrap text-center">
+																{{$herramienta->nombre_denominacion}}
+															</td>
+															<td class="text-nowrap">
+																<div style="text-align:center">
+																	{{ Form::checkbox('checkbox'.$index, 1, Input::old('checkbox'.$index), ['class' => 'form-check-input','id'=>'checkboxH'.$index]) }}
+																</div>
+															</td>
+														</tr>
+													@endif
 												@endforeach											
 										</tbody>
 										@else												
@@ -173,7 +175,7 @@
 									<tr>
 										<th class="text-nowrap text-center">N°</th>
 										<th class="text-nowrap text-center">Acción</th>
-										<th class="text-nowrap text-center">Activo <input type="checkbox" id="checkboxAll" class="form-check-input"></th>
+										<th class="text-nowrap text-center">Activo <input type="checkbox" id="checkboxAllT" class="form-check-input"></th>
 									</tr>
 								</thead>
 								<tbody >	

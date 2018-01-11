@@ -24,6 +24,9 @@ Route::group(array('before'=>'auth'),function(){
 	Route::get('/principal_admin','MenuPrincipalController@home_admin');
 	Route::get('/principal_gestor','MenuPrincipalController@home_gestor');
 
+	/*EXPORTACION DE BASE ACTUAL DE TICKETS GESTOR */
+	Route::get('/generar_reporte_gestor','MenuPrincipalController@generar_reporte_gestor');
+
 	/*DASHBOARD*/
 	Route::get('/dashboard/{id}','DashboardController@mostrar_dashboard');
 	Route::post('/mostrar_dashboard_prueba','DashboardController@mostrar_dashboard_prueba');

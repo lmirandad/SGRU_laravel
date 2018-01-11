@@ -207,16 +207,44 @@ $( document ).ready(function(){
 		actualizarAcciones();
 	});
 
-	$('#checkboxAll').change(function() {
+	$('#checkboxAllT').change(function() {
        if(this.checked){
        		size_table = document.getElementById("tabla_acciones_disponibles").rows.length-1;
        		for(i=0;i<size_table;i++){
-				$('#checkbox'+i).prop('checked', true);
+				$('#checkboxT'+i).prop('checked', true);
 			}
        }else{
        		size_table = document.getElementById("tabla_acciones_disponibles").rows.length-1;
        		for(i=0;i<size_table;i++){
-				$('#checkbox'+i).prop('checked', false);
+				$('#checkboxT'+i).prop('checked', false);
+			}
+       }
+    });
+
+    $('#checkboxAllHerramienta').change(function() {
+       if(this.checked){
+       		size_table = document.getElementById("tabla_herramientas_disponibles").rows.length-1;
+       		for(i=0;i<size_table;i++){
+				$('#checkboxH'+i).prop('checked', true);
+			}
+       }else{
+       		size_table = document.getElementById("tabla_herramientas_disponibles").rows.length-1;
+       		for(i=0;i<size_table;i++){
+				$('#checkboxH'+i).prop('checked', false);
+			}
+       }
+    });
+
+    $('#checkboxAllSector').change(function() {
+       if(this.checked){
+       		size_table = document.getElementById("tabla_sectores_disponibles").rows.length-1;
+       		for(i=0;i<size_table;i++){
+				$('#checkboxS'+i).prop('checked', true);
+			}
+       }else{
+       		size_table = document.getElementById("tabla_sectores_disponibles").rows.length-1;
+       		for(i=0;i<size_table;i++){
+				$('#checkboxS'+i).prop('checked', false);
 			}
        }
     });
@@ -410,9 +438,9 @@ function ver_acciones(e,id){
 			                +"<td class=\"text-nowrap text-center\" style=\"display:none\" id=\"idherramientaxtipo_solicitudxuser"+i+"\">"+response["acciones"][i].idherramientaxtipo_solicitudxuser+"</td>"	
 			                +"<td class=\"text-nowrap text-center\">"+response["acciones"][i].nombre_solicitud+"</td>";
             		if(response["acciones"][i].eliminado == null){
-                		data += "<td class=\"text-nowrap text-center\"><div class=\"form-check\"><label class=\"form-check-label\"><input id=\"checkbox"+i+"\" type=\"checkbox\" class=\"form-check-input\" checked=\"false\"><label></div></td></tr>"; 
+                		data += "<td class=\"text-nowrap text-center\"><div class=\"form-check\"><label class=\"form-check-label\"><input id=\"checkboxT"+i+"\" type=\"checkbox\" class=\"form-check-input\" checked=\"false\"><label></div></td></tr>"; 
                 	}else{
-                		data += "<td class=\"text-nowrap text-center\"><div class=\"form-check\"><label class=\"form-check-label\"><input id=\"checkbox"+i+"\" type=\"checkbox\" class=\"form-check-input\" ><label></div></td></tr>";
+                		data += "<td class=\"text-nowrap text-center\"><div class=\"form-check\"><label class=\"form-check-label\"><input id=\"checkboxT"+i+"\" type=\"checkbox\" class=\"form-check-input\" ><label></div></td></tr>";
                 	}	
 
             		$('#tabla_acciones_disponibles').append(data);
@@ -439,7 +467,7 @@ function actualizarAcciones(){
 	usuario_id = $('#usuario_id').val();
 	for(i=0;i<size_table;i++){
 		arr_idherramientaxtipo_solicitudxuser[i] = $('#idherramientaxtipo_solicitudxuser'+i).html();
-		if($('#checkbox'+i).is(":checked"))
+		if($('#checkboxT'+i).is(":checked"))
 			arr_checkbox[i] = 1;
 		else
 			arr_checkbox[i] = 0;

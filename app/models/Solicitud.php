@@ -242,7 +242,7 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		if($anho_actual != null)
 
 			$query->whereYear('solicitud.fecha_solicitud','=',$anho_actual);
-		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','herramienta.nombre as nombre_herramienta');
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','herramienta.nombre as nombre_herramienta','usuariosxasignacion.idusuario_asignado as idusuario_asignado');
 		return $query;
 	}
 

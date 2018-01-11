@@ -68,6 +68,20 @@ $( document ).ready(function(){
 		agregarNuevasHerramientas();
 	});
 
+	$('#checkboxAll').change(function() {
+       if(this.checked){
+       		size_table = document.getElementById("tabla_herramientas_disponibles").rows.length-1;
+       		for(i=0;i<size_table;i++){
+				$('#checkbox'+i).prop('checked', true);
+			}
+       }else{
+       		size_table = document.getElementById("tabla_herramientas_disponibles").rows.length-1;
+       		for(i=0;i<size_table;i++){
+				$('#checkbox'+i).prop('checked', false);
+			}
+       }
+    });
+
 
 });
 

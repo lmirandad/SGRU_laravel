@@ -724,4 +724,195 @@ class MenuPrincipalController extends BaseController {
 		}
 	}
 
+	public function generar_reporte_gestor()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 2)
+			{
+				$mes_actual = null;
+				$anho_actual = null;
+				$id_usuario = $data["user"]->id;
+				$fecha_actual = date('Y-m-d H:i:s');
+
+				$value = Excel::create('BASE TICKETS '.$fecha_actual, function($excel) use ($mes_actual,$anho_actual,$id_usuario){
+					$excel->sheet('TICKETS PENDIENTES', function($sheet) use ($mes_actual,$anho_actual,$id_usuario){
+						
+						$sheet->row(1, array(
+							     'N°','CODIGO_SOLICITUD','FECHA_SOLICITUD','TIPO_SOLICITUD','ESTADO_SOLICITUD','HERRAMIENTA_SOLICITADA','APLICATIVO_AGRUPADO','ENTIDAD','CANAL','SECTOR','USUARIO_ASIGNADO','ASUNTO','FECHA_ASIGNACION','DIAS_ASIGNACION','SLA_PENDIENTE','DIAS_LABORALES','SEMAFORO'
+							));
+
+						$solicitudes_pendientes = Solicitud::buscarPorIdEstadoPorUsuario(3,$id_usuario,$mes_actual,$anho_actual)->get();
+						
+						$cantidad_solicitudes = count($solicitudes_pendientes);
+
+						for($i=0;$i<$cantidad_solicitudes;$i++)
+						{
+							$sla = Sla::buscarSlaSolicitud($solicitudes_pendientes[$i]->idsolicitud,$solicitudes_pendientes[$i]->idtipo_solicitud)->get()[0];
+							
+							$fecha_asignacion=Carbon\Carbon::parse($solicitudes_pendientes[$i]->fecha_asignacion);				
+							$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+							$fecha_solicitud=Carbon\Carbon::parse($solicitudes_pendientes[$i]->fecha_solicitud);				
+							$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+							$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
+							
+							//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
+							$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+							$diferencia_dias_fecha_trabajo= $fecha_asignacion_formateada->diffInWeekdays($fecha_actual);
+							
+							//Obtener los dias feriados entre la fecha de hoy y la asignacion
+							$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_actual)->get();
+							$cantidad_dias = 0;
+							if($feriados != null )
+							{
+								$tamano = count($feriados);											
+								for($j=0;$j<$tamano;$j++)
+								{
+									$dia = date('N',strtotime($feriados[$j]->valor_fecha));
+									//Validar si el feriado coincide con un fin de semana para no contar dos veces
+									if($dia == 6 || $dia == 7)
+										$cantidad_dias++;							
+								}
+							}
+							$diferencia_dias_fecha_trabajo -= $cantidad_dias;
+							$fecha_solicitud = date('Y-m-d',strtotime($solicitudes_pendientes[$i]->fecha_solicitud));
+							$fecha_asignacion = date('Y-m-d',strtotime($solicitudes_pendientes[$i]->fecha_asignacion));
+							$nombre_tipo_solicitud = $solicitudes_pendientes[$i]->nombre_tipo_solicitud;
+							$nombre_estado_solicitud = $solicitudes_pendientes[$i]->nombre_estado_solicitud;
+							$nombre_aplicativo = "NO DETECTADO";
+							$nombre_denominacion = "NO DETECTADO";
+							if($solicitudes_pendientes[$i]->idherramienta != NULL){
+								$herramienta = Herramienta::find($solicitudes_pendientes[$i]->idherramienta);
+								$nombre_aplicativo = $herramienta->nombre;
+								$nombre_denominacion = DenominacionHerramienta::find($herramienta->iddenominacion_herramienta)->nombre;
+							}
+
+							$entidad = Entidad::find($solicitudes_pendientes[$i]->identidad);
+							$canal = Canal::find($entidad->idcanal);
+							$sector = Sector::find($canal->idsector);
+							$usuario = User::find($solicitudes_pendientes[$i]->idusuario_asignado);
+							$asunto = $solicitudes_pendientes[$i]->asunto;
+							$sla_pendiente = $sla->sla_pendiente;
+
+							$sheet->row($i+2, array(
+							     $i+1,$solicitudes_pendientes[$i]->codigo_solicitud,$fecha_solicitud,$nombre_tipo_solicitud,$nombre_estado_solicitud,$nombre_aplicativo,$nombre_denominacion,$entidad->nombre,$canal->nombre,$sector->nombre,$usuario->nombre.' '.$usuario->apellido_paterno.' '.$usuario->apellido_materno,$solicitudes_pendientes[$i]->asunto,$fecha_asignacion,$diferencia_dias,$sla_pendiente,$diferencia_dias_fecha_trabajo,
+							));
+
+							$backGround = NULL;
+
+							if($diferencia_dias_fecha_trabajo < $sla_pendiente)
+							{
+								$backGround = "#42f00d";
+							}elseif($diferencia_dias_fecha_trabajo == $sla_pendiente)
+							{
+								$backGround = "#f0a20d";
+							}else
+							{
+								$backGround = "#f00d0d";
+							}
+
+							$sheet->cells('Q'.($i+2).':Q'.($i+2),function($cells) use ($backGround) {
+								$cells->setBackground($backGround);
+							});
+						}
+
+					});
+
+					$excel->sheet('TICKETS PROCESANDO', function($sheet) use ($mes_actual,$anho_actual,$id_usuario)  {
+						
+						$sheet->row(1, array(
+							     'N°','CODIGO_SOLICITUD','FECHA_SOLICITUD','FECHA_INICIO_PROCESANDO','TIPO_SOLICITUD','ESTADO_SOLICITUD','HERRAMIENTA_SOLICITADA','APLICATIVO_AGRUPADO','ENTIDAD','CANAL','SECTOR','USUARIO_ASIGNADO','ASUNTO','FECHA_ASIGNACION','DIAS_ASIGNACION','SLA_PROCESANDO','DIAS_LABORALES','SEMAFORO'
+							));
+
+						$solicitudes_procesando = Solicitud::buscarPorIdEstadoPorUsuario(4,$id_usuario,$mes_actual,$anho_actual)->get();
+						
+						$cantidad_solicitudes = count($solicitudes_procesando);
+
+						for($i=0;$i<$cantidad_solicitudes;$i++)
+						{
+							$sla = Sla::buscarSlaSolicitud($solicitudes_procesando[$i]->idsolicitud,$solicitudes_procesando[$i]->idtipo_solicitud)->get()[0];
+							
+							$fecha_asignacion=Carbon\Carbon::parse($solicitudes_procesando[$i]->fecha_asignacion);				
+							$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+							$fecha_solicitud=Carbon\Carbon::parse($solicitudes_procesando[$i]->fecha_solicitud);				
+							$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+							$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
+							
+							//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
+							$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+							$diferencia_dias_fecha_trabajo= $fecha_asignacion_formateada->diffInWeekdays($fecha_actual);
+							
+							//Obtener los dias feriados entre la fecha de hoy y la asignacion
+							$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_actual)->get();
+							$cantidad_dias = 0;
+							if($feriados != null )
+							{
+								$tamano = count($feriados);											
+								for($j=0;$j<$tamano;$j++)
+								{
+									$dia = date('N',strtotime($feriados[$j]->valor_fecha));
+									//Validar si el feriado coincide con un fin de semana para no contar dos veces
+									if($dia == 6 || $dia == 7)
+										$cantidad_dias++;							
+								}
+							}
+							$diferencia_dias_fecha_trabajo -= $cantidad_dias;
+							$fecha_solicitud = date('Y-m-d',strtotime($solicitudes_procesando[$i]->fecha_solicitud));
+							$fecha_asignacion = date('Y-m-d',strtotime($solicitudes_procesando[$i]->fecha_asignacion));
+							$fecha_inicio_procesando = date('Y-m-d',strtotime($solicitudes_procesando[$i]->fecha_inicio_procesando));
+							$nombre_tipo_solicitud = $solicitudes_procesando[$i]->nombre_tipo_solicitud;
+							$nombre_estado_solicitud = $solicitudes_procesando[$i]->nombre_estado_solicitud;
+							$nombre_aplicativo = "NO DETECTADO";
+							$nombre_denominacion = "NO DETECTADO";
+							if($solicitudes_procesando[$i]->idherramienta != NULL){
+								$herramienta = Herramienta::find($solicitudes_procesando[$i]->idherramienta);
+								$nombre_aplicativo = $herramienta->nombre;
+								$nombre_denominacion = DenominacionHerramienta::find($herramienta->iddenominacion_herramienta)->nombre;
+							}
+
+							$entidad = Entidad::find($solicitudes_procesando[$i]->identidad);
+							$canal = Canal::find($entidad->idcanal);
+							$sector = Sector::find($canal->idsector);
+							$usuario = User::find($solicitudes_procesando[$i]->idusuario_asignado);
+							$asunto = $solicitudes_procesando[$i]->asunto;
+							$sla_procesando = $sla->sla_procesando;
+
+							$sheet->row($i+2, array(
+							     $i+1,$solicitudes_procesando[$i]->codigo_solicitud,$fecha_solicitud,$fecha_inicio_procesando,$nombre_tipo_solicitud,$nombre_estado_solicitud,$nombre_aplicativo,$nombre_denominacion,$entidad->nombre,$canal->nombre,$sector->nombre,$usuario->nombre.' '.$usuario->apellido_paterno.' '.$usuario->apellido_materno,$solicitudes_procesando[$i]->asunto,$fecha_asignacion,$diferencia_dias,$sla_procesando,$diferencia_dias_fecha_trabajo,
+							));
+
+							$backGround = NULL;
+
+							if($diferencia_dias_fecha_trabajo < $sla_procesando)
+							{
+								$backGround = "#42f00d";
+							}elseif($diferencia_dias_fecha_trabajo == $sla_procesando)
+							{
+								$backGround = "#f0a20d";
+							}else
+							{
+								$backGround = "#f00d0d";
+							}
+
+							$sheet->cells('R'.($i+2).':R'.($i+2),function($cells) use ($backGround) {
+								$cells->setBackground($backGround);
+							});
+						}
+
+					});
+
+				})->download('xls');
+
+				
+				
+				//return View::make('MenuPrincipal/menuPrincipalGestor',$data);
+			}else
+				return View::make('error/error',$data);
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
 }

@@ -278,15 +278,19 @@
 				<div class="panel-body">
 					{{ Form::open(array('url'=>'/entidades/buscar_entidades','method'=>'get' ,'role'=>'form', 'id'=>'search-form')) }}
 					<div class="row">
-						<div class="col-md-4">
+						<div class="col-md-3">
+							{{ Form::label('codigo_entidad_search','Código de la Entidad')}}
+							{{ Form::text('codigo_entidad_search',$codigo_entidad_search,array('class'=>'form-control','placeholder'=>'Ingrese código de la entidad','id'=>'codigo_entidad_search')) }}
+						</div>
+						<div class="col-md-3">
 							{{ Form::label('entidad_search','Nombre de la Entidad')}}
 							{{ Form::text('entidad_search',$entidad_search,array('class'=>'form-control','placeholder'=>'Ingrese nombre de la entidad','id'=>'entidad_search')) }}
 						</div>
-						<div class="col-md-4">
+						<div class="col-md-3">
 							{{ Form::label('entidad_search_sector','Sector')}}
 							{{ Form::select('entidad_search_sector',array(''=>'Seleccione')+$sectores,$entidad_search_sector,array('class'=>'form-control','id'=>'slcSector')) }}
 						</div>
-						<div class="col-md-4">
+						<div class="col-md-3">
 							{{ Form::label('entidad_search_canal','Canal')}}
 							{{ Form::select('entidad_search_canal',array(''=>'Seleccione'),$entidad_search_canal,array('class'=>'form-control','id'=>'slcCanal')) }}
 						</div>						

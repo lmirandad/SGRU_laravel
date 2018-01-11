@@ -90,7 +90,7 @@ class SolicitudController extends BaseController {
 			$data["inside_url"] = Config::get('app.inside_url');
 			$data["user"] = Session::get('user');
 			// Verifico si el usuario es un WEBMASTER (ADMINISTRADOR DEL SISTEMA)
-			if($data["user"]->idrol == 1 || $data["user"]->idrol == 2){
+			if($data["user"]->idrol == 1){
 			
 			
 				//Lectura del archivo
@@ -242,7 +242,11 @@ class SolicitudController extends BaseController {
 							"codigo" => $codigo_solicitud_ingresar,
 							"fecha_solicitud" => $fecha_solicitud_date,
 							"identidad" => null,
+							"nombre_entidad" => null,
+							"idherramienta" => null,
+							"nombre_herramienta" => null,
 							"idtipo_solicitud_general" => $tipo_solicitud_obj[0]->idtipo_solicitud_general,
+							"nombre_tipo" => $tipo_solicitud_obj[0]->nombre,
 						];
 						array_push($data["solicitudes_por_rechazar"], $solicitud_arreglo_rechazo);
 
@@ -283,13 +287,6 @@ class SolicitudController extends BaseController {
 						
 						continue; //(LOGS)
 					}
-
-					
-
-					
-
-
-
 					
 					//6. VALIDACION DEL ASUNTO
 					if(strcmp($asunto,'') == 0){
@@ -298,8 +295,12 @@ class SolicitudController extends BaseController {
 						$solicitud_arreglo_rechazo = [
 							"codigo" => $codigo_solicitud_ingresar,
 							"fecha_solicitud" => $fecha_solicitud_date,
+							"nombre_entidad" => $entidad[0]->nombre,
 							"identidad" => $entidad[0]->identidad,
+							"idherramienta" => null,
+							"nombre_herramienta" => null,
 							"idtipo_solicitud_general" => $tipo_solicitud_obj[0]->idtipo_solicitud_general,
+							"nombre_tipo" => $tipo_solicitud_obj[0]->nombre,
 						];
 						array_push($data["solicitudes_por_rechazar"], $solicitud_arreglo_rechazo);
 						continue; //(LOGS)
@@ -364,6 +365,25 @@ class SolicitudController extends BaseController {
 					{
 						$nombre_herramienta = "NO DETECTADO";
 					}else{
+						//VALIDAR LAS HERRAMIENTAS PROHIBIDAS
+						if($idherramienta == 95 || $idherramienta == 96 || $idherramienta == 97)
+						{
+							$obj_log["descripcion"] = "El aplicativo no es gestionado por el equipo de usuarios.";
+							$obj_log["aplicativo"] = Herramienta::find($idherramienta)->nombre;
+							array_push($logs_errores,$obj_log);
+							$solicitud_arreglo_rechazo = [
+								"codigo" => $codigo_solicitud_ingresar,
+								"fecha_solicitud" => $fecha_solicitud_date,
+								"nombre_entidad" => $entidad[0]->nombre,
+								"identidad" => $entidad[0]->identidad,
+								"idherramienta" => $idherramienta,
+								"nombre_herramienta" => Herramienta::find($idherramienta)->nombre,
+								"idtipo_solicitud_general" => $tipo_solicitud_obj[0]->idtipo_solicitud_general,
+								"nombre_tipo" => $tipo_solicitud_obj[0]->nombre,
+							];
+							array_push($data["solicitudes_por_rechazar"], $solicitud_arreglo_rechazo);
+							continue; //(LOGS)
+						}
 						$herramienta = Herramienta::find($idherramienta);
 						$nombre_herramienta = $herramienta->nombre;
 					}
@@ -702,7 +722,10 @@ class SolicitudController extends BaseController {
 				{
 					$data["asignacion"] = null;
 					$data["usuario_asignado"] = null;
-					$data["herramienta"] = null;
+					if($data["solicitud"]->idherramienta == null)
+						$data["herramienta"] = null;
+					else
+						$data["herramienta"] = Herramienta::find($data["solicitud"]->idherramienta);
 					$data["transacciones"] = array();
 				}
 

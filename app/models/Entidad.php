@@ -42,9 +42,12 @@ class Entidad extends Eloquent implements UserInterface, RemindableInterface {
 		$query->select('entidad.*');
 	}
 	
-	public function scopeBuscarEntidades($query,$nombre,$idcanal,$idsector){
+	public function scopeBuscarEntidades($query,$codigo_enve,$nombre,$idcanal,$idsector){
 		$query->join('canal','entidad.idcanal','=','canal.idcanal')
 			  ->join('sector','canal.idsector','=','sector.idsector');
+
+		if($codigo_enve != null)
+			$query->where('entidad.codigo_enve','=',"$codigo_enve");
 
 		if($nombre != null )
 			$query->where('entidad.nombre','LIKE',"%$nombre%");

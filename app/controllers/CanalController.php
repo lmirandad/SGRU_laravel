@@ -172,7 +172,7 @@ class CanalController extends BaseController {
 			$data["inside_url"] = Config::get('app.inside_url');
 			$data["user"] = Session::get('user');
 			// Verifico si el usuario es un WEBMASTER (ADMINISTRADOR DEL SISTEMA)
-			if($data["user"]->idrol == 1 || $data["user"]->idrol == 2){
+			if($data["user"]->idrol == 1){
 				$data["canal_search"] = Input::get('canal_search');
 				$data["canal_search_sector"] = Input::get('canal_search_sector');
 				$data["sectores"] = Sector::lists('nombre','idsector');

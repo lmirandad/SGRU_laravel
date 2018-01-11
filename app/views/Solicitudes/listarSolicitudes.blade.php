@@ -85,14 +85,13 @@
 										<th class="text-nowrap text-center">Fecha de Asignación</th>
 										<th class="text-nowrap text-center">Tipo de Solicitud</th>
 										<th class="text-nowrap text-center">Estado Solicitud</th>
-										<th class="text-nowrap text-center">Ver Solicitud</th>
 									</tr>
 								</thead>
 								@foreach($solicitudes_data as $solicitud_data)
 								<tbody>	
 									<tr>
 										<td class="text-nowrap text-center">
-											{{$solicitud_data->codigo_solicitud}}</a>
+											<a href="{{URL::to('/solicitudes/mostrar_solicitud')}}/{{$solicitud_data->idsolicitud}}">{{$solicitud_data->codigo_solicitud}}</a>
 										</td>
 										<td class="text-nowrap text-center">
 											{{date('d-m-Y',strtotime($solicitud_data->fecha_solicitud))}}
@@ -113,11 +112,6 @@
 										</td>
 										<td class="text-nowrap text-center">
 											{{$solicitud_data->nombre_estado_solicitud}}
-										</td>
-										<td class="text-nowrap text-center">
-											<div style="text-align:center">
-												<a class="btn btn-info btn-sm" href="{{URL::to('/solicitudes/mostrar_solicitud')}}/{{$solicitud_data->idsolicitud}}"><span class="fa fa-search"></span></a>
-											</div>		
 										</td>
 									</tr>
 								</tbody>

@@ -17,6 +17,7 @@ $( document ).ready(function(){
 	});
 
 	$('#btnLimpiarEntidad').click(function(){
+		$('#codigo_entidad_search').val(null);
 		$('#entidad_search').val(null);
 		$('#slcSector').val(null);
 		$('#slcCanal').val(null);

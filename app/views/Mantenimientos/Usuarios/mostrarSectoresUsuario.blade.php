@@ -40,13 +40,13 @@
 						<div class="row" style="height:150px;overflow-y:auto; ">
 							<div class="col-md-12">
 								<div class="table-responsive">
-									<table class="table table-hover">
+									<table class="table table-hover" id="tabla_sectores_disponibles">
 										@if(count($sectores_disponibles)>0)
 										<thead>
 											<tr>
 												<th class="text-nowrap text-center">N°</th>
 												<th class="text-nowrap text-center">Sector</th>
-												<th class="text-nowrap text-center">Agregar</th>
+												<th class="text-nowrap text-center">Agregar <input type="checkbox" id="checkboxAllSector" class="form-check-input"></th>
 											</tr>
 										</thead>
 										<tbody>	
@@ -61,7 +61,7 @@
 													</td>
 													<td class="text-nowrap">
 														<div style="text-align:center">
-															{{ Form::checkbox('checkbox'.$index, 1, Input::old('checkbox'.$index), ['class' => 'form-check-input']) }}
+															{{ Form::checkbox('checkbox'.$index, 1, Input::old('checkbox'.$index), ['class' => 'form-check-input','id'=>'checkboxS'.$index]) }}
 														</div>
 													</td>
 												</tr>

@@ -60,10 +60,9 @@ $( document ).ready(function(){
 });
 
 
-function eliminar_requerimientos(e,id)
+function eliminar_requerimientos(e)
 {
 	e.preventDefault();	
-	$('#solicitud_id_eliminar_base').val(id);
 		BootstrapDialog.confirm({
 			title: 'Mensaje de Confirmación',
 			message: '¿Está seguro que desea realizar esta acción?<br>Se borrarán todos los requerimientos y transacciones asociados a la solicitud.', 
@@ -97,6 +96,7 @@ function mostrar_datos_req(e,id)
 	e.preventDefault();
 	$("#table_requerimientos tbody").remove();
 	$('#solicitud_id_mostrar').val(id);
+	$('#solicitud_id_eliminar_base').val(id);
 	$.ajax({
 		url: inside_url+'requerimientos/mostrar_lista_requerimientos',
 		type: 'POST',

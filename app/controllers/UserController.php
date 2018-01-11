@@ -362,8 +362,11 @@ class UserController extends BaseController {
 				$data["roles"] = Rol::lists('nombre','idrol');				
 				$data["usuario"] = User::find($idusuario);
 
-				if($data["usuario"]==null){						
-					return Redirect::to('/principal')->with('error','Se ha intentado acceder a la información de otro usuario que no corresponde al usuario logueado');
+				if($data["usuario"]==null){			
+					if($data["user"]->idrol == 1)
+						return Redirect::to('/principal_admin')->with('error','Se ha intentado acceder a la información de otro usuario que no corresponde al usuario logueado');
+					else
+						return Redirect::to('/principal_gestor')->with('error','Se ha intentado acceder a la información de otro usuario que no corresponde al usuario logueado');
 				}
 
 				$data["herramientas"] = HerramientaXUser::buscarHerramientasPorIdUsuario($data["usuario"]->id)->get();

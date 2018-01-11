@@ -32,7 +32,7 @@ class ReporteriaController extends BaseController {
 			$data["inside_url"] = Config::get('app.inside_url');
 			$data["user"] = Session::get('user');
 			// Verifico si el usuario es un WEBMASTER (ADMINISTRADOR DEL SISTEMA)
-			if($data["user"]->idrol == 1 || $data["user"]->idrol == 2){
+			if($data["user"]->idrol == 1){
 
 				$data["fecha_desde_solicitud"] = Input::get('fecha_desde_solicitud');
 				$data["fecha_hasta_solicitud"] = Input::get('fecha_hasta_solicitud');
@@ -170,7 +170,7 @@ class ReporteriaController extends BaseController {
 			$data["inside_url"] = Config::get('app.inside_url');
 			$data["user"] = Session::get('user');
 			// Verifico si el usuario es un WEBMASTER (ADMINISTRADOR DEL SISTEMA)
-			if($data["user"]->idrol == 1 || $data["user"]->idrol == 2){
+			if($data["user"]->idrol == 1){
 
 				$data["fecha_desde_requerimiento"] = Input::get('fecha_desde_requerimiento');
 				$data["fecha_hasta_requerimiento"] = Input::get('fecha_hasta_requerimiento');

@@ -14,7 +14,15 @@
 		<div id="navbar-menu">
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-id-badge"></i>  <span>Bienvenido, <strong>{{$user->nombre}}</strong> </span> <i class="icon-submenu lnr lnr-chevron-down"></i></a>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-id-badge"></i>  <span>
+						@if(date('H') >= 0 && date('H') <= 11)
+							Buenos días,
+						@elseif(date('H') >= 12 && date('H') <= 17)
+							Buenas tardes,
+						@else(date('H') >= 18 && date('H') <= 23)
+							Buenas noches,
+						@endif
+						<strong>&nbsp{{$user->nombre}}</strong> </span> <i class="icon-submenu lnr lnr-chevron-down"></i></a>
 					<ul class="dropdown-menu">
 						<li><a href="{{URL::to('/usuarios/mostrar_usuario_sesion')}}/{{$user->id}}"><i class="lnr lnr-user"></i> <span>Ver Usuario</span></a></li>
 						<li><a href="{{ URL::to('logout') }}"><i class="lnr lnr-exit"></i> <span>Cerrar Sesión</span></a></li>

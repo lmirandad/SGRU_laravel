@@ -235,7 +235,7 @@ class UsuariosObservadosVenaController extends BaseController {
 			    fclose($file_handle);*/
 
 			    //inicio del algoritmo
-			    $lista_vena = Excel::selectSheets('DATA')->load($file_name)->get();
+			    $lista_vena =  Excel::load($file_name)->get();
 				$cantidad_registros_totales = count($lista_vena);
 				$cantidad_registros_procesados = 0;
 
@@ -251,7 +251,7 @@ class UsuariosObservadosVenaController extends BaseController {
 					return Redirect::to('usuarios_observados_vena/cargar_usuarios_observados_vena');
 				}
 
-				if(count($lista_vena[0]) != 29)
+				if(count($lista_vena[0]) != 3)
 				{
 					Session::flash('error', 'No es posible realizar la lectura del archivo puesto que la cantidad de campos no es correcta.');
 					return Redirect::to('usuarios_observados_vena/cargar_usuarios_observados_vena');
@@ -264,9 +264,9 @@ class UsuariosObservadosVenaController extends BaseController {
 				for($i = 0; $i < $cantidad_registros_totales; $i++)
 				{
 					//2.1. Leer Valores
-					$numero_documento = $lista_vena[$i][2];
-					$fecha_bloqueo = $lista_vena[$i][12];
-					$motivo = $lista_vena[$i][14];
+					$numero_documento = $lista_vena[$i][0];
+					$fecha_bloqueo = $lista_vena[$i][1];
+					$motivo = $lista_vena[$i][2];
 
 
 					//CREACION DEL ARREGLO LOG

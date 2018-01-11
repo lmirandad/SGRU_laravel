@@ -80,7 +80,7 @@
 		{{ Form::open(array('url'=>'/asignaciones/submit_asignacion' ,'role'=>'form','id'=>'submit-asignar','enctype'=>'multipart/form-data')) }}
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title"><strong>VISTA PREVIA</strong></h3>
+				<h3 class="panel-title"><strong>VISTA PREVIA SOLICITUDES POR ASIGNAR</strong></h3>
 			</div>		
 			<div class="panel-body">
 				<div class="row">
@@ -140,16 +140,24 @@
 						</div>
 					</div>
 				</div>
-				<div class="row" style="display:none">
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><strong>VISTA PREVIA SOLICITUDES POR RECHAZAR</strong></h3>
+			</div>		
+			<div class="panel-body">
+				<div class="row" >
 					<div class="col-md-12">
 						<div class="table-responsive" id="tabla_solicitudes">
 							<table class="table table-hover">
 								<thead>
 									<tr>
 										<th class="text-nowrap text-center">Código Solicitud</th>
-										<th class="text-nowrap text-center">IdEntidad</th>
+										<th class="text-nowrap text-center">Nombre Entidad</th>
 										<th class="text-nowrap text-center">Tipo Solicitud</th>
 										<th class="text-nowrap text-center">Fecha Solicitud</th>
+										<th class="text-nowrap text-center">Aplicativo Detectado</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -158,15 +166,31 @@
 									<tr>
 										<td class="text-nowrap text-center">
 											<input style="display:none" name='codigos_solicitud_rechazo[]' value='{{ $solicitudes["codigo"]}}' readonly/>
+											{{$solicitudes["codigo"]}}
 										</td>										
 										<td class="text-nowrap text-center">
 											<input style="display:none" name='ids_entidad_rechazo[]' value='{{ $solicitudes["identidad"]}}' readonly/>
+											{{ $solicitudes["nombre_entidad"]}}
 										</td>
 										<td class="text-nowrap text-center">
 											<input style="display:none" name='idstipo_solicitud_general_rechazo[]' value='{{ $solicitudes["idtipo_solicitud_general"]}}' readonly/>
+											@if($solicitudes["nombre_tipo"] == null)
+												NO DETECTADO
+											@else
+												{{$solicitudes["nombre_tipo"]}}
+											@endif
 										</td>
 										<td class="text-nowrap text-center">
 											<input style="display:none" name='fechas_solicitud_rechazo[]' value="{{date('d-m-Y',strtotime($solicitudes["fecha_solicitud"]))}}" readonly/>
+											{{date('d-m-Y',strtotime($solicitudes["fecha_solicitud"]))}}
+										</td>
+										<td class="text-nowrap text-center">
+											<input style="display:none" name='ids_herramienta[]' value="{{$solicitudes["idherramienta"]}}" readonly/>
+											@if($solicitudes["nombre_herramienta"] == null)
+												NO DETECTADO
+											@else
+												{{$solicitudes["nombre_herramienta"]}}
+											@endif
 										</td>
 									</tr>
 									@endforeach
@@ -181,7 +205,7 @@
 		
 		<div class="row">
 			<div class="form-group col-md-2">				
-				<a class="btn btn-info btn-block" id="btnAsignar" > <i class="lnr lnr-location"></i>&nbsp&nbspAsignación</a>
+				<a class="btn btn-info btn-block" id="btnAsignar" > <i class="lnr lnr-location"></i>&nbsp&nbspAsignar</a>
 			</div>
 			<div class="form-group col-md-2 col-md-offset-8">
 				<a class="btn btn-default btn-block" href="{{URL::to('/principal_admin')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>		

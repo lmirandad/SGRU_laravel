@@ -161,6 +161,7 @@ class AsignacionController extends BaseController {
 				$ids_entidad_rechazo = Input::get('ids_entidad_rechazo');
 				$idstipo_solicitud_general_rechazo = Input::get('idstipo_solicitud_general_rechazo');
 				$fechas_solicitud_rechazo = Input::get('fechas_solicitud_rechazo');
+				$ids_herramienta = Input::get('ids_herramienta');
 				$cantidad_registros_rechazados = count($codigos_rechazo);
 
 				for($i = 0; $i< $cantidad_registros_rechazados; $i++)
@@ -171,6 +172,14 @@ class AsignacionController extends BaseController {
 						$solicitud->identidad = null;
 					else
 						$solicitud->identidad = $ids_entidad_rechazo[$i];
+					if(strcmp($ids_herramienta[$i],'') ==0)
+						$solicitud->idherramienta = null;
+					else{
+						$herramienta = Herramienta::find($ids_herramienta[$i]);
+						$solicitud->idherramienta = $ids_herramienta[$i];
+						$solicitud->motivo_anulacion = "El aplicativo o acción ".$herramienta->nombre.' no es gestionada por el equipo de usuarios';
+					}
+
 					$solicitud->idtipo_solicitud_general = $idstipo_solicitud_general_rechazo[$i];					
 					$partes = explode('-',$fechas_solicitud_rechazo[$i]);
 					$solicitud->fecha_solicitud = date('Y-m-d H:i:s',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));
@@ -199,7 +208,7 @@ class AsignacionController extends BaseController {
 						$texto_rechazados=$texto_rechazados.$codigos_rechazo[$i].'<br>';
 					}
 					$texto_final_rechazado = '<strong> SOLICITUDES RECHAZADAS </strong>:<br>Se rechazaron los siguientes códgios:'.'<br>'.$texto_rechazados
-						.'<br>'.'Motivos:'.'<br>'.'1. El canal no ha ingresado el asunto de la solicitud (PORTAL DE CANALES).<br>2. La solicitud no posee una entidad asociada (PORTAL DE CANALES).<br>';
+						.'<br>'.'Motivos:'.'<br>'.'1. El canal no ha ingresado el asunto de la solicitud (PORTAL DE CANALES).<br>2. La solicitud no posee una entidad asociada (PORTAL DE CANALES).<br>3. Las herramientas asociadas no son gestionadas por el equipo de usuarios.<br>';
 				}
 
 				if( strcmp($texto_final_no_procesado,'') != 0 || strcmp($texto_final_rechazado, '') != 0 )

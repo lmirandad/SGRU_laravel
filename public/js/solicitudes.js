@@ -58,7 +58,7 @@ $( document ).ready(function(){
 	    	btnOKLabel: 'Aceptar', 
 			callback: function(result){
 		        if(result) {
-		        	$('#tabla_solicitudes').loading({
+		        	$('body').loading({
 			    		message: 'Cargando..',
 			      	});
 					document.getElementById("submit-cargar").submit();

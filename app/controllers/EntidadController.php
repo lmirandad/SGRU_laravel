@@ -187,16 +187,17 @@ class EntidadController extends BaseController {
 			$data["inside_url"] = Config::get('app.inside_url');
 			$data["user"] = Session::get('user');
 			// Verifico si el usuario es un WEBMASTER (ADMINISTRADOR DEL SISTEMA)
-			if($data["user"]->idrol == 1 || $data["user"]->idrol == 2){
+			if($data["user"]->idrol == 1){
+				$data["codigo_entidad_search"] = Input::get('codigo_entidad_search');
 				$data["entidad_search"] = Input::get('entidad_search');
 				$data["entidad_search_canal"] = Input::get('entidad_search_canal');
 				$data["entidad_search_sector"] = Input::get('entidad_search_sector');
 				$data["sectores"] = Sector::lists('nombre','idsector');
 				$data["flag_seleccion"] = 3;
-				if($data["entidad_search"] == null && strcmp($data["entidad_search_canal"],"") == 0  && strcmp($data["entidad_search_sector"],"") == 0 ){
+				if($data["codigo_entidad_search"] == null && $data["entidad_search"] == null && strcmp($data["entidad_search_canal"],"") == 0  && strcmp($data["entidad_search_sector"],"") == 0 ){
 					$data["entidades_data"] = Entidad::withTrashed()->listarEntidades()->paginate(10);					
 				}else{
-					$data["entidades_data"] = Entidad::withTrashed()->buscarEntidades($data["entidad_search"],$data["entidad_search_canal"],$data["entidad_search_sector"])->paginate(10);					
+					$data["entidades_data"] = Entidad::withTrashed()->buscarEntidades($data["codigo_entidad_search"],$data["entidad_search"],$data["entidad_search_canal"],$data["entidad_search_sector"])->paginate(10);					
 
 				}
 				return View::make('Mantenimientos/Sectores_Canales_Entidades/listarSectoresCanalesEntidades',$data);
