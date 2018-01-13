@@ -18,7 +18,6 @@ class CreateTransaccionTable extends Migration {
 			$table->datetime('fecha_registro');
 			$table->datetime('fecha_cierre')->nullable();
 			$table->string('cargo_canal',200)->nullable();
-			$table->string('perfil_aplicativo',200)->nullable();
 			$table->string('numero_documento',10)->nullable();
 			$table->string('nombre_usuario',200)->nullable();
 			$table->integer('usuario_bloqueado')->nullable();

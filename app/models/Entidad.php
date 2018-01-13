@@ -32,6 +32,7 @@ class Entidad extends Eloquent implements UserInterface, RemindableInterface {
 			  ->join('sector','sector.idsector','=','canal.idsector');
 
 		$query->select('entidad.*','sector.nombre as nombre_sector','canal.nombre as nombre_canal');
+		$query->orderBy(DB::raw('CONVERT(integer,entidad.codigo_enve)'),'ASC');
 
 		return $query;
 	}
@@ -64,6 +65,7 @@ class Entidad extends Eloquent implements UserInterface, RemindableInterface {
 		}
 
 		$query->select('entidad.*','sector.nombre as nombre_sector','canal.nombre as nombre_canal');
+		$query->orderBy(DB::raw('CONVERT(integer,entidad.codigo_enve)'),'ASC');
 
 		/*echo '<pre>';
 		var_dump($query->get());

@@ -315,8 +315,8 @@
 								<table class="table table-hover">
 									<thead>
 										<tr>
-											<th class="text-nowrap text-center">Entidad</th>
 											<th class="text-nowrap text-center">Código Entidad</th>
+											<th class="text-nowrap text-center">Entidad</th>											
 											<th class="text-nowrap text-center">Canal</th>
 											<th class="text-nowrap text-center">Sector</th>
 											<th class="text-nowrap text-center">Editar</th>
@@ -328,11 +328,12 @@
 										@foreach($entidades_data as $entidad_data)
 										<tr>
 											<td class="text-nowrap text-center">
-												<a href="{{URL::to('/entidades/mostrar_entidad/')}}/{{$entidad_data->identidad}}">{{$entidad_data->nombre}}</a>
+												<a href="{{URL::to('/entidades/mostrar_entidad/')}}/{{$entidad_data->identidad}}">{{$entidad_data->codigo_enve}}</a>
 											</td>
 											<td class="text-nowrap text-center">
-												{{$entidad_data->codigo_enve}}
+												{{$entidad_data->nombre}}
 											</td>
+											
 											<td class="text-nowrap text-center">
 												{{$entidad_data->nombre_canal}}
 											</td>

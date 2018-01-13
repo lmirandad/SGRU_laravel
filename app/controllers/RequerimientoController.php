@@ -33,18 +33,15 @@ class RequerimientoController extends BaseController {
 			    for($i = 0; $i < $cantidad_requerimientos; $i++)
 			    {
 			    	//revisar dato por dato
-			    	$accion = $resultado[$i][0];
-			    	$aplicativo = $resultado[$i][1];
-			    	$canal = $resultado[$i][2];
-			    	$entidad = $resultado[$i][3];
+			    	$canal = $resultado[$i][0];
+			    	$accion = $resultado[$i][1];
+			    	$documento =strval($resultado[$i][2]);
+			    	$nombre = $resultado[$i][3];
 			    	$cargo = $resultado[$i][4];
-			    	$perfil = $resultado[$i][5];
-			    	$documento =strval($resultado[$i][6]);
-			    	$nombre = $resultado[$i][7];
-			    	$punto_venta = $resultado[$i][8];
-			    	$codigo_requerimiento = $resultado[$i][9];
-
-			    	
+			    	$entidad = $resultado[$i][5];
+			    	$punto_venta = $resultado[$i][6];
+			    	$aplicativo = $resultado[$i][7];
+			    	$codigo_requerimiento = $resultado[$i][8];
 
 			    	$obj_log = [
 			    		"numero_fila" => ($i+1),
@@ -54,7 +51,7 @@ class RequerimientoController extends BaseController {
 			    	//Validar si el codigo de requerimiento está vacio, sin ello no se puede crear o revisar la información
 			    	if($codigo_requerimiento == null || strcmp($codigo_requerimiento,'') == 0)
 			    	{
-			    		continue;
+			    		$codigo_requerimiento = 'SIN_REQ';
 			    	}
 
 			    	//Validar si el usuario tiene dni correcto, sin ello no se puede crear la transaccion ni menos el requerimiento
@@ -194,7 +191,6 @@ class RequerimientoController extends BaseController {
 				    	$transaccion = new Transaccion;
 				    	$transaccion->fecha_registro = date('Y-m-d H:i:s');
 				    	$transaccion->cargo_canal = $cargo;
-				    	$transaccion->perfil_aplicativo = $perfil;
 				    	$transaccion->numero_documento = $documento;
 				    	$transaccion->nombre_usuario = $nombre;
 				    	if($usuario_bloqueado == true)
@@ -222,7 +218,6 @@ class RequerimientoController extends BaseController {
 			    		$transaccion = new Transaccion;
 				    	$transaccion->fecha_registro = date('Y-m-d H:i:s');
 				    	$transaccion->cargo_canal = $cargo;
-				    	$transaccion->perfil_aplicativo = $perfil;
 				    	$transaccion->numero_documento = null;
 				    	$transaccion->nombre_usuario = $nombre;
 				    	$transaccion->usuario_bloqueado = 0;
@@ -444,31 +439,79 @@ class RequerimientoController extends BaseController {
 			if($data["user"]->idrol == 2){
 				
 				$codigos = Input::get('codigos');
-				$idrequerimientos = Input::get('idrequerimientos');
+				$idtransacciones = Input::get('idtransacciones');
 				$idsolicitud = Input::get('solicitud_id_mostrar');
 
 				$solicitud = Solicitud::find($idsolicitud);
 
-				$cantidad_requerimientos = count($codigos);
-				for($i = 0; $i<$cantidad_requerimientos; $i++)
+				$cantidad_transacciones = count($idtransacciones);
+
+				for($i = 0;$i < $cantidad_transacciones; $i++)
 				{
-					$requerimiento = Requerimiento::find($idrequerimientos[$i]);
-					if($requerimiento->idestado_requerimiento == 3){
-						$requerimiento->codigo_requerimiento = $codigos[$i];
-						// buscar si existe otro requerimiento con el mismo codigo
-						/*$requerimientos_repetidos = Requerimiento::buscarRequerimientosPorCodigo($codigos[$i],$requerimiento->idrequerimiento,$idsolicitud)->get();
-
-						if($requerimientos_repetidos == null || $requerimientos_repetidos->isEmpty())
-						{*/
-							//si no hay otro entonces podemos guardar
-							$requerimiento->save();
-						/*}else
+					
+					$transaccion = Transaccion::find($idtransacciones[$i]);
+					
+					$requerimiento = Requerimiento::find($transaccion->idrequerimiento);
+					
+					//Comarar si el codigo de requerimiento es igual al nuevo que se está tipiando
+					if(strcmp($requerimiento->codigo_requerimiento,$codigos[$i]) != 0)
+					{
+						//Son diferentes, validamos si existe el requerimiento de esa solicitud;
+						$requerimiento_codigo = Requerimiento::buscarRequerimientosPorCodigoRequerimiento($codigos[$i],$idsolicitud)->get();
+						
+						if($requerimiento_codigo == null || $requerimiento_codigo->isEmpty())
 						{
-							//como ya existe otro usuario no se actualizará este requerimiento
+							//no existe la solicitud que se ha ingresado en los forms, entonces se debe proceder a crear
 							
+							$nuevo_req = new Requerimiento;
+							$nuevo_req->fecha_registro = $requerimiento->fecha_registro;
+							$nuevo_req->fecha_cierre = $requerimiento->fecha_cierre;
+							$nuevo_req->idherramienta = $requerimiento->idherramienta;
+							$nuevo_req->idpunto_venta = $requerimiento->idpunto_venta;
+							$nuevo_req->observaciones = $requerimiento->observaciones;
+							$nuevo_req->idestado_requerimiento = $requerimiento->idestado_requerimiento;
+							$nuevo_req->idsolicitud = $requerimiento->idsolicitud;
+							$nuevo_req->accion_requerimiento = $requerimiento->accion_requerimiento;
+							$nuevo_req->iduser_created_by = $requerimiento->iduser_created_by;
+							$nuevo_req->codigo_requerimiento = $codigos[$i];
+							$nuevo_req->save();
+							$transaccion->idrequerimiento = $nuevo_req->idrequerimiento;
+							$transaccion->save();
+						}else
+						{
+							//si existe, debemos mover la transacción a este nuevo requerimiento
+							$transaccion->idrequerimiento = $requerimiento_codigo[0]->idrequerimiento;
+							$transaccion->save();
+						}
+					}
+				}
 
-						}*/
+				//validamos si existen registros vacíos.
+				$requerimientos = Requerimiento::buscarRequerimientosPorSolicitud($idsolicitud)->get();
+				if($requerimientos != null && !$requerimientos->isEmpty())
+				{
+					$cantidad_requerimientos = count($requerimientos);
 
+					for($i=0;$i<$cantidad_requerimientos;$i++)
+					{
+						$transacciones_requerimiento = Transaccion::buscarTransaccionesPorRequerimiento($requerimientos[$i]->idrequerimiento)->get();
+
+						if($transacciones_requerimiento == null || $transacciones_requerimiento->isEmpty() || count($transacciones_requerimiento) == 0)
+						{
+							//se borra el requerimiento
+							$logs = LogCargaFur::buscarLogCargaPorIdRequerimiento($requerimientos[$i]->idrequerimiento)->get();
+							if($logs == null || $logs->isEmpty())
+								$requerimientos[$i]->forceDelete();
+							else
+							{
+								$cantidad_logs = count($logs);
+								for($j=0;$j<$cantidad_logs;$j++)
+								{
+									$logs[$j]->forceDelete();
+								}
+								$requerimientos[$i]->forceDelete();
+							}
+						}
 					}
 				}
 

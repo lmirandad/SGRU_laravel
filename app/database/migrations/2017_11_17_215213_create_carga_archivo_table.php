@@ -15,6 +15,7 @@ class CreateCargaArchivoTable extends Migration {
 		Schema::create('carga_archivo', function(Blueprint $table)
 		{
 			$table->integer('idcarga_archivo', true);
+			$table->integer('numero_corte')->nullable();
 			$table->dateTime('fecha_carga_archivo');
 			$table->integer('iduser_registrador')->index('fk_carga_archivo_users1_idx');
 			$table->integer('iduser_created_by')->nullable()->index('fk_carga_archivo_users2_idx');

@@ -859,6 +859,11 @@ class SolicitudController extends BaseController {
 					$nuevo_usuarioxasignacion->iduser_created_by = $data["user"]->id;
 					$nuevo_usuarioxasignacion->save();
 
+					//actualizar la solicitud indicando que hay reasignacion
+					$solicitud = Solicitud::find($idsolicitud);
+					$solicitud->ticket_reasignado = 1;
+					$solicitud->save();
+
 					Session::flash('message', 'Se realizó correctamente la reasignación.');
 					
 					return Redirect::to('solicitudes/mostrar_solicitud/'.$idsolicitud);

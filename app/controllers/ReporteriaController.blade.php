@@ -49,13 +49,13 @@ class ReporteriaController extends BaseController {
 				$fecha_desde_solicitud = $data["fecha_desde_solicitud"];
 				$fecha_hasta_solicitud = $data["fecha_hasta_solicitud"];		
 
-				
+				$fecha_reporte = date('Y-m-d H:i:s');
 
-				$value = Excel::create('Reporte Logs ', function($excel) use  ($fecha_desde_solicitud,$fecha_hasta_solicitud){
-					$excel->sheet('Reporte', function($sheet) use ($fecha_desde_solicitud,$fecha_hasta_solicitud)  {
+				$value = Excel::create('REPORTE SOLICITUDES '.$fecha_reporte, function($excel) use  ($fecha_desde_solicitud,$fecha_hasta_solicitud){
+					$excel->sheet('BASE', function($sheet) use ($fecha_desde_solicitud,$fecha_hasta_solicitud)  {
 						
 						$sheet->row(1, array(
-							     'N°','CODIGO_SOLICITUD','FECHA_SOLICITUD','FECHA_ASIGNACION','FECHA_INICIO_PROCESANDO','FECHA_CIERRE','TIPO_SOLICITUD','ESTADO_SOLICITUD','HERRAMIENTA_SOLICITADA','APLICATIVO_AGRUPADO','ENTIDAD','CANAL','SECTOR','USUARIO_ASIGNADO','ASUNTO','SLA_PENDIENTE','SLA_PROCESANDO'
+							     'N°','CODIGO_SOLICITUD','FECHA_SOLICITUD','FECHA_ASIGNACION','NUMERO_CORTE','FECHA_INICIO_PROCESANDO','FECHA_CIERRE','TIPO_SOLICITUD','ESTADO_SOLICITUD','HERRAMIENTA_SOLICITADA','APLICATIVO_AGRUPADO','ENTIDAD','CANAL','SECTOR','USUARIO_ASIGNADO','ASUNTO','SLA_PENDIENTE','SLA_PROCESANDO'
 							));
 						$solicitudes = Solicitud::buscarSolicitudesPorFechas($fecha_desde_solicitud,$fecha_hasta_solicitud)->get();
 
@@ -67,6 +67,12 @@ class ReporteriaController extends BaseController {
 							$fecha_solicitud = date('Y-m-d',strtotime($solicitudes[$i]->fecha_solicitud));
 							$fecha_asignacion = null;
 							$fecha_inicio_procesando = null;
+							$numero_corte ='';
+							if($solicitudes[$i]->numero_corte != null)
+								$numero_corte = 'CORTE N° '.$solicitudes[$i]->numero_corte;
+							else
+								$numero_corte = 'SOLICITUD MANUAL';
+							
 							if($fecha_inicio_procesando != null)
 								$fecha_inicio_procesando = date('Y-m-d',strtotime($solicitudes[$i]->fecha_inicio_procesando));
 							
@@ -76,6 +82,8 @@ class ReporteriaController extends BaseController {
 
 							$nombre_tipo_solicitud = $solicitudes[$i]->nombre_tipo_solicitud;
 							$nombre_estado_solicitud = $solicitudes[$i]->nombre_estado_solicitud;
+							if($solicitudes[$i]->ticket_reasignado == 1)
+								$nombre_estado_solicitud = $nombre_estado_solicitud.' - reasignado';
 
 							$nombre_usuario_asignado = null;
 							$nombre_herramienta = null;
@@ -140,9 +148,11 @@ class ReporteriaController extends BaseController {
 									$sla_procesando = $sla[0]->sla_procesando;
 								}
 							}
+
+
 							
 							$sheet->row($i+2, array(
-							     $i+1,$codigo_solicitud,$fecha_solicitud,$fecha_asignacion,$fecha_inicio_procesando,$fecha_cierre,$nombre_tipo_solicitud,$nombre_estado_solicitud,$nombre_herramienta,$nombre_denominacion,$nombre_entidad,$nombre_canal,$nombre_sector,$nombre_usuario_asignado,$asunto,$sla_pendiente,$sla_procesando
+							     $i+1,$codigo_solicitud,$fecha_solicitud,$fecha_asignacion,$numero_corte,$fecha_inicio_procesando,$fecha_cierre,$nombre_tipo_solicitud,$nombre_estado_solicitud,$nombre_herramienta,$nombre_denominacion,$nombre_entidad,$nombre_canal,$nombre_sector,$nombre_usuario_asignado,$asunto,$sla_pendiente,$sla_procesando
 							));
 
 						}
@@ -189,13 +199,14 @@ class ReporteriaController extends BaseController {
 
 				$transacciones = Transaccion::buscarTransaccionPorIdRequerimiento(5)->get();
 
-				
-				Excel::create('prueba', function($excel) use ($fecha_desde_requerimiento,$fecha_hasta_requerimiento){
+				$fecha_reporte = date('Y-m-d H:i:s');
+
+				Excel::create('REPORTE REQUERIMIENTOS '.$fecha_reporte, function($excel) use ($fecha_desde_requerimiento,$fecha_hasta_requerimiento){
 					
-					$excel->sheet('sheetname', function($sheet) use ($fecha_desde_requerimiento,$fecha_hasta_requerimiento) {						
+					$excel->sheet('BASE', function($sheet) use ($fecha_desde_requerimiento,$fecha_hasta_requerimiento) {						
 
 						$sheet->row(1, array(
-						     'N°','CODIGO_SOLICITUD','CODIGO_REQUERIMIENTO','ID_TRANSACCION','FECHA_REGISTRO_REQUERIMIENTO','FECHA_CIERRE_REQUERIMIENTO','FECHA_REGISTRO_TRANSACCION','FECHA_CIERRE_TRANSACCION','ACCION','APLICATIVO','APLICATIVO_AGRUPADO','TIPO_GESTION','CANAL','ENTIDAD','PUNTO_VENTA','CARGO_CANAL','PERFIL_APLICATIVO','DNI_USUARIO','USUARIO_BLOQUEADO','ESTADO_TRANSACCION','ESTADO_REQUERIMIENTO','FLAG_DEPENDENCIA'
+						     'N°','CODIGO_SOLICITUD','CODIGO_REQUERIMIENTO','ID_TRANSACCION','FECHA_REGISTRO_REQUERIMIENTO','FECHA_CIERRE_REQUERIMIENTO','FECHA_REGISTRO_TRANSACCION','FECHA_CIERRE_TRANSACCION','ACCION','APLICATIVO','APLICATIVO_AGRUPADO','TIPO_GESTION','CANAL','ENTIDAD','PUNTO_VENTA','CARGO_CANAL','DNI_USUARIO','USUARIO_BLOQUEADO','ESTADO_TRANSACCION','ESTADO_REQUERIMIENTO','FLAG_DEPENDENCIA'
 						));
 
 						$requerimientos = Requerimiento::buscarRequerimientosPorFechas($fecha_desde_requerimiento,$fecha_hasta_requerimiento)->get();
@@ -268,7 +279,6 @@ class ReporteriaController extends BaseController {
 										$fecha_cierre_transaccion = date('Y-m-d',strtotime($transacciones[$j]->fecha_cierre));
 
 									$cargo_canal = $transacciones[$j]->cargo_canal;
-									$perfil_aplicativo = $transacciones[$j]->perfil_aplicativo;
 									$dni_usuario = $transacciones[$j]->numero_documento;
 									if($transacciones[$j]->usuario_bloqueado == 1)
 										$usuario_bloqueado = 'SI';
@@ -288,7 +298,7 @@ class ReporteriaController extends BaseController {
 										$flag_dependencia = 0;
 
 									$sheet->row($contador_filas+1, array(
-								    	$contador_filas,$codigo_solicitud,$codigo_requerimiento,$id_transaccion,$fecha_registro_requerimiento,$fecha_cierre_requerimiento,$fecha_registro_transaccion,$fecha_cierre_requerimiento,$accion,$aplicativo,$aplicativo_agrupado,$tipo_gestion,$canal,$entidad,$punto_venta,$cargo_canal,$perfil_aplicativo,$dni_usuario,$usuario_bloqueado,$estado_transaccion,$estado_requerimiento,$flag_dependencia
+								    	$contador_filas,$codigo_solicitud,$codigo_requerimiento,$id_transaccion,$fecha_registro_requerimiento,$fecha_cierre_requerimiento,$fecha_registro_transaccion,$fecha_cierre_requerimiento,$accion,$aplicativo,$aplicativo_agrupado,$tipo_gestion,$canal,$entidad,$punto_venta,$cargo_canal,$dni_usuario,$usuario_bloqueado,$estado_transaccion,$estado_requerimiento,$flag_dependencia
 										));
 									$contador_filas++;
 								}	

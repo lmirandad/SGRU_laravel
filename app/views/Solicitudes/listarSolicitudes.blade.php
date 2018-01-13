@@ -83,6 +83,7 @@
 										<th class="text-nowrap text-center">Código Solicitud</th>
 										<th class="text-nowrap text-center">Fecha de Solicitud</th>
 										<th class="text-nowrap text-center">Fecha de Asignación</th>
+										<th class="text-nowrap text-center">Número de Corte</th>
 										<th class="text-nowrap text-center">Tipo de Solicitud</th>
 										<th class="text-nowrap text-center">Estado Solicitud</th>
 									</tr>
@@ -101,6 +102,13 @@
 												{{date('d-m-Y',strtotime($solicitud_data->fecha_asignacion 	))}}
 											@else
 												NO ASIGNADO
+											@endif
+										</td>
+										<td class="text-nowrap text-center">
+											@if($solicitud_data->numero_corte != null)
+												CORTE N° {{$solicitud_data->numero_corte}}
+											@else
+												SOLICITUD MANUAL
 											@endif
 										</td>
 										<td class="text-nowrap text-center">

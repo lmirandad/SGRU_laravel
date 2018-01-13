@@ -148,7 +148,6 @@
 										<th class="text-nowrap text-center">Entidad</th>
 										<th class="text-nowrap text-center">Punto de Venta</th>
 										<th class="text-nowrap text-center">Cargo</th>
-										<th class="text-nowrap text-center">Perfil</th>
 										<th class="text-nowrap text-center">DNI Usuario</th>
 										<th class="text-nowrap text-center">Estado</th>
 										<th class="text-nowrap text-center">Observaciones</th>
@@ -223,13 +222,6 @@
 											<td class="text-nowrap text-center">
 												@if($transaccion->cargo_canal != null)
 													{{$transaccion->cargo_canal}}
-												@else
-													-
-												@endif
-											</td>
-											<td class="text-nowrap text-center">
-												@if($transaccion->perfil_aplicativo != null)
-													{{$transaccion->perfil_aplicativo}}
 												@else
 													-
 												@endif

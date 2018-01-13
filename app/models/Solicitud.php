@@ -43,14 +43,15 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		$query->leftJoin('sla','sla.idsla','=','solicitud.idsla')
 			  ->leftJoin('tipo_solicitudxsla','tipo_solicitudxsla.idsla','=','sla.idsla')
 			  ->leftJoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
-			  ->leftJoin('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
+			  ->leftJoin('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion')
+			  ->leftJoin('carga_archivo','solicitud.idcarga_archivo','=','carga_archivo.idcarga_archivo');
 
 		$query->where('solicitud.idestado_solicitud','!=',5)
 			  ->where('usuariosxasignacion.idusuario_asignado','=',$idusuario)
 			  ->where('usuariosxasignacion.estado_usuario_asignado','=',1)
 			  ->whereYear('solicitud.fecha_solicitud','=',$anho);
 
-		$query->select('solicitud.idsolicitud','solicitud.idestado_solicitud','tipo_solicitudxsla.sla_pendiente','tipo_solicitudxsla.sla_procesando','asignacion.fecha_asignacion','solicitud.fecha_inicio_procesando','solicitud.fecha_cierre');
+		$query->select('solicitud.idsolicitud','solicitud.idestado_solicitud','tipo_solicitudxsla.sla_pendiente','tipo_solicitudxsla.sla_procesando','asignacion.fecha_asignacion','solicitud.fecha_inicio_procesando','solicitud.fecha_cierre','carga_archivo.*');
 
 	}
 
@@ -94,11 +95,12 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->leftjoin('canal','canal.idcanal','=','entidad.idcanal')
 			  ->leftjoin('sector','sector.idsector','=','canal.idsector')
 			  ->leftjoin('herramienta','herramienta.idherramienta','=','solicitud.idherramienta')
-			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
+			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+			  ->leftJoin('carga_archivo','solicitud.idcarga_archivo','=','carga_archivo.idcarga_archivo');
 
 		$query->where('solicitud.codigo_solicitud','LIKE',$codigo_solicitud);
 
-		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','herramienta.nombre as nombre_herramienta');
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','herramienta.nombre as nombre_herramienta','carga_archivo.*');
 		
 		
 		return $query;
@@ -110,9 +112,13 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 	{
 		$query->leftjoin('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','solicitud.idtipo_solicitud')
 			  ->leftjoin('estado_solicitud','estado_solicitud.idestado_solicitud','=','solicitud.idestado_solicitud')
-			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
+			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+			  ->leftJoin('carga_archivo','solicitud.idcarga_archivo','=','carga_archivo.idcarga_archivo');
 
-		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','carga_archivo.*');
+
+		$query->orderBy('asignacion.fecha_asignacion','ASC');
+		$query->orderBy('solicitud.ticket_reasignado','DESC');
 		return $query;
 	}
 
@@ -123,7 +129,8 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->leftjoin('entidad','entidad.identidad','=','solicitud.identidad')
 			  ->leftjoin('canal','canal.idcanal','=','entidad.idcanal')
 			  ->leftjoin('sector','sector.idsector','=','canal.idsector')
-			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
+			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+			  ->leftJoin('carga_archivo','solicitud.idcarga_archivo','=','carga_archivo.idcarga_archivo');
 
 		if($codigo_solicitud != null)
 			$query->where('solicitud.codigo_solicitud','LIKE',$codigo_solicitud);
@@ -143,7 +150,9 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		if($idsector != 0)
 			$query->where('sector.idsector','=',$idsector);
 
-		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','carga_archivo.*');
+		$query->orderBy('asignacion.fecha_asignacion','ASC');
+		$query->orderBy('solicitud.ticket_reasignado','DESC');
 		return $query;
 	}
 
@@ -154,12 +163,15 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		$query->leftjoin('tipo_solicitud','tipo_solicitud.idtipo_solicitud','=','solicitud.idtipo_solicitud')
 			  ->leftjoin('estado_solicitud','estado_solicitud.idestado_solicitud','=','solicitud.idestado_solicitud')
 			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
-			  ->leftJoin('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
+			  ->leftJoin('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion')
+			  ->leftJoin('carga_archivo','solicitud.idcarga_archivo','=','carga_archivo.idcarga_archivo');
 
 		$query->where('usuariosxasignacion.idusuario_asignado','=',$idusuario);
 			  $query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
 
-		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','carga_archivo.*');
+		$query->orderBy('asignacion.fecha_asignacion','ASC');
+		$query->orderBy('solicitud.ticket_reasignado','DESC');
 		return $query;
 	}
 
@@ -171,7 +183,8 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->leftjoin('canal','canal.idcanal','=','entidad.idcanal')
 			  ->leftjoin('sector','sector.idsector','=','canal.idsector')
 			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
-			  ->leftJoin('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
+			  ->leftJoin('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion')
+			  ->leftJoin('carga_archivo','solicitud.idcarga_archivo','=','carga_archivo.idcarga_archivo');
 
 		$query->where('usuariosxasignacion.idusuario_asignado','=',$idusuario);
 		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
@@ -194,7 +207,9 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		if($idsector != 0)
 			$query->where('sector.idsector','=',$idsector);
 
-		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion');
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','carga_archivo.*');
+		$query->orderBy('asignacion.fecha_asignacion','ASC');
+		$query->orderBy('solicitud.ticket_reasignado','DESC');
 		return $query;
 	}
 
@@ -205,7 +220,8 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->leftjoin('canal','canal.idcanal','=','entidad.idcanal')
 			  ->leftjoin('sector','sector.idsector','=','canal.idsector')
 			  ->leftjoin('herramienta','herramienta.idherramienta','=','solicitud.idherramienta')
-			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud');
+			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+			  ->leftJoin('carga_archivo','solicitud.idcarga_archivo','=','carga_archivo.idcarga_archivo');
 
 		$query->where('solicitud.idestado_solicitud','=',$idestado_solicitud);
 		
@@ -215,7 +231,9 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			$query->whereYear('solicitud.fecha_solicitud','=',$anho_actual);
 
 		
-		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','herramienta.nombre as nombre_herramienta');
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','herramienta.nombre as nombre_herramienta','carga_archivo.*');
+		$query->orderBy('asignacion.fecha_asignacion','ASC');
+		$query->orderBy('solicitud.ticket_reasignado','DESC');
 		return $query;
 		
 	}
@@ -228,7 +246,8 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->leftjoin('sector','sector.idsector','=','canal.idsector')
 			  ->leftjoin('herramienta','herramienta.idherramienta','=','solicitud.idherramienta')
 			  ->leftjoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
-			  ->leftjoin('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
+			  ->leftjoin('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion')
+			  ->leftJoin('carga_archivo','solicitud.idcarga_archivo','=','carga_archivo.idcarga_archivo');
 
 		$query->where('solicitud.idestado_solicitud','=',$idestado_solicitud);
 		
@@ -242,7 +261,10 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		if($anho_actual != null)
 
 			$query->whereYear('solicitud.fecha_solicitud','=',$anho_actual);
-		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','herramienta.nombre as nombre_herramienta','usuariosxasignacion.idusuario_asignado as idusuario_asignado');
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','asignacion.fecha_asignacion as fecha_asignacion','herramienta.nombre as nombre_herramienta','usuariosxasignacion.idusuario_asignado as idusuario_asignado','carga_archivo.*');
+
+		$query->orderBy('asignacion.fecha_asignacion','ASC');
+		$query->orderBy('solicitud.ticket_reasignado','DESC');
 		return $query;
 	}
 
@@ -622,7 +644,8 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->leftjoin('estado_solicitud','estado_solicitud.idestado_solicitud','=','solicitud.idestado_solicitud')
 			  ->leftjoin('entidad','entidad.identidad','=','solicitud.identidad')
 			  ->leftjoin('canal','canal.idcanal','=','entidad.idcanal')
-			  ->leftjoin('sector','sector.idsector','=','canal.idsector');
+			  ->leftjoin('sector','sector.idsector','=','canal.idsector')
+			  ->leftJoin('carga_archivo','solicitud.idcarga_archivo','=','carga_archivo.idcarga_archivo');
 
 		
 		if($fecha_desde != "")
@@ -632,7 +655,7 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			$query->where('solicitud.fecha_solicitud','<=',date('Y-m-d H:i:s',strtotime('+23 hours +59 minutes +59 seconds',strtotime($fecha_hasta))));
 
 
-		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud');
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','carga_archivo.*');
 
 		return $query;
 	}

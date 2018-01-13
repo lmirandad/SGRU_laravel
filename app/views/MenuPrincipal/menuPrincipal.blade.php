@@ -169,6 +169,7 @@
 											<th class="text-nowrap text-center">Código Solicitud</th>
 											<th class="text-nowrap text-center">Fecha de Solicitud</th>
 											<th class="text-nowrap text-center">Fecha de Asignación</th>
+											<th class="text-nowrap text-center">Número de Corte</th>
 											<th class="text-nowrap text-center">Días de Asignación</th>
 											<th class="text-nowrap text-center">Tipo</th>
 											<th class="text-nowrap text-center">Estado</th>
@@ -195,6 +196,13 @@
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
+												@if($solicitud_data->numero_corte != null)
+													CORTE N° {{$solicitud_data->numero_corte}}
+												@else
+													SOLICITUD MANUAL
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
 												@if($solicitud_data->fecha_asignacion != null)
 													{{$diferencia_fechas_atendidos[$index]}}
 												@else
@@ -210,6 +218,9 @@
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
+												@if($solicitud_data->ticket_reasignado == 1)
+												 - <font color="red"><strong>reasignado</strong></font>
+												@endif
 											</td>											
 											<td class="text-nowrap text-center">
 												@if($solicitud_data->idherramienta != null)
@@ -247,6 +258,13 @@
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
+												@if($solicitud_data->numero_corte != null)
+													CORTE N° {{$solicitud_data->numero_corte}}
+												@else
+													SOLICITUD MANUAL
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
 												@if($solicitud_data->fecha_asignacion != null)
 													{{$diferencia_fechas_cerrados[$index]}}
 												@else
@@ -262,6 +280,9 @@
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
+												@if($solicitud_data->ticket_reasignado == 1)
+												 - <font color="red"><strong>reasignado</strong></font>
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												@if($solicitud_data->idherramienta != null)
@@ -299,6 +320,13 @@
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
+												@if($solicitud_data->numero_corte != null)
+													CORTE N° {{$solicitud_data->numero_corte}}
+												@else
+													SOLICITUD MANUAL
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
 												@if($solicitud_data->fecha_asignacion != null)
 													{{$diferencia_fechas_pendiente[$index]}}
 												@else
@@ -314,6 +342,9 @@
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
+												@if($solicitud_data->ticket_reasignado == 1)
+												 - <font color="red"><strong>reasignado</strong></font>
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												@if($solicitud_data->idherramienta != null)
@@ -334,10 +365,10 @@
 											</td>
 											<td class="text-nowrap text-center">
 												@if($solicitud_data->idestado_solicitud == 3) <!-- PENDIENTE -->
-													@if( $diferencia_fechas_trabajo_pendiente[$index] < $slas_data_pendiente[$index]->sla_pendiente )
+													@if( $diferencia_fechas_trabajo_pendiente[$index] < $slas_data_pendiente[$index]->sla_pendiente - 1 )
 													 	<!-- VERDE -->
 														<span style=" padding: 2px 11px; border-radius: 100%;background-color: #00C851;"></span>
-													@elseif( $diferencia_fechas_trabajo_pendiente[$index] == $slas_data_pendiente[$index]->sla_pendiente )
+													@elseif( $slas_data_pendiente[$index]->sla_pendiente - $diferencia_fechas_trabajo_pendiente[$index] <= 1 && $slas_data_pendiente[$index]->sla_pendiente - $diferencia_fechas_trabajo_pendiente[$index] >=0  )
 														<!-- AMBAR -->
 														<span style=" padding: 2px 11px; border-radius: 100%;background-color: #ffb74d;"></span>
 													@else
@@ -345,10 +376,10 @@
 														<span style=" padding: 2px 11px; border-radius: 100%;background-color: #ff4444;"></span>
 													@endif
 												@elseif ($solicitud_data->idestado_solicitud == 4) <!-- PROCESANDO -->
-													@if( $diferencia_fechas_trabajo_pendiente[$index] < $slas_data_pendiente[$index]->sla_procesando )
+													@if( $diferencia_fechas_trabajo_pendiente[$index] < $slas_data_pendiente[$index]->sla_procesando - 1 )
 													 	<!-- VERDE -->
 														<span style=" padding: 2px 11px; border-radius: 100%;background-color: #00C851;"></span>
-													@elseif( $diferencia_fechas_trabajo_pendiente[$index] == $slas_data_pendiente[$index]->sla_procesando )
+													@elseif( $slas_data_pendiente[$index]->sla_procesando - $diferencia_fechas_trabajo_pendiente[$index] <= 1 && $slas_data_pendiente[$index]->sla_procesando - $diferencia_fechas_trabajo_pendiente[$index] >=0 )
 														<!-- AMBAR -->
 														<span style=" padding: 2px 11px; border-radius: 100%;background-color: #ffb74d;"></span>
 													@else
@@ -377,6 +408,13 @@
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
+												@if($solicitud_data->numero_corte != null)
+													CORTE N° {{$solicitud_data->numero_corte}}
+												@else
+													SOLICITUD MANUAL
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
 												@if($solicitud_data->fecha_asignacion != null)
 													{{$diferencia_fechas_procesando[$index]}}
 												@else
@@ -392,6 +430,9 @@
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
+												@if($solicitud_data->ticket_reasignado == 1)
+												 - <font color="red"><strong>reasignado</strong></font>
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												@if($solicitud_data->idherramienta != null)
@@ -412,10 +453,10 @@
 											</td>
 											<td class="text-nowrap text-center">
 												@if($solicitud_data->idestado_solicitud == 3) <!-- PENDIENTE -->
-													@if( $diferencia_fechas_trabajo_procesando[$index] < $slas_data_procesando[$index]->sla_pendiente )
+													@if( $diferencia_fechas_trabajo_procesando[$index] < $slas_data_procesando[$index]->sla_pendiente - 1 )
 													 	<!-- VERDE -->
 														<span style=" padding: 2px 11px; border-radius: 100%;background-color: #00C851;"></span>
-													@elseif( $diferencia_fechas_trabajo_procesando[$index] == $slas_data_procesando[$index]->sla_pendiente )
+													@elseif( $slas_data_procesando[$index]->sla_pendiente - $diferencia_fechas_trabajo_procesando[$index] <= 1 && $slas_data_procesando[$index]->sla_pendiente - $diferencia_fechas_trabajo_procesando[$index] >=0 )
 														<!-- AMBAR -->
 														<span style=" padding: 2px 11px; border-radius: 100%;background-color: #ffb74d;"></span>
 													@else
@@ -423,10 +464,10 @@
 														<span style=" padding: 2px 11px; border-radius: 100%;background-color: #ff4444;"></span>
 													@endif
 												@elseif ($solicitud_data->idestado_solicitud == 4) <!-- PROCESANDO -->
-													@if( $diferencia_fechas_trabajo_procesando[$index] < $slas_data_procesando[$index]->sla_procesando )
+													@if( $diferencia_fechas_trabajo_procesando[$index] < $slas_data_procesando[$index]->sla_procesando - 1 )
 													 	<!-- VERDE -->
 														<span style=" padding: 2px 11px; border-radius: 100%;background-color: #00C851;"></span>
-													@elseif( $diferencia_fechas_trabajo_procesando[$index] == $slas_data_procesando[$index]->sla_procesando )
+													@elseif( $slas_data_procesando[$index]->sla_procesando - $diferencia_fechas_trabajo_procesando[$index] <=1 &&  $slas_data_procesando[$index]->sla_procesando - $diferencia_fechas_trabajo_procesando[$index] >=0 )
 														<!-- AMBAR -->
 														<span style=" padding: 2px 11px; border-radius: 100%;background-color: #ffb74d;"></span>
 													@else
@@ -455,6 +496,13 @@
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
+												@if($solicitud_data->numero_corte != null)
+													CORTE N° {{$solicitud_data->numero_corte}}
+												@else
+													SOLICITUD MANUAL
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
 												-												
 											</td>
 											<td class="text-nowrap text-center">
@@ -466,6 +514,9 @@
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
+												@if($solicitud_data->ticket_reasignado == 1)
+												 - <font color="red"><strong>reasignado</strong></font>
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												@if($solicitud_data->idherramienta != null)
@@ -503,6 +554,13 @@
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
+												@if($solicitud_data->numero_corte != null)
+													CORTE N° {{$solicitud_data->numero_corte}}
+												@else
+													SOLICITUD MANUAL
+												@endif
+											</td>
+											<td class="text-nowrap text-center">
 												@if($solicitud_data->fecha_asignacion != null)
 													{{$diferencia_fechas_anuladas[$index]}}
 												@else
@@ -518,6 +576,9 @@
 											</td>
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
+												@if($solicitud_data->ticket_reasignado == 1)
+												 - <font color="red"><strong>reasignado</strong></font>
+												@endif
 											</td>
 											<td class="text-nowrap text-center">
 												@if($solicitud_data->idherramienta != null)

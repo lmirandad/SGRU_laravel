@@ -122,11 +122,18 @@ function mostrar_datos_req(e,id)
 					nombre_canal = (arr_requerimientos[i].nombre_canal == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_canal ;  
 					nombre_entidad = (arr_requerimientos[i].nombre_entidad == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_entidad ;  
 					nombre_punto_venta = (arr_requerimientos[i].nombre_punto_venta == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_punto_venta ;  
-					
+					codigo_requerimiento = "";
+
 					if(arr_requerimientos[i].numero_documento == null)
 						numero_documento = "BLOQUEADO";
 					else
 						numero_documento = arr_requerimientos[i].numero_documento;
+
+					if(arr_requerimientos[i].codigo_requerimiento == null)
+						codigo_requerimiento = "SIN_REQ";
+					else
+						codigo_requerimiento = arr_requerimientos[i].codigo_requerimiento;
+
 
 
 					boton_atender = "<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-success btn-sm\" onclick=\"finalizar_requerimiento(event,"+arr_requerimientos[i].idtransaccion+")\" type=\"button\"><span class=\"lnr lnr-thumbs-up\"></span></button></div></td>";
@@ -134,14 +141,15 @@ function mostrar_datos_req(e,id)
 
 					data = "<tr>"
 			                +"<td class=\"text-nowrap text-center\">"+arr_requerimientos[i].idtransaccion+"</td>"
+			                +"<td class=\"text-nowrap text-center\" style=\"display:none\"><input type=\"text\" class=\"form-control\" name=\"idtransacciones[]\"  value = "+arr_requerimientos[i].idtransaccion+"></td>";
 			                +"<td class=\"text-nowrap text-center\" style=\"display:none\" id=\"idtransaccion"+i+"\">"+arr_requerimientos[i].idtransaccion+"</td>"	
 			                +"<td class=\"text-nowrap text-center\" style=\"display:none\"><input type=\"text\" class=\"form-control\" name=\"idrequerimientos[]\"  value = "+arr_requerimientos[i].idrequerimiento+"></td>";
 			                
 
 			        if(arr_requerimientos[i].idestado_transaccion == 3)
-			        	data = data +  "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\"  id=\"codigo_requerimiento"+arr_requerimientos[i].idrequerimiento+"\" value = "+arr_requerimientos[i].codigo_requerimiento+"></td>";       
+			        	data = data +  "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\"  id=\"codigo_requerimiento"+arr_requerimientos[i].idrequerimiento+"\" value = "+codigo_requerimiento+"></td>";       
 			        else
-			        	data = data + "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\" readonly id=\"codigo_requerimiento"+arr_requerimientos[i].idrequerimiento+"\" value = "+arr_requerimientos[i].codigo_requerimiento+"></td>";       
+			        	data = data + "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\" readonly id=\"codigo_requerimiento"+arr_requerimientos[i].idrequerimiento+"\" value = "+codigo_requerimiento+"></td>";       
 			                
 			         data = data +"<td class=\"text-nowrap text-center\">"+arr_requerimientos[i].accion_requerimiento+"</td>"
 			                +"<td class=\"text-nowrap text-center\">"+nombre_herramienta+"</td>"
@@ -151,7 +159,6 @@ function mostrar_datos_req(e,id)
 			                +"<td class=\"text-nowrap text-center\">"+nombre_entidad+"</td>"
 			                +"<td class=\"text-nowrap text-center\">"+nombre_punto_venta+"</td>"
 			                +"<td class=\"text-nowrap text-center\">"+arr_requerimientos[i].cargo_canal+"</td>"
-			                +"<td class=\"text-nowrap text-center\">"+arr_requerimientos[i].perfil_aplicativo+"</td>"
 			                +"<td class=\"text-nowrap text-center\">"+numero_documento+"</td>"
 			                +"<td class=\"text-nowrap text-center\"><strong>"+arr_requerimientos[i].nombre_estado_transaccion+"</strong></td>"
 			                +"<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-info btn-sm\" onclick=\"mostrar_observaciones(event,"+arr_requerimientos[i].idtransaccion+")\" type=\"button\"><span class=\"fa fa-search\"></span></button></div></td>";

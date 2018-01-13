@@ -37,6 +37,21 @@ class AsignacionController extends BaseController {
 				$carga_archivo->idestado_carga_archivo = 1;
 				$carga_archivo->idtipo_carga_archivo = 1;
 
+				$cargas = CargaArchivo::buscarUltimoCorte(date('Y-m-d'))->get();
+
+				if($cargas == null || $cargas->isEmpty())
+				{
+					//No hay cortes, este es el primero
+					$carga_archivo->numero_corte = 1;
+
+					
+				}else
+				{
+					$numero_corte = $cargas[0]->numero_corte;
+					$carga_archivo->numero_corte = $numero_corte + 1;
+					
+				}
+
 				$carga_archivo->save();
 
 				$array_codigos_no_procesados = array();
@@ -44,8 +59,8 @@ class AsignacionController extends BaseController {
 
 				// Por cada solicitud realizar los pasos 2 y 3
 				$herramienta_varios = Herramienta::buscarPorNombre('VARIOS')->get();
-			
-
+				
+				
 				for($i=0; $i<$cantidad_registros; $i++)
 				{
 					// 2. Registrar nueva solicitud
@@ -168,6 +183,7 @@ class AsignacionController extends BaseController {
 				{
 					$solicitud = new Solicitud;
 					$solicitud->codigo_solicitud = $codigos_rechazo[$i];
+					$solicitud->idcarga_archivo = $carga_archivo->idcarga_archivo;
 					if(strcmp($ids_entidad_rechazo[$i],'') ==0 )
 						$solicitud->identidad = null;
 					else

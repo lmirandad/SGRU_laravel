@@ -29,6 +29,7 @@ class PuntoVenta extends Eloquent implements UserInterface, RemindableInterface 
 	{
 		$query->where('punto_venta.identidad','=',$identidad);
 		$query->select('punto_venta.*');
+		$query->orderBy(DB::raw('CONVERT(integer,punto_venta.codigo_punto_venta)'),'ASC');
 		return $query;
 	}
 
