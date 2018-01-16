@@ -195,6 +195,19 @@ class SolicitudController extends BaseController {
 					else
 						$codigo_solicitud_ingresar = (int)$codigo_solicitud;
 
+					//2.5 Luego de estas validaciones se deberá revisar si la solicitud ya existe 
+					$solicitud = Solicitud::buscarPorCodigoSolicitud($codigo_solicitud_ingresar)->get();
+					if($solicitud == null || $solicitud->isEmpty())
+					{
+						//solicitud no existe, es una nueva
+						
+					}else
+					{
+						$obj_log["descripcion"] = "solicitud ya fue registrada en el sistema.";
+						array_push($logs_errores,$obj_log);
+						continue;
+					}
+
 					//3. VALIDACION DEL TIPO DE SOLICITUD GENERAL
 					if(strcmp($tipo_solicitud_gral,'') != 0)
 					{
@@ -390,18 +403,7 @@ class SolicitudController extends BaseController {
 
 					$obj_log["aplicativo"] = $nombre_herramienta;
 
-					//2.5 Luego de estas validaciones se deberá revisar si la solicitud ya existe 
-					$solicitud = Solicitud::buscarPorCodigoSolicitud($codigo_solicitud_ingresar)->get();
-					if($solicitud == null || $solicitud->isEmpty())
-					{
-						//solicitud no existe, es una nueva
-						
-					}else
-					{
-						$obj_log["descripcion"] = "solicitud ya fue registrada en el sistema.";
-						array_push($logs_errores,$obj_log);
-						continue;
-					}
+					
 					
 					$cantidad_registros_procesados++;
 					$solicitud_arreglo = [

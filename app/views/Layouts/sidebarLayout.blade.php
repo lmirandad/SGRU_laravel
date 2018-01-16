@@ -39,7 +39,9 @@
 					<div id="subPagesReporteria" class="collapse ">
 						<ul class="nav"> 
 							<li><a href="{{URL::to('/reportes')}}"><i class="fa fa-file-text-o "></i><span>Reportes</span></a></li> 
-							<li><a href="{{URL::to('/dashboard/0')}}"><i class="lnr lnr-pie-chart"></i><span>Dashboard</span></a></li>
+							<!--
+								<li><a href="{{URL::to('/dashboard/0')}}"><i class="lnr lnr-pie-chart"></i><span>Dashboard</span></a></li>
+							-->
 						</ul>
 					</div>
 				</li>

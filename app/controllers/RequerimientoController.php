@@ -625,6 +625,16 @@ class RequerimientoController extends BaseController {
 					
 				$idtransaccion = Input::get('requerimiento_id_finalizar');
 				$transaccion = Transaccion::find($idtransaccion);
+
+				$requerimiento = Requerimiento::find($transaccion->idrequerimiento);
+				$codigo_requerimiento = $requerimiento->codigo_requerimiento ;
+
+				if(strcmp($codigo_requerimiento, "SIN_REQ") == 0 || strcmp($codigo_requerimiento, '') == 0)
+				{
+					return Redirect::to('/principal_gestor')->with('error','No se pudo finalizar la atención de la transaccion N°'.$transaccion->idtransaccion. '. La transaccion no se encuentra asociada a un requerimiento.');	
+				}
+
+
 				$transaccion->idestado_transaccion = 1;
 				$transaccion->fecha_cierre = date('Y-m-d H:i:s');
 				$transaccion->save();
