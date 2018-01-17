@@ -220,6 +220,7 @@ Route::group(array('prefix'=>'requerimientos', 'before'=>'auth'),function(){
 	Route::post('/rechazar_requerimiento','RequerimientoController@rechazar_requerimiento');
 	Route::post('/submit_rechazar_requerimiento','RequerimientoController@submit_rechazar_requerimiento');
 	Route::post('/submit_finalizar_requerimiento','RequerimientoController@submit_finalizar_requerimiento');
+	Route::post('/submit_procesar_requerimiento','RequerimientoController@submit_procesar_requerimiento');
 	Route::post('/submit_eliminar_base','RequerimientoController@submit_eliminar_base');
 });
 

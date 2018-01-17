@@ -1098,31 +1098,20 @@ class SolicitudController extends BaseController {
 					$solicitud->fecha_cierre = date('Y-m-d H:i:s');
 					$solicitud->idestado_solicitud = 6;
 
-					//A su vez se deben rechazar los requerimientos
-					$requerimientos = Requerimiento::buscarRequerimientosPorSolicitud($solicitud->idsolicitud)->get();
-					if($requerimientos != null && !$requerimientos->isEmpty())
+					//A su vez se deben rechazar las transacciones
+					$transacciones = Transaccion::buscarTransaccionesPorSolicitud($solicitud->idsolicitud)->get();
+					if($transacciones != null && !$transacciones->isEmpty())
 					{
-						$cantidad_requerimientos = count($requerimientos);
-						for($i = 0; $i<$cantidad_requerimientos;$i++)
+						$cantidad_transacciones = count($transacciones);
+						for($i = 0; $i<$cantidad_transacciones;$i++)
 						{
-							$transacciones = Transaccion::buscarTransaccionesPorRequerimiento($requerimientos[$i]->idrequerimiento)->get();
-							if($transacciones!=null && !$transacciones->isEmpty())
-							{
-								$cantidad_transacciones = count($transacciones);
-								for($j=0;$j<$cantidad_transacciones;$j++){
-									$transacciones[$j]->idestado_transaccion = 2;
-									$transacciones[$j]->fecha_cierre = date('Y-m-d H:i:s');
-									if($transacciones[$j]->usuario_bloqueado == 1)
-										$transacciones[$j]->observaciones = 'Usuario Bloqueado - Solicitud anulada por el usuario';
-									else
-										$transacciones[$j]->observaciones = 'Solicitud anulada por el usuario';
-									$transacciones[$j]->save();
-								}
-								$requerimientos[$i]->idestado_requerimiento = 2;
-								$requerimientos[$i]->fecha_cierre = date('Y-m-d H:i:s');
-								$requerimientos[$i]->observaciones = $requerimientos[$i]->observaciones.'Solicitud anulada por el usuario';
-								$requerimientos[$i]->save();
-							}
+							$transacciones[$i]->idestado_transaccion = 2;
+							$transacciones[$i]->fecha_cierre = date('Y-m-d H:i:s');
+							if($transacciones[$i]->usuario_bloqueado == 1)
+								$transacciones[$i]->observaciones = 'Usuario Bloqueado - Solicitud anulada por el usuario';
+							else
+								$transacciones[$i]->observaciones = 'Solicitud anulada por el usuario';
+							$transacciones[$i]->save();							
 						}
 					}
 

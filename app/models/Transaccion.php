@@ -25,25 +25,10 @@ class Transaccion extends Eloquent implements UserInterface, RemindableInterface
 	 * @var array
 	 */
 
-	public function scopeBuscarTransaccionesPorRequerimiento($query,$idrequerimiento)
-	{
-		$query->where('transaccion.idrequerimiento','=',$idrequerimiento);
-		$query->select('transaccion.*');
-		return $query;
-	}
-
-	public function scopeBuscarTransaccionesEstadoPorRequerimiento($query,$idrequerimiento,$idestado)
-	{
-		$query->where('transaccion.idrequerimiento','=',$idrequerimiento);
-		$query->where('transaccion.idestado_transaccion','=',$idestado);
-		$query->select('transaccion.*');
-		return $query;
-	}
-
+	
 	public function scopeBuscarTransaccionesEstadoPorSolicitud($query,$idsolicitud,$idestado)
 	{
-		$query->join('requerimiento','requerimiento.idrequerimiento','=','transaccion.idrequerimiento')
-			  ->join('solicitud','solicitud.idsolicitud','=','requerimiento.idsolicitud');
+		$query->join('solicitud','solicitud.idsolicitud','=','transaccion.idsolicitud');
 		$query->where('solicitud.idsolicitud','=',$idsolicitud)
 			  ->where('transaccion.idestado_transaccion','=',$idestado);
 		$query->select('transaccion.*');
@@ -52,34 +37,17 @@ class Transaccion extends Eloquent implements UserInterface, RemindableInterface
 
 	public function scopeBuscarTransaccionesPorSolicitud($query,$solicitud)
 	{
-		$query->join('requerimiento','requerimiento.idrequerimiento','=','transaccion.idrequerimiento')
-			  ->join('estado_transaccion','estado_transaccion.idestado_transaccion','=','transaccion.idestado_transaccion')
-			  ->join('solicitud','solicitud.idsolicitud','=','requerimiento.idsolicitud')
-			  ->leftJoin('herramienta','herramienta.idherramienta','=','requerimiento.idherramienta')
+		$query->join('estado_transaccion','estado_transaccion.idestado_transaccion','=','transaccion.idestado_transaccion')
+			  ->join('solicitud','solicitud.idsolicitud','=','transaccion.idsolicitud')
+			  ->leftJoin('herramienta','herramienta.idherramienta','=','transaccion.idherramienta')
 			  ->leftJoin('denominacion_herramienta','denominacion_herramienta.iddenominacion_herramienta','=','herramienta.iddenominacion_herramienta')
 			  ->leftJoin('tipo_requerimiento','tipo_requerimiento.idtipo_requerimiento','=','herramienta.idtipo_requerimiento')
-			  ->leftJoin('punto_venta','punto_venta.idpunto_venta','=','requerimiento.idpunto_venta')
+			  ->leftJoin('punto_venta','punto_venta.idpunto_venta','=','transaccion.idpunto_venta')
 			  ->leftJoin('entidad','entidad.identidad','=','punto_venta.identidad')
 			  ->leftJoin('canal','canal.idcanal','=','entidad.idcanal')
 			  ->where('solicitud.idsolicitud','=',$solicitud)
-			  ->select('requerimiento.*','transaccion.*','estado_transaccion.nombre as nombre_estado_transaccion','herramienta.nombre as nombre_herramienta','denominacion_herramienta.nombre as nombre_denominacion','tipo_requerimiento.nombre as nombre_tipo_requerimiento','punto_venta.nombre as nombre_punto_venta','entidad.nombre as nombre_entidad','canal.nombre as nombre_canal');
+			  ->select('transaccion.*','estado_transaccion.nombre as nombre_estado_transaccion','herramienta.nombre as nombre_herramienta','denominacion_herramienta.nombre as nombre_denominacion','tipo_requerimiento.nombre as nombre_tipo_requerimiento','punto_venta.nombre as nombre_punto_venta','entidad.nombre as nombre_entidad','canal.nombre as nombre_canal');
 		return $query;
-	}
-
-	public function scopeBuscarTransaccionPorIdRequerimiento($query,$idrequerimiento)
-	{
-		$query->join('requerimiento','requerimiento.idrequerimiento','=','transaccion.idrequerimiento')
-			  ->join('estado_transaccion','estado_transaccion.idestado_transaccion','=','transaccion.idestado_transaccion')
-			  ->leftJoin('herramienta','herramienta.idherramienta','=','requerimiento.idherramienta')
-			  ->leftJoin('denominacion_herramienta','denominacion_herramienta.iddenominacion_herramienta','=','herramienta.iddenominacion_herramienta')
-			  ->leftJoin('tipo_requerimiento','tipo_requerimiento.idtipo_requerimiento','=','herramienta.idtipo_requerimiento')
-			  ->leftJoin('punto_venta','punto_venta.idpunto_venta','=','requerimiento.idpunto_venta')
-			  ->leftJoin('entidad','entidad.identidad','=','punto_venta.identidad')
-			  ->leftJoin('canal','canal.idcanal','=','entidad.idcanal')
-			  ->leftJoin('solicitud','solicitud.idsolicitud','=','requerimiento.idsolicitud')
-			  ->where('requerimiento.idrequerimiento','=',$idrequerimiento)
-			  ->select('requerimiento.*','transaccion.*','estado_transaccion.nombre as nombre_estado_transaccion','herramienta.nombre as nombre_herramienta','denominacion_herramienta.nombre as nombre_denominacion','tipo_requerimiento.nombre as nombre_tipo_requerimiento','punto_venta.nombre as nombre_punto_venta','entidad.nombre as nombre_entidad','canal.nombre as nombre_canal','solicitud.*');
-		return $query;	
 	}
 
 	/*+++++++++++++++++++++++++++++++++++++++++DASHBOARD ANUAL+++++++++++++++++++++++++++++++++++*/

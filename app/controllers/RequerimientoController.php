@@ -23,14 +23,18 @@ class RequerimientoController extends BaseController {
 
 			    $solicitud_id = Input::get('solicitud_id');
 
+			    $solicitud = Solicitud::find($solicitud_id);
+
 			    $resultado = Excel::load($file_name)->get();
 
-			 	$cantidad_requerimientos = count($resultado);
+			 	$cantidad_transacciones = count($resultado);
 			    $herramientas = Herramienta::listarHerramientas()->get();
 			    $array_log = array();
-			   // echo '<pre>'; var_dump('cantidad_requerimientos '.$cantidad_requerimientos);echo '</pre>';
 
-			    for($i = 0; $i < $cantidad_requerimientos; $i++)
+			    $mensaje_error = '';
+			   // echo '<pre>'; var_dump('cantidad_transacciones '.$cantidad_transacciones);echo '</pre>';
+
+			    for($i = 0; $i < $cantidad_transacciones; $i++)
 			    {
 			    	//revisar dato por dato
 			    	$canal = $resultado[$i][0];
@@ -63,9 +67,11 @@ class RequerimientoController extends BaseController {
 			    	//3. documento
 			    	if($documento == null || !ctype_digit($documento))
 			    	{
-			    		$observacion_requerimiento = $observacion_requerimiento."Requerimiento sin DNI válido.";
+			    		$observacion_requerimiento = $observacion_requerimiento."Transaccion sin DNI válido.";
 			    		$obj_log["descripcion"] = $obj_log["descripcion"].$observacion_requerimiento.'/';
 			    		$usuario_valido = false;
+			    		$mensaje_error = $mensaje_error.'Registro N° '.($i+1).' no registrado. Transaccion sin DNI válido<br>';
+			    		continue;
 
 			    	}else{			    		
 			    		//validacion lista vena u observados
@@ -94,102 +100,86 @@ class RequerimientoController extends BaseController {
 			    		}
 			    	}
 
-			    	//echo '<pre>'; var_dump('usuario_bloqueado '.$usuario_bloqueado);echo '</pre>';
+			    	//es un nuevo transaccion
+		    		$transaccion = new Transaccion;
+		    		$transaccion->fecha_registro = date('Y-m-d H:i:s');
+			    	$transaccion->codigo_requerimiento = $codigo_requerimiento;
+			    	$transaccion->accion_requerimiento = $accion;
 
-			    	//validar si el codigo de requerimiento ya fue creado anteriormente
-			    	$busqueda_requerimiento = Requerimiento::BuscarRequerimientosPorCodigoRequerimiento($codigo_requerimiento,$solicitud_id)->get();
-			    	$requerimiento = null;
-
-
-			    	//En caso que no sea encontrado, se creará uno nuevo pero también se validará si se puede registrar.
-			    	if($busqueda_requerimiento == null || $busqueda_requerimiento->isEmpty())
+			    	//2. Aplicativo
+			    	if($aplicativo == null || strcmp($aplicativo,'')==0)
 			    	{
-			    		//es un nuevo requerimiento
-			    		$requerimiento = new Requerimiento;
-			    		$requerimiento->fecha_registro = date('Y-m-d H:i:s');
-				    	$requerimiento->codigo_requerimiento = $codigo_requerimiento;
-				    	$requerimiento->accion_requerimiento = $accion;
-
-				    	//2. Aplicativo
-				    	if($aplicativo == null || strcmp($aplicativo,'')==0)
-				    	{
-				    		$observacion_requerimiento = $observacion_requerimiento."Requerimiento sin aplicativo (Requerimiento no creado)|";
-				    		$obj_log["descripcion"] = $obj_log["descripcion"].$observacion_requerimiento.'-';
-				    		$crear_requerimiento = false;
-				    	}else
-				    	{
-				    		$idherramienta = RequerimientoController::buscarHerramienta($aplicativo,$herramientas);
-
-				    		if($idherramienta == 0)
-				    		{
-				    			$observacion_requerimiento = $observacion_requerimiento."Herramienta no existente (Requerimiento no creado)|";
-				    			$crear_requerimiento = false;
-				    			$obj_log["descripcion"] = $obj_log["descripcion"].$observacion_requerimiento.'-';
-				    		}else
-				    			$requerimiento->idherramienta = $idherramienta;
-				    	}
-
-				    	//4. Punto de Venta
-				    	if($punto_venta == null || strcmp($punto_venta,'')==0)
-				    	{
-				    		$observacion_requerimiento = $observacion_requerimiento."Requerimiento sin punto de venta (Requerimiento no creado)|";
-				    		$crear_requerimiento = false;
-				    		$obj_log["descripcion"] = $obj_log["descripcion"].$observacion_requerimiento.'-';
-				    	}else{
-				    		$idpunto_venta = RequerimientoController::buscarPuntoVenta($punto_venta);
-				    		if($idpunto_venta == 0)
-				    		{
-				    			$observacion_requerimiento = $observacion_requerimiento."Punto de Venta no existente (Requerimiento no creado)|";
-				    			$crear_requerimiento = false;
-				    			$obj_log["descripcion"] = $obj_log["descripcion"].$observacion_requerimiento.'-';
-				    		}else{
-				    			$requerimiento->idpunto_venta =$idpunto_venta;
-				    		}
-				    	}
-
-				    	//si el flag es true, entonces se termina de completar el requerimiento con las observaciones pendientes
-				    	if($crear_requerimiento == false)
-				    	{
-				    		/*$requerimiento->observaciones = $resultado_registro;
-				    		$requerimiento->idestado_requerimiento = 2;
-							$requerimiento->fecha_cierre = date('Y-m-d H:i:s');*/
-							//No se registrará el requerimiento, se hace el salto
-							$log = new LogCargaFur;
-							$log->numero_fila = $obj_log["numero_fila"];
-							$log->resultado = $obj_log["descripcion"];
-							$log->nombre_archivo = $file_name;
-							$log->idrequerimiento = $requerimiento->idrequerimiento;
-							$log->iduser_created_by = $data["user"]->id;
-							$log->save();
-							//array_push($array_log, $obj_log);
-							continue;
-				    	}else
-				    	{
-				    		//se creará el requerimiento pero tambien hay que validar si el usuario a crear en la trx es valido
-				    		$requerimiento->observaciones = null;
-				    		$requerimiento->idestado_requerimiento = 3;
-				    	}
-
-				    	$requerimiento->idsolicitud = $solicitud_id;
-				    	$requerimiento->iduser_created_by = $data["user"]->id;
-				    	$obj_log["descripcion"] = $obj_log["descripcion"].'Requerimiento nuevo creado|';
-				    	$requerimiento->save();
-
-
-
+			    		$observacion_requerimiento = $observacion_requerimiento."Requerimiento sin aplicativo (Requerimiento no creado)|";
+			    		$obj_log["descripcion"] = $obj_log["descripcion"].$observacion_requerimiento.'-';
+			    		$crear_requerimiento = false;
+			    		$mensaje_error = $mensaje_error.'Registro N° '.($i+1).' no registrado. Herramienta no existente <br>';
 			    	}else
 			    	{
-			    		//quiere decir que el requerimiento ya existe por lo tanto no se modificará su información
-			    		$requerimiento = $busqueda_requerimiento[0];
+			    		$idherramienta = RequerimientoController::buscarHerramienta($aplicativo,$herramientas);
+
+			    		if($idherramienta == 0)
+			    		{
+			    			$observacion_requerimiento = $observacion_requerimiento."Herramienta no existente (Requerimiento no creado)|";
+			    			$crear_requerimiento = false;
+			    			$obj_log["descripcion"] = $obj_log["descripcion"].$observacion_requerimiento.'-';
+			    			$mensaje_error = $mensaje_error.'Registro N° '.($i+1).' no registrado. Herramienta no existente <br>';
+			    			continue;
+			    		}else
+			    			$transaccion->idherramienta = $idherramienta;
 			    	}
+
+			    	//4. Punto de Venta
+			    	if($punto_venta == null || strcmp($punto_venta,'')==0)
+			    	{
+			    		$observacion_requerimiento = $observacion_requerimiento."Requerimiento sin punto de venta (Requerimiento no creado)|";
+			    		$crear_requerimiento = false;
+			    		$obj_log["descripcion"] = $obj_log["descripcion"].$observacion_requerimiento.'-';
+			    		$mensaje_error = $mensaje_error.'Registro N° '.($i+1).' no registrado. Punto de Venta no existente <br>';
+			    	}else{
+			    		$idpunto_venta = RequerimientoController::buscarPuntoVenta($punto_venta);
+			    		if($idpunto_venta == 0)
+			    		{
+			    			$observacion_requerimiento = $observacion_requerimiento."Punto de Venta no existente (Requerimiento no creado)|";
+			    			$crear_requerimiento = false;
+			    			$obj_log["descripcion"] = $obj_log["descripcion"].$observacion_requerimiento.'-';
+			    			$mensaje_error = $mensaje_error.'Registro N° '.($i+1).' no registrado. Punto de Venta no existente <br>';
+			    			continue;
+			    		}else{
+			    			$transaccion->idpunto_venta =$idpunto_venta;
+			    		}
+			    	}
+
+			    	//si el flag es true, entonces se termina de completar el requerimiento con las observaciones pendientes
+			    	if($crear_requerimiento == false)
+			    	{
+			    		$log = new LogCargaFur;
+						$log->numero_fila = $obj_log["numero_fila"];
+						$log->resultado = $obj_log["descripcion"];
+						$log->nombre_archivo = $file_name;
+						$log->idtransaccion = $transaccion->idtransaccion;
+						$log->iduser_created_by = $data["user"]->id;
+						$log->save();
+						//array_push($array_log, $obj_log);
+						continue;
+			    	}else
+			    	{
+			    		//se creará el requerimiento pero tambien hay que validar si el usuario a crear en la trx es valido
+			    		$transaccion->observaciones = null;
+			    		$transaccion->idestado_transaccion = 3;
+			    	}
+
+			    	$transaccion->idsolicitud = $solicitud_id;
+			    	$transaccion->iduser_created_by = $data["user"]->id;
+			    	$obj_log["descripcion"] = $obj_log["descripcion"].'Requerimiento nuevo creado|';
+
+			    	$transaccion->save();
+
 
 			    	//CREACION DE LA TRANSACCION
 			    	// Validamos nuevamente si el usuario era válido
 			    	if($usuario_valido == true)
 			    	{
 
-				    	$transaccion = new Transaccion;
-				    	$transaccion->fecha_registro = date('Y-m-d H:i:s');
 				    	$transaccion->cargo_canal = $cargo;
 				    	$transaccion->numero_documento = $documento;
 				    	$transaccion->nombre_usuario = $nombre;
@@ -200,23 +190,21 @@ class RequerimientoController extends BaseController {
 				    		$transaccion->fecha_cierre = date('Y-m-d H:i:s');
 				    		$transaccion->observaciones = $observacion_transaccion;
 				    		$obj_log["descripcion"] = $obj_log["descripcion"].'Transaccion nueva creada (con estado rechazado)|';
-
+				    		$mensaje_error = $mensaje_error.'Registro N° '.($i+1).' registrado. El usuario está bloqueado (Transacción Rechazada) <br>';
 				    	}else
 				    	{
 				    		$transaccion->usuario_bloqueado = 0;
 				    		$transaccion->idestado_transaccion = 3;
 				    		$transaccion->observaciones = null;
+				    		$mensaje_error = $mensaje_error.'Registro N° '.($i+1).' registrado con éxito<br>';
 				    	}
-				    	$obj_log["descripcion"] = $obj_log["descripcion"].'Transaccion nueva creada|';
-				    	$transaccion->iduser_created_by = $data["user"]->id;
-				    	$transaccion->idrequerimiento = $requerimiento->idrequerimiento;
+				    	
 				    	$transaccion->save();
 			    	
 			    	}else
 			    	{
 			    		// en caso que no sea valido se creará la transaccion pero rechazada
-			    		$transaccion = new Transaccion;
-				    	$transaccion->fecha_registro = date('Y-m-d H:i:s');
+			    		$transaccion->fecha_cierre = date('Y-m-d H:i:s');
 				    	$transaccion->cargo_canal = $cargo;
 				    	$transaccion->numero_documento = null;
 				    	$transaccion->nombre_usuario = $nombre;
@@ -224,7 +212,6 @@ class RequerimientoController extends BaseController {
 			    		$transaccion->idestado_transaccion = 2;
 			    		$transaccion->observaciones = null;
 			    		$transaccion->iduser_created_by = $data["user"]->id;
-			    		$transaccion->idrequerimiento = $requerimiento->idrequerimiento;
 			    		$transaccion->save();
 			    		$obj_log["descripcion"] = $obj_log["descripcion"].'Transaccion nueva creada (con estado rechazado)|';
 			    	}
@@ -234,7 +221,7 @@ class RequerimientoController extends BaseController {
 					$log->numero_fila = $obj_log["numero_fila"];
 					$log->resultado = $obj_log["descripcion"];
 					$log->nombre_archivo = $file_name;
-					$log->idrequerimiento = $requerimiento->idrequerimiento;
+					$log->idtransaccion = $transaccion->idtransaccion;
 					$log->iduser_created_by = $data["user"]->id;
 					$log->save();
 			    }
@@ -245,53 +232,37 @@ class RequerimientoController extends BaseController {
 		    	$solicitud->fecha_inicio_procesando = date('Y-m-d H:i:s');
 		    	$solicitud->save();
 
-
+		    	Session::flash('info','<strong>RESULTADO DE LA CARGA</strong><br>'.$mensaje_error);
+		    	
 		    	//COMO TODOS LOS REQUERIMIENTOS ESTAN PENDIENTES ENTONCES VALIDAMOS SUS TRANSACCIONES
-		    	$requerimientos = Requerimiento::buscarRequerimientosPorSolicitud($solicitud->idsolicitud)->get();
+		    	$transacciones = Transaccion::buscarTransaccionesPorSolicitud($solicitud->idsolicitud)->get();
 
-		    	if($requerimientos != null && !$requerimientos->isEmpty())
+		    	if($transacciones != null && !$transacciones->isEmpty())
 		    	{
-		    		$cantidad_reques = count($requerimientos);
-		    		for($i = 0; $i < $cantidad_reques; $i++)
+		    		$cantidad_transacciones_totales = count($transacciones);
+		    		$transacciones_rechazadas = Transaccion::buscarTransaccionesEstadoPorSolicitud($solicitud->idsolicitud,2)->get();
+
+		    		if($transacciones_rechazadas != null && !$transacciones_rechazadas->isEmpty())
 		    		{
-		    			$transacciones = Transaccion::buscarTransaccionesPorRequerimiento($requerimientos[$i]->idrequerimiento)->get();
-		    			$transacciones_rechazadas = Transaccion::buscarTransaccionesEstadoPorRequerimiento($requerimientos[$i]->idrequerimiento,2)->get();
-		    			if(($transacciones != null && !$transacciones->isEmpty()) && ($transacciones_rechazadas != null && !$transacciones_rechazadas->isEmpty()) )
+		    			$cantidad_transacciones_rechazadas = count($transacciones_rechazadas);
+		    			if($cantidad_transacciones_totales == $cantidad_transacciones_rechazadas)
 		    			{
-		    				if(count($transacciones) == count($transacciones_rechazadas))
-		    				{
-		    					//quiere decir que todos están rechazados, entonces rechazamos el requerimiento
-		    					$requerimientos[$i]->observaciones = $requerimientos[$i]->observaciones.'\n'.'Transacciones rechazadas'; 
-		    					$requerimientos[$i]->idestado_requerimiento = 2;
-		    					$requerimientos[$i]->fecha_cierre = date('Y-m-d H:i:s');
-		    					$requerimientos[$i]->save();
-		    				}
+		    				//si es la misma cantidad entonces se devuelve el pedido
+		    				$solicitud->idestado_solicitud = 2;
+		    				$solicitud->fecha_inicio_procesando = date('Y-m-d H:i:s');
+		    				$solicitud->fecha_cierre = date('Y-m-d H:i:s');
+		    				$solicitud->save();
+		    				return Redirect::to('/principal_gestor')->with('message','Se procedió a cerrar la solicitud '.$solicitud->codigo_solicitud.'.<br>Las transacciones que se registraron en el sistema fueron rechazadas puesto que los usuarios se encuentran bloqueados en Lista Vena u Observados.');
 		    			}
-		    		}		    		
+		    		}
 		    	}else{
 		    		$solicitud->idestado_solicitud = 3;
     				$solicitud->fecha_inicio_procesando = null;
     				$solicitud->save();
     				return Redirect::to('/principal_gestor')->with('error','No Se procedieron a cargar los requerimientos de la solicitud '.$solicitud->codigo_solicitud.'.<br>Posibles motivos:<br>- No existen los puntos de venta asociados.<br>- Los aplicativos no existen en el sistema.');
 		    	}
-
-		    	//ahora comparamos la cantidad de requerimientos rechazadas vs los totales
-	    		//comparamos a nivel de transacciones para definir si es cerrado con observaciones
-	    		$transacciones_solicitud = Transaccion::buscarTransaccionesPorSolicitud($solicitud->idsolicitud)->get();
-	    		$transacciones_rechazadas = Transaccion::buscarTransaccionesEstadoPorSolicitud($solicitud->idsolicitud,2)->get();
-	    		if($transacciones_rechazadas != null && !$transacciones_rechazadas->isEmpty())
-	    		{
-	    			if(count($transacciones_rechazadas) == count($transacciones_solicitud))
-	    			{
-	    				//se cierra la solicitud puesto que tiene todos sus solicitudes rechazadas
-	    				$solicitud->idestado_solicitud = 2;
-	    				$solicitud->fecha_cierre = date('Y-m-d H:i:s');
-	    				$solicitud->save();
-	    			}
-	    		}
-
 						    	
-				return Redirect::to('/principal_gestor')->with('message','Se procedieron a cargar los requerimientos de la solicitud '.$solicitud->codigo_solicitud);
+				return Redirect::to('/principal_gestor')->with('message','Se procedieron a cargar las transacciones de la solicitud '.$solicitud->codigo_solicitud);
 			}else{
 				return View::make('error/error',$data);
 			}
@@ -446,77 +417,49 @@ class RequerimientoController extends BaseController {
 
 				$cantidad_transacciones = count($idtransacciones);
 
+				$mensaje = '';
+
 				for($i = 0;$i < $cantidad_transacciones; $i++)
 				{
 					
-					$transaccion = Transaccion::find($idtransacciones[$i]);
-					
-					$requerimiento = Requerimiento::find($transaccion->idrequerimiento);
-					
-					//Comarar si el codigo de requerimiento es igual al nuevo que se está tipiando
-					if(strcmp($requerimiento->codigo_requerimiento,$codigos[$i]) != 0)
+					if(strcmp($codigos[$i], 'SIN_REQ') != 0)
 					{
-						//Son diferentes, validamos si existe el requerimiento de esa solicitud;
-						$requerimiento_codigo = Requerimiento::buscarRequerimientosPorCodigoRequerimiento($codigos[$i],$idsolicitud)->get();
 						
-						if($requerimiento_codigo == null || $requerimiento_codigo->isEmpty())
+						$transaccion = Transaccion::find($idtransacciones[$i]);
+						$herramienta = Herramienta::find($transaccion->idherramienta);
+						$tipo_requerimiento = TipoRequerimiento::find($herramienta->idtipo_requerimiento);
+
+						if($tipo_requerimiento->idtipo_requerimiento == 6)
 						{
-							//no existe la solicitud que se ha ingresado en los forms, entonces se debe proceder a crear
-							
-							$nuevo_req = new Requerimiento;
-							$nuevo_req->fecha_registro = $requerimiento->fecha_registro;
-							$nuevo_req->fecha_cierre = $requerimiento->fecha_cierre;
-							$nuevo_req->idherramienta = $requerimiento->idherramienta;
-							$nuevo_req->idpunto_venta = $requerimiento->idpunto_venta;
-							$nuevo_req->observaciones = $requerimiento->observaciones;
-							$nuevo_req->idestado_requerimiento = $requerimiento->idestado_requerimiento;
-							$nuevo_req->idsolicitud = $requerimiento->idsolicitud;
-							$nuevo_req->accion_requerimiento = $requerimiento->accion_requerimiento;
-							$nuevo_req->iduser_created_by = $requerimiento->iduser_created_by;
-							$nuevo_req->codigo_requerimiento = $codigos[$i];
-							$nuevo_req->save();
-							$transaccion->idrequerimiento = $nuevo_req->idrequerimiento;
-							$transaccion->save();
+							//ES UN REMEDY, ENTONCES VALIDAMOS SI EL CODIGO INICIA EN REQ
+							//entonces se valida el codigo
+							if(strlen($codigos[$i]) <= 3 || strcmp(substr($codigos[$i],0,3),'REQ') != 0 )
+							{
+								$mensaje = $mensaje.'Código de la transacción N° '.$idtransacciones[$i].' no corresponde a un REMEDY';
+							}else{
+								$transaccion->codigo_requerimiento = $codigos[$i];
+								$transaccion->save();
+							} 
 						}else
 						{
-							//si existe, debemos mover la transacción a este nuevo requerimiento
-							$transaccion->idrequerimiento = $requerimiento_codigo[0]->idrequerimiento;
+							$transaccion->codigo_requerimiento = $codigos[$i];
 							$transaccion->save();
 						}
 					}
+				
 				}
 
-				//validamos si existen registros vacíos.
-				$requerimientos = Requerimiento::buscarRequerimientosPorSolicitud($idsolicitud)->get();
-				if($requerimientos != null && !$requerimientos->isEmpty())
+				$mensaje_final = '';
+
+				if(strcmp($mensaje, '') != 0 ){
+					$mensaje_final = 'Se actualizaron los códigos de las transacciones del ticket '.$solicitud->codigo_solicitud.' con excepción de los siguientes:<br>'.$mensaje;
+					Session::flash('error',$mensaje_final);
+				}else
 				{
-					$cantidad_requerimientos = count($requerimientos);
-
-					for($i=0;$i<$cantidad_requerimientos;$i++)
-					{
-						$transacciones_requerimiento = Transaccion::buscarTransaccionesPorRequerimiento($requerimientos[$i]->idrequerimiento)->get();
-
-						if($transacciones_requerimiento == null || $transacciones_requerimiento->isEmpty() || count($transacciones_requerimiento) == 0)
-						{
-							//se borra el requerimiento
-							$logs = LogCargaFur::buscarLogCargaPorIdRequerimiento($requerimientos[$i]->idrequerimiento)->get();
-							if($logs == null || $logs->isEmpty())
-								$requerimientos[$i]->forceDelete();
-							else
-							{
-								$cantidad_logs = count($logs);
-								for($j=0;$j<$cantidad_logs;$j++)
-								{
-									$logs[$j]->forceDelete();
-								}
-								$requerimientos[$i]->forceDelete();
-							}
-						}
-					}
+					$mensaje_final = 'Se actualizaron correctamente los códigos de los requerimientos del ticket '.$solicitud->codigo_solicitud;Session::flash('message',$mensaje_final);
 				}
 
-
-				Session::flash('message', 'Se actualizaron correctamente los códigos de los requerimientos del ticket '.$solicitud->codigo_solicitud);
+				
 				
 				return Redirect::to('/principal_gestor');
 
@@ -554,8 +497,10 @@ class RequerimientoController extends BaseController {
 				}else{
 					
 					$idtransaccion = Input::get('requerimiento_id_rechazar');
+
 					$observacion = Input::get('observacion');
 					$transaccion = Transaccion::find($idtransaccion);
+					$solicitud = Solicitud::find($transaccion->idsolicitud);
 					$transaccion->observaciones = $observacion;
 					$transaccion->idestado_transaccion = 2;
 					$transaccion->fecha_cierre = date('Y-m-d H:i:s');
@@ -563,33 +508,27 @@ class RequerimientoController extends BaseController {
 					//validamos si ya no hay mas requerimientos pendientes de atencion
 
 					//VALIDAMOS POR REQUERIMIENTO
-					$requerimiento = Requerimiento::find($transaccion->idrequerimiento);
-					$transacciones = Transaccion::buscarTransaccionesEstadoPorRequerimiento($requerimiento->idrequerimiento,3)->get();
+					$transacciones = Transaccion::buscarTransaccionesEstadoPorSolicitud($solicitud->idsolicitud,3)->get();
 
 					//validar si NO hay transacciones pendientes
 					if($transacciones == null || $transacciones->isEmpty())
 					{
-						$transacciones_totales = Transaccion::buscarTransaccionesPorRequerimiento($requerimiento->idrequerimiento)->get();
+						$transacciones_totales = Transaccion::buscarTransaccionesPorSolicitud($solicitud->idsolicitud)->get();
 						//quiere decir que no hay pendientes, se valida si todos están rechazados
-						$transacciones_rechazadas = Transaccion::buscarTransaccionesEstadoPorRequerimiento($requerimiento->idrequerimiento,2)->get();
+						$transacciones_rechazadas = Transaccion::buscarTransaccionesEstadoPorSolicitud($solicitud->idsolicitud,2)->get();
 
 						//si: Numero_trx_totales = Numero_trx_rechazadas -> todas estan rechazadas (se rechaza el requerimiento)
 						if(count($transacciones_totales) == count($transacciones_rechazadas))
 						{
-							$requerimiento->idestado_requerimiento = 2;
-							$requerimiento->fecha_cierre = date('Y-m-d H:i:s');
-							$requerimiento->save();
-						}else
-						{
-							//existe al menos uno que esté atendido, entonces el requerimiento se da como atendido
-							$requerimiento->idestado_requerimiento = 1;
-							$requerimiento->fecha_cierre = date('Y-m-d H:i:s');
-							$requerimiento->save();
+							$solicitud->idestado_solicitud = 2;
+							$solicitud->fecha_cierre = date('Y-m-d H:i:s');
+							$solicitud->save();
+							return Redirect::to('/principal_gestor')->with('message','Se rechazó la transacción N° '.$transaccion->idtransaccion.' (Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud);
 						}
 					}
 
 					//VALIDAMOS POR SOLICITUD (A NIVEL TRANSACCION)
-					$solicitud = Solicitud::find($requerimiento->idsolicitud);
+					$solicitud = Solicitud::find($solicitud->idsolicitud);
 					$transacciones = Transaccion::buscarTransaccionesEstadoPorSolicitud($solicitud->idsolicitud,3)->get();
 					
 					if($transacciones == null || $transacciones->isEmpty())
@@ -598,10 +537,10 @@ class RequerimientoController extends BaseController {
 						$solicitud->idestado_solicitud = 2;
 						$solicitud->fecha_cierre = date('Y-m-d H:i:s');
 						$solicitud->save();
-						return Redirect::to('/principal_gestor')->with('message','Se rechazó el requerimiento '.$requerimiento->codigo_requerimiento.'.<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud);
+						return Redirect::to('/principal_gestor')->with('message','Se rechazó la transacción N° '.$transaccion->idtransaccion.' (Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud);
 					}
 
-					return Redirect::to('/principal_gestor')->with('message','Se rechazó el requerimiento '.$requerimiento->codigo_requerimiento);
+					return Redirect::to('/principal_gestor')->with('message','Se rechazó la transacción N° '.$transaccion->idtransaccion.' (Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')');
 				}
 
 			}else{
@@ -626,51 +565,26 @@ class RequerimientoController extends BaseController {
 				$idtransaccion = Input::get('requerimiento_id_finalizar');
 				$transaccion = Transaccion::find($idtransaccion);
 
-				$requerimiento = Requerimiento::find($transaccion->idrequerimiento);
-				$codigo_requerimiento = $requerimiento->codigo_requerimiento ;
+				$codigo_requerimiento = $transaccion->codigo_requerimiento;
 
-				if(strcmp($codigo_requerimiento, "SIN_REQ") == 0 || strcmp($codigo_requerimiento, '') == 0)
+				$herramienta = Herramienta::find($transaccion->idherramienta);
+
+				if($herramienta->idtipo_requerimiento == 6)
 				{
-					return Redirect::to('/principal_gestor')->with('error','No se pudo finalizar la atención de la transaccion N°'.$transaccion->idtransaccion. '. La transaccion no se encuentra asociada a un requerimiento.');	
+					//SI ES REMEDY
+					if(strcmp($codigo_requerimiento, "SIN_REQ") == 0 || strcmp($codigo_requerimiento, '') == 0)
+					{
+						return Redirect::to('/principal_gestor')->with('error','No se pudo finalizar la atención de la transaccion N°'.$transaccion->idtransaccion. '. La transaccion no se encuentra asociada a un requerimiento tipo REQ.');	
+					}
 				}
-
-
+				
 				$transaccion->idestado_transaccion = 1;
 				$transaccion->fecha_cierre = date('Y-m-d H:i:s');
 				$transaccion->save();
-				//validamos si ya no hay mas requerimientos pendientes de atencion
-
-				//validamo si el requerimiento se puede cerrar
-				//VALIDAR REQUERIMIENTO
-
-				$requerimiento = Requerimiento::find($transaccion->idrequerimiento);
-				$transacciones = Transaccion::buscarTransaccionesEstadoPorRequerimiento($requerimiento->idrequerimiento,3)->get();
-
-				//validar si NO hay transacciones pendientes
-				if($transacciones == null || $transacciones->isEmpty())
-				{
-					$transacciones_totales = Transaccion::buscarTransaccionesPorRequerimiento($requerimiento->idrequerimiento)->get();
-					//quiere decir que no hay pendientes, se valida si todos están rechazados
-					$transacciones_rechazadas = Transaccion::buscarTransaccionesEstadoPorRequerimiento($requerimiento->idrequerimiento,2)->get();
-
-					//si: Numero_trx_totales = Numero_trx_rechazadas -> todas estan rechazadas (se rechaza el requerimiento)
-					if(count($transacciones_totales) == count($transacciones_rechazadas))
-					{
-						$requerimiento->idestado_requerimiento = 2;
-						$requerimiento->fecha_cierre = date('Y-m-d H:i:s');
-						$requerimiento->save();
-					}else
-					{
-						//existe al menos uno que esté atendido, entonces el requerimiento se da como atendido
-						$requerimiento->idestado_requerimiento = 1;
-						$requerimiento->fecha_cierre = date('Y-m-d H:i:s');
-						$requerimiento->save();
-					}
-				}
-
+				
 				//VALIDAR LA SOLICITUD
 
-				$solicitud = Solicitud::find($requerimiento->idsolicitud);
+				$solicitud = Solicitud::find($transaccion->idsolicitud);
 				//buscar todas los requerimientos pendientes
 				$transacciones = Transaccion::buscarTransaccionesEstadoPorSolicitud($solicitud->idsolicitud,3)->get();
 				//si no hay pendientes revisamos si existen rechazadas
@@ -684,19 +598,62 @@ class RequerimientoController extends BaseController {
 						$solicitud->idestado_solicitud = 1;
 						$solicitud->fecha_cierre = date('Y-m-d H:i:s');
 						$solicitud->save();
-						return Redirect::to('/principal_gestor')->with('message','Se finalizó la atención del requerimiento '.$requerimiento->codigo_requerimiento.'.<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud);
+						return Redirect::to('/principal_gestor')->with('message','Se finalizó la atención de la transacción N°'.$transaccion->idtransaccion.'(Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud);
 					}else
 					{
 						//quiere decir que ya no hay mas pendientes se cierra el ticket con estado cerrado con observaciones
 						$solicitud->idestado_solicitud = 2;
 						$solicitud->fecha_cierre = date('Y-m-d H:i:s');
 						$solicitud->save();
-						return Redirect::to('/principal_gestor')->with('message','Se finalizó la atención del requerimiento '.$requerimiento->codigo_requerimiento.'.<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud);
+						return Redirect::to('/principal_gestor')->with('message','Se finalizó la atención de la transacción N°'.$transaccion->idtransaccion.'(Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud);
 					}
 					
 				}
 
-				return Redirect::to('/principal_gestor')->with('message','Se finalizó la atención de la transaccion N°'.$transaccion->idtransaccion. ' del requerimiento '.$requerimiento->codigo_requerimiento);
+				return Redirect::to('/principal_gestor')->with('message','Se finalizó la atención de la transacción N°'.$transaccion->idtransaccion.'(Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')');
+				
+
+			}else{
+				return View::make('error/error',$data);
+			}
+
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function submit_procesar_requerimiento()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 2){
+				
+				
+					
+				$idtransaccion = Input::get('requerimiento_id_procesar');
+				$transaccion = Transaccion::find($idtransaccion);
+
+				$codigo_requerimiento = $transaccion->codigo_requerimiento;
+
+				$herramienta = Herramienta::find($transaccion->idherramienta);
+
+				if($herramienta->idtipo_requerimiento == 6)
+				{
+					//SI ES REMEDY
+					if(strcmp($codigo_requerimiento, "SIN_REQ") == 0 || strcmp($codigo_requerimiento, '') == 0)
+					{
+						return Redirect::to('/principal_gestor')->with('error','No se puede procesar la atención de la transaccion N°'.$transaccion->idtransaccion. '. La transaccion no se encuentra asociada a un requerimiento tipo REQ.');	
+					}
+				}
+				
+				$transaccion->idestado_transaccion = 4;
+				$transaccion->fecha_inicio_procesando = date('Y-m-d H:i:s');
+				$transaccion->save();
+				
+				
+				return Redirect::to('/principal_gestor')->with('message','Se inició la atención de la transacción N°'.$transaccion->idtransaccion.'(Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')');
 				
 
 			}else{
@@ -734,7 +691,6 @@ class RequerimientoController extends BaseController {
 			$transaccion->fecha_cierre = null;
 			$transaccion->save();
 
-
 			return Response::json(array( 'success' => true,'transaccion' => $transaccion),200);
 			
 		}else{
@@ -752,29 +708,17 @@ class RequerimientoController extends BaseController {
 				
 				
 				$solicitud_id = Input::get('solicitud_id_eliminar_base');
-
+				$solicitud = Solicitud::find($solicitud_id);
 				
-				$requerimientos = Requerimiento::buscarRequerimientosPorSolicitud($solicitud_id)->get();
-			    if($requerimientos != null && !$requerimientos->isEmpty())
-			    {  
-			    	$cantidad_requerimientos = count($requerimientos);
-			    	for($i=0;$i<$cantidad_requerimientos;$i++)
-			    	{
-			    		// TRANSACCIONES
-
-			    		$transacciones = Transaccion::buscarTransaccionesPorRequerimiento($requerimientos[$i]->idrequerimiento)->get();
-			    		if($transacciones != null && !$transacciones->isEmpty())
-			    		{
-			    			$cantidad_transacciones = count($transacciones);
-			    			for($j=0;$j<$cantidad_transacciones;$j++)
-			    			{
-			    				$transaccion = Transaccion::find($transacciones[$j]->idtransaccion);
-			    				$transaccion->forceDelete();
-			    			}
-			    		}
-
-			    		//LOG FUR
-			    		$logs = LogCargaFur::buscarLogCargaPorIdRequerimiento($requerimientos[$i]->idrequerimiento)->get();
+		 		// TRANSACCIONES
+	    		$transacciones = Transaccion::buscarTransaccionesPorSolicitud($solicitud->idsolicitud)->get();
+	    		if($transacciones != null && !$transacciones->isEmpty())
+	    		{
+	    			$cantidad_transacciones = count($transacciones);
+	    			for($i=0;$i<$cantidad_transacciones;$i++)
+	    			{
+	    				//LOG FUR
+			    		$logs = LogCargaFur::buscarLogCargaPorIdTransaccion($transacciones[$i]->idtransaccion)->get();
 						if($logs != null && !$logs->isEmpty())
 			    		{
 			    			$cantidad_logs = count($logs);
@@ -783,11 +727,10 @@ class RequerimientoController extends BaseController {
 			    				$logs[$j]->forceDelete();
 			    			}
 			    		}			    		
-
-			    		$requerimiento = Requerimiento::find($requerimientos[$i]->idrequerimiento);
-			    		$requerimiento->forceDelete();
-			    	}
-			    }
+	    				$transaccion = Transaccion::find($transacciones[$i]->idtransaccion);
+	    				$transaccion->forceDelete();
+	    			}
+	    		}
 
 			    //Regresar el ticket a su estado de pendiente;
 			    $solicitud = Solicitud::find($solicitud_id);
@@ -796,7 +739,7 @@ class RequerimientoController extends BaseController {
 			    $solicitud->fur_cargado = 0;
 			    $solicitud->save();
 
-			   return Redirect::to('/principal_gestor')->with('message','Se eliminó la base de requerimientos de la solicitud '.$solicitud->codigo_solicitud);
+			   return Redirect::to('/principal_gestor')->with('message','Se eliminó la base de transacciones de la solicitud '.$solicitud->codigo_solicitud);
 
 			}else{
 				return View::make('error/error',$data);

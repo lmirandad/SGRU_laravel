@@ -135,21 +135,20 @@ function mostrar_datos_req(e,id)
 						codigo_requerimiento = arr_requerimientos[i].codigo_requerimiento;
 
 
-
+					boton_procesar = "<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-info btn-sm\" onclick=\"procesar_requerimiento(event,"+arr_requerimientos[i].idtransaccion+")\" type=\"button\"><span class=\"lnr lnr-cog\"></span></button></div></td>";
 					boton_atender = "<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-success btn-sm\" onclick=\"finalizar_requerimiento(event,"+arr_requerimientos[i].idtransaccion+")\" type=\"button\"><span class=\"lnr lnr-thumbs-up\"></span></button></div></td>";
 					boton_rechazar = "<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-danger btn-sm\" onclick=\"rechazar_requerimiento(event,"+arr_requerimientos[i].idtransaccion+")\" type=\"button\"><span class=\"lnr lnr-thumbs-down\"></span></button></div></td></tr>";
 
 					data = "<tr>"
 			                +"<td class=\"text-nowrap text-center\">"+arr_requerimientos[i].idtransaccion+"</td>"
 			                +"<td class=\"text-nowrap text-center\" style=\"display:none\"><input type=\"text\" class=\"form-control\" name=\"idtransacciones[]\"  value = "+arr_requerimientos[i].idtransaccion+"></td>";
-			                +"<td class=\"text-nowrap text-center\" style=\"display:none\" id=\"idtransaccion"+i+"\">"+arr_requerimientos[i].idtransaccion+"</td>"	
-			                +"<td class=\"text-nowrap text-center\" style=\"display:none\"><input type=\"text\" class=\"form-control\" name=\"idrequerimientos[]\"  value = "+arr_requerimientos[i].idrequerimiento+"></td>";
+			                +"<td class=\"text-nowrap text-center\" style=\"display:none\" id=\"idtransaccion"+i+"\">"+arr_requerimientos[i].idtransaccion+"</td>";
 			                
 
 			        if(arr_requerimientos[i].idestado_transaccion == 3)
-			        	data = data +  "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\"  id=\"codigo_requerimiento"+arr_requerimientos[i].idrequerimiento+"\" value = "+codigo_requerimiento+"></td>";       
+			        	data = data +  "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\"  id=\"codigo_requerimiento"+arr_requerimientos[i].idtransaccion+"\" value = "+codigo_requerimiento+"></td>";       
 			        else
-			        	data = data + "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\" readonly id=\"codigo_requerimiento"+arr_requerimientos[i].idrequerimiento+"\" value = "+codigo_requerimiento+"></td>";       
+			        	data = data + "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\" readonly id=\"codigo_requerimiento"+arr_requerimientos[i].idtransaccion+"\" value = "+codigo_requerimiento+"></td>";       
 			                
 			         data = data +"<td class=\"text-nowrap text-center\">"+arr_requerimientos[i].accion_requerimiento+"</td>"
 			                +"<td class=\"text-nowrap text-center\">"+nombre_herramienta+"</td>"
@@ -163,13 +162,14 @@ function mostrar_datos_req(e,id)
 			                +"<td class=\"text-nowrap text-center\"><strong>"+arr_requerimientos[i].nombre_estado_transaccion+"</strong></td>"
 			                +"<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-info btn-sm\" onclick=\"mostrar_observaciones(event,"+arr_requerimientos[i].idtransaccion+")\" type=\"button\"><span class=\"fa fa-search\"></span></button></div></td>";
 
-			        if(arr_requerimientos[i].idestado_transaccion == 3)
-			        	data = data + boton_atender + boton_rechazar;
-			        else
+			        if(arr_requerimientos[i].idestado_transaccion == 3) //pendiente
+			        	data = data + boton_procesar + "<td class=\"text-nowrap text-center\">-</td>" + boton_rechazar;
+			        else if (arr_requerimientos[i].idestado_transaccion == 4) //procesando
+			        	data = data + "<td class=\"text-nowrap text-center\">-</td>" + boton_atender + boton_rechazar;
+			        else 
 			        	data = data 
 			           			+ "<td class=\"text-nowrap text-center\">-</td>"
-			        			+ "<td class=\"text-nowrap text-center\">-</td></tr>";       
-			                
+			        			+ "<td class=\"text-nowrap text-center\">-</td></tr>";     			                
 
 
             		$('#table_requerimientos').append(data);	            		                		
@@ -338,6 +338,24 @@ function finalizar_requerimiento(e,idtransaccion)
 			callback: function(result){
 		        if(result) {
 		        	document.getElementById("submit-finalizar").submit();
+				}
+			}
+		});
+}
+
+
+function procesar_requerimiento(e,idtransaccion)
+{
+	$('#requerimiento_id_procesar').val(idtransaccion);
+	BootstrapDialog.confirm({
+			title: 'Mensaje de Confirmación',
+			message: '¿Está seguro que desea realizar esta acción?', 
+			type: BootstrapDialog.TYPE_INFO,
+			btnCancelLabel: 'Cancelar', 
+	    	btnOKLabel: 'Aceptar', 
+			callback: function(result){
+		        if(result) {
+		        	document.getElementById("submit-procesar").submit();
 				}
 			}
 		});

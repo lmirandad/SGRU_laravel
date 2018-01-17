@@ -5,6 +5,12 @@
 	<div class="main-content">
 		<div class="container-fluid">
 			<h3 class="page-title"><strong>BANDEJA SOLICITUDES</strong> </h3>
+			@if (Session::has('info'))
+				<div class="alert alert-info alert-dismissible" role="alert">
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+					<i class="fa fa-times-circle"></i> {{ Session::get('info') }}
+				</div>
+			@endif
 			@if (Session::has('message'))
 				<div class="alert alert-success">
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -18,6 +24,7 @@
 					<i class="fa fa-times-circle"></i> {{ Session::get('error') }}
 				</div>
 			@endif
+			
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2">
 					<div class="panel panel-headline">
@@ -247,7 +254,7 @@
 											</td>
 											<td class="text-nowrap text-center">
 												<div style="text-align:center">
-													<button class="btn btn-success btn-sm" onclick="mostrar_datos_req(event,{{$solicitud_data->idsolicitud}})" type="button"><i class="fa fa-search"></i> Ver Requerimientos</button>
+													<button class="btn btn-success btn-sm" onclick="mostrar_datos_req(event,{{$solicitud_data->idsolicitud}})" type="button"><i class="fa fa-search"></i> Ver Transacciones</button>
 												</div>
 											</td>
 										</tr>
@@ -325,6 +332,7 @@
 										<th class="text-nowrap text-center">DNI Usuario</th>
 										<th class="text-nowrap text-center">Estado</th>
 										<th class="text-nowrap text-center">Observaciones</th>
+										<th class="text-nowrap text-center">Trabajado</th>
 										<th class="text-nowrap text-center">Finalizar Req.</th>
 										<th class="text-nowrap text-center">Rechazar Req.</th>
 									</tr>
@@ -389,5 +397,8 @@
  {{ Form::close() }} 
   {{ Form::open(array('url'=>'/requerimientos/submit_finalizar_requerimiento' ,'role'=>'form','id'=>'submit-finalizar','enctype'=>'multipart/form-data')) }}
     {{ Form::hidden('requerimiento_id_finalizar', null,array('id'=>'requerimiento_id_finalizar')) }}	
+   {{ Form::close() }} 
+   {{ Form::open(array('url'=>'/requerimientos/submit_procesar_requerimiento' ,'role'=>'form','id'=>'submit-procesar','enctype'=>'multipart/form-data')) }}
+    {{ Form::hidden('requerimiento_id_procesar', null,array('id'=>'requerimiento_id_procesar')) }}	
    {{ Form::close() }} 
 @stop

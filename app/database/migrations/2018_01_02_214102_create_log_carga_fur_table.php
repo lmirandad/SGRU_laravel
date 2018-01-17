@@ -19,7 +19,7 @@ class CreateLogCargaFurTable extends Migration {
 			$table->string('resultado',500);
 			$table->string('nombre_archivo',500);
 			$table->integer('iduser_created_by')->nullable()->index('fk_log_carga_fur_users_idx');	
-			$table->integer('idrequerimiento')->nullable()->index('fk_log_carga_fur_requerimiento_idx');
+			$table->integer('idtransaccion')->nullable()->index('fk_log_carga_fur_transaccion_idx');
 			$table->timestamps();
 			$table->softDeletes();
 		});
