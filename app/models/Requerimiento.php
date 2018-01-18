@@ -108,26 +108,6 @@ class Requerimiento extends Eloquent implements UserInterface, RemindableInterfa
 							left join usuariosxasignacion on (asignacion.idasignacion = usuariosxasignacion.idusuariosxasignacion)');
 	}
 
-	public function scopeBuscarRequerimientosPorFechas($query,$fecha_desde,$fecha_hasta)
-	{
-		$query->leftJoin('herramienta','herramienta.idherramienta','=','requerimiento.idherramienta')
-			  ->leftJoin('denominacion_herramienta','denominacion_herramienta.iddenominacion_herramienta','=','herramienta.iddenominacion_herramienta')
-			  ->leftJoin('tipo_requerimiento','tipo_requerimiento.idtipo_requerimiento','=','herramienta.idtipo_requerimiento')
-			  ->leftJoin('punto_venta','punto_venta.idpunto_venta','=','requerimiento.idpunto_venta')
-			  ->leftJoin('entidad','entidad.identidad','=','punto_venta.identidad')
-			  ->leftJoin('canal','canal.idcanal','=','entidad.idcanal')
-			  ->leftJoin('estado_requerimiento','estado_requerimiento.idestado_requerimiento','=','requerimiento.idestado_requerimiento')
-			  ->leftJoin('solicitud','solicitud.idsolicitud','=','requerimiento.idsolicitud');
-		
-		if($fecha_desde != "")
-			$query->where('requerimiento.fecha_registro','>=',date('Y-m-d H:i:s',strtotime($fecha_desde)));
-		
-		if($fecha_hasta != "")
-			$query->where('requerimiento.fecha_registro','<=',date('Y-m-d H:i:s',strtotime('+23 hours +59 minutes +59 seconds',strtotime($fecha_hasta))));
-
-		$query->select('requerimiento.*','estado_requerimiento.nombre as nombre_estado_requerimiento','herramienta.nombre as nombre_herramienta','denominacion_herramienta.nombre as nombre_denominacion','tipo_requerimiento.nombre as nombre_tipo_requerimiento','punto_venta.nombre as nombre_punto_venta','entidad.nombre as nombre_entidad','canal.nombre as nombre_canal','solicitud.*');
-
-		return $query;
-	}
+	
 
 }

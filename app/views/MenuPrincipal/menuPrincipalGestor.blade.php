@@ -24,7 +24,12 @@
 					<i class="fa fa-times-circle"></i> {{ Session::get('error') }}
 				</div>
 			@endif
-			
+			@if($solicitud_id == null)
+				{{ Form::hidden('solicitud_id_precargar', null,array('id'=>'solicitud_id_precargar')) }}	
+			@else
+				{{ Form::hidden('solicitud_id_precargar', $solicitud_id,array('id'=>'solicitud_id_precargar')) }}	
+			@endif
+
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2">
 					<div class="panel panel-headline">
@@ -309,11 +314,24 @@
       <div class="modal-content" >
 	        <div class="modal-header" id="modal_header_requerimientos_mostrar">
 	          <button type="button" class="close" id="btnCerrarModal" data-dismiss="modal">&times;</button>
-	          <h4 class="modal-title">Requerimientos Registrados</h4>
+	          <h4 class="modal-title" id="solicitud-title"></h4>
 	          {{ Form::hidden('solicitud_id_mostrar', null,array('id'=>'solicitud_id_mostrar')) }}	
 	        </div>
 	        <div class="modal-body" id="modal_text_acciones">
 	         	<div class="container-fluid">
+	         		@if (Session::has('message'))
+						<div class="alert alert-success">
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<i class="fa fa-check-circle"></i> 
+							{{ Session::get('message') }}
+						</div>
+					@endif
+					@if (Session::has('error'))
+						<div class="alert alert-danger alert-dismissible" role="alert">
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<i class="fa fa-times-circle"></i> {{ Session::get('error') }}
+						</div>
+					@endif
 	         		<div class="row">
 						<div class="table-responsive" >
 							<table class="table table-hover" id="table_requerimientos">
@@ -332,8 +350,8 @@
 										<th class="text-nowrap text-center">DNI Usuario</th>
 										<th class="text-nowrap text-center">Estado</th>
 										<th class="text-nowrap text-center">Observaciones</th>
-										<th class="text-nowrap text-center">Trabajado</th>
-										<th class="text-nowrap text-center">Finalizar Req.</th>
+										<th class="text-nowrap text-center">Trabajado <input type="checkbox" id="checkboxAllTrabajar" class="form-check-input"> </th>
+										<th class="text-nowrap text-center">Finalizar Req. <input type="checkbox" id="checkboxAllFinalizar" class="form-check-input"> </th>
 										<th class="text-nowrap text-center">Rechazar Req.</th>
 									</tr>
 								</thead>
@@ -348,12 +366,18 @@
 	        <div class="modal-footer">
 	        	 {{ Form::close() }} 
 	        	<div class="form-group col-md-3">
-					<a class="btn btn-primary btn-block" id="btnActualizarCodigos"><i class="fa fa-floppy-o"></i>&nbsp Actualizar Codigos Requerimientos</a>				
+					<a class="btn btn-primary btn-block" id="btnActualizarCodigos"><i class="fa fa-floppy-o"></i>&nbsp ACTUALIZAR CODIGOS REQUERIMIENTOS</a>				
+				</div>
+				<div class="form-group col-md-3">
+					<a class="btn btn-info btn-block" id="btnProcesarCodigos"><i class="lnr lnr-cog"></i>&nbsp PROCESAR TRANSACCIONES</a>
+				</div>
+				<div class="form-group col-md-3">
+					<a class="btn btn-success btn-block" id="btnFinalizarCodigos"><i class="fa fa-thumbs-up"></i>&nbsp ATENDER TRANSACCIONES</a>
 				</div>
 				{{ Form::open(array('url'=>'/requerimientos/submit_eliminar_base' ,'role'=>'form','id'=>'submit-eliminar','enctype'=>'multipart/form-data')) }}
 				{{ Form::hidden('solicitud_id_eliminar_base', null,array('id'=>'solicitud_id_eliminar_base')) }}	
-				<div class="form-group col-md-3 col-md-offset-6">
-					<button class="btn btn-danger btn-md" onclick="eliminar_requerimientos(event)" type="button"><i class="lnr lnr-cross"></i> Eliminar Base Requerimientos</button>		
+				<div class="form-group col-md-3">
+					<button class="btn btn-danger btn-md" onclick="eliminar_requerimientos(event)" type="button"><i class="lnr lnr-cross"></i> ELIMINAR BASE DE REQUERIMIENTOS</button>		
 				</div>
 				 {{ Form::close() }}
 	        </div>
@@ -396,9 +420,18 @@
  </div> 
  {{ Form::close() }} 
   {{ Form::open(array('url'=>'/requerimientos/submit_finalizar_requerimiento' ,'role'=>'form','id'=>'submit-finalizar','enctype'=>'multipart/form-data')) }}
-    {{ Form::hidden('requerimiento_id_finalizar', null,array('id'=>'requerimiento_id_finalizar')) }}	
+    <div style="display:none" id="div_ids_checkbox_finalizar">
+   	
+   </div>
+    {{ Form::hidden('solicitud_id_finalizar', null,array('id'=>'solicitud_id_finalizar')) }}	
+   
    {{ Form::close() }} 
-   {{ Form::open(array('url'=>'/requerimientos/submit_procesar_requerimiento' ,'role'=>'form','id'=>'submit-procesar','enctype'=>'multipart/form-data')) }}
-    {{ Form::hidden('requerimiento_id_procesar', null,array('id'=>'requerimiento_id_procesar')) }}	
+   
+   {{ Form::open(array('url'=>'/requerimientos/submit_procesar_requerimiento','role'=>'form','id'=>'submit-procesar','enctype'=>'multipart/form-data'))}}
+   <div style="display:none" id="div_ids_checkbox">
+   	
+   </div>
+	{{ Form::hidden('solicitud_id_procesar', null,array('id'=>'solicitud_id_procesar')) }}	
+
    {{ Form::close() }} 
 @stop

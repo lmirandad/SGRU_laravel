@@ -49,16 +49,22 @@ class ReporteriaController extends BaseController {
 				$fecha_desde_solicitud = $data["fecha_desde_solicitud"];
 				$fecha_hasta_solicitud = $data["fecha_hasta_solicitud"];		
 
+				$solicitudes = Solicitud::buscarSolicitudesPorFechas($fecha_desde_solicitud,$fecha_hasta_solicitud)->get();
+
+				if($solicitudes == null || $solicitudes->isEmpty() || count($solicitudes) == 0)
+				{
+					return Redirect::to('/reportes')->with('error','No hay solicitudes registradas dentro de las fechas seleccionadas');
+				}
+
 				$fecha_reporte = date('Y-m-d H:i:s');
 
-				$value = Excel::create('REPORTE SOLICITUDES '.$fecha_reporte, function($excel) use  ($fecha_desde_solicitud,$fecha_hasta_solicitud){
-					$excel->sheet('BASE', function($sheet) use ($fecha_desde_solicitud,$fecha_hasta_solicitud)  {
+				$value = Excel::create('REPORTE SOLICITUDES '.$fecha_reporte, function($excel) use  ($solicitudes){
+					$excel->sheet('BASE', function($sheet) use ($solicitudes)  {
 						
 						$sheet->row(1, array(
 							     'N°','CODIGO_SOLICITUD','FECHA_SOLICITUD','FECHA_ASIGNACION','NUMERO_CORTE','FECHA_INICIO_PROCESANDO','FECHA_CIERRE','TIPO_SOLICITUD','ESTADO_SOLICITUD','HERRAMIENTA_SOLICITADA','APLICATIVO_AGRUPADO','ENTIDAD','CANAL','SECTOR','USUARIO_ASIGNADO','ASUNTO','SLA_PENDIENTE','SLA_PROCESANDO'
 							));
-						$solicitudes = Solicitud::buscarSolicitudesPorFechas($fecha_desde_solicitud,$fecha_hasta_solicitud)->get();
-
+						
 						$cantidad_solicitudes = count($solicitudes);
 
 						for($i = 0; $i<$cantidad_solicitudes; $i++)
@@ -197,120 +203,74 @@ class ReporteriaController extends BaseController {
 				$fecha_desde_requerimiento = $data["fecha_desde_requerimiento"];
 				$fecha_hasta_requerimiento = $data["fecha_hasta_requerimiento"];
 
-				$transacciones = Transaccion::buscarTransaccionPorIdRequerimiento(5)->get();
-
 				$fecha_reporte = date('Y-m-d H:i:s');
 
-				Excel::create('REPORTE REQUERIMIENTOS '.$fecha_reporte, function($excel) use ($fecha_desde_requerimiento,$fecha_hasta_requerimiento){
+				$transacciones = Transaccion::buscarTransaccionesPorFechas($fecha_desde_requerimiento,$fecha_hasta_requerimiento)->get();
+
+				if($transacciones == null || $transacciones->isEmpty() || count($transacciones) == 0)
+				{
+					return Redirect::to('/reportes')->with('error','No hay transacciones registradas dentro de las fechas seleccionadas');
+				}
+
+				Excel::create('REPORTE REQUERIMIENTOS '.$fecha_reporte, function($excel) use ($transacciones){
 					
-					$excel->sheet('BASE', function($sheet) use ($fecha_desde_requerimiento,$fecha_hasta_requerimiento) {						
+					$excel->sheet('BASE', function($sheet) use ($transacciones) {						
 
 						$sheet->row(1, array(
-						     'N°','CODIGO_SOLICITUD','CODIGO_REQUERIMIENTO','ID_TRANSACCION','FECHA_REGISTRO_REQUERIMIENTO','FECHA_CIERRE_REQUERIMIENTO','FECHA_REGISTRO_TRANSACCION','FECHA_CIERRE_TRANSACCION','ACCION','APLICATIVO','APLICATIVO_AGRUPADO','TIPO_GESTION','CANAL','ENTIDAD','PUNTO_VENTA','CARGO_CANAL','DNI_USUARIO','USUARIO_BLOQUEADO','ESTADO_TRANSACCION','ESTADO_REQUERIMIENTO','FLAG_DEPENDENCIA'
+						     'N°','CODIGO_SOLICITUD','CODIGO_REQUERIMIENTO','ID_TRANSACCION','FECHA_REGISTRO_TRANSACCION','FECHA_INICIO_PROCESANDO_TRANSACCION','FECHA_CIERRE_TRANSACCION','ACCION','APLICATIVO','APLICATIVO_AGRUPADO','TIPO_GESTION','CANAL','ENTIDAD','PUNTO_VENTA','CARGO_CANAL','DNI_USUARIO','USUARIO_BLOQUEADO','ESTADO_TRANSACCION'
 						));
 
-						$requerimientos = Requerimiento::buscarRequerimientosPorFechas($fecha_desde_requerimiento,$fecha_hasta_requerimiento)->get();
-						$contador_filas = 1;
-						$cantidad_requerimientos = count($requerimientos);
+						
 
-						for($i = 0; $i<$cantidad_requerimientos; $i++)
+						$cantidad_transacciones = count($transacciones);
+
+						for($i = 0; $i<$cantidad_transacciones; $i++)
 						{
 							
-							$transacciones = Transaccion::buscarTransaccionPorIdRequerimiento($requerimientos[$i]->idrequerimiento)->get();
-							$codigo_solicitud = $requerimientos[$i]->codigo_solicitud;
-							$codigo_requerimiento = $requerimientos[$i]->codigo_requerimiento;
+							$codigo_solicitud = $transacciones[$i]->codigo_solicitud;
+							$codigo_requerimiento = $transacciones[$i]->codigo_requerimiento;
 							$id_transaccion = null;							
-							$fecha_registro_requerimiento = null;
-							if($requerimientos[$i]->fecha_registro != null)
-								$fecha_registro_requerimiento = date('Y-m-d',strtotime($requerimientos[$i]->fecha_registro));
-
-							$fecha_cierre_requerimiento = null;
-							if($requerimientos[$i]->fecha_cierre != null)
-								$fecha_cierre_requerimiento = date('Y-m-d',strtotime($requerimientos[$i]->fecha_cierre));
-
 							$fecha_registro_transaccion = null;
+							if($transacciones[$i]->fecha_registro != null)
+								$fecha_registro_transaccion = date('Y-m-d',strtotime($transacciones[$i]->fecha_registro));
+
+							$fecha_inicio_procesando_transaccion = null;
+							if($transacciones[$i]->fecha_inicio_procesando_transaccion != null)
+								$fecha_inicio_procesando_transaccion = date('Y-m-d',strtotime($transacciones[$i]->fecha_inicio_procesando_transaccion));
+
 							$fecha_cierre_transaccion = null;
-							$accion = $requerimientos[$i]->accion_requerimiento;
-							$aplicativo = $requerimientos[$i]->nombre_herramienta;
-							$aplicativo_agrupado = $requerimientos[$i]->nombre_denominacion;
-							$tipo_gestion = $requerimientos[$i]->nombre_tipo_requerimiento;
-							$canal = $requerimientos[$i]->nombre_canal;
-							$entidad = $requerimientos[$i]->nombre_entidad;
-							$punto_venta = $requerimientos[$i]->nombre_punto_venta;
-							$cargo_canal = null;
-							$id_transaccion = null;
+							if($transacciones[$i]->fecha_cierre != null)
+								$fecha_cierre_transaccion = date('Y-m-d',strtotime($transacciones[$i]->fecha_cierre));
+
+							$accion = $transacciones[$i]->accion_requerimiento;
+							$aplicativo = $transacciones[$i]->nombre_herramienta;
+							$aplicativo_agrupado = $transacciones[$i]->nombre_denominacion;
+							$tipo_gestion = $transacciones[$i]->nombre_tipo_requerimiento;
+							$canal = $transacciones[$i]->nombre_canal;
+							$entidad = $transacciones[$i]->nombre_entidad;
+							$punto_venta = $transacciones[$i]->nombre_punto_venta;
+							$cargo_canal = $transacciones[$i]->cargo_canal;
+							$id_transaccion = $transacciones[$i]->idtransaccion;
 							$usuario_bloqueado = null;
-							$perfil_aplicativo = null;
-							$dni_usuario = null;
-							$estado_requerimiento = null;
+							
+							$dni_usuario = $transacciones[$i]->numero_documento;
+							$estado_transaccion = $transacciones[$i]->nombre_estado_transaccion;
 
-							if($requerimientos[$i]->idestado_requerimiento == 1)
-								$estado_requerimiento = 'ATENDIDO';
-							elseif($requerimientos[$i]->idestado_requerimiento == 2)
-								$estado_requerimiento = 'RECHAZADO';
-							else
-								$estado_requerimiento = 'PENDIENTE';
-
-							$estado_transaccion = null;
 							$flag_dependencia = null;
 
-
-							if($transacciones == null || $transacciones->isEmpty())
-							{
-								
-								$sheet->row($contador_filas+1, array(
-							    	$contador_filas,$codigo_solicitud,$codigo_requerimiento,'',$fecha_registro_requerimiento,$fecha_cierre_requerimiento,$accion,'','',$aplicativo,$aplicativo_agrupado,'',$canal,$entidad,$punto_venta,'','','','','',$estado_requerimiento,1
-								));
-								$contador_filas++;
-
-							}else
-							{
-								
-								$cantidad_transacciones = count($transacciones);
-								for($j=0;$j<$cantidad_transacciones;$j++)
-								{
-									$id_transaccion = $transacciones[$j]->idtransaccion;
-
-									if($transacciones[$j]->fecha_registro != null)
-										$fecha_registro_transaccion = date('Y-m-d',strtotime($transacciones[$j]->fecha_registro));
-
-									$fecha_cierre_requerimiento = null;
-									if($transacciones[$j]->fecha_cierre != null)
-										$fecha_cierre_transaccion = date('Y-m-d',strtotime($transacciones[$j]->fecha_cierre));
-
-									$cargo_canal = $transacciones[$j]->cargo_canal;
-									$dni_usuario = $transacciones[$j]->numero_documento;
-									if($transacciones[$j]->usuario_bloqueado == 1)
-										$usuario_bloqueado = 'SI';
-									else
-										$usuario_bloqueado = 'NO';
-
-									if($transacciones[$j]->idestado_transaccion == 1)
-										$estado_transaccion = 'ATENDIDO';
-									elseif ($transacciones[$j]->idestado_transaccion == 2)
-										$estado_transaccion = 'RECHAZADO';
-									else
-										$estado_transaccion = 'PENDIENTE';
-
-									if($j==0)
-										$flag_dependencia = 1;
-									else
-										$flag_dependencia = 0;
-
-									$sheet->row($contador_filas+1, array(
-								    	$contador_filas,$codigo_solicitud,$codigo_requerimiento,$id_transaccion,$fecha_registro_requerimiento,$fecha_cierre_requerimiento,$fecha_registro_transaccion,$fecha_cierre_requerimiento,$accion,$aplicativo,$aplicativo_agrupado,$tipo_gestion,$canal,$entidad,$punto_venta,$cargo_canal,$dni_usuario,$usuario_bloqueado,$estado_transaccion,$estado_requerimiento,$flag_dependencia
-										));
-									$contador_filas++;
-								}	
-
-							}
+							if($transacciones[$i]->usuario_bloqueado == 1)
+								$usuario_bloqueado = 'SI';
+							else
+								$usuario_bloqueado = 'NO';
 
 							
 
+							$sheet->row($i+2, array(
+						    	$i+1,$codigo_solicitud,$codigo_requerimiento,$id_transaccion,$fecha_registro_transaccion,$fecha_inicio_procesando_transaccion,$fecha_cierre_transaccion,$accion,$aplicativo,$aplicativo_agrupado,$tipo_gestion,$canal,$entidad,$punto_venta,$cargo_canal,$dni_usuario,$usuario_bloqueado,$estado_transaccion));
+							
 						}
 					});
-				})->download('xls');
-
+				})->download('xlsx');
 				
 							
 			}else{

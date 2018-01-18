@@ -225,6 +225,7 @@ class MenuPrincipalController extends BaseController {
 			// Verifico si el usuario es un Webmaster
 			if($data["user"]->idrol == 2)
 			{
+				$data["solicitud_id"] = null;
 				$mes_actual = null;
 				$anho_actual = null;
 				$data["solicitudes_pendiente_data"] = Solicitud::buscarPorIdEstadoPorUsuario(3,$data["user"]->id,$mes_actual,$anho_actual)->get();
@@ -951,6 +952,114 @@ class MenuPrincipalController extends BaseController {
 				
 				
 				//return View::make('MenuPrincipal/menuPrincipalGestor',$data);
+			}else
+				return View::make('error/error',$data);
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function home_gestor_procesando($idsolicitud=null){
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 2)
+			{
+				$mes_actual = null;
+				$anho_actual = null;
+				$data["solicitudes_pendiente_data"] = Solicitud::buscarPorIdEstadoPorUsuario(3,$data["user"]->id,$mes_actual,$anho_actual)->get();
+				
+				$data["solicitudes_procesando_data"] = Solicitud::buscarPorIdEstadoPorUsuario(4,$data["user"]->id,$mes_actual,$anho_actual)->get();
+				
+				$data["idusuario"] = $data["user"]->id;
+				$data["solicitudes_pendientes"] = count($data["solicitudes_pendiente_data"]);
+				$data["solicitudes_procesando"] = count($data["solicitudes_procesando_data"]);
+				
+				$data["slas_data_pendiente"] = array();
+				$data["diferencia_fechas_pendiente"] = array();
+				$data["diferencia_fechas_trabajo_pendiente"] = array();
+				$cantidad_solicitudes = count($data["solicitudes_pendiente_data"]);
+				for($i=0;$i<$cantidad_solicitudes;$i++)
+				{
+					$sla = Sla::buscarSlaSolicitud($data["solicitudes_pendiente_data"][$i]->idsolicitud,$data["solicitudes_pendiente_data"][$i]->idtipo_solicitud)->get()[0];
+					array_push($data["slas_data_pendiente"], $sla);
+					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_pendiente_data"][$i]->fecha_asignacion);				
+					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_pendiente_data"][$i]->fecha_solicitud);				
+					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+					$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
+					array_push($data["diferencia_fechas_pendiente"],$diferencia_dias);
+					//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
+					$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+					$diferencia_dias_fecha_trabajo= $fecha_asignacion_formateada->diffInWeekdays($fecha_actual);
+					
+					//Obtener los dias feriados entre la fecha de hoy y la asignacion
+					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_actual)->get();
+					$cantidad_dias = 0;
+					if($feriados != null )
+					{
+						$tamano = count($feriados);											
+						for($j=0;$j<$tamano;$j++)
+						{
+							$dia = date('N',strtotime($feriados[$j]->valor_fecha));
+							//Validar si el feriado coincide con un fin de semana para no contar dos veces
+							if($dia != 6 && $dia != 7)
+								$cantidad_dias++;							
+						}
+					}
+					$diferencia_dias_fecha_trabajo -= $cantidad_dias;
+					array_push($data["diferencia_fechas_trabajo_pendiente"],$diferencia_dias_fecha_trabajo);
+				}
+				$data["slas_data_procesando"] = array();
+				$data["diferencia_fechas_procesando"] = array();
+				$data["diferencia_fechas_trabajo_procesando"] = array();
+				$cantidad_solicitudes = count($data["solicitudes_procesando_data"]);
+				for($i=0;$i<$cantidad_solicitudes;$i++)
+				{
+					$sla = Sla::buscarSlaSolicitud($data["solicitudes_procesando_data"][$i]->idsolicitud,$data["solicitudes_procesando_data"][$i]->idtipo_solicitud)->get()[0];
+					array_push($data["slas_data_procesando"], $sla);
+					
+					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_procesando_data"][$i]->fecha_asignacion);				
+					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+
+					$fecha_inicio_procesando=Carbon\Carbon::parse($data["solicitudes_procesando_data"][$i]->fecha_inicio_procesando);				
+					$fecha_inicio_procesando_formateada = Carbon\Carbon::parse(date_format($fecha_inicio_procesando,'Y-m-d'));					
+
+					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_procesando_data"][$i]->fecha_solicitud);				
+					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+
+					$diferencia_dias = $fecha_solicitud_formateada->diffInDays($fecha_asignacion_formateada);
+					array_push($data["diferencia_fechas_procesando"],$diferencia_dias);
+					//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
+					$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+					$diferencia_dias_fecha_trabajo= $fecha_inicio_procesando_formateada->diffInWeekdays($fecha_actual);
+					
+					//Obtener los dias feriados entre la fecha de hoy y la asignacion
+					$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando_formateada,$fecha_actual)->get();
+					$cantidad_dias = 0;
+					if($feriados != null )
+					{
+						$tamano = count($feriados);											
+						for($j=0;$j<$tamano;$j++)
+						{
+							$dia = date('N',strtotime($feriados[$j]->valor_fecha));
+							//Validar si el feriado coincide con un fin de semana para no contar dos veces
+							if($dia != 6 && $dia != 7)
+								$cantidad_dias++;							
+						}
+					}
+					$diferencia_dias_fecha_trabajo -= $cantidad_dias;
+					array_push($data["diferencia_fechas_trabajo_procesando"],$diferencia_dias_fecha_trabajo);
+				}
+				$data["search_codigo_solicitud"] = null;
+				
+				if($idsolicitud == null)
+					$data["solicitud_id"] = null;
+				else
+					$data["solicitud_id"] = $idsolicitud;
+
+				return View::make('MenuPrincipal/menuPrincipalGestor',$data);
 			}else
 				return View::make('error/error',$data);
 		}else{

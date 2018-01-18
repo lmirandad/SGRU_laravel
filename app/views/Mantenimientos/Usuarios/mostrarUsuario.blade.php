@@ -146,7 +146,7 @@
 				</div>
 			</div>
 		</div>
-		@if($usuario->idrol != 1)
+		@if($usuario->idrol == 2)
 		<div class="row">
 			<div class="col-md-6">
 				<div class="panel">	

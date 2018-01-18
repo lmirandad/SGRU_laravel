@@ -101,7 +101,7 @@
 											@endif											
 										</td>
 										<td class="text-nowrap text-center">
-											@if($user_data->idrol != 1)
+											@if($user_data->idrol == 2)
 												@if($user_data->deleted_at)
 													-
 												@else
@@ -115,7 +115,7 @@
 											@endif
 										</td>
 										<td class="text-nowrap text-center">
-											@if($user_data->idrol != 1)
+											@if($user_data->idrol == 2)
 												@if($user_data->deleted_at)
 													-
 												@else

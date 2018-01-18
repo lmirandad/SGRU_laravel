@@ -334,11 +334,12 @@ class RequerimientoController extends BaseController {
 			
 			$solicitud_id = Input::get('idsolicitud');
 			$transacciones =Transaccion::buscarTransaccionesPorSolicitud($solicitud_id)->get();
+			$solicitud = Solicitud::find($solicitud_id);
 
 			if($transacciones == null || $transacciones->isEmpty())
 				return Response::json(array( 'success' => true,'tiene_transacciones'=>false,'transacciones' => null),200);
 			
-			return Response::json(array( 'success' => true,'tiene_transacciones' => true,'transacciones' => $transacciones),200);
+			return Response::json(array( 'success' => true,'tiene_transacciones' => true,'transacciones' => $transacciones,'solicitud'=>$solicitud),200);
 			
 		}else{
 			return Response::json(array( 'success' => false),200);
@@ -424,7 +425,6 @@ class RequerimientoController extends BaseController {
 					
 					if(strcmp($codigos[$i], 'SIN_REQ') != 0)
 					{
-						
 						$transaccion = Transaccion::find($idtransacciones[$i]);
 						$herramienta = Herramienta::find($transaccion->idherramienta);
 						$tipo_requerimiento = TipoRequerimiento::find($herramienta->idtipo_requerimiento);
@@ -456,12 +456,11 @@ class RequerimientoController extends BaseController {
 					Session::flash('error',$mensaje_final);
 				}else
 				{
-					$mensaje_final = 'Se actualizaron correctamente los códigos de los requerimientos del ticket '.$solicitud->codigo_solicitud;Session::flash('message',$mensaje_final);
+					$mensaje_final = 'Se actualizaron correctamente los códigos de los requerimientos del ticket '.$solicitud->codigo_solicitud; 
+					Session::flash('message',$mensaje_final);
 				}
 
-				
-				
-				return Redirect::to('/principal_gestor');
+				return Redirect::to('/principal_gestor_procesando/'.$solicitud->idsolicitud);
 
 			}else{
 				return View::make('error/error',$data);
@@ -523,12 +522,11 @@ class RequerimientoController extends BaseController {
 							$solicitud->idestado_solicitud = 2;
 							$solicitud->fecha_cierre = date('Y-m-d H:i:s');
 							$solicitud->save();
-							return Redirect::to('/principal_gestor')->with('message','Se rechazó la transacción N° '.$transaccion->idtransaccion.' (Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud);
+							return Redirect::to('/principal_gestor')->with('message','Se rechazó la transacción N° '.$transaccion->idtransaccion.' (Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud.' con estado <strong>CERRADO CON OBSERVACIONES</strong>');
 						}
 					}
 
 					//VALIDAMOS POR SOLICITUD (A NIVEL TRANSACCION)
-					$solicitud = Solicitud::find($solicitud->idsolicitud);
 					$transacciones = Transaccion::buscarTransaccionesEstadoPorSolicitud($solicitud->idsolicitud,3)->get();
 					
 					if($transacciones == null || $transacciones->isEmpty())
@@ -537,10 +535,10 @@ class RequerimientoController extends BaseController {
 						$solicitud->idestado_solicitud = 2;
 						$solicitud->fecha_cierre = date('Y-m-d H:i:s');
 						$solicitud->save();
-						return Redirect::to('/principal_gestor')->with('message','Se rechazó la transacción N° '.$transaccion->idtransaccion.' (Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud);
+						return Redirect::to('/principal_gestor')->with('message','Se rechazó la transacción N° '.$transaccion->idtransaccion.' (Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud.' con estado <strong>CERRADO CON OBSERVACIONES</strong>');
 					}
 
-					return Redirect::to('/principal_gestor')->with('message','Se rechazó la transacción N° '.$transaccion->idtransaccion.' (Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')');
+					return Redirect::to('/principal_gestor_procesando/'.$solicitud->idsolicitud)->with('message','Se rechazó la transacción N° '.$transaccion->idtransaccion.' (Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')');
 				}
 
 			}else{
@@ -562,31 +560,36 @@ class RequerimientoController extends BaseController {
 				
 				
 					
-				$idtransaccion = Input::get('requerimiento_id_finalizar');
-				$transaccion = Transaccion::find($idtransaccion);
+				$id_solicitud = Input::get('solicitud_id_finalizar');
 
-				$codigo_requerimiento = $transaccion->codigo_requerimiento;
+				$transacciones = Transaccion::buscarTransaccionesPorSolicitud($id_solicitud)->get();
+				
+				$codigos_transacciones = '';
 
-				$herramienta = Herramienta::find($transaccion->idherramienta);
-
-				if($herramienta->idtipo_requerimiento == 6)
+				if($transacciones != null && !$transacciones->isEmpty())
 				{
-					//SI ES REMEDY
-					if(strcmp($codigo_requerimiento, "SIN_REQ") == 0 || strcmp($codigo_requerimiento, '') == 0)
+					$cantidad_transacciones = count($transacciones);
+
+					for($i=0;$i<$cantidad_transacciones;$i++)
 					{
-						return Redirect::to('/principal_gestor')->with('error','No se pudo finalizar la atención de la transaccion N°'.$transaccion->idtransaccion. '. La transaccion no se encuentra asociada a un requerimiento tipo REQ.');	
+						
+						$res_checkbox = Input::get('ids_checkbox_finalizar')[$i];
+
+						if($res_checkbox == 1)
+						{
+							$transacciones[$i]->idestado_transaccion = 1;
+							$transacciones[$i]->fecha_cierre = date('Y-m-d H:i:s');
+							$transacciones[$i]->save();
+							$codigos_transacciones = $codigos_transacciones.' Transacción N° '.$transacciones[$i]->idtransaccion.' (Cod. Requerimiento: '.$transacciones[$i]->codigo_requerimiento.')<br>';			
+						}
 					}
 				}
 				
-				$transaccion->idestado_transaccion = 1;
-				$transaccion->fecha_cierre = date('Y-m-d H:i:s');
-				$transaccion->save();
-				
 				//VALIDAR LA SOLICITUD
 
-				$solicitud = Solicitud::find($transaccion->idsolicitud);
+				$solicitud = Solicitud::find($id_solicitud);
 				//buscar todas los requerimientos pendientes
-				$transacciones = Transaccion::buscarTransaccionesEstadoPorSolicitud($solicitud->idsolicitud,3)->get();
+				$transacciones = Transaccion::buscarTransaccionesPendientesProcesandoPorSolicitud($solicitud->idsolicitud)->get();
 				//si no hay pendientes revisamos si existen rechazadas
 				if($transacciones == null || $transacciones->isEmpty())
 				{
@@ -598,19 +601,19 @@ class RequerimientoController extends BaseController {
 						$solicitud->idestado_solicitud = 1;
 						$solicitud->fecha_cierre = date('Y-m-d H:i:s');
 						$solicitud->save();
-						return Redirect::to('/principal_gestor')->with('message','Se finalizó la atención de la transacción N°'.$transaccion->idtransaccion.'(Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud);
+						return Redirect::to('/principal_gestor')->with('message','Se finalizó la atención de las transacciones: <br>'.$codigos_transacciones.'<br>Se cerró la solicitud N°'.$solicitud->codigo_solicitud.' con estado <strong>ATENDIDO</strong>');
 					}else
 					{
 						//quiere decir que ya no hay mas pendientes se cierra el ticket con estado cerrado con observaciones
 						$solicitud->idestado_solicitud = 2;
 						$solicitud->fecha_cierre = date('Y-m-d H:i:s');
 						$solicitud->save();
-						return Redirect::to('/principal_gestor')->with('message','Se finalizó la atención de la transacción N°'.$transaccion->idtransaccion.'(Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud);
+						return Redirect::to('/principal_gestor')->with('message','Se finalizó la atención de las transacciones: <br>'.$codigos_transacciones.'<br>Se cerró la solicitud N°'.$solicitud->codigo_solicitud.' con estado <strong>CERRADO CON OBSERVACIONES</strong>');
 					}
 					
 				}
 
-				return Redirect::to('/principal_gestor')->with('message','Se finalizó la atención de la transacción N°'.$transaccion->idtransaccion.'(Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')');
+				return Redirect::to('/principal_gestor_procesando/'.$id_solicitud)->with('message','Se finalizó la atención de las transacciones: <br>'.$codigos_transacciones);
 				
 
 			}else{
@@ -630,30 +633,68 @@ class RequerimientoController extends BaseController {
 			// Verifico si el usuario es un Webmaster
 			if($data["user"]->idrol == 2){
 				
+				$id_solicitud = Input::get('solicitud_id_procesar');
+
+				$transacciones = Transaccion::buscarTransaccionesPorSolicitud($id_solicitud)->get();
 				
-					
-				$idtransaccion = Input::get('requerimiento_id_procesar');
-				$transaccion = Transaccion::find($idtransaccion);
+				$codigos_transacciones = '';
 
-				$codigo_requerimiento = $transaccion->codigo_requerimiento;
+				$mensaje = '';
 
-				$herramienta = Herramienta::find($transaccion->idherramienta);
+				$cantidad_errores = 0;
+				$cantidad_transacciones_seleccionadas = 0;
 
-				if($herramienta->idtipo_requerimiento == 6)
+				if($transacciones != null && !$transacciones->isEmpty())
 				{
-					//SI ES REMEDY
-					if(strcmp($codigo_requerimiento, "SIN_REQ") == 0 || strcmp($codigo_requerimiento, '') == 0)
+					$cantidad_transacciones = count($transacciones);
+
+					for($i=0;$i<$cantidad_transacciones;$i++)
 					{
-						return Redirect::to('/principal_gestor')->with('error','No se puede procesar la atención de la transaccion N°'.$transaccion->idtransaccion. '. La transaccion no se encuentra asociada a un requerimiento tipo REQ.');	
+						
+						$res_checkbox = Input::get('ids_checkbox')[$i];
+
+						if($res_checkbox == 1)
+						{
+							$cantidad_transacciones_seleccionadas++;
+
+							$herramienta = Herramienta::find($transacciones[$i]->idherramienta);
+							$tipo_requerimiento = TipoRequerimiento::find($herramienta->idtipo_requerimiento);
+
+							if($tipo_requerimiento->idtipo_requerimiento == 6)
+							{
+								//ES UN REMEDY, ENTONCES VALIDAMOS SI EL CODIGO INICIA EN REQ
+								//entonces se valida el codigo
+								if(strlen($transacciones[$i]->codigo_requerimiento) <= 3 || strcmp(substr($transacciones[$i]->codigo_requerimiento,0,3),'REQ') != 0 )
+								{
+									$mensaje = $mensaje.'Código de la transacción N° '.$transacciones[$i]->idtransaccion.' no corresponde a un REMEDY <strong>Actualizar código</strong><br>';
+
+									$cantidad_errores++;
+								}else{
+									$transacciones[$i]->idestado_transaccion = 4;
+									$transacciones[$i]->fecha_inicio_procesando = date('Y-m-d H:i:s');
+									$transacciones[$i]->save();
+									$codigos_transacciones = $codigos_transacciones.' Transacción N° '.$transacciones[$i]->idtransaccion.' (Cod. Requerimiento: '.$transacciones[$i]->codigo_requerimiento.')<br>';			
+								} 
+							}else
+							{
+								$transacciones[$i]->idestado_transaccion = 4;
+								$transacciones[$i]->fecha_inicio_procesando = date('Y-m-d H:i:s');
+								$transacciones[$i]->save();
+								$codigos_transacciones = $codigos_transacciones.' Transacción N° '.$transacciones[$i]->idtransaccion.' (Cod. Requerimiento: '.$transacciones[$i]->codigo_requerimiento.')<br>';			
+							}
+
+							
+						}
 					}
 				}
 				
-				$transaccion->idestado_transaccion = 4;
-				$transaccion->fecha_inicio_procesando = date('Y-m-d H:i:s');
-				$transaccion->save();
-				
-				
-				return Redirect::to('/principal_gestor')->with('message','Se inició la atención de la transacción N°'.$transaccion->idtransaccion.'(Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')');
+				if($cantidad_errores > 0)
+					Session::flash('error','No se procesarán las siguientes transacciones:<br>'.$mensaje);
+
+				if($cantidad_transacciones_seleccionadas == $cantidad_errores)
+					return Redirect::to('/principal_gestor_procesando/'.$id_solicitud);
+				else
+					return Redirect::to('/principal_gestor_procesando/'.$id_solicitud)->with('message','Se inició la atención de las transacciones:<br>'.$codigos_transacciones);
 				
 
 			}else{

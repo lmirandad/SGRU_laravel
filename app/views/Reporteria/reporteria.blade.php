@@ -27,7 +27,7 @@
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>EXPORTAR BASE DE SOLICITUDES</strong></h3>
+							<h3 class="panel-title"><strong>EXPORTAR BASE DE SOLICITUDES</strong> (FECHA SOLICITUD)</h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
@@ -67,7 +67,7 @@
 				<div class="col-md-12">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>EXPORTAR BASE DE REQUERIMIENTOS / TRANSACCIONES</strong></h3>
+							<h3 class="panel-title"><strong>EXPORTAR BASE DE REQUERIMIENTOS / TRANSACCIONES</strong> (FECHA REGISTRO TRANSACCION)</h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">

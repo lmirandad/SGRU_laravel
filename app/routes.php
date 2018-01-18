@@ -23,6 +23,7 @@ Route::group(array('before'=>'auth'),function(){
 	Route::get('/logout','LoginController@logout');
 	Route::get('/principal_admin','MenuPrincipalController@home_admin');
 	Route::get('/principal_gestor','MenuPrincipalController@home_gestor');
+	Route::get('/principal_gestor_procesando/{id}','MenuPrincipalController@home_gestor_procesando');
 
 	/*EXPORTACION DE BASE ACTUAL DE TICKETS GESTOR */
 	Route::get('/generar_reporte_gestor','MenuPrincipalController@generar_reporte_gestor');
