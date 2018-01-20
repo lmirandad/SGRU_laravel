@@ -192,6 +192,7 @@
 									<thead>
 										<tr>
 											<th class="text-nowrap text-center">Nombre del Canal</th>
+											<th class="text-nowrap text-center">Canal Agrupado</th>
 											<th class="text-nowrap text-center">Sector</th>
 											<th class="text-nowrap text-center">Editar</th>
 											<!--
@@ -205,6 +206,9 @@
 										<tr>
 											<td class="text-nowrap text-center">
 												<a href="{{URL::to('/canales/mostrar_canal/')}}/{{$canal_data->idcanal}}">{{$canal_data->nombre}}</a>
+											</td>
+											<td class="text-nowrap text-center">
+												{{$canal_data->nombre_canal_agrupado}}
 											</td>
 											<td class="text-nowrap text-center">
 												{{$canal_data->nombre_sector}}

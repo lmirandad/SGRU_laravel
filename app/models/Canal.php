@@ -28,9 +28,10 @@ class Canal extends Eloquent implements UserInterface, RemindableInterface {
 
 	public function scopeListarCanales($query)
 	{
-		$query->join('sector','sector.idsector','=','canal.idsector');
+		$query->join('sector','sector.idsector','=','canal.idsector')
+			   ->join('canal_agrupado','canal_agrupado.idcanal_agrupado','=','canal.idcanal_agrupado');
 
-		$query->select('canal.*','sector.nombre as nombre_sector');
+		$query->select('canal.*','sector.nombre as nombre_sector','canal_agrupado.nombre as nombre_canal_agrupado');
 
 		return $query;
 	}
@@ -72,13 +73,14 @@ class Canal extends Eloquent implements UserInterface, RemindableInterface {
 
 	public function scopeBuscarCanales($query,$nombre_canal,$idsector){
 		
-		$query->join('sector','canal.idsector','=','sector.idsector');
+		$query->join('sector','canal.idsector','=','sector.idsector')
+			  ->join('canal_agrupado','canal_agrupado.idcanal_agrupado','=','canal.idcanal_agrupado');
 		if($nombre_canal != null)
 			$query->where('canal.nombre','LIKE',"%$nombre_canal%");
 		if(strcmp($idsector,"")!=0)
 			$query->where('canal.idsector','=',$idsector);
 
-		$query->select('canal.*','sector.nombre as nombre_sector');
+		$query->select('canal.*','sector.nombre as nombre_sector','canal_agrupado.nombre as nombre_canal_agrupado');
 
 	}
 	

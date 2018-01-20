@@ -252,7 +252,7 @@ class RequerimientoController extends BaseController {
 		    				$solicitud->fecha_inicio_procesando = date('Y-m-d H:i:s');
 		    				$solicitud->fecha_cierre = date('Y-m-d H:i:s');
 		    				$solicitud->save();
-		    				return Redirect::to('/principal_gestor')->with('message','Se procedió a cerrar la solicitud '.$solicitud->codigo_solicitud.'.<br>Las transacciones que se registraron en el sistema fueron rechazadas puesto que los usuarios se encuentran bloqueados en Lista Vena u Observados.');
+		    				return Redirect::to('/principal_gestor')->with('message','Se procedió a cerrar la solicitud '.$solicitud->codigo_solicitud.' con estado <strong>CERRADO CON OBSERVACIONES</strong>.<br>Las transacciones que se registraron en el sistema fueron rechazadas puesto que los usuarios se encuentran bloqueados en Lista Vena u Observados.');
 		    			}
 		    		}
 		    	}else{

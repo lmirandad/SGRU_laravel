@@ -36,23 +36,28 @@
 								<p>{{ $errors->first('nombre_canal') }}</p>				
 								<p>{{ $errors->first('descripcion') }}</p>
 								<p>{{ $errors->first('sector') }}</p>
+								<p>{{ $errors->first('canal_agrupado') }}</p>
 							</div>
 							@endif
 						</div>
 						<div class="row">
-							<div class="form-group col-md-3 col-md-offset-3 @if($errors->first('nombre_canal')) has-error has-feedback @endif"">
+							<div class="form-group col-md-3 col-md-offset-2 @if($errors->first('nombre_canal')) has-error has-feedback @endif"">
 								{{ Form::label('nombre_canal','Nombre del Canal')}}
 								{{ Form::text('nombre_canal',Input::old('nombre_canal'),array('class'=>'form-control','placeholder'=>'Ingrese nombre del canal')) }}
 							</div>
 							<div class="form-group col-md-3 @if($errors->first('sector')) has-error has-feedback @endif"">
 								{{ Form::label('sector','Sector:')}}
-								{{ Form::select('sector',array(''=>'Seleccione')+$sectores,Input::old('sector'),array('class'=>'form-control')) }}
+								{{ Form::select('sector',array(''=>'Seleccione')+$sectores,Input::old('sector'),array('class'=>'form-control','id'=>'slcSector')) }}
+							</div>
+							<div class="form-group col-md-3 @if($errors->first('canal_agrupado')) has-error has-feedback @endif"">
+								{{ Form::label('canal_agrupado','Canal Agrupado:')}}
+								{{ Form::select('canal_agrupado',array(''=>'Seleccione'),Input::old('canal_agrupado'),array('class'=>'form-control','id'=>'slcCanalAgrupado')) }}
 							</div>
 						</div>
 						<div class="row">
-							<div class="form-group col-md-6 col-md-offset-3 @if($errors->first('descripcion')) has-error has-feedback @endif"">
+							<div class="form-group col-md-9 col-md-offset-2 @if($errors->first('descripcion')) has-error has-feedback @endif"">
 								{{ Form::label('descripcion','Descripción:')}}
-								{{ Form::textarea('descripcion',Input::old('descripcion'),array('class'=>'form-control','placeholder'=>'Ingrese una descripción','rows'=>5,'style'=>'resize:none')) }}
+								{{ Form::textarea('descripcion',Input::old('descripcion'),array('class'=>'form-control','placeholder'=>'Ingrese una descripción','rows'=>5,'style'=>'resize:none','id'=>'slcCanalAgrupado')) }}
 							</div>
 						</div>
 					</div>

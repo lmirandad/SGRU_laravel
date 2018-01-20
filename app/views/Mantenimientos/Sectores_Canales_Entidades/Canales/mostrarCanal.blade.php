@@ -39,11 +39,15 @@
 							@endif
 						</div>
 						<div class="row">
-							<div class="form-group col-md-6 @if($errors->first('nombre_canal')) has-error has-feedback @endif"">
+							<div class="form-group col-md-4 @if($errors->first('nombre_canal')) has-error has-feedback @endif"">
 								{{ Form::label('nombre_canal','Nombre del Canal')}}
 								{{ Form::text('nombre_canal',$canal->nombre,array('class'=>'form-control','placeholder'=>'Ingrese nombre del canal','disabled'=>'disabled')) }}
 							</div>
-							<div class="form-group col-md-6 @if($errors->first('sector')) has-error has-feedback @endif"">
+							<div class="form-group col-md-4 @if($errors->first('nombre_canal_agrupado')) has-error has-feedback @endif"">
+								{{ Form::label('nombre_canal_agrupado','Nombre del Canal Agrupado:')}}
+								{{ Form::select('canal_agrupado',array(''=>'Seleccione')+$canales_agrupados,$canal->idcanal_agrupado,array('class'=>'form-control','disabled'=>'disabled')) }}
+							</div>
+							<div class="form-group col-md-4 @if($errors->first('sector')) has-error has-feedback @endif"">
 								{{ Form::label('sector','Sector:')}}
 								{{ Form::select('sector',array(''=>'Seleccione')+$sectores,$canal->idsector,array('class'=>'form-control','disabled'=>'disabled')) }}
 							</div>

@@ -132,7 +132,7 @@ Route::group(array('prefix'=>'sectores', 'before'=>'auth'),function(){
 	Route::get('/mostrar_herramientas_sector/{id}','SectorController@mostrar_herramientas_sector');
 	Route::post('/submit_agregar_herramientas','SectorController@submit_agregar_herramientas');
 	Route::post('/mostrar_canales_herramientas','SectorController@mostrar_canales_herramientas');
-	
+	Route::post('/mostrar_canales_agrupados','SectorController@mostrar_canales_agrupados');
 });
 
 /*CANALES*/

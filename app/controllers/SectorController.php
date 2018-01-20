@@ -429,6 +429,25 @@ class SectorController extends BaseController {
 		return Response::json(array( 'success' => true,'canales' => $canales, 'herramientas' => $herramientas),200);			
 		
 	}
+
+	public function mostrar_canales_agrupados(){
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		// Check if the current user is the "System Admin"
+		$sector_id = Input::get('sector_id');
+		$canales_agrupados = CanalAgrupado::buscarCanalAgrupadoPorIdSector($sector_id)->get();
+		
+		
+		if($canales_agrupados==null || $canales_agrupados->isEmpty())
+			return Response::json(array( 'success' => true,'canales_agrupados'=>null),200);		
+
+		return Response::json(array( 'success' => true,'canales_agrupados' => $canales_agrupados),200);			
+		
+	}
 	
 
 }

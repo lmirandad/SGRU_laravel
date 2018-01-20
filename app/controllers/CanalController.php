@@ -10,6 +10,7 @@ class CanalController extends BaseController {
 			// Verifico si el usuario es un Webmaster
 			if($data["user"]->idrol == 1){
 				$data["sectores"] = Sector::lists('nombre','idsector');
+				$data["canales_agrupados"] = null;
 				return View::make('Mantenimientos/Sectores_Canales_Entidades/Canales/crearCanal',$data);
 			}else{
 				return View::make('error/error',$data);
@@ -31,7 +32,8 @@ class CanalController extends BaseController {
 				$attributes = array(
 					'nombre_canal' => 'Nombre del Canal',
 					'descripcion' => 'Descripcion',
-					'sector' => 'Sector'
+					'sector' => 'Sector',
+					'canal_agrupado' => 'Canal Agrupado'
 				);
 
 				$messages = array();
@@ -39,7 +41,8 @@ class CanalController extends BaseController {
 				$rules = array(
 					'nombre_canal' => 'required|max:100|alpha_num_spaces_slash_dash|unique:canal,nombre',
 					'descripcion' => 'alpha_num_spaces_slash_dash_enter|max:200',
-					'sector' => 'required'
+					'sector' => 'required',
+					'canal_agrupado' => 'required'
 				);
 				// Run the validation rules on the inputs from the form
 				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);
@@ -50,11 +53,13 @@ class CanalController extends BaseController {
 					$nombre_canal = Input::get('nombre_canal');
 					$descripcion = Input::get('descripcion');
 					$idsector = Input::get('sector');
+					$idcanal_agrupado = Input::get('canal_agrupado'); 
 					
 					$canal = new Canal;
 					$canal->nombre = $nombre_canal;
 					$canal->descripcion = $descripcion;
 					$canal->idsector = $idsector;
+					$canal->idcanal_agrupado = $idcanal_agrupado;
 					$canal->iduser_created_by = $data["user"]->id;
 
 					$canal->save();						
@@ -81,6 +86,7 @@ class CanalController extends BaseController {
 			if(($data["user"]->idrol == 1) && $idcanal)
 			{	
 				$data["canal"] = Canal::withTrashed()->find($idcanal);
+				$data["canales_agrupados"] = CanalAgrupado::buscarCanalAgrupadoPorIdSector($data["canal"]->idsector)->lists('nombre','idcanal_agrupado');
 				$data["sectores"] = Sector::lists('nombre','idsector');
 
 				if($data["canal"]==null){
@@ -109,7 +115,8 @@ class CanalController extends BaseController {
 				$attributes = array(
 					'nombre_canal' => 'Nombre del Canal',
 					'descripcion' => 'Descripcion',
-					'sector' => 'Sector'
+					'sector' => 'Sector',
+					'canal_agrupado' => 'Canal Agrupado'
 				);
 
 				$messages = array();
@@ -117,7 +124,8 @@ class CanalController extends BaseController {
 				$rules = array(
 					'nombre_canal' => 'required|max:100|alpha_num_spaces_slash_dash|unique:canal,nombre,'.$canal_id.',idcanal',
 					'descripcion' => 'alpha_num_spaces_slash_dash_enter|max:200',
-					'sector' => 'required'
+					'sector' => 'required',
+					'canal_agrupado' => 'required'
 				);
 				// Run the validation rules on the inputs from the form
 				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);
@@ -133,7 +141,7 @@ class CanalController extends BaseController {
 					$nombre_canal = Input::get('nombre_canal');
 					$descripcion = Input::get('descripcion');
 					$idsector = Input::get('sector');
-					
+					$idcanal_agrupado = Input::get('canal_agrupado');
 					$canal = Canal::find($canal_id);
 
 					if($idsector != $canal->idsector)
@@ -150,6 +158,7 @@ class CanalController extends BaseController {
 					$canal->nombre = $nombre_canal;
 					$canal->descripcion = $descripcion;
 					$canal->idsector = $idsector;
+					$canal->idcanal_agrupado = $idcanal_agrupado;
 					$canal->iduser_updated_by = $data["user"]->id;
 
 					$canal->save();					
@@ -201,7 +210,9 @@ class CanalController extends BaseController {
 			if(($data["user"]->idrol == 1) && $idcanal)
 			{	
 				$data["canal"] = Canal::withTrashed()->find($idcanal);
+				$data["canales_agrupados"] = CanalAgrupado::lists('nombre','idcanal_agrupado');
 				$data["sectores"] = Sector::lists('nombre','idsector');
+
 
 				if($data["canal"]==null){						
 					return Redirect::to('entidades_canales_sectores/listar/2')->with('error','Canal no encontrado');

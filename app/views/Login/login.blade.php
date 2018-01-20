@@ -36,14 +36,14 @@
 						<label for="signin-password" class="control-label sr-only">Contraseña</label>
 						{{ Form::password('password',array('class'=>'form-control','placeholder'=>'Ingrese contraseña','id'=>'signin-password')) }}
 					</div>														
-					{{ Form::submit('ACCEDER',array('id'=>'submit-login', 'class'=>'btn btn-lg btn-info btn-block')) }}
+					{{ Form::submit('ACCEDER',array('id'=>'submit-login', 'class'=>'btn btn-lg btn-info btn-block','style'=>'background-color:#015C63;border-color:#015C63')) }}
 					{{ Form::close() }}
 				</div>
 			</div>
 			<div class="right">
 				<div class="overlay"></div>
 				<div class="content text">
-					<h2 class="heading" style="text-align:center" ><strong>SISTEMA DE GESTIÓN DE REGISTRO DE USUARIOS</strong></h2>
+					<h1  style="text-align:center"><strong>PORTAL 1.0</strong></h1>
 				</div>
 			</div>
 			<div class="clearfix"></div>
