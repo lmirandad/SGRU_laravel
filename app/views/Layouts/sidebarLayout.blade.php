@@ -27,6 +27,11 @@
 							<li><a href="{{URL::to('equivalencias_tipo_solicitud/listar_equivalencias')}}"><font style="color:#00272E"><i class="fa fa-exchange"></i><span>Equivalencias Acción Solicitud</font></span> </a>
 							</li>
 							<li><a href="{{URL::to('feriados/listar_feriados')}}"><font style="color:#00272E"><i class="fa fa-calendar"></i><span>Feriados</font></span> </a>
+							</li>
+							<!-- COMING SOON
+							<li><a href="{{URL::to('rango_dias/listar_rangos')}}"><font style="color:#00272E"><i class="lnr lnr-code"></i><span>Rango Dias Reporteria</font></span> </a>
+							</li>
+							-->
 							<li><a href="{{URL::to('usuarios_observados_vena/cargar_usuarios_observados_vena')}}"><font style="color:#00272E"><i class="lnr lnr-cross-circle"></i><span>Lista Vena / Observados</font></span> </a>
 							</li>
 						</ul>

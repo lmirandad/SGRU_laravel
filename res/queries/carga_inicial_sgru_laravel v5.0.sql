@@ -1,4 +1,4 @@
-﻿-- CARGA INICIAL - SGRU_LARAVEL - 2018-01-19 - v5.0
+﻿-- CARGA INICIAL - SGRU_LARAVEL - 2018-01-20 - v5.0
 --****************************************************
 -- INSERTS  
 ---****************************************************
@@ -8,6 +8,14 @@ INSERT INTO rol (nombre,created_at,updated_at) VALUES ('ADMINISTRADOR',convert(d
 INSERT INTO rol (nombre,created_at,updated_at) VALUES ('GESTOR','2017-11-17','2017-11-17');
 INSERT INTO rol (nombre,created_at,updated_at) VALUES ('BUSINESS PARTNER','2017-11-17','2017-11-17');
 INSERT INTO rol (nombre,created_at,updated_at) VALUES ('RESPONSABLE CANAL','2017-11-17','2017-11-17');
+INSERT INTO rol (nombre,created_at,updated_at) VALUES ('GESTOR RIESGO OPERACIONAL','2017-11-17','2017-11-17');
+INSERT INTO rol (nombre,created_at,updated_at) VALUES ('GESTOR USUARIOS VENDEDORES','2017-11-17','2017-11-17');
+-- RANGO DIAS REPORTERIA
+INSERT INTO rango_dias_reporteria (nombre,dia_minimo,dia_maximo,created_at,updated_at) VALUES ('[0-1]',0,1,'2017-11-17','2017-11-17')
+INSERT INTO rango_dias_reporteria (nombre,dia_minimo,dia_maximo,created_at,updated_at) VALUES ('[2-3]',2,3,'2017-11-17','2017-11-17')
+INSERT INTO rango_dias_reporteria (nombre,dia_minimo,dia_maximo,created_at,updated_at) VALUES ('[4-5]',4,5,'2017-11-17','2017-11-17')
+INSERT INTO rango_dias_reporteria (nombre,dia_minimo,dia_maximo,created_at,updated_at) VALUES ('[6-7]',6,7,'2017-11-17','2017-11-17')
+INSERT INTO rango_dias_reporteria (nombre,dia_minimo,dia_maximo,created_at,updated_at) VALUES ('[>7]',8,NULL,'2017-11-17','2017-11-17')
 --TIPO DOCUMENTO
 INSERT INTO tipo_doc_identidad (nombre,created_at,updated_at) VALUES ('DNI','2017-11-17','2017-11-17');
 INSERT INTO tipo_doc_identidad (nombre,created_at,updated_at) VALUES ('CARNET DE EXTRANJERIA','2017-11-17','2017-11-17');
