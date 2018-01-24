@@ -89,7 +89,9 @@ Route::group(array('prefix'=>'usuarios', 'before'=>'auth'),function(){
 	Route::get('/mostrar_herramientas_usuario/{id}','UserController@mostrar_herramientas_usuario');
 	Route::post('/submit_agregar_herramientas','UserController@submit_agregar_herramientas');
 	Route::get('/mostrar_sectores_usuario/{id}','UserController@mostrar_sectores_usuario');
-	Route::post('/submit_agregar_sectores','UserController@submit_agregar_sectores');		
+	Route::post('/submit_agregar_sectores','UserController@submit_agregar_sectores');
+	Route::get('/mostrar_canales_usuario/{id}','UserController@mostrar_canales_usuario');		
+	Route::post('/submit_agregar_canales','UserController@submit_agregar_canales');
 	Route::post('/submit_habilitar_usuario','UserController@submit_habilitar_usuario');
 	Route::post('/submit_inhabilitar_usuario','UserController@submit_inhabilitar_usuario');
 	
@@ -137,6 +139,7 @@ Route::group(array('prefix'=>'sectores', 'before'=>'auth'),function(){
 
 /*CANALES*/
 Route::group(array('prefix'=>'canales', 'before'=>'auth'),function(){
+	Route::post('/submit_eliminar_canal_usuario','CanalController@submit_eliminar_canal_usuario');
 	Route::get('/crear_canal','CanalController@crear_canal');
 	Route::post('/submit_crear_canal','CanalController@submit_crear_canal');	
 	Route::get('/editar_canal/{id}','CanalController@editar_canal');

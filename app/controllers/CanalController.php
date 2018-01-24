@@ -300,4 +300,31 @@ class CanalController extends BaseController {
 		}
 	}
 
+	public function submit_eliminar_canal_usuario(){
+		if(!Request::ajax() || !Auth::check()){
+			return Response::json(array( 'success' => false ),200);
+		}
+		$id = Auth::id();
+		$data["inside_url"] = Config::get('app.inside_url');
+		$data["user"] = Session::get('user');
+		if($data["user"]->idrol == 1){
+			// Check if the current user is the "System Admin"
+			$usuario_id = Input::get('usuario_id');
+			$idcanal = Input::get('idcanal');
+			
+			$canal = Canal::find($idcanal);
+
+			if($canal == null)
+				return Response::json(array( 'success' => true,'existe'=>false,'nombre_canal'=>null),200);
+			
+			$canal->idusuario_responsable = null;
+			$canal->save();
+
+			return Response::json(array( 'success' => true,'existe'=>false,'nombre_canal'=>$canal->nombre),200);
+			
+		}else{
+			return Response::json(array( 'success' => false),200);
+		}
+	}
+
 }

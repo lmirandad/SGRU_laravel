@@ -203,6 +203,10 @@ $( document ).ready(function(){
 		agregarNuevosSectores();
 	});
 
+	$('#btnAgregarCanalSubmit').click(function(){
+		agregarNuevosCanales();
+	});
+
 	$('#btnAgregarAccionSubmit').click(function(){
 		actualizarAcciones();
 	});
@@ -249,6 +253,20 @@ $( document ).ready(function(){
        }
     });
 
+    $('#checkboxAllCanal').change(function() {
+       if(this.checked){
+       		size_table = document.getElementById("tabla_canales_disponibles").rows.length-1;
+       		for(i=0;i<size_table;i++){
+				$('#checkboxC'+i).prop('checked', true);
+			}
+       }else{
+       		size_table = document.getElementById("tabla_canales_disponibles").rows.length-1;
+       		for(i=0;i<size_table;i++){
+				$('#checkboxC'+i).prop('checked', false);
+			}
+       }
+    });
+
 });
 
 
@@ -278,6 +296,21 @@ function agregarNuevosSectores(){
 		callback: function(result){
             if(result) {
 				document.getElementById("submit-agregar-sectores").submit();
+            }
+        }
+    });					
+}
+
+function agregarNuevosCanales(){
+	BootstrapDialog.confirm({
+		title: 'Mensaje de Confirmación',
+		message: '¿Está seguro que desea realizar esta acción?', 
+		type: BootstrapDialog.TYPE_INFO,
+		btnCancelLabel: 'Cancelar', 
+    	btnOKLabel: 'Aceptar', 
+		callback: function(result){
+            if(result) {
+				document.getElementById("submit-agregar-canales").submit();
             }
         }
     });					
@@ -403,6 +436,54 @@ function eliminar_sector(e,id){
 					        });
 						}
 						
+						
+					},
+					error: function(){
+					}
+				});
+			}
+		}
+	});	
+}
+
+function eliminar_canal(e,id){
+	usuario_id = $('#usuario_id').val();
+	e.preventDefault();
+	BootstrapDialog.confirm({
+		title: 'Mensaje de Confirmación',
+		message: '¿Está seguro que desea realizar esta acción?', 
+		type: BootstrapDialog.TYPE_DANGER,
+		btnCancelLabel: 'Cancelar', 
+    	btnOKLabel: 'Aceptar', 
+		callback: function(result){
+            if(result) {
+            	$.ajax({
+					url: inside_url+'canales/submit_eliminar_canal_usuario',
+					type: 'POST',
+					data: { 
+						'idcanal' : id,
+						'usuario_id': usuario_id
+					},
+					beforeSend: function(){
+						//$(this).prop('disabled',true);
+					},
+					complete: function(){
+						//$(this).prop('disabled',false);
+					},
+					success: function(response){
+
+						dialog = BootstrapDialog.show({
+				            title: 'Mensaje',
+				            message: 'Se retiró el canal al usuario como responsable.',
+				            type : BootstrapDialog.TYPE_SUCCESS,
+				            buttons: [{
+				                label: 'Entendido',
+				                action: function(dialog) {
+				                    var url = inside_url + "usuarios/mostrar_canales_usuario/"+usuario_id;
+									window.location = url;
+				                }
+				            }]
+				        });						
 						
 					},
 					error: function(){

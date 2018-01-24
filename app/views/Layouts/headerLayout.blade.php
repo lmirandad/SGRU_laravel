@@ -4,7 +4,7 @@
 		@if($user->idrol == 1)
 		<a href="{{URL::to('/principal_admin')}}"><img src="{{asset('assets/img/nuevo_logo.png')}}" alt="SGRU" class="img-responsive logo" style="margin-bottom: -30px;margin-top:-20px;padding-left:-20px"></a>
 		@else		
-		<a href="{{URL::to('/principal_admin')}}"><img src="{{asset('assets/img/nuevo_logo.png')}}" alt="SGRU" class="img-responsive logo" style="margin-bottom: -30px;margin-top:-20px;padding-left:-20px"></a>
+		<a href="{{URL::to('/principal_gestor')}}"><img src="{{asset('assets/img/nuevo_logo.png')}}" alt="SGRU" class="img-responsive logo" style="margin-bottom: -30px;margin-top:-20px;padding-left:-20px"></a>
 		@endif
 	</div>
 	<div class="container-fluid">

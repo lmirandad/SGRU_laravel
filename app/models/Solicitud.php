@@ -55,6 +55,21 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 
 	}
 
+	public function scopeBuscarSolicitudPorIdSolicitud($query,$idsolicitud)
+	{
+		$query->leftJoin('sla','sla.idsla','=','solicitud.idsla')
+			  ->leftJoin('tipo_solicitudxsla','tipo_solicitudxsla.idsla','=','sla.idsla')
+			  ->leftJoin('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
+			  ->leftJoin('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion')
+			  ->leftJoin('carga_archivo','solicitud.idcarga_archivo','=','carga_archivo.idcarga_archivo');
+
+		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1)
+			  ->where('solicitud.idsolicitud','=',$idsolicitud);
+
+		$query->select('solicitud.idsolicitud','solicitud.idestado_solicitud','tipo_solicitudxsla.sla_pendiente','tipo_solicitudxsla.sla_procesando','asignacion.fecha_asignacion','solicitud.fecha_inicio_procesando','solicitud.fecha_cierre','carga_archivo.*');
+
+	}
+
 	public function scopeBuscarSolicitudesPendientesProcesandoPorIdUsuario($query,$idusuario)
 	{
 		$query->join('asignacion','solicitud.idsolicitud','=','asignacion.idsolicitud');
@@ -645,7 +660,8 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			  ->leftjoin('entidad','entidad.identidad','=','solicitud.identidad')
 			  ->leftjoin('canal','canal.idcanal','=','entidad.idcanal')
 			  ->leftjoin('sector','sector.idsector','=','canal.idsector')
-			  ->leftJoin('carga_archivo','solicitud.idcarga_archivo','=','carga_archivo.idcarga_archivo');
+			  ->leftJoin('carga_archivo','solicitud.idcarga_archivo','=','carga_archivo.idcarga_archivo')
+			  ->leftJoin('asignacion','solicitud.idsolicitud','=','asignacion.idsolicitud');
 
 		
 		if($fecha_desde != "")
@@ -655,7 +671,7 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 			$query->where('solicitud.fecha_solicitud','<=',date('Y-m-d H:i:s',strtotime('+23 hours +59 minutes +59 seconds',strtotime($fecha_hasta))));
 
 
-		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','carga_archivo.*');
+		$query->select('solicitud.*','tipo_solicitud.nombre as nombre_tipo_solicitud','estado_solicitud.nombre as nombre_estado_solicitud','carga_archivo.*','asignacion.fecha_asignacion as fecha_asignacion');
 
 		return $query;
 	}

@@ -41,8 +41,8 @@ $( document ).ready(function(){
      }
 
 	 $('#btnLimpiar').click(function(){
-	 	$('#fecha_desde').val(null);
-	 	$('#fecha_hasta').val(null);
+	 	$('#fecha_desde_solicitud').val(null);
+        $('#fecha_hasta_solicitud').val(null);	 	
 	 });
 
      $('#btnLimpiarReq').click(function(){

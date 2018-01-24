@@ -506,30 +506,11 @@ class RequerimientoController extends BaseController {
 					$transaccion->save();
 					//validamos si ya no hay mas requerimientos pendientes de atencion
 
-					//VALIDAMOS POR REQUERIMIENTO
-					$transacciones = Transaccion::buscarTransaccionesEstadoPorSolicitud($solicitud->idsolicitud,3)->get();
-
-					//validar si NO hay transacciones pendientes
-					if($transacciones == null || $transacciones->isEmpty())
-					{
-						$transacciones_totales = Transaccion::buscarTransaccionesPorSolicitud($solicitud->idsolicitud)->get();
-						//quiere decir que no hay pendientes, se valida si todos están rechazados
-						$transacciones_rechazadas = Transaccion::buscarTransaccionesEstadoPorSolicitud($solicitud->idsolicitud,2)->get();
-
-						//si: Numero_trx_totales = Numero_trx_rechazadas -> todas estan rechazadas (se rechaza el requerimiento)
-						if(count($transacciones_totales) == count($transacciones_rechazadas))
-						{
-							$solicitud->idestado_solicitud = 2;
-							$solicitud->fecha_cierre = date('Y-m-d H:i:s');
-							$solicitud->save();
-							return Redirect::to('/principal_gestor')->with('message','Se rechazó la transacción N° '.$transaccion->idtransaccion.' (Cod. Requerimiento: '.$transaccion->codigo_requerimiento.')<br> '.'Se cerró la solicitud N°'.$solicitud->codigo_solicitud.' con estado <strong>CERRADO CON OBSERVACIONES</strong>');
-						}
-					}
-
 					//VALIDAMOS POR SOLICITUD (A NIVEL TRANSACCION)
-					$transacciones = Transaccion::buscarTransaccionesEstadoPorSolicitud($solicitud->idsolicitud,3)->get();
+					$transacciones_procesando = Transaccion::buscarTransaccionesEstadoPorSolicitud($solicitud->idsolicitud,4)->get();
+					$transacciones_pendientes = Transaccion::buscarTransaccionesEstadoPorSolicitud($solicitud->idsolicitud,3)->get();
 					
-					if($transacciones == null || $transacciones->isEmpty())
+					if(($transacciones_procesando == null || $transacciones_procesando->isEmpty()) && ($transacciones_pendientes == null || $transacciones_pendientes->isEmpty()) )
 					{
 						//quiere decir que ya no hay mas pendientes se cierra el ticket con estado cerrado con observaciones
 						$solicitud->idestado_solicitud = 2;

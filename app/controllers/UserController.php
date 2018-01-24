@@ -437,6 +437,33 @@ class UserController extends BaseController {
 		}
 	}
 
+	public function mostrar_canales_usuario($idusuario=null){
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if(($data["user"]->idrol == 1) && $idusuario)
+			{	
+				$data["usuario"] = User::find($idusuario);
+				if($data["usuario"]==null){						
+					return Redirect::to('usuarios/listar_usuarios')->with('error','Usuario no encontrado');
+				}
+				$data["canales"] = Canal::buscarCanalesPorIdUsuarioResponsable($data["usuario"]->id)->get();
+				$data["canales_disponibles"] = Canal::listarCanalesSinResponsable()->get();
+				/*echo '<pre>';
+			    var_dump(count($data["sectores_disponibles"]));
+			    echo '</pre>';*/
+				
+				return View::make('Mantenimientos/usuarios/mostrarCanalesResponsable',$data);			
+				
+			}else{
+				return View::make('error/error',$data);
+			}
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
 	public function submit_agregar_herramientas(){
 		if(Auth::check()){
 			$data["inside_url"] = Config::get('app.inside_url');
@@ -567,6 +594,57 @@ class UserController extends BaseController {
 			    }else
 			    {
 			    	return Redirect::to('usuarios/mostrar_sectores_usuario/'.$usuario_id)->with('error', 'No se agregaron los sectores al usuario');	
+			    }	
+				
+			}else{
+				return View::make('error/error',$data);
+			}
+
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function submit_agregar_canales(){
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1){
+				// Validate the info, create rules for the inputs
+				$user = User::find(Input::get('usuario_id'));				
+				$usuario_id = Input::get('usuario_id');
+				$arr_idcanales = Input::get('ids_canales');
+				/*echo '<pre>';
+			    var_dump(count($arr_idsectores));
+			    echo '</pre>';*/
+			    $size_ids = count($arr_idcanales);
+			    $flag_seleccion = false;
+			    //por cada uno validar si el checkbox asociado fue tecleado
+			    for($i=0;$i<$size_ids;$i++){
+			    	$res_checkbox = Input::get('checkbox'.$i);
+			    	/*echo '<pre>';
+				    var_dump('seleccionado ' .$res_checkbox.': id-> '.$arr_idcanales[$i] );	
+				    echo '</pre>';*/
+				    if($res_checkbox == 1)
+				    {
+				    	
+				    	$canal = Canal::find($arr_idcanales[$i]);
+				    	$canal->idusuario_responsable = $usuario_id;
+				    	$canal->save();
+				    	$flag_seleccion = true;
+				    }
+			    }
+
+			    if($size_ids > 0)
+			    {
+			    	if($flag_seleccion)
+			    		return Redirect::to('usuarios/mostrar_canales_usuario/'.$usuario_id)->with('message', 'Se actualizaron correctamente los canales al usuario como responsable');	
+			    	else
+			    		return Redirect::to('usuarios/mostrar_canales_usuario/'.$usuario_id)->with('error', 'No se seleccionó ningún canal.');	
+			    }else
+			    {
+			    	return Redirect::to('usuarios/mostrar_canales_usuario/'.$usuario_id)->with('error', 'No se agregaron los canales al usuario');	
 			    }	
 				
 			}else{

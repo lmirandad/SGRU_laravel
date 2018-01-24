@@ -83,5 +83,19 @@ class Canal extends Eloquent implements UserInterface, RemindableInterface {
 		$query->select('canal.*','sector.nombre as nombre_sector','canal_agrupado.nombre as nombre_canal_agrupado');
 
 	}
+
+	public function scopeBuscarCanalesPorIdUsuarioResponsable($query,$idusuario)
+	{
+		$query->where('canal.idusuario_responsable','=',$idusuario);
+		$query->select('canal.*');
+		return $query;
+	}
+
+	public function scopeListarCanalesSinResponsable($query)
+	{
+		$query->whereNull('canal.idusuario_responsable');
+		$query->select('canal.*');
+		return $query;	
+	}
 	
 }

@@ -105,7 +105,7 @@ class SolicitudController extends BaseController {
 			    $lista_solicitudes = Excel::load($file_name)->get();
 
 			    //inicio del algoritmo
-			     //$lista_solicitudes = $line_of_text;
+			    //$lista_solicitudes = $line_of_text;
 				$cantidad_registros_totales = count($lista_solicitudes);
 				$cantidad_registros_procesados = 0;
 
@@ -164,26 +164,31 @@ class SolicitudController extends BaseController {
 					
 					$array_log_text = '';
 
-					//1. VALIDACION DE LA FECHA DE SOLICITUD
-					if(strcmp($fecha_solicitud,'') != 0)
-					{
-						if(DateTime::createFromFormat('Y-m-d H:i:s', $fecha_solicitud) == false)
+					//1. VALIDACION DEL ESTADO DE SOLICITUD
+
+					if(strcmp($estado_solicitud,'') != 0)
+					{	//validar si el estado de solicitud existe
+						$estado_solicitud_obj = EstadoSolicitud::buscarPorNombre($estado_solicitud)->get();
+						if($estado_solicitud_obj == null || $estado_solicitud_obj->isEmpty()) //NO PROCEDE
 						{
-							$obj_log["descripcion"] = "La fecha de solicitud no cuenta con el formato de fecha correcto";
+							$obj_log["descripcion"] = "El estado de la solicitud no se encuentra registrado en el sistema.";
 							array_push($logs_errores,$obj_log);
-							//FECHA CON FORMATO ERRADO
 							continue; //(LOGS)
-						} 
-						else{	
-							$fecha_solicitud_date = $fecha_solicitud;
+						}
+
+						if($estado_solicitud_obj[0]->idestado_solicitud != 3){
+							$obj_log["descripcion"] = "La solicitud ya se encuentra procesada. No se asignan solicitudes que ya están en proceso.";
+							array_push($logs_errores,$obj_log);
+							continue;
 						}
 					}else //NO PROCEDE
 					{
-						$obj_log["descripcion"] = "El campo Fecha de Solicitud está vacío.";
+						$obj_log["descripcion"] = "El campo Estado de Solicitud está vacío.";
 						array_push($logs_errores,$obj_log);
+						
 						continue; //(LOGS)
 					}
-					
+
 					//2. VALIDACION DEL CODIGO DE LA SOLICITUD
 					//Validar si el codigo es vacío y posteriomente se valida si es numérico
 					if(strcmp($codigo_solicitud,'') == 0 || !ctype_digit($codigo_solicitud))
@@ -208,7 +213,30 @@ class SolicitudController extends BaseController {
 						continue;
 					}
 
-					//3. VALIDACION DEL TIPO DE SOLICITUD GENERAL
+					//3. VALIDACION DE LA FECHA DE SOLICITUD
+					if(strcmp($fecha_solicitud,'') != 0)
+					{
+						
+						if(DateTime::createFromFormat('Y-m-d H:i:s', $fecha_solicitud) == false)
+						{
+							$obj_log["descripcion"] = "La fecha de solicitud no cuenta con el formato de fecha correcto";
+							array_push($logs_errores,$obj_log);
+							//FECHA CON FORMATO ERRADO
+							continue; //(LOGS)
+						} 
+						else{	
+							$fecha_solicitud_date = $fecha_solicitud;
+						}
+					}else //NO PROCEDE
+					{
+						$obj_log["descripcion"] = "El campo Fecha de Solicitud está vacío.";
+						array_push($logs_errores,$obj_log);
+						continue; //(LOGS)
+					}
+					
+					
+
+					//4. VALIDACION DEL TIPO DE SOLICITUD GENERAL
 					if(strcmp($tipo_solicitud_gral,'') != 0)
 					{
 						//validar si existe el tipo de solicitud
@@ -276,30 +304,7 @@ class SolicitudController extends BaseController {
 					$obj_log["canal"] = $canal_entidad->nombre;
 					$obj_log["sector"] = $sector_canal->nombre;
 
-					//2. VALIDACION DEL ESTADO DE SOLICITUD
-
-					if(strcmp($estado_solicitud,'') != 0)
-					{	//validar si el estado de solicitud existe
-						$estado_solicitud_obj = EstadoSolicitud::buscarPorNombre($estado_solicitud)->get();
-						if($estado_solicitud_obj == null || $estado_solicitud_obj->isEmpty()) //NO PROCEDE
-						{
-							$obj_log["descripcion"] = "El estado de la solicitud no se encuentra registrado en el sistema.";
-							array_push($logs_errores,$obj_log);
-							continue; //(LOGS)
-						}
-
-						if($estado_solicitud_obj[0]->idestado_solicitud != 3){
-							$obj_log["descripcion"] = "La solicitud ya se encuentra procesada. No se asignan solicitudes que ya están en proceso.";
-							array_push($logs_errores,$obj_log);
-							continue;
-						}
-					}else //NO PROCEDE
-					{
-						$obj_log["descripcion"] = "El campo Estado de Solicitud está vacío.";
-						array_push($logs_errores,$obj_log);
-						
-						continue; //(LOGS)
-					}
+					
 					
 					//6. VALIDACION DEL ASUNTO
 					if(strcmp($asunto,'') == 0){
@@ -319,27 +324,6 @@ class SolicitudController extends BaseController {
 						continue; //(LOGS)
 					}
 
-					//7. VALIDACION DE LA FECHA DE ESTADO
-					if(strcmp($fecha_estado,'') != 0)
-					{
-						if(DateTime::createFromFormat('Y-m-d H:i:s', $fecha_estado) == false) //FECHA CON FORMATO ERRADO
-						{
-							$obj_log["descripcion"] = "La fecha de estado no cuenta con el formato de fecha correcto.";
-							array_push($logs_errores,$obj_log);
-							
-							continue; //(LOGS)
-						}
-						else{
-							$fecha_estado_date = $fecha_estado;
-						}
-					}else //NO PROCEDE (LOGS)
-					{	
-						$obj_log["descripcion"] = "El campo Fecha de Estado está vacío.";
-						array_push($logs_errores,$obj_log);
-						continue;
-					}
-
-					
 					//8. VALIDACION DEL TIPO DE ACCION
 
 					//VALIDACION TIPO DE ACCION
@@ -379,7 +363,7 @@ class SolicitudController extends BaseController {
 						$nombre_herramienta = "NO DETECTADO";
 					}else{
 						//VALIDAR LAS HERRAMIENTAS PROHIBIDAS
-						if($idherramienta == 95 || $idherramienta == 96 || $idherramienta == 97)
+						if($idherramienta == 99 || $idherramienta == 100 || $idherramienta == 101)
 						{
 							$obj_log["descripcion"] = "El aplicativo no es gestionado por el equipo de usuarios.";
 							$obj_log["aplicativo"] = Herramienta::find($idherramienta)->nombre;

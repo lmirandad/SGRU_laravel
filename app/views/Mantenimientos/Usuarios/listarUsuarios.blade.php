@@ -63,12 +63,12 @@
 									<tr>
 										<th class="text-nowrap text-center">Usuario</th>
 										<th class="text-nowrap text-center">Nombres</th>
-										<th class="text-nowrap text-center">Apellidos</th>
-										<th class="text-nowrap text-center">Doc. de identidad</th>
+										<th class="text-nowrap text-center">Doc. <br>identidad</th>
 										<th class="text-nowrap text-center">Rol</th>
-										<th class="text-nowrap text-center">Editar</th>
-										<th class="text-nowrap text-center">Aplicativos Especializados</th>
-										<th class="text-nowrap text-center">Sectores Asignados</th>
+										<th class="text-nowrap text-center">Editar <br> Datos</th>
+										<th class="text-nowrap text-center">Aplicativos Especializados<br> (GESTOR)</th>
+										<th class="text-nowrap text-center">Sectores Asignados <br>(GESTOR)</th>
+										<th class="text-nowrap text-center">Canales Responsable <br>(RESPONSABLE CANAL)</th>
 										<th class="text-nowrap text-center">Estado</th>
 									</tr>
 								</thead>
@@ -79,10 +79,7 @@
 											<a href="{{URL::to('/usuarios/mostrar_usuario/')}}/{{$user_data->id}}">{{$user_data->username}}</a>
 										</td>
 										<td class="text-nowrap text-center">
-											{{$user_data->nombre}}
-										</td>
-										<td class="text-nowrap text-center">
-											{{$user_data->apellido_paterno}} {{$user_data->apellido_materno}}
+											{{$user_data->nombre}} {{$user_data->apellido_paterno}} {{$user_data->apellido_materno}}
 										</td>
 										<td class="text-nowrap text-center">
 											{{$user_data->numero_doc_identidad}}
@@ -121,6 +118,21 @@
 												@else
 													<div style="text-align:center">
 														<a class="btn btn-info  btn-sm" href="{{URL::to('/usuarios/mostrar_sectores_usuario')}}/{{$user_data->id}}">
+														<span class="fa fa-search"></span></a>
+													</div>
+												@endif
+											@else
+												-
+											@endif
+										</td>
+										<td class="text-nowrap text-center">
+											@if($user_data->idrol == 4)
+												<!-- PARA ROL RESPONSABLE CANAL -->
+												@if($user_data->deleted_at)
+													-
+												@else
+													<div style="text-align:center">
+														<a class="btn btn-info  btn-sm" href="{{URL::to('/usuarios/mostrar_canales_usuario')}}/{{$user_data->id}}">
 														<span class="fa fa-search"></span></a>
 													</div>
 												@endif

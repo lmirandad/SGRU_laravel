@@ -20,7 +20,8 @@ class CreateCanalTable extends Migration {
 			$table->integer('idsector')->index('fk_canal_sector1_idx');
 			$table->integer('idcanal_agrupado')->nullable()->index('fk_canal_canal_agrupado_idx');
 			$table->integer('iduser_created_by')->nullable()->index('fk_canal_users1_idx');
-			$table->integer('iduser_updated_by')->nullable()->index('fk_canal_users2_idx');
+			$table->integer('iduser_updated_by')->nullable()->index('fk_canal_users2_idx');			
+			$table->integer('idusuario_responsable')->nullable()->index('fk_canal_users3_idx');
 			$table->timestamps();
 			$table->softDeletes();
 		});
