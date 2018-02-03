@@ -25,7 +25,7 @@ class HerramientaXTipoSolicitud extends Eloquent implements UserInterface, Remin
 	 * @var array
 	 */
 	
-
+	//Query para listar tipos de solicitudes (acciones) por determinada herramienta
 	public function scopeListarTipoSolicitudHerramienta($query,$search_criteria)
 	{
 		$query->where('herramientaxtipo_solicitud.idherramienta','=',$search_criteria);

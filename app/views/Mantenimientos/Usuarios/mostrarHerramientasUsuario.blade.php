@@ -53,7 +53,7 @@
 										<tbody >	
 											
 												@foreach($herramientas_disponibles as $index  => $herramienta)
-													@if($herramienta->idherramienta != 95 && $herramienta->idherramienta != 96 &&$herramienta->idherramienta != 97)
+													@if($herramienta->idherramienta != 99 && $herramienta->idherramienta != 100 &&$herramienta->idherramienta != 101)
 														<tr>
 															<td class="text-nowrap text-center">
 																<input style="display:none" name='ids_herramientas[]' value='{{ $herramienta->idherramienta }}' readonly/>

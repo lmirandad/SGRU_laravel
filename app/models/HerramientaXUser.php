@@ -24,6 +24,8 @@ class HerramientaXUser extends Eloquent implements UserInterface, RemindableInte
 	 *
 	 * @var array
 	 */
+
+	//Query para buscar las herramientas que es especializado un determiando usuario
 	public function scopeBuscarHerramientasPorIdUsuario($query,$search_criteria)
 	{
 		$query->join('herramienta','herramienta.idherramienta','=','herramientaxusers.idherramienta')		
@@ -36,6 +38,7 @@ class HerramientaXUser extends Eloquent implements UserInterface, RemindableInte
 		return $query;
 	}
 
+	//Query para buscar el objeto herramientaxusers 
 	public function scopeBuscarHerramientasPorIdUsuarioIdHerramienta($query,$search_idusuario,$search_idherramienta)
 	{
 		$query->withTrashed()
@@ -50,6 +53,7 @@ class HerramientaXUser extends Eloquent implements UserInterface, RemindableInte
 		return $query;
 	}
 
+	//Query para buscar todos los usuarios especializados por determianda herramienta
 	public function scopeBuscarUsuariosPorIdHerramienta($query,$idherramienta)
 	{
 		$query->join('users','users.id','=','herramientaxusers.iduser');

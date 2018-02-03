@@ -41,7 +41,7 @@
 				</div>
 			</div>
 			<div class="right">
-				<div class="overlay"></div>
+				<div class="overlay" ></div>
 				<div class="content text">
 					<h1  style="text-align:center"><strong>PORTAL 1.0</strong></h1>
 				</div>

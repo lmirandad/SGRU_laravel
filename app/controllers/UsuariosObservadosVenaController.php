@@ -242,8 +242,7 @@ class UsuariosObservadosVenaController extends BaseController {
 				$data["resultados_observados"] = null;
 				$data["resultados_vena"] = array();
 
-			
-
+				
 				//VALIDACIONES INICIALES
 				if($cantidad_registros_totales == 0)
 				{
@@ -251,7 +250,7 @@ class UsuariosObservadosVenaController extends BaseController {
 					return Redirect::to('usuarios_observados_vena/cargar_usuarios_observados_vena');
 				}
 
-				if(count($lista_vena[0]) != 3)
+				if(count($lista_vena[0]) < 23)
 				{
 					Session::flash('error', 'No es posible realizar la lectura del archivo puesto que la cantidad de campos no es correcta.');
 					return Redirect::to('usuarios_observados_vena/cargar_usuarios_observados_vena');
@@ -264,9 +263,9 @@ class UsuariosObservadosVenaController extends BaseController {
 				for($i = 0; $i < $cantidad_registros_totales; $i++)
 				{
 					//2.1. Leer Valores
-					$numero_documento = $lista_vena[$i][0];
-					$fecha_bloqueo = $lista_vena[$i][1];
-					$motivo = $lista_vena[$i][2];
+					$numero_documento = $lista_vena[$i][2];
+					$fecha_bloqueo = $lista_vena[$i][12];
+					$motivo = $lista_vena[$i][14];
 
 
 					//CREACION DEL ARREGLO LOG
@@ -323,9 +322,7 @@ class UsuariosObservadosVenaController extends BaseController {
 				if($buscar_usuario_observado != null){
 					$data["usuarios_observados_ya_cargados"] = 1;
 				}
-
-
-								
+				
 				return View::make('Mantenimientos/UsuariosObservados_Vena/cargarUsuariosObservadosVena',$data);
 			}else{
 				return View::make('error/error',$data);

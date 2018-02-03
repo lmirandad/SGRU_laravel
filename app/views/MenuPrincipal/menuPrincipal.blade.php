@@ -73,16 +73,13 @@
 				<div class="panel-heading">
 					<h3 class="panel-title">Número de Solicitudes: 
 						@if($usuario_busqueda != null) <i>{{$usuario_busqueda}}</i> @endif
-
 					</h3> 
 					
 					<p class="panel-subtitle"> 
-						@if($fecha_busqueda != null) Fecha Búsqueda: <strong>{{$fecha_busqueda}} </strong>
-						@else	Fecha Actual: <strong>{{date('m-Y')}}</strong>
+						@if($fecha_busqueda != null) Mes Búsqueda: <strong>{{$fecha_busqueda}} </strong>
+						@else	Mes Actual: <strong>{{date('m-Y')}}</strong>
 						@endif
-
-					</p>
-						
+					</p>						
 				</div>
 				<div class="panel-body">	
 					<div class="row">
@@ -166,16 +163,16 @@
 								<table class="table table-hover">
 									<thead>
 										<tr>
-											<th class="text-nowrap text-center">Código Solicitud</th>
-											<th class="text-nowrap text-center">Fecha de Solicitud</th>
-											<th class="text-nowrap text-center">Fecha de Asignación</th>
-											<th class="text-nowrap text-center">Número de Corte</th>
-											<th class="text-nowrap text-center">Días de Asignación</th>
-											<th class="text-nowrap text-center">Tipo</th>
+											<th class="text-nowrap text-center">Código<br>Solicitud</th>
+											<th class="text-nowrap text-center">Fecha de<br>Solicitud</th>
+											<th class="text-nowrap text-center">Fecha de<br>Asignación</th>
+											<th class="text-nowrap text-center">Número de<br>Corte</th>
+											<th class="text-nowrap text-center">Días de<br>Asignación</th>
+											<th class="text-nowrap text-center">Acción</th>
 											<th class="text-nowrap text-center">Estado</th>
 											<th class="text-nowrap text-center">Herramienta</th>
 											<th class="text-nowrap text-center">SLA</th>
-											<th class="text-nowrap text-center">Días Laborables</th>
+											<th class="text-nowrap text-center">Días<br>Laborables</th>
 											<th class="text-nowrap text-center">SEMÁFORO</th>
 										</tr>
 									</thead>
@@ -219,7 +216,7 @@
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
 												@if($solicitud_data->ticket_reasignado == 1)
-												 - <font color="red"><strong>reasignado</strong></font>
+													<font color="red"><strong><br>(reasignado)</strong></font>
 												@endif
 											</td>											
 											<td class="text-nowrap text-center">
@@ -281,7 +278,7 @@
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
 												@if($solicitud_data->ticket_reasignado == 1)
-												 - <font color="red"><strong>reasignado</strong></font>
+													<font color="red"><strong><br>(reasignado)</strong></font>
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
@@ -343,7 +340,7 @@
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
 												@if($solicitud_data->ticket_reasignado == 1)
-												 - <font color="red"><strong>reasignado</strong></font>
+													<font color="red"><strong><br>(reasignado)</strong></font>
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
@@ -365,7 +362,7 @@
 											</td>
 											<td class="text-nowrap text-center">
 												@if($solicitud_data->idestado_solicitud == 3) <!-- PENDIENTE -->
-													@if( $diferencia_fechas_trabajo_pendiente[$index] < $slas_data_pendiente[$index]->sla_pendiente - 1 )
+													@if($diferencia_fechas_trabajo_pendiente[$index] < $slas_data_pendiente[$index]->sla_pendiente - 1 )
 													 	<!-- VERDE -->
 														<span style=" padding: 2px 11px; border-radius: 100%;background-color: #00C851;"></span>
 													@elseif( $slas_data_pendiente[$index]->sla_pendiente - $diferencia_fechas_trabajo_pendiente[$index] <= 1 && $slas_data_pendiente[$index]->sla_pendiente - $diferencia_fechas_trabajo_pendiente[$index] >=0  )
@@ -431,7 +428,7 @@
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
 												@if($solicitud_data->ticket_reasignado == 1)
-												 - <font color="red"><strong>reasignado</strong></font>
+													<font color="red"><strong><br>(reasignado)</strong></font>
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
@@ -453,7 +450,7 @@
 											</td>
 											<td class="text-nowrap text-center">
 												@if($solicitud_data->idestado_solicitud == 3) <!-- PENDIENTE -->
-													@if( $diferencia_fechas_trabajo_procesando[$index] < $slas_data_procesando[$index]->sla_pendiente - 1 )
+													@if( $diferencia_fechas_trabajo_procesando[$index] < $slas_data_procesando[$index]->sla_pendiente - 1 )														
 													 	<!-- VERDE -->
 														<span style=" padding: 2px 11px; border-radius: 100%;background-color: #00C851;"></span>
 													@elseif( $slas_data_procesando[$index]->sla_pendiente - $diferencia_fechas_trabajo_procesando[$index] <= 1 && $slas_data_procesando[$index]->sla_pendiente - $diferencia_fechas_trabajo_procesando[$index] >=0 )
@@ -515,7 +512,7 @@
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
 												@if($solicitud_data->ticket_reasignado == 1)
-												 - <font color="red"><strong>reasignado</strong></font>
+													<font color="red"><strong><br>(reasignado)</strong></font>
 												@endif
 											</td>
 											<td class="text-nowrap text-center">
@@ -577,7 +574,7 @@
 											<td class="text-nowrap text-center">
 												{{$solicitud_data->nombre_estado_solicitud}}
 												@if($solicitud_data->ticket_reasignado == 1)
-												 - <font color="red"><strong>reasignado</strong></font>
+													<font color="red"><strong><br>(reasignado)</strong></font>
 												@endif
 											</td>
 											<td class="text-nowrap text-center">

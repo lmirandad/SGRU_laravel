@@ -25,6 +25,7 @@ class PuntoVenta extends Eloquent implements UserInterface, RemindableInterface 
 	 * @var array
 	 */
 	
+	//Query para buscar todos los puntos de venta por entidad
 	public function scopeBuscarPuntosVentaPorEntidad($query,$identidad)
 	{
 		$query->where('punto_venta.identidad','=',$identidad);
@@ -33,6 +34,7 @@ class PuntoVenta extends Eloquent implements UserInterface, RemindableInterface 
 		return $query;
 	}
 
+	//Query para buscar el punto de venta por nombre (para la carga del FUR estandarizada)
 	public function scopeBuscarPorNombre($query,$nombre)
 	{
 		$query->where('punto_venta.nombre','LIKE',"$nombre");

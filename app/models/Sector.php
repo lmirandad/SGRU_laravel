@@ -25,7 +25,7 @@ class Sector extends Eloquent implements UserInterface, RemindableInterface {
 	 * @var array
 	 */
 	
-
+	//Query para listar los sectores registrados en el sistema
 	public function scopeListarSectores($query)
 	{
 		$query->select('sector.*');
@@ -33,6 +33,7 @@ class Sector extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para listar todos los sectores disponibles para asignar al usuario
 	public function scopeListarSectoresDisponibles($query,$search_criteria)
 	{
 		$query->whereNotIn('sector.idsector',function($subquery) use ($search_criteria){
@@ -48,6 +49,7 @@ class Sector extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para buscar todos los sectores por criterio de busqueda (criterio: Nombre)
 	public function scopeBuscarSectores($query,$search_criteria)
 	{
 		$query->where('sector.nombre','LIKE',"%$search_criteria%");

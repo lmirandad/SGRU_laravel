@@ -14,6 +14,7 @@ $( document ).ready(function(){
 	$('#btnLimpiarCanal').click(function(){
 		$('#canal_search').val(null);
 		$('#canal_search_sector').val(null);
+		$('#canal_search_canal_agrupado').val(null);
 	});
 
 	$('#btnLimpiarEntidad').click(function(){

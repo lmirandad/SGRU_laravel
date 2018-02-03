@@ -24,6 +24,7 @@ class LogCargaFur extends Eloquent implements UserInterface, RemindableInterface
 	 * @var array
 	 */
 
+	//Buscar los logs de la carga de transacciones por id de transacción
 	public function scopeBuscarLogCargaPorIdTransaccion($query,$idtransaccion)
 	{
 		$query->where('log_carga_fur.idtransaccion','=',$idtransaccion);

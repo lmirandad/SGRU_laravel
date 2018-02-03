@@ -25,6 +25,7 @@ class PerfilAplicativo extends Eloquent implements UserInterface, RemindableInte
 	 * @var array
 	 */
 
+	//Query para listar todos los perfiles por herramienta
 	public function scopeBuscarPerfilesPorHerramienta($query,$idherramienta)
 	{
 		$query->where('perfil_aplicativo.idherramienta','=',$idherramienta);

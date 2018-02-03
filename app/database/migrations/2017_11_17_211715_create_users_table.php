@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration {
 			$table->string('genero', 1);
 			$table->string('numero_doc_identidad', 20);
 			$table->string('telefono', 20)->nullable();
+			$table->integer('flag_cambiar_contrasena')->nullable()->default(0);
 			$table->timestamps();
 			$table->softDeletes();
 			$table->integer('idrol')->index('fk_users_rol_idx');

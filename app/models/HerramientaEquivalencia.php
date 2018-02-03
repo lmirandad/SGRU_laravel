@@ -25,6 +25,7 @@ class HerramientaEquivalencia extends Eloquent implements UserInterface, Reminda
 	 * @var array
 	 */
 
+	//Query para buscar equivalencias de nombre de herramienta por idherramienta
 	public function scopeBuscarEquivalenciasPorIdHerramienta($query,$idherramienta)
 	{
 		$query->where('herramienta_equivalencia.idherramienta','=',$idherramienta);

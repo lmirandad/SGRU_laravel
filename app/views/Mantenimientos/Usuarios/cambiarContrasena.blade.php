@@ -34,7 +34,7 @@
 							{{ Form::password('password_nueva_2',array('class'=>'form-control','placeholder'=>'Repita ingreso nueva contraseña','id'=>'signin-password1')) }}
 						</div>	
 						<div class="form-group">
-							{{ Form::button('CAMBIAR CONTRASEÑA', array('id'=>'submit-login','type' => 'submit', 'class' => 'btn btn-lg btn-info btn-block')) }}							
+							{{ Form::button('CAMBIAR CONTRASEÑA', array('id'=>'submit-login','type' => 'submit', 'class' => 'btn btn-lg btn-info btn-block','style'=>'background-color:#015C63;border-color:#015C63')) }}							
 						</div>
 					
 					{{ Form::close() }}
@@ -43,7 +43,7 @@
 			<div class="right">
 				<div class="overlay"></div>
 				<div class="content text">
-					<h2 class="heading" style="text-align:center" ><strong>SISTEMA DE GESTIÓN DE REGISTRO DE USUARIOS</strong></h2>
+					<h1 style="text-align:center" ><strong>PORTAL 1.0</strong></h1>
 				</div>
 			</div>
 			<div class="clearfix"></div>

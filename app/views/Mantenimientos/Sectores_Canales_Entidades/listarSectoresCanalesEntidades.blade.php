@@ -164,13 +164,17 @@
 				<div class="panel-body">
 					{{ Form::open(array('url'=>'/canales/buscar_canales','method'=>'get' ,'role'=>'form', 'id'=>'search-form')) }}
 					<div class="row">
-						<div class="col-md-4">
+						<div class="col-md-3">
 							{{ Form::label('canal_search','Nombre del Canal')}}
 							{{ Form::text('canal_search',$canal_search,array('class'=>'form-control','placeholder'=>'Ingrese nombre del canal','id'=>'canal_search')) }}
 						</div>
-						<div class="col-md-4">
+						<div class="col-md-2">
 							{{ Form::label('canal_search_sector','Sector')}}
 							{{ Form::select('canal_search_sector',array(''=>'Seleccione')+$sectores,$canal_search_sector,array('class'=>'form-control','id'=>'canal_search_sector')) }}
+						</div>
+						<div class="col-md-3">
+							{{ Form::label('canal_search_canal_agrupado','Canal Agrupado')}}
+							{{ Form::select('canal_search_canal_agrupado',array(''=>'Seleccione')+$canales_agrupados,$canal_search_canal_agrupado,array('class'=>'form-control','id'=>'canal_search_canal_agrupado')) }}
 						</div>
 						<div class="form-group col-md-2">
 						{{ Form::button('<span class="fa fa-search""></span> Buscar', array('id'=>'submit-search-form','type' => 'submit', 'class' => 'btn btn-info btn-block','style'=>'margin-top:25px;')) }}	

@@ -27,28 +27,28 @@
 				<div class="row">
 					<div class="col-md-3">
 						{{ Form::label('search_solicitud','Código de Solicitud')}}
-						{{ Form::text('search_solicitud',$search_solicitud,array('class'=>'form-control','placeholder'=>'Ingrese nombre del usuario','id'=>'search_solicitud')) }}
+						{{ Form::text('search_solicitud',$search_solicitud,array('class'=>'form-control','placeholder'=>'Ingrese número de solicitud','id'=>'search_solicitud')) }}
 					</div>
 					<div class="col-md-3">
-						{{ Form::label('fecha_solicitud_desde','Fecha de solicitud desde') }}
-						<div id="search_datetimepicker1" class="form-group input-group date @if($errors->first('fecha_solicitud_desde')) has-error has-feedback @endif">
-							{{ Form::text('fecha_solicitud_desde',$fecha_solicitud_desde,array('class'=>'form-control','placeholder'=>'Fecha de Solicitud Desde')) }}
+						{{ Form::label('fecha_asignacion_desde','Fecha de asignación desde') }}
+						<div id="search_datetimepicker1" class="form-group input-group date @if($errors->first('fecha_asignacion_desde')) has-error has-feedback @endif">
+							{{ Form::text('fecha_asignacion_desde',$fecha_asignacion_desde,array('class'=>'form-control','placeholder'=>'Fecha de Asignación Desde')) }}
 							<span class="input-group-addon">
 		                        <span class="glyphicon glyphicon-calendar"></span>
 		                    </span>
 						</div>	
 					</div>
 					<div class="col-md-3">
-						{{ Form::label('fecha_solicitud_hasta','Fecha de solicitud hasta') }}
-						<div id="search_datetimepicker2" class="form-group input-group date @if($errors->first('fecha_solicitud_hasta')) has-error has-feedback @endif">
-							{{ Form::text('fecha_solicitud_hasta',$fecha_solicitud_hasta,array('class'=>'form-control','placeholder'=>'Fecha de Solicitud Hasta')) }}
+						{{ Form::label('fecha_asignacion_hasta','Fecha de asignacion hasta') }}
+						<div id="search_datetimepicker2" class="form-group input-group date @if($errors->first('fecha_asignacion_hasta')) has-error has-feedback @endif">
+							{{ Form::text('fecha_asignacion_hasta',$fecha_asignacion_hasta,array('class'=>'form-control','placeholder'=>'Fecha de Asignación Hasta')) }}
 							<span class="input-group-addon">
 		                        <span class="glyphicon glyphicon-calendar"></span>
 		                    </span>
 						</div>	
 					</div>
 					<div class="col-md-3">
-						{{ Form::label('search_tipo_solicitud','Tipo de Solicitud')}}
+						{{ Form::label('search_tipo_solicitud','Acción')}}
 						{{ Form::select('search_tipo_solicitud',array('0'=>'Seleccione')+$tipos_solicitud,$search_tipo_solicitud,array('class'=>'form-control')) }}
 					</div>
 				</div>
@@ -84,7 +84,7 @@
 										<th class="text-nowrap text-center">Fecha de Solicitud</th>
 										<th class="text-nowrap text-center">Fecha de Asignación</th>
 										<th class="text-nowrap text-center">Número de Corte</th>
-										<th class="text-nowrap text-center">Tipo de Solicitud</th>
+										<th class="text-nowrap text-center">Acción</th>
 										<th class="text-nowrap text-center">Estado Solicitud</th>
 									</tr>
 								</thead>
@@ -130,9 +130,9 @@
 				</div>
 			</div>
 		</div>
-		@if($search_solicitud || $fecha_solicitud_desde || $fecha_solicitud_hasta || $search_tipo_solicitud || $search_estado_solicitud || $search_sector)
-			{{ $solicitudes_data->appends(array('search_solicitud' => $search_solicitud,'fecha_solicitud_desde'=>$fecha_solicitud_desde,
-			'fecha_solicitud_hasta'=>$fecha_solicitud_hasta,'search_tipo_solicitud'=>$search_tipo_solicitud,'search_estado_solicitud' => $search_estado_solicitud,'search_sector' => $search_sector))->links() }}
+		@if($search_solicitud || $fecha_asignacion_desde || $fecha_asignacion_hasta || $search_tipo_solicitud || $search_estado_solicitud || $search_sector)
+			{{ $solicitudes_data->appends(array('search_solicitud' => $search_solicitud,'fecha_asignacion_desde'=>$fecha_asignacion_desde,
+			'fecha_asignacion_hasta'=>$fecha_asignacion_hasta,'search_tipo_solicitud'=>$search_tipo_solicitud,'search_estado_solicitud' => $search_estado_solicitud,'search_sector' => $search_sector))->links() }}
 		@else
 			{{ $solicitudes_data->links() }}
 		@endif

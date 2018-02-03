@@ -25,6 +25,7 @@ class TipoSolicitudXSla extends Eloquent implements UserInterface, RemindableInt
 	 * @var array
 	 */
 	
+	//Query para listar las acciones (Tipos de solicitud) por sla
 	public function scopeListarAccionesPorSla($query,$idsla){
 		$query->join('herramientaxsectorxtipo_solicitud','tipo_solicitudxsla.idherramientaxsectorxtipo_solicitud','=','herramientaxsectorxtipo_solicitud.idherramientaxsectorxtipo_solicitud')
 			 ->join('tipo_solicitud','herramientaxsectorxtipo_solicitud.idtipo_solicitud','=','tipo_solicitud.idtipo_solicitud');
@@ -34,6 +35,7 @@ class TipoSolicitudXSla extends Eloquent implements UserInterface, RemindableInt
 		return $query;
 	}
 
+	//Query para buscar sla por herramienta x sector x tipo solicitud (Objeto Tipo_solicitudxSla)
 	public function scopeBuscarPorSlaPorHerramientaXSectorXTipoSolicitud($query,$idherramientaxsectorxtipo_solicitud,$idsla){
 		$query->where('tipo_solicitudxsla.idherramientaxsectorxtipo_solicitud','=',$idherramientaxsectorxtipo_solicitud);
 		$query->where('tipo_solicitudxsla.idsla','=',$idsla);
@@ -41,6 +43,7 @@ class TipoSolicitudXSla extends Eloquent implements UserInterface, RemindableInt
 		return $query;
 	}
 	
+	//Query para buscar slas por sector herramienta y accion
 	public function scopeBuscarSlaPorSectorHerramientaAccion($query,$idsector,$idherramienta,$idaccion)
 	{
 		$query->join('sla','sla.idsla','=','tipo_solicitudxsla.idsla')

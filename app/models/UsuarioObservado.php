@@ -24,6 +24,7 @@ class UsuarioObservado extends Eloquent implements UserInterface, RemindableInte
 	 * @var array
 	 */
 
+	//Query para buscar usuarios cargados el dia de hoy (criterio fecha actual)
 	public function scopeBuscarUsuarioCargadoHoy($query,$fecha_actual)
 	{
 		$query->where('usuario_observado.fecha_registro','=',date('Y-m-d',strtotime($fecha_actual)));
@@ -31,6 +32,7 @@ class UsuarioObservado extends Eloquent implements UserInterface, RemindableInte
 		return $query;
 	}
 
+	//Query para buscar usuarios por numero de documento
 	public function scopeBuscarUsuarioPorDocumento($query,$documento)
 	{
 		$query->where('usuario_observado.numero_documento','=',"$documento");
@@ -38,6 +40,7 @@ class UsuarioObservado extends Eloquent implements UserInterface, RemindableInte
 		return $query;	
 	}
 
+	//Query para contar los usuarios cargados hoy (criterio fecha actual)
 	public function scopeContarUsuarioCargadoHoy($query,$fecha_actual)
 	{
 		$query->where('usuario_observado.fecha_registro','=',date('Y-m-d',strtotime($fecha_actual)));

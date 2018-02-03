@@ -25,6 +25,7 @@ class TipoSolicitud extends Eloquent implements UserInterface, RemindableInterfa
 	 * @var array
 	 */
 	
+	//Query para listar tipos de solicitudes (Acciones)
 	public function scopeListarTiposSolicitud($query)
 	{
 		$query->select('tipo_solicitud.*');

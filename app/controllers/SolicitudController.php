@@ -22,8 +22,8 @@ class SolicitudController extends BaseController {
 			// Verifico si el usuario es un WEBMASTER (ADMINISTRADOR DEL SISTEMA)
 			if($data["user"]->idrol == 1 || $data["user"]->idrol == 2){
 				$data["search_solicitud"] = null;
-				$data["fecha_solicitud_desde"] = null;
-				$data["fecha_solicitud_hasta"] = null;
+				$data["fecha_asignacion_desde"] = null;
+				$data["fecha_asignacion_hasta"] = null;
 				$data["search_tipo_solicitud"] = null;
 				$data["search_estado_solicitud"] = null;
 				$data["search_sector"] = null;
@@ -52,8 +52,8 @@ class SolicitudController extends BaseController {
 			// Verifico si el usuario es un WEBMASTER (ADMINISTRADOR DEL SISTEMA)
 			if($data["user"]->idrol == 1 || $data["user"]->idrol == 2){
 				$data["search_solicitud"] = Input::get('search_solicitud');
-				$data["fecha_solicitud_desde"] = Input::get('fecha_solicitud_desde');
-				$data["fecha_solicitud_hasta"] = Input::get('fecha_solicitud_hasta');
+				$data["fecha_asignacion_desde"] = Input::get('fecha_asignacion_desde');
+				$data["fecha_asignacion_hasta"] = Input::get('fecha_asignacion_hasta');
 				$data["search_tipo_solicitud"] = Input::get('search_tipo_solicitud');
 				$data["search_estado_solicitud"] = Input::get('search_estado_solicitud');
 				$data["search_sector"] = Input::get('search_sector');
@@ -61,7 +61,7 @@ class SolicitudController extends BaseController {
 				$data["estados_solicitud"] = EstadoSolicitud::lists('nombre','idestado_solicitud');
 				$data["sectores"] = Sector::lists('nombre','idsector');
 
-				if($data["search_solicitud"] == null && $data["fecha_solicitud_desde"]== null && $data["fecha_solicitud_hasta"]== null && $data["search_tipo_solicitud"] == 0 && $data["search_estado_solicitud"] == 0 && $data["search_sector"] == 0 ){
+				if($data["search_solicitud"] == null && $data["fecha_asignacion_desde"]== null && $data["fecha_asignacion_hasta"]== null && $data["search_tipo_solicitud"] == 0 && $data["search_estado_solicitud"] == 0 && $data["search_sector"] == 0 ){
 					if($data["user"]->idrol == 1)
 						$data["solicitudes_data"] = Solicitud::withTrashed()->listarSolicitudes()->paginate(10);
 					else
@@ -70,9 +70,9 @@ class SolicitudController extends BaseController {
 
 				}else{
 					if($data["user"]->idrol == 1)
-						$data["solicitudes_data"] = Solicitud::withTrashed()->buscarSolicitudes($data["search_solicitud"],$data["fecha_solicitud_desde"],$data["fecha_solicitud_hasta"],$data["search_tipo_solicitud"],$data["search_estado_solicitud"],$data["search_sector"])->paginate(10);
+						$data["solicitudes_data"] = Solicitud::withTrashed()->buscarSolicitudes($data["search_solicitud"],$data["fecha_asignacion_desde"],$data["fecha_asignacion_hasta"],$data["search_tipo_solicitud"],$data["search_estado_solicitud"],$data["search_sector"])->paginate(10);
 					else
-						$data["solicitudes_data"] = Solicitud::withTrashed()->buscarSolicitudesGestor($data["user"]->id,$data["search_solicitud"],$data["fecha_solicitud_desde"],$data["fecha_solicitud_hasta"],$data["search_tipo_solicitud"],$data["search_estado_solicitud"],$data["search_sector"])->paginate(10);
+						$data["solicitudes_data"] = Solicitud::withTrashed()->buscarSolicitudesGestor($data["user"]->id,$data["search_solicitud"],$data["fecha_asignacion_desde"],$data["fecha_asignacion_hasta"],$data["search_tipo_solicitud"],$data["search_estado_solicitud"],$data["search_sector"])->paginate(10);
 					return View::make('Solicitudes/listarSolicitudes',$data);	
 				}				
 			}else{
@@ -102,7 +102,7 @@ class SolicitudController extends BaseController {
 				}
 				
 				
-			    $lista_solicitudes = Excel::load($file_name)->get();
+			    $lista_solicitudes = Excel::load($file_name)->get()[0];
 
 			    //inicio del algoritmo
 			    //$lista_solicitudes = $line_of_text;
@@ -129,7 +129,7 @@ class SolicitudController extends BaseController {
 				}
 				
 				
-				for($i = 0; $i < $cantidad_registros_totales; $i++)
+				for($i = 0	; $i < $cantidad_registros_totales; $i++)
 				{
 					//2.1. Leer Valores
 					$codigo_entidad = $lista_solicitudes[$i][0];
@@ -140,6 +140,8 @@ class SolicitudController extends BaseController {
 					$fecha_solicitud = $lista_solicitudes[$i][5];
 					$estado_solicitud = $lista_solicitudes[$i][6];
 					$fecha_estado = $lista_solicitudes[$i][7];
+
+
 
 					//algunas variables adicionales
 					$codigo_solicitud_ingresar = null;
@@ -344,7 +346,7 @@ class SolicitudController extends BaseController {
 					
 					//9. VALIDACION DE LA APLICACION
 					/*******************SUJETO A CAMBIO DE ALGORITMO*************************************/
-					$resultado = SolicitudController::obtener_herramienta($asunto,$herramientas);
+					$resultado = SolicitudController::obtener_herramienta_v2($asunto,$herramientas);
 					/***********************************NUEVO CODIGO***************************************************/
 					if($resultado == 0)
 					{
@@ -559,6 +561,115 @@ class SolicitudController extends BaseController {
     			
     		}
     	}   	
+
+    	//return $resultados;
+    	if($contador_aplicativos > 1)
+    		return 0;
+    	else if($contador_aplicativos == 1)
+    		return $resultados;
+    	else
+    		return -1;
+
+	}
+
+	public function obtener_herramienta_v2($cadena,$herramientas)
+	{
+		$contador_aplicativos = 0;
+    	$resultados = null;
+    	$palabras = preg_split('/[;,. :()_-]/',$cadena);
+
+    	$cantidad_palabras = count($palabras);
+    	$cantidad_herramientas = count($herramientas);
+
+
+    	
+    	/*echo '<pre>';
+    	var_dump($palabras);
+    	echo '</pre>';*/
+
+    	for( $z=0 ; $z < $cantidad_herramientas ; $z++)
+    	{
+    		$equivalencias = HerramientaEquivalencia::buscarEquivalenciasPorIdHerramienta($herramientas[$z]->idherramienta)->get();
+			$cantidad_equivalencias = count($equivalencias);
+			$aplicativo_encontrado = false;
+			for($w=0;$w<$cantidad_equivalencias;$w++)
+			{
+				$nombre_herramienta = strtolower($equivalencias[$w]->nombre_equivalencia);
+				$tamano_herramienta = count(explode(' ',$nombre_herramienta));
+				$pivot_inicial = $tamano_herramienta;
+				if($pivot_inicial > $cantidad_palabras){
+					
+					continue;
+				}
+				elseif($pivot_inicial == $cantidad_palabras && $cantidad_palabras == 1)
+				{
+					$cadena_a_comparar = strtolower($palabras[0]);					
+					
+					similar_text($nombre_herramienta,$cadena_a_comparar,$porcentaje);
+    				//si es mayor a 90% entonces contamos con una herramienta
+    				
+
+	    			if($porcentaje>=90)
+	    			{
+	    				$aplicativo_encontrado = true;
+	    				break;	    				
+	    			}
+				}else
+				{
+					for($j = $pivot_inicial -1 ; $j < $cantidad_palabras ; $j++)
+					{
+						$cadena_a_comparar = '';
+						$inicial = $j - $tamano_herramienta + 1;
+						$flag_no_comparar = 0;
+						for($k = $inicial; $k < $inicial + $tamano_herramienta; $k++)
+						{
+							if(strcmp($palabras[$k],'')==0)
+							{
+								$flag_no_comparar = 1;
+								break;
+							}
+
+							if($k == $inicial)
+								$cadena_a_comparar = $cadena_a_comparar.strtolower($palabras[$k]);
+							else
+								$cadena_a_comparar = $cadena_a_comparar.' '.strtolower($palabras[$k]);
+						}
+
+						
+
+						if($flag_no_comparar == 0)
+						{
+							similar_text($nombre_herramienta,$cadena_a_comparar,$porcentaje);
+		    				//si es mayor a 90% entonces contamos con una herramienta
+		    				
+			    			/*echo '<pre>';
+							var_dump('Herramienta: '.$nombre_herramienta.' - '.'Cadena: '.$cadena_a_comparar.' - Porcentaje: '.$porcentaje);
+							echo '</pre>';*/
+			    			if($porcentaje>=90)
+			    			{
+			    				
+			    				
+			    				$aplicativo_encontrado = true;
+			    				break;	    				
+			    			}		
+						}				
+
+					}
+				}			
+
+				if($aplicativo_encontrado == true)
+					break;
+					
+			}
+
+			if($aplicativo_encontrado == true)
+			{
+				$contador_aplicativos++;
+				if($contador_aplicativos == 1)
+    				$resultados = $herramientas[$z]->idherramienta;
+    		}
+    	}	
+    	
 
     	//return $resultados;
     	if($contador_aplicativos > 1)

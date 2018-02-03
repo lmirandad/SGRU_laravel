@@ -24,6 +24,7 @@ class Meses extends Eloquent implements UserInterface, RemindableInterface {
 	 * @var array
 	 */
 
+	//Query para listar todos los meses
 	public function scopeListarMeses($query)
 	{
 		$query->select('meses.*');

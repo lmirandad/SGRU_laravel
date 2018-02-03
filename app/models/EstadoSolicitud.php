@@ -25,6 +25,7 @@ class EstadoSolicitud extends Eloquent implements UserInterface, RemindableInter
 	 * @var array
 	 */
 
+	//Query para buscar estados de solicitud por nombre
 	public function scopeBuscarPorNombre($query,$nombre)
 	{
 		$query->where('estado_solicitud.nombre','LIKE',$nombre);
@@ -32,6 +33,7 @@ class EstadoSolicitud extends Eloquent implements UserInterface, RemindableInter
 		return $query;
 	}
 
+	//Query para listar todos los estados de solicitud
 	public function scopeListarEstados($query)
 	{
 		$query->select('estado_solicitud.*');

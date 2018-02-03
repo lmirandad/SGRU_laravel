@@ -25,7 +25,7 @@ class HerramientaXTipoSolicitudXUser extends Eloquent implements UserInterface, 
 	 * @var array
 	 */
 	
-
+	//Query para listar todos los tipos de solicitudes (acciones) por determinado usuario y herramienta especializada
 	public function scopeListarTipoSolicitudUsuario($query,$idusuario,$idherramienta)
 	{
 		$query->withTrashed()

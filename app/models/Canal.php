@@ -25,7 +25,7 @@ class Canal extends Eloquent implements UserInterface, RemindableInterface {
 	 * @var array
 	 */
 	
-
+	//Query para listar todos los canales registrados en el sistema, incluido su sector y canal_agrupado
 	public function scopeListarCanales($query)
 	{
 		$query->join('sector','sector.idsector','=','canal.idsector')
@@ -36,6 +36,7 @@ class Canal extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para listar todos los canales que han solicitado Tickets (solicitudes) en un determinado mes y año
 	public function scopeListarCanalesConSolicitudesMesAnho($query,$mes,$anho)
 	{
 		$query->join('entidad','entidad.idcanal','=','canal.idcanal')
@@ -48,6 +49,7 @@ class Canal extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para listar todos los canales que han solicitado Tickets (solicitudes) en un determinado mes y año y de un determinado usuario (gestor)
 	public function scopeListarCanalesConSolicitudesMesAnhoUsuario($query,$mes,$anho,$usuario)
 	{
 		$query->join('entidad','entidad.idcanal','=','canal.idcanal')
@@ -64,6 +66,7 @@ class Canal extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para listar todos los canales de un determinado sector
 	public function scopeBuscarCanalesPorIdSector($query,$idsector){
 		$query->where('canal.idsector','=',$idsector);
 		$query->select('canal.*');
@@ -71,7 +74,8 @@ class Canal extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;	
 	}
 
-	public function scopeBuscarCanales($query,$nombre_canal,$idsector){
+	//Query para buscar los canales por determinados criterios de busqueda (Criterios: Nombre Canal - Id Sector - Id Canal Agrupado)
+	public function scopeBuscarCanales($query,$nombre_canal,$idsector,$idcanal_agrupado){
 		
 		$query->join('sector','canal.idsector','=','sector.idsector')
 			  ->join('canal_agrupado','canal_agrupado.idcanal_agrupado','=','canal.idcanal_agrupado');
@@ -79,11 +83,14 @@ class Canal extends Eloquent implements UserInterface, RemindableInterface {
 			$query->where('canal.nombre','LIKE',"%$nombre_canal%");
 		if(strcmp($idsector,"")!=0)
 			$query->where('canal.idsector','=',$idsector);
+		if($idcanal_agrupado != null)
+			$query->where('canal.idcanal_agrupado','=',$idcanal_agrupado);
 
 		$query->select('canal.*','sector.nombre as nombre_sector','canal_agrupado.nombre as nombre_canal_agrupado');
 
 	}
 
+	//Query para buscar los canales por determinado usuario responsable
 	public function scopeBuscarCanalesPorIdUsuarioResponsable($query,$idusuario)
 	{
 		$query->where('canal.idusuario_responsable','=',$idusuario);
@@ -91,6 +98,7 @@ class Canal extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para buscar los canales que no poseen usuarios responsables.
 	public function scopeListarCanalesSinResponsable($query)
 	{
 		$query->whereNull('canal.idusuario_responsable');

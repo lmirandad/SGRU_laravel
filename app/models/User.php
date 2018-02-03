@@ -25,6 +25,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 */
 	protected $hidden = array('password', 'remember_token');
 
+	//Query para listar todos los usuarios de los sistemas
 	public function scopeListarUsuarios($query)
 	{
 		$query->withTrashed()
@@ -33,6 +34,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para listar todos los gestores (idrol = 2)
 	public function scopeListarGestores($query)
 	{
 		$query->withTrashed()
@@ -41,6 +43,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;	
 	}
 
+	//Query para buscar usuarios por nombre usuario (criterio de busqueda :username)
 	public function scopeBuscarUsuarioPorUsername($query,$search_username)
 	{
 		$query->withTrashed()	
@@ -49,6 +52,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para buscar usuarios por id usuario
 	public function scopeBuscarUsuarioPorId($query,$search_criteria)
 	{
 		$query->withTrashed()
@@ -57,6 +61,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para buscar usuarios asignados a un determinado sector
 	public function scopeBuscarUsuariosPorIdSector($query,$idsector)
 	{
 		$query->join('usersxsector','usersxsector.iduser','=','users.id')
@@ -66,6 +71,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para buscar usuarios por criterios de busqueda (criterios de busqueda: username, tipo de documento, numero de documento, herramienta)
 	public function scopeBuscarUsuariosVistaMantenimiento($query,$search_criteria,$search_tipo_documento,$search_documento_identidad,$search_herramienta)
 	{
 		$query->withTrashed()
@@ -90,7 +96,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
-	
+	//Query para buscar usuarios por nombre
 	public function scopeBuscarPorNombre($query,$search_criteria)
 	{
 		$query->withTrashed()
@@ -104,6 +110,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para buscar usuarios con su respectiva cantidad de tickets asignados por sector
 	public function scopeBuscarUsuariosAsignacionPorSector($query,$idsector)
 	{
 		
@@ -134,6 +141,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		
 	}
 
+	//Query para buscar usuarios con su respectiva cantidad de tickets asignados por herramienta y accion
 	public function scopeBuscarUsuariosAsignacionPorHerramienta($query,$idherramienta,$idaccion)
 	{
 		return DB::select('Select A.id_usuario, A.nombre_usuario, A.apellido_paterno, A.apellido_materno, ISNULL(B.cantidad_solicitudes,0) cantidad_solicitudes

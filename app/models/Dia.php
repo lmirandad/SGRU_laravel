@@ -24,6 +24,7 @@ class Dia extends Eloquent implements UserInterface, RemindableInterface {
 	 * @var array
 	 */
 
+	//Query para listar los dias de la semana (utilizado para el dashboard - NO POWER BI)
 	public function scopeListarDias($query)
 	{
 		$query->select('dia.*');

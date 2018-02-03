@@ -25,6 +25,7 @@ class Asignacion extends Eloquent implements UserInterface, RemindableInterface 
 	 * @var array
 	 */
 
+	//Query para buscar las asignaciones por Id de solicitud.
 	public function scopeBuscarPorIdSolicitud($query,$idsolicitud)
 	{
 		$query->where('asignacion.idsolicitud','=',$idsolicitud);

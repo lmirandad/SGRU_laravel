@@ -25,7 +25,7 @@ class Transaccion extends Eloquent implements UserInterface, RemindableInterface
 	 * @var array
 	 */
 
-	
+	//Query para buscar transacciones por estado y por solicitud asociado
 	public function scopeBuscarTransaccionesEstadoPorSolicitud($query,$idsolicitud,$idestado)
 	{
 		$query->join('solicitud','solicitud.idsolicitud','=','transaccion.idsolicitud');
@@ -35,6 +35,7 @@ class Transaccion extends Eloquent implements UserInterface, RemindableInterface
 		return $query;	 
 	}
 
+	//Query para buscar transacciones pendientes y procesando por solicitud asociada
 	public function scopeBuscarTransaccionesPendientesProcesandoPorSolicitud($query,$idsolicitud)
 	{
 		$query->join('solicitud','solicitud.idsolicitud','=','transaccion.idsolicitud');
@@ -47,6 +48,7 @@ class Transaccion extends Eloquent implements UserInterface, RemindableInterface
 		return $query;	 
 	}
 
+	//Query para buscar transacciones por solicitud
 	public function scopeBuscarTransaccionesPorSolicitud($query,$solicitud)
 	{
 		$query->join('estado_transaccion','estado_transaccion.idestado_transaccion','=','transaccion.idestado_transaccion')
@@ -62,6 +64,7 @@ class Transaccion extends Eloquent implements UserInterface, RemindableInterface
 		return $query;
 	}
 
+	//Query para buscar transacciones por rango de fechas (Reporteria)
 	public function scopeBuscarTransaccionesPorFechas($query,$fecha_desde,$fecha_hasta)
 	{
 		$query->leftJoin('herramienta','herramienta.idherramienta','=','transaccion.idherramienta')
@@ -84,91 +87,5 @@ class Transaccion extends Eloquent implements UserInterface, RemindableInterface
 		return $query;
 	}
 
-	/*+++++++++++++++++++++++++++++++++++++++++DASHBOARD ANUAL+++++++++++++++++++++++++++++++++++*/
-
-	public function scopeMostrarTransaccionPorEstadoAnualAplicativo($query,$estado,$anho,$idherramienta)
-	{
-		return DB::select('select sum(CASE WHEN herramienta.idherramienta = '.$idherramienta.' and YEAR(transaccion.fecha_registro) = '.$anho.' and transaccion.idestado_transaccion = '.$estado.' THEN 1 ELSE 0 END) as cantidad 
-					from transaccion
-					inner join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
-					right join herramienta on (requerimiento.idherramienta = herramienta.idherramienta)');
-	}
-
-
-	public function scopeMostrarTransaccionPorEstadoAnualAplicativoUsuario($query,$estado,$anho,$idherramienta,$idusuario)
-	{
-		return DB::select('select sum(CASE WHEN herramienta.idherramienta = '.$idherramienta.' and YEAR(transaccion.fecha_registro) = '.$anho.' and transaccion.idestado_transaccion = '.$estado.' and 
-							usuariosxasignacion.idusuario_asignado = '.$idusuario.' and usuariosxasignacion.estado_usuario_asignado = 1 THEN 1 ELSE 0 END) as cantidad 
-							from transaccion
-							inner join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
-							right join herramienta on (requerimiento.idherramienta = herramienta.idherramienta)
-							inner join solicitud on (solicitud.idsolicitud = requerimiento.idsolicitud)
-							inner join asignacion on (asignacion.idsolicitud = solicitud.idsolicitud)
-							inner join usuariosxasignacion on (usuariosxasignacion.idasignacion = asignacion.idasignacion)');
-	}
-
-	public function scopeMostrarTransaccionPorEstadoAnualAplicativoGestionSeguridad($query,$flag_gestion,$anho)
-	{
-		return DB::select('Select ISNULL(CAST(sum(case when herramienta.flag_seguridad = '.$flag_gestion.' and YEAR(transaccion.fecha_registro) = '.$anho.' then 1 else 0 end) as float)/ CAST(NULLIF(sum(case when herramienta.flag_seguridad IS NOT NULL and YEAR(transaccion.fecha_registro) = '.$anho.' then 1 else 0 end),0) as float),CAST(0 as float)) as cantidad,meses.idmes from transaccion 
-						  right join meses on (MONTH(transaccion.fecha_registro) = meses.idmes)
-						  left join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
-						  left join herramienta on (herramienta.idherramienta = requerimiento.idherramienta)
-						  group by meses.idmes');
-	}
-
-	public function scopeMostrarTransaccionPorEstadoAnualUsuarioAplicativoGestionSeguridad($query,$flag_gestion,$anho,$usuario)
-	{
-		return DB::select('Select ISNULL(CAST(sum(case when herramienta.flag_seguridad = '.$flag_gestion.' and YEAR(transaccion.fecha_registro) = '.$anho.' and usuariosxasignacion.idusuario_asignado = '.$usuario.' and usuariosxasignacion.estado_usuario_asignado = 1 then 1 else 0 end) as float)/ CAST(NULLIF(sum(case when herramienta.flag_seguridad IS NOT NULL and YEAR(transaccion.fecha_registro) = '.$anho.' and usuariosxasignacion.idusuario_asignado = '.$usuario.' and usuariosxasignacion.estado_usuario_asignado = 1  then 1 else 0 end),0) as float),CAST(0 as float)) as cantidad,meses.idmes 
-			from transaccion
-			right join meses on (MONTH(transaccion.fecha_registro) = meses.idmes)
-			left join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
-			left join solicitud on (requerimiento.idsolicitud = solicitud.idsolicitud)
-			left join asignacion on (asignacion.idsolicitud = solicitud.idsolicitud)
-			left join usuariosxasignacion on (usuariosxasignacion.idasignacion = asignacion.idasignacion)
-			left join herramienta on (herramienta.idherramienta = requerimiento.idherramienta)
-			group by meses.idmes');
-	}
-
-	/*+++++++++++++++++++++++++++++++++++++++++DASHBOARD MES+++++++++++++++++++++++++++++++++++*/
-
-	public function scopeMostrarTransaccionPorEstadoMesAplicativo($query,$estado,$mes,$anho,$idherramienta)
-	{
-		return DB::select('select sum(CASE WHEN herramienta.idherramienta = '.$idherramienta.' and YEAR(transaccion.fecha_registro) = '.$anho.' and MONTH(transaccion.fecha_registro) = '.$mes.' and transaccion.idestado_transaccion = '.$estado.' THEN 1 ELSE 0 END) as cantidad 
-					from transaccion
-					inner join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
-					right join herramienta on (requerimiento.idherramienta = herramienta.idherramienta)');
-	}
-
-
-	public function scopeMostrarTransaccionPorEstadoMesAplicativoUsuario($query,$estado,$mes,$anho,$idherramienta,$idusuario)
-	{
-		return DB::select('select sum(CASE WHEN herramienta.idherramienta = '.$idherramienta.' and YEAR(transaccion.fecha_registro) = '.$anho.' and transaccion.idestado_transaccion = '.$estado.' and MONTH(transaccion.fecha_registro) = '.$mes.' and
-							usuariosxasignacion.idusuario_asignado = '.$idusuario.' and usuariosxasignacion.estado_usuario_asignado = 1 THEN 1 ELSE 0 END) as cantidad 
-							from transaccion
-							inner join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
-							right join herramienta on (requerimiento.idherramienta = herramienta.idherramienta)
-							inner join solicitud on (solicitud.idsolicitud = requerimiento.idsolicitud)
-							inner join asignacion on (asignacion.idsolicitud = solicitud.idsolicitud)
-							inner join usuariosxasignacion on (usuariosxasignacion.idasignacion = asignacion.idasignacion)');
-	}
-
-	public function scopeMostrarTransaccionPorEstadoMesAplicativoGestionSeguridad($query,$flag_gestion,$mes,$anho)
-	{
-		return DB::select('Select ISNULL(CAST(sum(case when herramienta.flag_seguridad = '.$flag_gestion.' and YEAR(transaccion.fecha_registro) = '.$anho.' and MONTH(transaccion.fecha_registro) = '.$mes.' then 1 else 0 end) as float)/ CAST(NULLIF(sum(case when herramienta.flag_seguridad IS NOT NULL and YEAR(transaccion.fecha_registro) = '.$anho.'  and MONTH(transaccion.fecha_registro) = '.$mes.' then 1 else 0 end),0) as float),CAST(0 as float)) as cantidad from transaccion 
-						  right join meses on (MONTH(transaccion.fecha_registro) = meses.idmes)
-						  left join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
-						  left join herramienta on (herramienta.idherramienta = requerimiento.idherramienta)');
-	}
-
-	public function scopeMostrarTransaccionPorEstadoMesUsuarioAplicativoGestionSeguridad($query,$flag_gestion,$mes,$anho,$usuario)
-	{
-		return DB::select('Select ISNULL(CAST(sum(case when herramienta.flag_seguridad = '.$flag_gestion.' and YEAR(transaccion.fecha_registro) = '.$anho.'  and MONTH(transaccion.fecha_registro) = '.$mes.'and usuariosxasignacion.idusuario_asignado = '.$usuario.' and usuariosxasignacion.estado_usuario_asignado = 1 then 1 else 0 end) as float)/ CAST(NULLIF(sum(case when herramienta.flag_seguridad IS NOT NULL and YEAR(transaccion.fecha_registro) = '.$anho.'  and MONTH(transaccion.fecha_registro) = '.$mes.' and usuariosxasignacion.idusuario_asignado = '.$usuario.' and usuariosxasignacion.estado_usuario_asignado = 1  then 1 else 0 end),0) as float),CAST(0 as float)) as cantidad
-			from transaccion
-			right join meses on (MONTH(transaccion.fecha_registro) = meses.idmes)
-			left join requerimiento on (requerimiento.idrequerimiento = transaccion.idrequerimiento)
-			left join solicitud on (requerimiento.idsolicitud = solicitud.idsolicitud)
-			left join asignacion on (asignacion.idsolicitud = solicitud.idsolicitud)
-			left join usuariosxasignacion on (usuariosxasignacion.idasignacion = asignacion.idasignacion)
-			left join herramienta on (herramienta.idherramienta = requerimiento.idherramienta)');
-	}
+	
 }

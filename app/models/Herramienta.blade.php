@@ -24,6 +24,8 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 	 *
 	 * @var array
 	 */
+
+	//Query para listar todas las herramientas disponibles por usuario (Gestor) -> se muestran las herramientas que un usuario NO es especialista
 	public function scopeListarHerramientasDisponibles($query,$search_criteria)
 	{
 		$query->join('denominacion_herramienta','herramienta.iddenominacion_herramienta','=','denominacion_herramienta.iddenominacion_herramienta');
@@ -41,6 +43,7 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 		return $query;
 	}
 
+	//Query para listar todas las herramientas especializadas por usuario (Gestor) -> se muestran las herramientas que un usuario SI es especialista
 	public function scopeListarHerramientasDisponiblesSector($query,$search_criteria)
 	{
 		$query->join('denominacion_herramienta','herramienta.iddenominacion_herramienta','=','denominacion_herramienta.iddenominacion_herramienta');
@@ -58,6 +61,7 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 		return $query;
 	}
 
+	//Query para listar todas las herramientas registradas en el sistema
 	public function scopeListarHerramientas($query)
 	{
 		$query->join('denominacion_herramienta','herramienta.iddenominacion_herramienta','=','denominacion_herramienta.iddenominacion_herramienta');
@@ -67,6 +71,7 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 		return $query;
 	}
 
+	//Query para buscar herramientas por determinadas criterios (Criterios: Nombre herramienta(search_criteria) - denominacion_herramienta (aplicativo_agrupado) )
 	public function scopeBuscarHerramientas($query,$search_criteria,$search_denominacion_herramienta)
 	{
 		$query->withTrashed()
@@ -85,61 +90,12 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 		return $query;
 	}
 
+	//Query para aplicativos por nombre
 	public function scopeBuscarPorNombre($query,$nombre)
 	{
 		$query->where('herramienta.nombre','LIKE',$nombre);
 		$query->select('herramienta.*');
 		return $query;
 	}
-
-	public function scopeBuscarTransaccionesPorAnho($query,$anho)
-	{
-		$query->join('requerimiento','requerimiento.idherramienta','=','herramienta.idherramienta');
-		$query->whereYear('requerimiento.fecha_registro','=',$anho);
-		$query->select('herramienta.*');
-		$query->distinct();
-		return $query;
-	}
-
-	public function scopeBuscarTransaccionesPorAnhoPorUsuario($query,$anho,$usuario)
-	{
-		$query->join('requerimiento','requerimiento.idherramienta','=','herramienta.idherramienta')
-			  ->join('solicitud','solicitud.idsolicitud','=','requerimiento.idsolicitud')
-			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
-			  ->join('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
-		$query->whereYear('requerimiento.fecha_registro','=',$anho);
-		$query->where('usuariosxasignacion.idusuario_asignado','=',$usuario);
-		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
-		$query->select('herramienta.*');
-		$query->distinct();
-		return $query;
-	}
-
-	public function scopeBuscarTransaccionesPorAnhoMes($query,$anho,$mes)
-	{
-		$query->join('requerimiento','requerimiento.idherramienta','=','herramienta.idherramienta');
-		$query->whereYear('requerimiento.fecha_registro','=',$anho);
-		$query->whereMonth('requerimiento.fecha_registro','=',$mes);
-		$query->select('herramienta.*');
-		$query->distinct();
-		return $query;
-	}
-
-	public function scopeBuscarTransaccionesPorAnhoMesPorUsuario($query,$mes,$anho,$usuario)
-	{
-		$query->join('requerimiento','requerimiento.idherramienta','=','herramienta.idherramienta')
-			  ->join('solicitud','solicitud.idsolicitud','=','requerimiento.idsolicitud')
-			  ->join('asignacion','asignacion.idsolicitud','=','solicitud.idsolicitud')
-			  ->join('usuariosxasignacion','usuariosxasignacion.idasignacion','=','asignacion.idasignacion');
-
-		$query->whereYear('requerimiento.fecha_registro','=',$anho);
-		$query->whereMonth('requerimiento.fecha_registro','=',$mes);
-		$query->where('usuariosxasignacion.idusuario_asignado','=',$usuario);
-		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1);
-		$query->select('herramienta.*');
-		$query->distinct();
-		return $query;
-	}
-	
 
 }

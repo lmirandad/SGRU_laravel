@@ -27,7 +27,9 @@ class SectorCanalEntidadController extends BaseController {
 				{ 
 					$data["canal_search"] = null;					
 					$data["canal_search_sector"] = null;
+					$data["canal_search_canal_agrupado"] = null;
 					$data["sectores"] = Sector::lists('nombre','idsector');
+					$data["canales_agrupados"] = CanalAgrupado::lists('nombre','idcanal_agrupado');
 					$data["canales_data"] = Canal::withTrashed()->listarCanales()->paginate(10);
 					$data["flag_seleccion"] = 2;
 

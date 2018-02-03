@@ -184,12 +184,14 @@ class CanalController extends BaseController {
 			if($data["user"]->idrol == 1){
 				$data["canal_search"] = Input::get('canal_search');
 				$data["canal_search_sector"] = Input::get('canal_search_sector');
+				$data["canal_search_canal_agrupado"] = Input::get('canal_search_canal_agrupado');
 				$data["sectores"] = Sector::lists('nombre','idsector');
+				$data["canales_agrupados"] = CanalAgrupado::lists('nombre','idcanal_agrupado');
 				$data["flag_seleccion"] = 2;
-				if($data["canal_search"] == null && strcmp($data["canal_search_sector"],"") ==0 ){
+				if($data["canal_search"] == null && strcmp($data["canal_search_sector"],"") ==0 && $data["canal_search_canal_agrupado"] == null ){
 					$data["canales_data"] = Canal::listarCanales()->paginate(10);					
 				}else{
-					$data["canales_data"] = Canal::buscarCanales($data["canal_search"],$data["canal_search_sector"])->paginate(10);		
+					$data["canales_data"] = Canal::buscarCanales($data["canal_search"],$data["canal_search_sector"],$data["canal_search_canal_agrupado"])->paginate(10);		
 				}
 				return View::make('Mantenimientos/Sectores_Canales_Entidades/listarSectoresCanalesEntidades',$data);
 				
@@ -210,13 +212,16 @@ class CanalController extends BaseController {
 			if(($data["user"]->idrol == 1) && $idcanal)
 			{	
 				$data["canal"] = Canal::withTrashed()->find($idcanal);
-				$data["canales_agrupados"] = CanalAgrupado::lists('nombre','idcanal_agrupado');
-				$data["sectores"] = Sector::lists('nombre','idsector');
-
 
 				if($data["canal"]==null){						
 					return Redirect::to('entidades_canales_sectores/listar/2')->with('error','Canal no encontrado');
 				}
+				$data["canales_agrupados"] = CanalAgrupado::lists('nombre','idcanal_agrupado');
+				$data["sectores"] = Sector::lists('nombre','idsector');
+				if($data["canal"]->idusuario_responsable != null)
+					$data["usuario_responsable"] = User::find($data["canal"]->idcanal_agrupado);
+				else
+					$data["usuario_responsable"] = null;
 				$data["entidades"] = Entidad::buscarEntidadesPorIdCanal($data["canal"]->idcanal)->get();
 				return View::make('Mantenimientos/Sectores_Canales_Entidades/Canales/mostrarCanal',$data);
 			}else{

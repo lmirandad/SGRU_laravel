@@ -25,7 +25,7 @@ class Entidad extends Eloquent implements UserInterface, RemindableInterface {
 	 * @var array
 	 */
 	
-
+	//Query para listar todas las entidades registradas en el sistema. Se incluye el canal y el nombre del sector asociado a dicho canal.
 	public function scopeListarEntidades($query)
 	{
 		$query->join('canal','canal.idcanal','=','entidad.idcanal')
@@ -37,12 +37,14 @@ class Entidad extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para listar todas las entidades de un determinado canal
 	public function scopeBuscarEntidadesPorIdCanal($query,$idcanal)
 	{
 		$query->where('entidad.idcanal','=',$idcanal);
 		$query->select('entidad.*');
 	}
 	
+	//Query para buscar las entidades por determinados criterios de busqueda (Codigo Entidad - Nombre - Id Canal - Id Sector)
 	public function scopeBuscarEntidades($query,$codigo_enve,$nombre,$idcanal,$idsector){
 		$query->join('canal','entidad.idcanal','=','canal.idcanal')
 			  ->join('sector','canal.idsector','=','sector.idsector');
@@ -67,19 +69,22 @@ class Entidad extends Eloquent implements UserInterface, RemindableInterface {
 		$query->select('entidad.*','sector.nombre as nombre_sector','canal.nombre as nombre_canal');
 		$query->orderBy(DB::raw('CONVERT(integer,entidad.codigo_enve)'),'ASC');
 
-		/*echo '<pre>';
-		var_dump($query->get());
-		echo '</pre>';*/
-
 		return $query;
-
-
 
 	}
 
+	//Query para buscar una entidad por codigo de entidad (cod_enve)
 	public function scopeBuscarPorCodigoEntidad($query,$codigo)
 	{
 		$query->where('entidad.codigo_enve','LIKE',$codigo);
+		$query->select('entidad.*');
+		return $query;
+	}
+
+	//Query para buscar entidades por nombre
+	public function scopeBuscarPorNombre($query,$nombre)
+	{
+		$query->where('entidad.nombre','LIKE',"$nombre");
 		$query->select('entidad.*');
 		return $query;
 	}

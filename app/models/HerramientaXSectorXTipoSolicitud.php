@@ -25,7 +25,7 @@ class HerramientaXSectorXTipoSolicitud extends Eloquent implements UserInterface
 	 * @var array
 	 */
 	
-
+	//Query para listar los tipos de solicitudes (acciones) por determiando sector y determinada herramienta
 	public function scopeListarTipoSolicitudSector($query,$idsector,$idherramienta)
 	{
 		$query->withTrashed()
@@ -43,6 +43,7 @@ class HerramientaXSectorXTipoSolicitud extends Eloquent implements UserInterface
 		return $query;
 	}
 
+	//Query para buscar objetos herramientaxsectorxtipo_solicitud por id herramientaxsector
 	public function scopeBuscarPorId($query,$idherramientaxsector)
 	{
 		$query->withTrashed()

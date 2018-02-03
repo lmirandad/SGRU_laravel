@@ -43,10 +43,9 @@
 					<a href="#subPagesReporteria" data-toggle="collapse" class="collapsed" style="background-color:#F7F9F1"><span><font style="color:#00272E"><i class="lnr lnr-chart-bars"></i><strong>Reporteria</strong></font></span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
 					<div id="subPagesReporteria" class="collapse ">
 						<ul class="nav" style="background-color:#F7F9F1"> 
-							<li><a href="{{URL::to('/reportes')}}"><font style="color:#00272E"><i class="fa fa-file-text-o "></i><span>Reportes</font></span></a></li> 
-							<!--
-								<li><a href="{{URL::to('/dashboard/0')}}"><i class="lnr lnr-pie-chart"></i><span>Dashboard</span></a></li>
-							-->
+							<li><a href="{{URL::to('/reportes')}}"><font style="color:#00272E"><i class="fa fa-file-text-o "></i><span>Reportes</font></span></a></li>						
+							<li><a href="{{URL::to('/dashboardBI')}}"><font style="color:#00272E"><i class="lnr lnr-pie-chart"></i><span>Dashboard</font></span></a></li>
+							
 						</ul>
 					</div>
 				</li>

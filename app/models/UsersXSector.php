@@ -24,6 +24,8 @@ class UsersXSector extends Eloquent implements UserInterface, RemindableInterfac
 	 *
 	 * @var array
 	 */
+
+	//Query para buscar sectores por id usuario
 	public function scopeBuscarSectoresPorIdUsuario($query,$search_criteria)
 	{
 		$query->join('sector','sector.idsector','=','usersxsector.idsector')		
@@ -35,6 +37,7 @@ class UsersXSector extends Eloquent implements UserInterface, RemindableInterfac
 		return $query;
 	}
 
+	//Query para buscar sectores por id usuario y id sector (obj usersxsector)
 	public function scopeBuscarPorIdSectorIdUsuario($query,$idsector,$idusuario)
 	{
 		$query->withTrashed()

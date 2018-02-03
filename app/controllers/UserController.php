@@ -151,7 +151,13 @@ class UserController extends BaseController {
 		if(Auth::check()){
 				$data["inside_url"] = Config::get('app.inside_url');
 				$data["user"] = Session::get('user');
-				return View::make('Mantenimientos/Usuarios/cambiarContrasena',$data);
+
+				if($data["user"]->flag_cambiar_contrasena == 1)
+					return View::make('Mantenimientos/Usuarios/cambiarContrasena',$data);
+				else
+				{
+					return Redirect::to('/')->with('error','Administrador no ha reestablecido la contraseña para el cambio');
+				}
 		}else{
 			return View::make('error/error',$data);
 		}		
@@ -182,7 +188,8 @@ class UserController extends BaseController {
 					return Redirect::to('/usuarios/cambiar_contrasena')->withErrors($validator)->withInput(Input::all());
 				}else{
 					$user->password = Hash::make(Input::get('password_nueva'));
-					//$user->password = Crypt::encrypt($password);					
+					//$user->password = Crypt::encrypt($password);
+					$user->flag_cambiar_contrasena = 0;					
 					$user->save();					
 					Session::flash('message', 'Se cambió la contraseña con éxito.');
 					
@@ -238,6 +245,7 @@ class UserController extends BaseController {
 					$documento_identidad = Input::get('documento_identidad');
 					$usuario->password = Hash::make($documento_identidad);
 					$usuario->iduser_updated_by = $data["user"]->id;
+					$usuario->flag_cambiar_contrasena = 1;
 					$usuario->save();
 					return Response::json(array( 'success' => true, 'usuario' => $usuario ),200);	
 				}else{

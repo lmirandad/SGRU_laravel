@@ -24,6 +24,8 @@ class HerramientaXSector extends Eloquent implements UserInterface, RemindableIn
 	 *
 	 * @var array
 	 */
+
+	//Query buscar herramientas que son utilizadas por determinado sector
 	public function scopeBuscarHerramientasPorIdSector($query,$search_criteria)
 	{
 		$query->join('herramienta','herramienta.idherramienta','=','herramientaxsector.idherramienta')		
@@ -36,6 +38,7 @@ class HerramientaXSector extends Eloquent implements UserInterface, RemindableIn
 		return $query;
 	}
 
+	//Query para buscar objetos herramientaxsector por id sector y id herramienta
 	public function scopeBuscarHerramientasPorIdSectorIdHerramienta($query,$search_idsector,$search_idherramienta)
 	{
 		$query->withTrashed()
@@ -50,6 +53,7 @@ class HerramientaXSector extends Eloquent implements UserInterface, RemindableIn
 		return $query;
 	}
 
+	//Query para buscar sectores por determinado id herramienta
 	public function scopeBuscarSectorPorIdHerramienta($query,$idherramienta)
 	{
 		$query->join('sector','sector.idsector','=','herramientaxsector.idsector');

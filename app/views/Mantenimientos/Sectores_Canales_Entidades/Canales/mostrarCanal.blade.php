@@ -39,17 +39,27 @@
 							@endif
 						</div>
 						<div class="row">
-							<div class="form-group col-md-4 @if($errors->first('nombre_canal')) has-error has-feedback @endif"">
+							<div class="form-group col-md-6 @if($errors->first('nombre_canal')) has-error has-feedback @endif"">
 								{{ Form::label('nombre_canal','Nombre del Canal')}}
 								{{ Form::text('nombre_canal',$canal->nombre,array('class'=>'form-control','placeholder'=>'Ingrese nombre del canal','disabled'=>'disabled')) }}
 							</div>
-							<div class="form-group col-md-4 @if($errors->first('nombre_canal_agrupado')) has-error has-feedback @endif"">
+							<div class="form-group col-md-6 @if($errors->first('nombre_canal_agrupado')) has-error has-feedback @endif"">
 								{{ Form::label('nombre_canal_agrupado','Nombre del Canal Agrupado:')}}
 								{{ Form::select('canal_agrupado',array(''=>'Seleccione')+$canales_agrupados,$canal->idcanal_agrupado,array('class'=>'form-control','disabled'=>'disabled')) }}
 							</div>
-							<div class="form-group col-md-4 @if($errors->first('sector')) has-error has-feedback @endif"">
+						</div>
+						<div class="row">
+							<div class="form-group col-md-6 @if($errors->first('sector')) has-error has-feedback @endif"">
 								{{ Form::label('sector','Sector:')}}
 								{{ Form::select('sector',array(''=>'Seleccione')+$sectores,$canal->idsector,array('class'=>'form-control','disabled'=>'disabled')) }}
+							</div>
+							<div class="form-group col-md-6 @if($errors->first('nombre_responsable')) has-error has-feedback @endif"">
+								{{ Form::label('nombre_responsable','Nombre del Responsable')}}
+								@if($canal->idusuario_responsable != null)
+									{{ Form::text('nombre_responsable',$usuario_responsable->nombre.' '.$usuario_responsable->apellido_paterno.' '.$usuario_responsable->apellido_materno,array('class'=>'form-control','placeholder'=>'Ingrese nombre del canal','disabled'=>'disabled')) }}
+								@else
+									{{ Form::text('nombre_responsable',null	,array('class'=>'form-control','placeholder'=>'Sin responsable','disabled'=>'disabled')) }}
+								@endif
 							</div>
 						</div>
 						<div class="row">
@@ -67,7 +77,7 @@
 						<h3 class="panel-title">Entidades</h3>
 					</div>
 					<div class="panel-body">
-						<div class="table-responsive" style="height:230px;overflow-y:auto; ">
+						<div class="table-responsive" style="height:300px;overflow-y:auto; ">
 							<table class="table table-hover"  >
 								<thead>
 									<tr>

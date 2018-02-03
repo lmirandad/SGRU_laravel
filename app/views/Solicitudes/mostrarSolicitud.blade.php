@@ -274,11 +274,25 @@
 		<div class="row">
 			@if($user->idrol == 1)
 				@if($usuario_asignado != null)
-					@if(($solicitud->idestado_solicitud == 3 || $solicitud->idestado_solicitud == 4) )
+					@if(($solicitud->idestado_solicitud == 3) )
 						<div class="col-md-2">
 							<button class="btn btn-success btn-block" onclick="mostrar_usuarios_disponibles(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-redo"></i> Reasignación</button>
 						</div>		
 						<div class="form-group col-md-2 col-md-offset-8">
+							<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
+						</div>
+					@elseif( $solicitud->idestado_solicitud == 4)
+						<div class="col-md-2">
+							<button class="btn btn-success btn-block" onclick="mostrar_usuarios_disponibles(event,{{$solicitud->idsolicitud}})"> <i class="lnr lnr-redo"></i> Reasignación</button>
+						</div>
+						{{ Form::open(array('url'=>'/requerimientos/submit_eliminar_base' ,'role'=>'form','id'=>'submit-eliminar','enctype'=>'multipart/form-data')) }}
+						{{ Form::hidden('solicitud_id_eliminar_base', null,array('id'=>'solicitud_id_eliminar_base')) }}
+						
+							<div class="form-group col-md-3">
+								<button class="btn btn-danger btn-md" onclick="eliminar_requerimientos(event,{{$solicitud->idsolicitud}})" type="button"><i class="lnr lnr-cross"></i> Eliminar Base de Requerimientos</button>		
+							</div>	
+						{{ Form::close() }}
+						<div class="form-group col-md-2 col-md-offset-5">
 							<a class="btn btn-default btn-block" href="{{URL::to('solicitudes/listar_solicitudes')}}"><i class="lnr lnr-arrow-left"></i>&nbspCancelar</a>				
 						</div>
 					@else
@@ -386,4 +400,64 @@
     </div>
   </div>
  </div>  
+ <div class="container" >
+  <!-- Modal -->
+  <div class="modal fade" id="modal_requerimientos_trazabilidad"  role="dialog" style="overflow-y:scroll;">
+    <div class="modal-dialog modal-md" style="width:80%">    
+      <!-- Modal content-->
+      <div class="modal-content" >
+	        <div class="modal-header" id="modal_header_requerimientos_trazabilidad">
+	          
+	          <h4 class="modal-title" id="transaccion-title"></h4>
+	         
+	        </div>
+	        <div class="modal-body" id="modal_text_acciones_trazabilidad">
+	         	<div class="container-fluid">
+	         		<div id="message-in-modal" style="display:block;">
+		         		@if (Session::has('message'))
+							<div class="alert alert-success">
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								<i class="fa fa-check-circle"></i> 
+								{{ Session::get('message') }}
+							</div>
+						@endif
+						@if (Session::has('error'))
+							<div class="alert alert-danger alert-dismissible" role="alert">
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+								<i class="fa fa-times-circle"></i> {{ Session::get('error') }}
+							</div>
+						@endif
+					</div>
+
+					<div class="row">	         			
+						<div class="table-responsive" >
+							<table class="table table-hover" id="table_trazabilidad" >
+								<thead>
+									<tr>
+										<th class="text-nowrap text-center">N°</th>
+										<th class="text-nowrap text-center">Observacion</th>
+										<th class="text-nowrap text-center">Fecha</th>
+									</tr>
+								</thead>
+								<tbody >	
+									
+								</tbody>
+							</table>
+						</div>
+
+					</div>
+				</div>
+			</div>
+	        <div class="modal-footer">
+	        	 <div class="row">
+					<div class="form-group col-md-4 col-md-offset-8">
+						<a class="btn btn-default btn-block" id="btnSalirTrazabilidad"><i class="lnr lnr-arrow-left"></i>SALIR</a>				
+					</div>
+				</div>			
+	        </div>
+      </div>      
+    </div>
+  </div>
+ </div> 
+
 @stop

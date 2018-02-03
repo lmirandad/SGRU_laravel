@@ -15,8 +15,8 @@
 	<!-- GOOGLE FONTS -->
 	<link rel="stylesheet" href="{{asset('assets/css/font-googleapis-familySourceSanPro.css')}}">
 	<!-- ICONS -->
-	<link rel="apple-touch-icon" sizes="76x76" href="{{asset('assets/img/apple-icon.png')}}">
-	<link rel="icon" type="image/png" sizes="96x96" href="{{asset('assets/img/favicon.png')}}">
+	<link rel="apple-touch-icon" sizes="76x76" href="{{asset('assets/img/icon_telefonica.png')}}">
+	<link rel="icon" type="image/png" sizes="96x96" href="{{asset('assets/img/icon_telefonica.png')}}">
 	<script src="{{asset('assets/jquery/jquery.min.js')}}"></script>
 	<script src="{{asset('assets/bootstrap/js/bootstrap.min.js')}}"></script>
 	<script src="{{asset('assets/jquery-slimscroll/jquery.slimscroll.min.js')}}"></script>

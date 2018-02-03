@@ -25,6 +25,7 @@ class CargoCanal extends Eloquent implements UserInterface, RemindableInterface 
 	 * @var array
 	 */
 	
+	//Query para listar los cargos aceptados por un determinado canal
 	public function scopeBuscarCargosPorCanal($query,$idcanal)
 	{
 		$query->where('cargo_canal.idcanal','=',$idcanal);

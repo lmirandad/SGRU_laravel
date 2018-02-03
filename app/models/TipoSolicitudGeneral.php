@@ -25,6 +25,7 @@ class TipoSolicitudGeneral extends Eloquent implements UserInterface, Remindable
 	 * @var array
 	 */
 	
+	//Query para listar todos los tipos de solicitud general
 	public function scopeListarTiposSolicitudGeneral($query)
 	{
 		$query->select('tipo_solicitud_general.*');
@@ -32,6 +33,7 @@ class TipoSolicitudGeneral extends Eloquent implements UserInterface, Remindable
 		return $query;
 	}
 
+	//Query para listar todos los tipos de solicitud general por nombre
 	public function scopeBuscarPorNombre($query,$nombre_tipo)
 	{
 		$query->where('tipo_solicitud_general.nombre','LIKE',$nombre_tipo);

@@ -131,18 +131,36 @@ INSERT INTO USERS (username,password,email,remember_token,nombre,apellido_patern
 ,telefono,created_at,updated_at,idrol,idtipo_doc_identidad) VALUES
 ('sgru_webmaster','$2y$10$YSwHz1VNwKl3z7iKVB8k4uxbYGIwNudoETrnZMo0pPG0F16d5SpC.','luismiguel0103@hotmail.com','','Luis Miguel',
 'Miranda','Dulanto','1993-03-01','M','72299021','461682','2017-11-17','2017-11-17',1,1);
+
 INSERT INTO USERS (username,password,email,remember_token,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad
 ,telefono,created_at,updated_at,idrol,idtipo_doc_identidad) VALUES
-('sgru_gestor1','$2y$10$YSwHz1VNwKl3z7iKVB8k4uxbYGIwNudoETrnZMo0pPG0F16d5SpC.','luismiguel0103@hotmail.com','','Juan',
-'Perez','Robles','1993-03-01','M','72299021','461682','2017-11-17','2017-11-17',2,1);
+('cflores','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','luismiguel0103@hotmail.com','','Carlos',
+'Flores','Muñante','1993-03-01','M','12345678','461682','2017-11-17','2017-11-17',2,1);
+
 INSERT INTO USERS (username,password,email,remember_token,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad
 ,telefono,created_at,updated_at,idrol,idtipo_doc_identidad) VALUES
-('sgru_gestor2','$2y$10$YSwHz1VNwKl3z7iKVB8k4uxbYGIwNudoETrnZMo0pPG0F16d5SpC.','luismiguel0103@hotmail.com','','Armando',
-'Hoyos','Torres','1993-03-01','M','72299021','461682','2017-11-17','2017-11-17',2,1);
+('mshulca','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','luismiguel0103@hotmail.com','','Miguel',
+'Shulca','Romero','1993-03-01','M','12345679','461682','2017-11-17','2017-11-17',2,1);
+
 INSERT INTO USERS (username,password,email,remember_token,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad
 ,telefono,created_at,updated_at,idrol,idtipo_doc_identidad) VALUES
-('sgru_gestor3','$2y$10$YSwHz1VNwKl3z7iKVB8k4uxbYGIwNudoETrnZMo0pPG0F16d5SpC.','luismiguel0103@hotmail.com','','Ronny',
-'Luna','Choque','1993-03-01','M','72299021','461682','2017-11-17','2017-11-17',2,1);
+('csierra','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','luismiguel0103@hotmail.com','','Carlos',
+'Sierra','Marquez','1993-03-01','M','12345680','461682','2017-11-17','2017-11-17',2,1);
+
+INSERT INTO USERS (username,password,email,remember_token,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad
+,telefono,created_at,updated_at,idrol,idtipo_doc_identidad) VALUES
+('jarbulu','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','luismiguel0103@hotmail.com','','José',
+'Arbulú','Arbulú','1993-03-01','M','12345681','461682','2017-11-17','2017-11-17',2,1);
+
+INSERT INTO USERS (username,password,email,remember_token,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad
+,telefono,created_at,updated_at,idrol,idtipo_doc_identidad) VALUES
+('alengua','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','luismiguel0103@hotmail.com','','Fernando',
+'Lengua','Anicama','1993-03-01','M','12345682','461682','2017-11-17','2017-11-17',2,1);
+
+INSERT INTO USERS (username,password,email,remember_token,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad
+,telefono,created_at,updated_at,idrol,idtipo_doc_identidad) VALUES
+('gpaucar','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','luismiguel0103@hotmail.com','','Giomar',
+'Paucar','Arias','1993-03-01','M','12345683','461682','2017-11-17','2017-11-17',2,1);
 
 -- SECTOR
 INSERT INTO SECTOR (nombre,created_at,updated_at) VALUES ('SECTOR CALL','2017-11-21','2017-11-21')

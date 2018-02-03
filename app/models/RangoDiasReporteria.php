@@ -24,6 +24,7 @@ class RangoDiasReporteria extends Eloquent implements UserInterface, RemindableI
 	 * @var array
 	 */
 
+	//Query para listar rangos de dias para la reporteria (grupo de dias) --> NO UTILIZADO
 	public function scopeListarRangos($query)
 	{
 		$query->select('rango_dias_reporteria.*');

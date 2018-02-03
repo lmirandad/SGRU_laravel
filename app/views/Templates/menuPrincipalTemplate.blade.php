@@ -21,7 +21,7 @@
 	<link rel="stylesheet" href="{{asset('assets/css/font-googleapis-familySourceSanPro.css')}}">
 	<!-- ICONS -->
 	<link rel="apple-touch-icon" sizes="76x76" href="{{asset('assets/img/apple-icon.png')}}">
-	<link rel="icon" type="image/png" sizes="96x96" href="{{asset('assets/img/favicon.png')}}">
+	<link rel="icon" type="image/png" sizes="96x96" href="{{asset('assets/img/icon_telefonica.png')}}">
 	<!-- Javascript -->
 	<script src="{{asset('assets/jquery/jquery.min.js')}}"></script>
 	<script src="{{asset('assets/jquery/jquery.loading.min.js')}}"></script>
@@ -35,9 +35,10 @@
 	<script src="{{asset('assets/bootstrap/js/bootstrap-datetimepicker.min.js')}}"></script>
 	<script src="{{asset('assets/bootstrap/js/locale-es.js')}}"></script>
 	<script src="{{asset('assets/kartik-v/bootstrap-fileinput/js/fileinput.min.js')}}"></script>
-	<script src="{{asset('assets/kartik-v/bootstrap-fileinput/js/locales/es.js')}}"></script>	
+	<script src="{{asset('assets/kartik-v/bootstrap-fileinput/js/locales/es.js')}}"></script>
 	<script src="{{asset('js/menu_principal_gestor.js')}}"></script>
 	<script src="{{asset('js/menu_principal_admin.js')}}"></script>
+
 	<script type="text/javascript">
 		var inside_url = "{{$inside_url}}";
 	</script>

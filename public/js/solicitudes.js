@@ -91,8 +91,8 @@ $( document ).ready(function(){
 
 	$('#btnLimpiar').click(function(){
 		$('#search_solicitud').val(null);
-		$('#fecha_solicitud_desde').val(null);
-		$('#fecha_solicitud_hasta').val(null);
+		$('#fecha_asignacion_desde').val(null);
+		$('#fecha_asignacion_hasta').val(null);
 		$('#search_tipo_solicitud').val(0);
 		$('#search_estado_solicitud').val(0);
 		$('#search_sector').val(0);
@@ -293,72 +293,6 @@ function mostrar_modal_anular(e,idsolicitud)
 
 }
 
-function mostrar_observaciones(e,id)
-{
-
-	e.preventDefault();
-	$.ajax({
-		url: inside_url+'requerimientos/ver_observacion',
-		type: 'POST',
-		data: { 
-			'idtransaccion' : id,
-		},
-		beforeSend: function(){
-			$(".loader_container").show();
-		},
-		complete: function(){
-			//$(this).prop('disabled',false);
-		},
-		success: function(response){
-			if(response["transaccion"] != null)
-			{
-				if(response["transaccion"].observaciones != null){
-					observaciones = response["transaccion"].observaciones.split('|');
-					dialog = BootstrapDialog.show({
-				        title: 'Mensaje',
-				        message: observaciones[0],
-				        type : BootstrapDialog.TYPE_PRIMARY,
-				        buttons: [{
-				            label: 'Entendido',
-				            action: function(dialog) {
-				            	dialog.close();   
-				            }
-				   		 }]
-				    });
-				}					
-				else{
-					dialog = BootstrapDialog.show({
-				        title: 'Mensaje',
-				        message: 'Sin observaciones',
-				        type : BootstrapDialog.TYPE_PRIMARY,
-				        buttons: [{
-				            label: 'Entendido',
-				            action: function(dialog) {
-				            	dialog.close();   
-				            }
-				   		 }]
-				    });
-				}
-			}else
-			{
-				dialog = BootstrapDialog.show({
-			        title: 'Mensaje',
-			        message: 'Requerimiento no existe.',
-			        type : BootstrapDialog.TYPE_DANGER,
-			        buttons: [{
-			            label: 'Entendido',
-			            action: function(dialog) {
-			            	dialog.close();   
-			            }
-			   		 }]
-			    });
-			}		
-			
-		},
-		error: function(){
-		}
-	});
-}
 
 function reactivar_transaccion(e,id)
 {
@@ -421,4 +355,110 @@ function reactivar_transaccion(e,id)
 		}
 	});
 
+}
+
+function eliminar_requerimientos(e,id)
+{
+	e.preventDefault();
+	$('#solicitud_id_eliminar_base').val(id);
+	BootstrapDialog.confirm({
+		title: 'Mensaje de Confirmación',
+		message: '¿Está seguro que desea realizar esta acción?<br>Se borrarán todos los requerimientos y transacciones asociados a la solicitud.', 
+		type: BootstrapDialog.TYPE_DANGER,
+		btnCancelLabel: 'Cancelar', 
+    	btnOKLabel: 'Aceptar', 
+		callback: function(result){
+	        if(result) {
+	        	document.getElementById("submit-eliminar").submit();
+			}
+		}
+	});
+}
+
+function mostrar_observaciones(e,id)
+{
+
+	e.preventDefault();
+	$("#table_trazabilidad tbody").remove();
+	$.ajax({
+		url: inside_url+'requerimientos/ver_observacion',
+		type: 'POST',
+		data: { 
+			'idtransaccion' : id,
+		},
+		beforeSend: function(){
+			$(".loader_container").show();
+		},
+		complete: function(){
+			//$(this).prop('disabled',false);
+		},
+		success: function(response){
+
+			if(response["transaccion"] != null)
+			{
+				$('#transaccion-title').text('OBSERVACIONES TRANSACCIÓN ID '+ response["transaccion"].idtransaccion +' - SOLICITUD N° '+response["solicitud"].codigo_solicitud);
+				if(response["trazabilidad"] != null && response["trazabilidad"].length>0)
+				{
+					
+					arr_trazabilidad = response["trazabilidad"];
+					cantidad_observaciones = arr_trazabilidad.length;
+
+					for(i=0;i<cantidad_observaciones;i++)
+					{
+						data = "<tr>"
+				                +"<td class=\"text-nowrap text-center\">"+(i+1)+"</td>"
+				                +"<td class=\"text-nowrap text-center\" style=\"display:none\"><input type=\"text\" class=\"form-control\" name=\"idtrazabilidad[]\"  value = "+arr_trazabilidad[i].idtrazabilidad_transaccion+"></td>";
+				                +"<td class=\"text-nowrap text-center\" style=\"display:none\" id=\"idtrazabilidad"+i+"\">"+arr_trazabilidad[i].idtrazabilidad_transaccion+"</td>";
+				                
+
+				                 
+				         data = data +"<td>"+arr_trazabilidad[i].descripcion+"</td>"
+				                +"<td class=\"text-nowrap text-center\">"+arr_trazabilidad[i].fecha_registro+"</td>";
+
+				        if(arr_trazabilidad[i].iduser_created_by == null){
+				        	data = data + "<td class=\"text-nowrap text-center\">-</td>";
+				        	data = data + "<td class=\"text-nowrap text-center\">-</td></tr>";	
+				        }else
+				        {
+				        	data = data + "<td class=\"text-nowrap text-center\"><div style=\"text-align:center\"><button class=\"btn btn-warning btn-sm\" onclick=\"editar_observacion(event,"+arr_trazabilidad[i].idtrazabilidad_transaccion+")\" type=\"button\"><span class=\"lnr lnr-pencil\"></span></button></div></td>";
+				        	data = data + "<td class=\"text-nowrap text-center\"><div style=\"text-align:center\"><button class=\"btn btn-danger btn-sm\" onclick=\"eliminar_observacion(event,"+arr_trazabilidad[i].idtrazabilidad_transaccion+")\" type=\"button\"><span class=\"fa fa-times\"></span></button></div></td></tr>";
+				        }
+				        
+
+
+	            		$('#table_trazabilidad').append(data);
+					}
+
+					
+
+				}
+				$('#modal_requerimientos_trazabilidad').modal({
+					    backdrop: 'static',
+					    keyboard: false
+					});
+	            	$('#modal_requerimientos_trazabilidad').modal('show');
+					$('#modal_header_requerimientos_trazabilidad').removeClass();
+					$('#modal_header_requerimientos_trazabilidad').addClass("modal-header ");
+					$('#modal_header_requerimientos_trazabilidad').addClass("bg-primary");
+					$('#modal_header_requerimientos_trazabilidad').addClass('modal-open');
+			}else
+			{
+				dialog = BootstrapDialog.show({
+			        title: 'Mensaje',
+			        message: 'Transaccion no existe.',
+			        type : BootstrapDialog.TYPE_DANGER,
+			        buttons: [{
+			            label: 'Entendido',
+			            action: function(dialog) {
+			            	$('#modal_requerimientos_mostrar').modal('show');
+			             	dialog.close();   
+			            }
+			   		 }]
+			    });
+			}		
+			
+		},
+		error: function(){
+		}
+	});
 }

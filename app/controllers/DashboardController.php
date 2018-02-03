@@ -2,7 +2,25 @@
 
 class DashboardController extends BaseController {
 
-	public function mostrar_dashboard($flag_seleccion=null)
+	public function mostrar_dashboard_bi()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 1)
+			{	
+				return View::make('Reporteria/dashboardPowerBI',$data);
+			}else{
+				return View::make('error/error',$data);
+			}
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	/*public function mostrar_dashboard($flag_seleccion=null)
 	{
 		if(Auth::check()){
 			$data["inside_url"] = Config::get('app.inside_url');
@@ -27,11 +45,11 @@ class DashboardController extends BaseController {
 		}else{
 			return View::make('error/error',$data);
 		}
-	}
+	}*/
 	/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	/* *********************************DASHBOARD ANUAL *****************************************/
 	/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-
+	/*
 	public function mostrar_dashboard_anual_estados()
 	{
 		if(!Request::ajax() || !Auth::check()){
@@ -347,12 +365,13 @@ class DashboardController extends BaseController {
 		}else{
 			return Response::json(array( 'success' => false),200);
 		}
-	}
+	}*/
 
 	/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	/* *********************************DASHBOARD MENSUAL *****************************************/
 	/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+	/*
 	public function mostrar_dashboard_mes_estados()
 	{
 		if(!Request::ajax() || !Auth::check()){
@@ -671,6 +690,6 @@ class DashboardController extends BaseController {
 		}else{
 			return Response::json(array( 'success' => false),200);
 		}
-	}
+	}*/
 
 }

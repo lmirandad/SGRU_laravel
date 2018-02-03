@@ -17,7 +17,7 @@ class CanalAgrupado extends Eloquent implements UserInterface, RemindableInterfa
 	 */
 	protected $table = 'canal_agrupado';
 	protected $softDelete = true;
-	protected $primaryKey = 'idcanal_agrupadpo';
+	protected $primaryKey = 'idcanal_agrupado';
 
 	/**
 	 * The attributes excluded from the model's JSON form.
@@ -25,6 +25,7 @@ class CanalAgrupado extends Eloquent implements UserInterface, RemindableInterfa
 	 * @var array
 	 */
 	
+	//Query para listar todos los canales agrupados de un determinado sector
 	public function scopeBuscarCanalAgrupadoPorIdSector($query,$idsector)
 	{
 		$query->where('canal_agrupado.idsector','=',$idsector);

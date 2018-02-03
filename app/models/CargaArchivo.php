@@ -25,6 +25,7 @@ class CargaArchivo extends Eloquent implements UserInterface, RemindableInterfac
 	 * @var array
 	 */
 	
+	//Query para buscar el ultimo corte (la ultima carga de archivo para las asignaciones de tickets) de una determinada fecha
 	public function scopeBuscarUltimoCorte($query,$fecha)
 	{
 		$query->where(DB::raw('CONVERT(varchar(10),carga_archivo.fecha_carga_archivo,120)'),'=',$fecha);

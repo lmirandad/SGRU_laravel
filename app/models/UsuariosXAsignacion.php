@@ -25,6 +25,7 @@ class UsuariosXAsignacion extends Eloquent implements UserInterface, RemindableI
 	 * @var array
 	 */
 
+	//Query para buscar usuarios actuales de una determinada asignacion
 	public function scopeBuscarUsuarioActual($query,$idasignacion)
 	{
 		$query->where('usuariosxasignacion.idasignacion','=',$idasignacion)
@@ -34,6 +35,7 @@ class UsuariosXAsignacion extends Eloquent implements UserInterface, RemindableI
 
 	}
 
+	//Query para buscar un objeto usuariosxasignacion
 	public function scopeBuscarPorIdAsignacion($query,$idasignacion)
 	{
 		$query->where('usuariosxasignacion.idasignacion','=',$idasignacion);

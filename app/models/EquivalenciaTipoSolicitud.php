@@ -25,6 +25,7 @@ class EquivalenciaTipoSolicitud extends Eloquent implements UserInterface, Remin
 	 * @var array
 	 */
 	
+	//Query para buscar equivalencias de nombres de tipo de solicitud (Accion) por idtipo_solicitud
 	public function scopeBuscarEquivalenciasPorIdTipoSolicitud($query,$idtipo_solicitud)
 	{
 		$query->where('equivalencia_tipo_solicitud.idtipo_solicitud','=',$idtipo_solicitud);
@@ -32,6 +33,7 @@ class EquivalenciaTipoSolicitud extends Eloquent implements UserInterface, Remin
 		return $query;
 	}
 
+	//Query para buscar equivalencias de nombres de tipo de solicitud (Accion) por nombre
 	public function scopeBuscarPorTipoSolicitudPorNombre($query,$nombre,$idtipo_solicitud)
 	{
 		$query->where('equivalencia_tipo_solicitud.nombre_equivalencia','LIKE','$nombre');

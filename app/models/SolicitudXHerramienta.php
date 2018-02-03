@@ -25,6 +25,7 @@ class SolicitudXHerramienta extends Eloquent implements UserInterface, Remindabl
 	 * @var array
 	 */
 	
+	//Query para buscar herramientas por solicitud
 	public function scopeBuscarHerramientasPorIdSolicitud($query,$idsolicitud)
 	{
 		$query->join('herramienta','herramienta.idherramienta','=','solicitudxherramienta.idherramienta');

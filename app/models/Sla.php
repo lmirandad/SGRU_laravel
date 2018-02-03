@@ -25,7 +25,7 @@ class Sla extends Eloquent implements UserInterface, RemindableInterface {
 	 * @var array
 	 */
 	
-
+	//Query para buscar los Slas por el objeto HerramientaxSector
 	public function scopeBuscarSlasPorIdHerramientaXSector($query,$idherramientaxsector)
 	{
 		$query->where('sla.idherramientaxsector','=',$idherramientaxsector);
@@ -36,6 +36,7 @@ class Sla extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para buscar el sla vigente por el objeto HerramientaxSector
 	public function scopeBuscarSlaVigentePorIdHerramientaXSector($query,$idherramientaxsector)
 	{
 		$query->where('sla.idherramientaxsector','=',$idherramientaxsector)
@@ -46,6 +47,7 @@ class Sla extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	//Query para buscar los Slas por idsolicitud y tipo de solicitud (considerar que existe un Sla para una solicitud en estado pendiente y un sla distinto para una solicitud en estado procesando)
 	public function scopeBuscarSlaSolicitud($query,$idsolicitud,$idtipo_solicitud)
 	{
 		$query->join('solicitud','solicitud.idsla','=','sla.idsla')

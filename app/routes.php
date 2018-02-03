@@ -27,9 +27,11 @@ Route::group(array('before'=>'auth'),function(){
 
 	/*EXPORTACION DE BASE ACTUAL DE TICKETS GESTOR */
 	Route::get('/generar_reporte_gestor','MenuPrincipalController@generar_reporte_gestor');
+	Route::get('/descargar_plantilla_gestor','MenuPrincipalController@descargar_plantilla_gestor');
 
-	/*DASHBOARD*/
+	/*
 	Route::get('/dashboard/{id}','DashboardController@mostrar_dashboard');
+	Route::get('/dashboardBI','DashboardController@mostrar_dashboard_bi');
 	Route::post('/mostrar_dashboard_prueba','DashboardController@mostrar_dashboard_prueba');
 	Route::post('/mostrar_dashboard_anual_estados','DashboardController@mostrar_dashboard_anual_estados');
 	Route::post('/mostrar_dashboard_anual_usuario_estados','DashboardController@mostrar_dashboard_anual_usuario_estados');
@@ -52,7 +54,7 @@ Route::group(array('before'=>'auth'),function(){
 	Route::post('/mostrar_dashboard_mes_gestion_seguridad','DashboardController@mostrar_dashboard_mes_gestion_seguridad');
 	Route::post('/mostrar_dashboard_mes_usuarios_gestion_seguridad','DashboardController@mostrar_dashboard_mes_usuarios_gestion_seguridad');
 	Route::post('/mostrar_dashboard_mes_dias','DashboardController@mostrar_dashboard_mes_dias');
-	Route::post('/mostrar_dashboard_mes_dias_usuarios','DashboardController@mostrar_dashboard_mes_dias_usuarios');	
+	Route::post('/mostrar_dashboard_mes_dias_usuarios','DashboardController@mostrar_dashboard_mes_dias_usuarios');	*/
 
 	/*REPORTERIA*/
 	Route::get('/reportes','ReporteriaController@mostrar_reporteria');
@@ -219,13 +221,18 @@ Route::group(array('prefix'=>'requerimientos', 'before'=>'auth'),function(){
 	Route::post('/cargar_requerimientos','RequerimientoController@cargar_requerimientos');
 	Route::post('/mostrar_lista_requerimientos','RequerimientoController@mostrar_lista_requerimientos');
 	Route::post('/ver_observacion','RequerimientoController@ver_observacion');
+	Route::post('/ver_observacion_transaccion','RequerimientoController@ver_observacion_transaccion');
 	Route::post('/reactivar_transaccion','RequerimientoController@reactivar_transaccion');
 	Route::post('/submit_actualizar_codigos','RequerimientoController@submit_actualizar_codigos');
 	Route::post('/rechazar_requerimiento','RequerimientoController@rechazar_requerimiento');
+	Route::post('/submit_crear_transaccion','RequerimientoController@submit_crear_transaccion');
 	Route::post('/submit_rechazar_requerimiento','RequerimientoController@submit_rechazar_requerimiento');
 	Route::post('/submit_finalizar_requerimiento','RequerimientoController@submit_finalizar_requerimiento');
 	Route::post('/submit_procesar_requerimiento','RequerimientoController@submit_procesar_requerimiento');
 	Route::post('/submit_eliminar_base','RequerimientoController@submit_eliminar_base');
+	Route::post('/submit_eliminar_transaccion','RequerimientoController@submit_eliminar_transaccion');
+	Route::post('/submit_eliminar_observacion','RequerimientoController@submit_eliminar_observacion');
+	Route::post('/submit_crear_trazabilidad','RequerimientoController@submit_crear_trazabilidad');
 });
 
 /*TIPOS_SOLICITUD*/

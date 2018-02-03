@@ -19,7 +19,7 @@
 	<link rel="stylesheet" href="{{asset('assets/css/font-googleapis-familySourceSanPro.css')}}">
 	<!-- ICONS -->
 	<link rel="apple-touch-icon" sizes="76x76" href="{{asset('assets/img/apple-icon.png')}}">
-	<link rel="icon" type="image/png" sizes="96x96" href="{{asset('assets/img/favicon.png')}}">
+	<link rel="icon" type="image/png" sizes="96x96" href="{{asset('assets/img/icon_telefonica.png')}}">
 	<!-- Javascript -->
 	<script type="text/javascript">
 		var inside_url = "{{$inside_url}}";

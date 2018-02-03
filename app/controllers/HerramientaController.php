@@ -234,10 +234,15 @@ class HerramientaController extends BaseController {
 					$herramienta->iddenominacion_herramienta = $denominacion_herramienta;
 					$herramienta->idtipo_requerimiento = $tipo_requerimiento;
 					$herramienta->iduser_created_by = $data["user"]->id;
-					
-
 
 					$herramienta->save();	
+
+					//creacion de la equivalencia
+					$equivalencia = new HerramientaEquivalencia;
+					$equivalencia->nombre_equivalencia = $herramienta->nombre;
+					$equivalencia->idherramienta = $herramienta->idherramienta;
+					$equivalencia->iduser_created_by = $data["user"]->id;
+					$equivalencia->save();
 
 					
 					$size_tipos = count($tipos_solicitud);
