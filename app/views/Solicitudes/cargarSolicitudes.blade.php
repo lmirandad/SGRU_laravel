@@ -14,6 +14,13 @@
 						{{ Session::get('message') }}
 					</div>
 				@endif
+				@if (Session::has('info'))
+					<div class="alert alert-info">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<i class="fa fa-check-circle"></i> 
+						{{ Session::get('info') }}
+					</div>
+				@endif
 				@if (Session::has('error'))
 					<div class="alert alert-danger">
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -132,6 +139,9 @@
 											<input style="display:none" name='asuntos[]' value='{{ $resultado["asunto"]}}' readonly/>
 											<input style="display:none" name='idherramientas[]' value='{{ $resultado["idherramienta"]}}' readonly/>
 										</td>
+										
+											<input style="display:none" name='fechas_estado[]' value="{{date('d-m-Y',strtotime($resultado["fecha_estado"]))}}" readonly/>
+										
 									</tr>
 									@endforeach
 								@endif
@@ -184,6 +194,11 @@
 											<input style="display:none" name='fechas_solicitud_rechazo[]' value="{{date('d-m-Y',strtotime($solicitudes["fecha_solicitud"]))}}" readonly/>
 											{{date('d-m-Y',strtotime($solicitudes["fecha_solicitud"]))}}
 										</td>
+
+										
+											<input style="display:none" name='fechas_estado_rechazo[]' value="{{date('d-m-Y',strtotime($solicitudes["fecha_estado"]))}}" readonly/>
+											
+										
 										<td class="text-nowrap text-center">
 											<input style="display:none" name='ids_herramienta[]' value="{{$solicitudes["idherramienta"]}}" readonly/>
 											@if($solicitudes["nombre_herramienta"] == null)

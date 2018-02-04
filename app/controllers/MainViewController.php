@@ -288,26 +288,36 @@ class MenuPrincipalController extends BaseController {
 					
 				}
 				$data["origen"] = 1; //1: sin usuario //2: con usuario
-				$mensaje = '';
-				$fecha_actual = date ('Y-m-d H:i:s');
+				$mensaje_n = '';
+				$mensaje_p = '';
+				$fecha_actual = date ('Y-m-d');
 				$usuarios_observados = UsuarioObservado::buscarUsuarioCargadoHoy($fecha_actual)->get();
-				
+
 				if($usuarios_observados == null || $usuarios_observados->isEmpty())
-					$mensaje = $mensaje.'Lista de Usuarios Observados no ha sido cargada hoy.<br>';
-				else
+					$mensaje_n = $mensaje_n.'Lista de Usuarios Observados no ha sido cargada hoy.<br>';
+				else{
 					if(count($usuarios_observados) == 0)
-						$mensaje = $mensaje.'Lista de Usuarios Observados no ha sido cargada hoy.<br>';
+						$mensaje_n = $mensaje_n.'Lista de Usuarios Observados no ha sido cargada hoy.<br>';
+					else
+						$mensaje_p = $mensaje_p.'Última Lista de Usuarios Observados subido el '.date('d-m-Y',strtotime($usuarios_observados[0]->fecha_registro)).' a las '.date('H:i:s',strtotime($usuarios_observados[0]->fecha_registro)).'<br>';
+				}
 
 				$usuarios_vena = UsuarioVena::buscarUsuarioCargadoHoy($fecha_actual)->get();
 
 				if($usuarios_vena == null || $usuarios_vena->isEmpty())
-					$mensaje = $mensaje.'Lista de Usuarios Vena no ha sido cargada hoy.<br>';
+					$mensaje_n = $mensaje_n.'Lista de Usuarios Vena no ha sido cargada hoy.<br>';
 				else
+				{
 					if(count($usuarios_vena) == 0)
-						$mensaje = $mensaje.'Lista de Usuarios Vena no ha sido cargada hoy.<br>';
+						$mensaje_n = $mensaje_n.'Lista de Usuarios Vena no ha sido cargada hoy.<br>';
+					else
+						$mensaje_p = $mensaje_p.'Última Lista de Usuarios Vena subido el '.date('d-m-Y',strtotime($usuarios_vena[0]->fecha_registro)).' a las '.date('H:i:s',strtotime($usuarios_vena[0]->fecha_registro)).'<br>';
+				}
 
-				if(strcmp($mensaje,'')!=0)
-					Session::flash('error','<strong>AVISO</strong><br>'.$mensaje);
+				if(strcmp($mensaje_n,'')!=0)
+					Session::flash('error','<strong>AVISO</strong><br>'.$mensaje_n);
+				if(strcmp($mensaje_p,'')!=0)
+					Session::flash('message','<strong>AVISO</strong><br>'.$mensaje_p);
 				
 				return View::make('MenuPrincipal/menuPrincipal',$data);
 			}else

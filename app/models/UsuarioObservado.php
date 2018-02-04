@@ -27,7 +27,8 @@ class UsuarioObservado extends Eloquent implements UserInterface, RemindableInte
 	//Query para buscar usuarios cargados el dia de hoy (criterio fecha actual)
 	public function scopeBuscarUsuarioCargadoHoy($query,$fecha_actual)
 	{
-		$query->where('usuario_observado.fecha_registro','=',date('Y-m-d',strtotime($fecha_actual)));
+		$query->where('usuario_observado.fecha_registro','>=',date('Y-m-d H:i:s',strtotime('+0 hours +0 minutes +0 seconds',strtotime($fecha_actual))))
+			->where('usuario_observado.fecha_registro','<=',date('Y-m-d H:i:s',strtotime('+23 hours +59 minutes +59 seconds',strtotime($fecha_actual))));
 		$query->select('usuario_observado.*');
 		return $query;
 	}
@@ -43,7 +44,8 @@ class UsuarioObservado extends Eloquent implements UserInterface, RemindableInte
 	//Query para contar los usuarios cargados hoy (criterio fecha actual)
 	public function scopeContarUsuarioCargadoHoy($query,$fecha_actual)
 	{
-		$query->where('usuario_observado.fecha_registro','=',date('Y-m-d',strtotime($fecha_actual)));
+		$query->where('usuario_observado.fecha_registro','>=',date('Y-m-d H:i:s',strtotime('+0 hours +0 minutes +0 seconds',strtotime($fecha_actual))))
+			->where('usuario_observado.fecha_registro','<=',date('Y-m-d H:i:s',strtotime('+23 hours +59 minutes +59 seconds',strtotime($fecha_actual))));
 		$query->select('usuario_observado.*');
 		return $query->count();
 	}

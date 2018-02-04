@@ -202,6 +202,18 @@ class SolicitudController extends BaseController {
 					else
 						$codigo_solicitud_ingresar = (int)$codigo_solicitud;
 
+					//SE DEBE ACTUALIZAR LA FECHA DE ESTADO
+					if(strcmp($fecha_estado,'') != 0)
+					{							
+						if(DateTime::createFromFormat('Y-m-d H:i:s', $fecha_estado) == false)
+						{
+							$fecha_estado_date = null;
+						} 
+						else{	
+							$fecha_estado_date = $fecha_estado;
+						}
+					}
+
 					//2.5 Luego de estas validaciones se deberá revisar si la solicitud ya existe 
 					$solicitud = Solicitud::buscarPorCodigoSolicitud($codigo_solicitud_ingresar)->get();
 					if($solicitud == null || $solicitud->isEmpty())
@@ -209,10 +221,22 @@ class SolicitudController extends BaseController {
 						//solicitud no existe, es una nueva
 						
 					}else
-					{
-						$obj_log["descripcion"] = "solicitud ya fue registrada en el sistema.";
-						array_push($logs_errores,$obj_log);
-						continue;
+					{						
+						//SE DEBE ACTUALIZAR LA FECHA DE ESTADO
+						if($fecha_estado_date != null)
+						{							
+							$solicitud_actualizacion = Solicitud::find($solicitud[0]->idsolicitud);
+							$solicitud_actualizacion->fecha_estado_portal = $fecha_estado;
+							$solicitud_actualizacion->save();
+							$obj_log["descripcion"] = "solicitud ya fue registrada en el sistema. Se actualizará la fecha de estado.";
+							array_push($logs_errores,$obj_log);
+							continue;
+						}else //NO PROCEDE
+						{
+							$obj_log["descripcion"] = "solicitud ya fue registrada en el sistema.";
+							array_push($logs_errores,$obj_log);
+							continue; //(LOGS)
+						}
 					}
 
 					//3. VALIDACION DE LA FECHA DE SOLICITUD
@@ -284,6 +308,7 @@ class SolicitudController extends BaseController {
 						$solicitud_arreglo_rechazo = [
 							"codigo" => $codigo_solicitud_ingresar,
 							"fecha_solicitud" => $fecha_solicitud_date,
+							"fecha_estado" => $fecha_estado_date,
 							"identidad" => null,
 							"nombre_entidad" => null,
 							"idherramienta" => null,
@@ -315,6 +340,7 @@ class SolicitudController extends BaseController {
 						$solicitud_arreglo_rechazo = [
 							"codigo" => $codigo_solicitud_ingresar,
 							"fecha_solicitud" => $fecha_solicitud_date,
+							"fecha_estado" => $fecha_estado_date,
 							"nombre_entidad" => $entidad[0]->nombre,
 							"identidad" => $entidad[0]->identidad,
 							"idherramienta" => null,
@@ -373,6 +399,7 @@ class SolicitudController extends BaseController {
 							$solicitud_arreglo_rechazo = [
 								"codigo" => $codigo_solicitud_ingresar,
 								"fecha_solicitud" => $fecha_solicitud_date,
+								"fecha_estado" => $fecha_estado_date,
 								"nombre_entidad" => $entidad[0]->nombre,
 								"identidad" => $entidad[0]->identidad,
 								"idherramienta" => $idherramienta,
@@ -398,6 +425,7 @@ class SolicitudController extends BaseController {
 						"tipo_solicitud" => $tipo_solicitud_obj[0]->nombre,
 						"tipo_accion" => $tipo_accion->nombre,
 						"fecha_solicitud" => $fecha_solicitud_date,
+						"fecha_estado" => $fecha_estado_date,
 						"estado_solicitud" => $estado_solicitud_obj[0]->nombre,
 						"idherramienta" => $idherramienta,
 						"identidad" => $entidad[0]->identidad,
@@ -421,6 +449,7 @@ class SolicitudController extends BaseController {
 				$data["cantidad_procesados"] = $cantidad_registros_procesados;
 				$data["cantidad_total"] = $cantidad_registros_totales;				
 				
+				Session::flash('info','Se ha realizado una validación previa de las solicitudes.<br> Considerar que para las solicitudes ya registradas anteriormente a esta carga, son omitidas en la asignación (únicamente se actualizarán el campo "Fecha Estado") ');
 				
 				return View::make('Solicitudes/cargarSolicitudes',$data);
 			}else{

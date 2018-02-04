@@ -26,9 +26,12 @@ class UsuariosObservadosVenaController extends BaseController {
 		$fecha_actual = date('Y-m-d');
 		$buscar_usuario_observado = UsuarioObservado::buscarUsuarioCargadoHoy($fecha_actual)->first();
 
-		
+		$data["fecha_registro_usuarios_observados"] = null;
+		$data["fecha_registro_usuarios_vena"] = null;
+
 		if($buscar_usuario_observado != null){
 			$data["usuarios_observados_ya_cargados"] = 1;
+			$data["fecha_registro_usuarios_observados"] = date('d-m-Y H:i:s',strtotime($buscar_usuario_observado->fecha_registro));
 		}
 
 
@@ -36,6 +39,7 @@ class UsuariosObservadosVenaController extends BaseController {
 
 		if($buscar_usuario_vena != null){
 			$data["usuarios_vena_ya_cargados"] = 1;
+			$data["fecha_registro_usuarios_vena"] = date('d-m-Y H:i:s',strtotime($buscar_usuario_vena->fecha_registro));
 		}
 
 		return View::make('Mantenimientos/UsuariosObservados_Vena/cargarUsuariosObservadosVena',$data);
@@ -184,10 +188,24 @@ class UsuariosObservadosVenaController extends BaseController {
 
 				$data["usuarios_vena_ya_cargados"] = 0;
 
+				//validar si existen usuarios cargados en el día de hoy:
+				$fecha_actual = date('Y-m-d');
+				$buscar_usuario_observado = UsuarioObservado::buscarUsuarioCargadoHoy($fecha_actual)->first();
+
+				$data["fecha_registro_usuarios_observados"] = null;
+				$data["fecha_registro_usuarios_vena"] = null;
+
+				if($buscar_usuario_observado != null){
+					$data["usuarios_observados_ya_cargados"] = 1;
+					$data["fecha_registro_usuarios_observados"] = date('d-m-Y H:i:s',strtotime($buscar_usuario_observado->fecha_registro));
+				}
+
+
 				$buscar_usuario_vena = UsuarioVena::buscarUsuarioCargadoHoy($fecha_actual)->first();
 
 				if($buscar_usuario_vena != null){
 					$data["usuarios_vena_ya_cargados"] = 1;
+					$data["fecha_registro_usuarios_vena"] = date('d-m-Y H:i:s',strtotime($buscar_usuario_vena->fecha_registro));
 				}	
 
 				return View::make('Mantenimientos/UsuariosObservados_Vena/cargarUsuariosObservadosVena',$data);
@@ -315,13 +333,25 @@ class UsuariosObservadosVenaController extends BaseController {
 
 
 				//validar si existen usuarios cargados en el día de hoy:
+				
 				$fecha_actual = date('Y-m-d');
 				$buscar_usuario_observado = UsuarioObservado::buscarUsuarioCargadoHoy($fecha_actual)->first();
 
-				
+				$data["fecha_registro_usuarios_observados"] = null;
+				$data["fecha_registro_usuarios_vena"] = null;
+
 				if($buscar_usuario_observado != null){
 					$data["usuarios_observados_ya_cargados"] = 1;
+					$data["fecha_registro_usuarios_observados"] = date('d-m-Y H:i:s',strtotime($buscar_usuario_observado->fecha_registro));
 				}
+
+
+				$buscar_usuario_vena = UsuarioVena::buscarUsuarioCargadoHoy($fecha_actual)->first();
+
+				if($buscar_usuario_vena != null){
+					$data["usuarios_vena_ya_cargados"] = 1;
+					$data["fecha_registro_usuarios_vena"] = date('d-m-Y H:i:s',strtotime($buscar_usuario_vena->fecha_registro));
+				}	
 				
 				return View::make('Mantenimientos/UsuariosObservados_Vena/cargarUsuariosObservadosVena',$data);
 			}else{
@@ -363,9 +393,11 @@ class UsuariosObservadosVenaController extends BaseController {
 					$usuario_observado->numero_documento = $numeros_documento;
 					$usuario_observado->fecha_bloqueo = $fechas_bloqueo;
 					$usuario_observado->nombre_herramienta = $herramientas;
-					$usuario_observado->fecha_registro = date('Y-m-d');
+					$usuario_observado->fecha_registro = date('Y-m-d H:i:s');
 					$usuario_observado->save();
 				}
+
+				
 
 				Session::flash('message','Se realizó la carga de la lista de usuarios observados con éxito');
 						
@@ -410,7 +442,7 @@ class UsuariosObservadosVenaController extends BaseController {
 					$usuario_vena->numero_documento = $numeros_documento;
 					$usuario_vena->fecha_bloqueo = $fecha_bloqueo;
 					$usuario_vena->motivo = $motivo;
-					$usuario_vena->fecha_registro = date('Y-m-d');
+					$usuario_vena->fecha_registro = date('Y-m-d H:i:s');
 					$usuario_vena->save();
 				}
 

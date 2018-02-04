@@ -249,7 +249,7 @@ function mostrar_datos_req(e,id)
 				                +"<td class=\"text-nowrap text-center\" style=\"display:none\" id=\"idtransaccion"+i+"\">"+arr_requerimientos[i].idtransaccion+"</td>";
 				                
 
-				        if(arr_requerimientos[i].idestado_transaccion == 3)
+				        if(arr_requerimientos[i].idestado_transaccion == 3 || arr_requerimientos[i].idestado_transaccion == 4)
 				        	data = data +  "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\"  id=\"codigo_requerimiento"+arr_requerimientos[i].idtransaccion+"\" value = "+codigo_requerimiento+"></td>";       
 				        else
 				        	data = data + "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\" readonly id=\"codigo_requerimiento"+arr_requerimientos[i].idtransaccion+"\" value = "+codigo_requerimiento+"></td>";       
@@ -590,10 +590,13 @@ function mostrar_datos_req_ready(id)
 		{
 			//si son iguales, ocultar el <div> de los mensajes
 			$('#message-in-modal').removeAttr("style");
+			$('#message-in-modal-2').removeAttr("style");
 		}else
 		{
 			$('#message-in-modal').removeAttr('style');
 			$('#message-in-modal').css('display','none');
+			$('#message-in-modal-2').removeAttr('style');
+			$('#message-in-modal-2').css('display','none');
 			
 		}
 		
@@ -651,7 +654,7 @@ function mostrar_datos_req_ready(id)
 				                +"<td class=\"text-nowrap text-center\" style=\"display:none\" id=\"idtransaccion"+i+"\">"+arr_requerimientos[i].idtransaccion+"</td>";
 				                
 
-				        if(arr_requerimientos[i].idestado_transaccion == 3)
+				        if(arr_requerimientos[i].idestado_transaccion == 3 || arr_requerimientos[i].idestado_transaccion == 4)
 				        	data = data +  "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\"  id=\"codigo_requerimiento"+arr_requerimientos[i].idtransaccion+"\" value = "+codigo_requerimiento+"></td>";       
 				        else
 				        	data = data + "<td class=\"text-nowrap text-center\"><input type=\"text\" class=\"form-control\" name=\"codigos[]\" readonly id=\"codigo_requerimiento"+arr_requerimientos[i].idtransaccion+"\" value = "+codigo_requerimiento+"></td>";       

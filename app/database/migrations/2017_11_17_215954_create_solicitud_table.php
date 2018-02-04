@@ -27,6 +27,7 @@ class CreateSolicitudTable extends Migration {
 			$table->integer('idsla')->nullable()->index('fk_solicitud_sla_idx');
 			$table->integer('ticket_reasignado')->default(0);
 			$table->dateTime('fecha_solicitud')->nullable();
+			$table->dateTime('fecha_estado_portal')->nullable();
 			$table->integer('fur_cargado')->nullable();
 			$table->dateTime('fecha_inicio_procesando')->nullable();
 			$table->dateTime('fecha_cierre')->nullable();

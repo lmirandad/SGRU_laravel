@@ -36,11 +36,10 @@
 			<div class="col-md-12">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title"><strong>LISTA DE OBSERVADOS</strong></h3>@if($usuarios_observados_ya_cargados == 1)<h3 class="panel-title" style="color:#4dd0e1"><strong>(BASE CARGADA)</strong></h3>@endif
+						<h3 class="panel-title"><strong>LISTA DE OBSERVADOS</strong></h3>@if($usuarios_observados_ya_cargados == 1)<h3 class="panel-title" style="color:#015C63"><strong>(BASE CARGADA al {{$fecha_registro_usuarios_observados}})</strong></h3>@endif
 					</div>
 					<div class="panel-body">
 						<div class="row">
-							@if($usuarios_observados_ya_cargados == 0)
 								@if($vista_previa_ejecutado_observados == 1)
 									<div class="col-md-6">
 										<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
@@ -52,14 +51,7 @@
 										<input id="input-file-observados" type="file" name="file">
 									</div>
 								@endif
-							@else
-								<div class="col-md-6">
-									<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
-									<input id="input-file-observados" type="file" name="file" disabled="disabled">
-								</div>
-							@endif
-
-							@if($usuarios_observados_ya_cargados == 0)
+							
 								@if($vista_previa_ejecutado_observados == 1)
 									@if($vista_previa_ejecutado_vena == 0)
 										<div class="col-md-2" style="padding-top:26px">				
@@ -75,11 +67,6 @@
 										<a class="btn btn-success btn-block" id="btnVistaPreviaObservados" type="submit"> <i class="fa fa-circle-o-notch "></i> Vista Previa</a>
 									</div>
 								@endif
-							@else
-								<div class="col-md-2" style="padding-top:26px">				
-									<a class="btn btn-success btn-block" id="btnVistaPreviaObservados" disabled="disabled"> <i class="fa fa-circle-o-notch" ></i> Vista Previa</a>
-								</div>
-							@endif
 							<div class="col-md-2">
 								<label class="control-label">Registros Totales:</label>
 								{{ Form::text('numero_registros',$cantidad_total_observados,array('class'=>'form-control','disabled'=>'disabled','style'=>'text-align:center')) }}							
@@ -109,11 +96,10 @@
 			<div class="col-md-12">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title"><strong>LISTA VENA</strong></h3>@if($usuarios_vena_ya_cargados == 1)<h3 class="panel-title" style="color:#4dd0e1"><strong>(BASE CARGADA)</strong></h3>@endif
+						<h3 class="panel-title"><strong>LISTA VENA</strong></h3>@if($usuarios_vena_ya_cargados == 1)<h3 class="panel-title" style="color:#015C63"><strong>(BASE CARGADA al {{$fecha_registro_usuarios_vena}})</strong></h3>@endif
 					</div>
 					<div class="panel-body">
 						<div class="row">
-							@if($usuarios_vena_ya_cargados == 0)
 								@if($vista_previa_ejecutado_vena == 1)
 									<div class="col-md-6">
 										<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
@@ -125,13 +111,6 @@
 										<input id="input-file-vena" type="file" name="file">
 									</div>
 								@endif
-							@else
-								<div class="col-md-6">
-									<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
-									<input id="input-file-vena" type="file" name="file" disabled="disabled">
-								</div>
-							@endif
-							@if($usuarios_vena_ya_cargados == 0)
 								@if($vista_previa_ejecutado_vena == 1)
 									@if($vista_previa_ejecutado_observados == 0)
 										<div class="col-md-2" style="padding-top:26px">				
@@ -147,11 +126,6 @@
 										<a class="btn btn-success btn-block" id="btnVistaPreviaVena" type="submit"> <i class="fa fa-circle-o-notch "></i> Vista Previa</a>
 									</div>
 								@endif
-							@else
-								<div class="col-md-2" style="padding-top:26px">				
-									<a class="btn btn-success btn-block" id="btnVistaPreviaVena" type="submit" disabled="disabled"> <i class="fa fa-circle-o-notch "></i> Vista Previa</a>
-								</div>
-							@endif
 							<div class="col-md-2">
 								<label class="control-label">Registros Totales:</label>
 								{{ Form::text('numero_registros',$cantidad_total_vena,array('class'=>'form-control','disabled'=>'disabled','style'=>'text-align:center')) }}							

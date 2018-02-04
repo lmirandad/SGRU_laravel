@@ -533,7 +533,7 @@
 	        </div>
 	        <div class="modal-body" id="modal_text_acciones_trazabilidad">
 	         	<div class="container-fluid">
-	         		<div id="message-in-modal" style="display:block;">
+	         		<div id="message-in-modal-2" style="display:block;">
 		         		@if (Session::has('message'))
 							<div class="alert alert-success">
 								<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>

@@ -26,7 +26,8 @@ class UsuarioVena extends Eloquent implements UserInterface, RemindableInterface
 
 	public function scopeBuscarUsuarioCargadoHoy($query,$fecha_actual)
 	{
-		$query->where('usuario_vena.fecha_registro','=',date('Y-m-d',strtotime($fecha_actual)));
+		$query->where('usuario_vena.fecha_registro','>=',date('Y-m-d H:i:s',strtotime('+0 hours +0 minutes +0 seconds',strtotime($fecha_actual))))
+			->where('usuario_vena.fecha_registro','<=',date('Y-m-d H:i:s',strtotime('+23 hours +59 minutes +59 seconds',strtotime($fecha_actual))));
 		$query->select('usuario_vena.*');
 		return $query;
 	}

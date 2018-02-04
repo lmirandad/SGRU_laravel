@@ -20,6 +20,7 @@ class AsignacionController extends BaseController {
 				$fechas_solicitud = Input::get('fechas_solicitud');
 				$asuntos = Input::get('asuntos');
 				$idherramientas = Input::get('idherramientas');
+				$fechas_estado = Input::get('fechas_estado');
 				
 				$cantidad_registros = count($codigos_solicitud);
 
@@ -74,6 +75,15 @@ class AsignacionController extends BaseController {
 					$solicitud->idcarga_archivo = $carga_archivo->idcarga_archivo;
 					$partes = explode('-',$fechas_solicitud[$i]);
 					$solicitud->fecha_solicitud = date('Y-m-d H:i:s',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));
+					if($fechas_estado[$i] != null && strcmp($fechas_estado[$i],'')!=0)
+					{
+						$partes = explode('-',$fechas_estado[$i]);
+						$solicitud->fecha_estado_portal = date('Y-m-d H:i:s',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));	
+					}else
+					{
+						$solicitud->fecha_estado_portal = null;
+					}
+					
 					$solicitud->idtipo_solicitud_general = $idstipo_solicitud_general[$i];
 					$solicitud->fur_cargado = 0;
 
@@ -176,6 +186,7 @@ class AsignacionController extends BaseController {
 				$ids_entidad_rechazo = Input::get('ids_entidad_rechazo');
 				$idstipo_solicitud_general_rechazo = Input::get('idstipo_solicitud_general_rechazo');
 				$fechas_solicitud_rechazo = Input::get('fechas_solicitud_rechazo');
+				$fechas_estado_rechazo = Input::get('fechas_estado_rechazo');
 				$ids_herramienta = Input::get('ids_herramienta');
 				$cantidad_registros_rechazados = count($codigos_rechazo);
 
@@ -199,6 +210,15 @@ class AsignacionController extends BaseController {
 					$solicitud->idtipo_solicitud_general = $idstipo_solicitud_general_rechazo[$i];					
 					$partes = explode('-',$fechas_solicitud_rechazo[$i]);
 					$solicitud->fecha_solicitud = date('Y-m-d H:i:s',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));
+					if($fechas_estado_rechazo[$i] != null && strcmp($fechas_estado_rechazo[$i],'') != 0)
+					{
+						$partes = explode('-',$fechas_estado_rechazo[$i]);
+						$solicitud->fecha_estado_portal = date('Y-m-d H:i:s',strtotime($partes[2]."-".$partes[1]."-".$partes[0]));	
+					}else
+					{
+						$solicitud->fecha_estado_portal = null;
+					}
+					
 					$solicitud->idestado_solicitud = 5;
 					$solicitud->iduser_created_by = $data["user"]->id;
 					$solicitud->save();
