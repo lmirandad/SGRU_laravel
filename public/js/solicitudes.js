@@ -32,7 +32,9 @@ $( document ).ready(function(){
         });
      }
 
-     
+     $('#btnSalirTrazabilidad').click(function(){
+     	$('#modal_requerimientos_trazabilidad').modal('hide');
+     });
 
     $('#btnMostrarFormularioReasingacion').click(function(){
     	mostrar_usuarios_disponibles();
@@ -415,14 +417,7 @@ function mostrar_observaciones(e,id)
 				         data = data +"<td>"+arr_trazabilidad[i].descripcion+"</td>"
 				                +"<td class=\"text-nowrap text-center\">"+arr_trazabilidad[i].fecha_registro+"</td>";
 
-				        if(arr_trazabilidad[i].iduser_created_by == null){
-				        	data = data + "<td class=\"text-nowrap text-center\">-</td>";
-				        	data = data + "<td class=\"text-nowrap text-center\">-</td></tr>";	
-				        }else
-				        {
-				        	data = data + "<td class=\"text-nowrap text-center\"><div style=\"text-align:center\"><button class=\"btn btn-warning btn-sm\" onclick=\"editar_observacion(event,"+arr_trazabilidad[i].idtrazabilidad_transaccion+")\" type=\"button\"><span class=\"lnr lnr-pencil\"></span></button></div></td>";
-				        	data = data + "<td class=\"text-nowrap text-center\"><div style=\"text-align:center\"><button class=\"btn btn-danger btn-sm\" onclick=\"eliminar_observacion(event,"+arr_trazabilidad[i].idtrazabilidad_transaccion+")\" type=\"button\"><span class=\"fa fa-times\"></span></button></div></td></tr>";
-				        }
+				       
 				        
 
 

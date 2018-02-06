@@ -39,6 +39,11 @@ class UsuarioVena extends Eloquent implements UserInterface, RemindableInterface
 		return $query;	
 	}
 
+	public function scopeListarUsuariosVenaUltimo($query)
+	{
+		$query->select('usuario_vena.*');
+		return $query;	
+	}
 	
 
 }

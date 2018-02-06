@@ -47,7 +47,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	public function scopeBuscarUsuarioPorUsername($query,$search_username)
 	{
 		$query->withTrashed()	
-			  ->where('users.username','=',$search_username)		  
+			  ->where('users.username','=',"$search_username")		  
 			  ->select('users.*');
 		return $query;
 	}
@@ -122,7 +122,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			inner join [usersxsector] on [usersxsector].[iduser] = [users].[id]
 			inner join [sector] on [sector].[idsector] = [usersxsector].[idsector]
 			where 
-			[sector].[idsector] = ? and [users].[deleted_at] IS null) A
+			[sector].[idsector] = ? and [usersxsector].[deleted_at] IS null) A
 			LEFT JOIN 
 			(select [users].[id] id_usuario, count([solicitud].[idsolicitud]) cantidad_solicitudes
 			from [users] 
@@ -157,6 +157,47 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			and [herramienta].[idherramienta] = '.$idherramienta.' 
 			and [tipo_solicitud].[idtipo_solicitud] = '.$idaccion.'  
 			and [herramientaxtipo_solicitudxuser].[deleted_at] is null) A 
+			LEFT JOIN
+			(
+			select [herramientaxtipo_solicitudxuser].[iduser] id_usuario, count(solicitud.idsolicitud) as cantidad_solicitudes 
+			from [users] 
+			inner join [herramientaxtipo_solicitudxuser] on [herramientaxtipo_solicitudxuser].[iduser] = [users].[id] 
+			inner join [herramientaxtipo_solicitud] on [herramientaxtipo_solicitud].[idherramientaxtipo_solicitud] = [herramientaxtipo_solicitudxuser].[idherramientaxtipo_solicitud] 
+			inner join [tipo_solicitud] on [tipo_solicitud].[idtipo_solicitud] = [herramientaxtipo_solicitud].[idtipo_solicitud] 
+			inner join [herramienta] on [herramienta].[idherramienta] = [herramientaxtipo_solicitud].[idherramienta] 
+			inner join [usuariosxasignacion] on [users].[id]= [usuariosxasignacion].[idusuario_asignado]
+			inner join [asignacion] on [asignacion].[idasignacion] = [usuariosxasignacion].[idasignacion] 
+			inner join [solicitud] on [solicitud].[idsolicitud] = [asignacion].[idsolicitud] 
+			where [users].[deleted_at] is null 
+			and [herramienta].[idherramienta] = '.$idherramienta.' 
+			and [tipo_solicitud].[idtipo_solicitud] = '.$idaccion.'  
+			and [herramientaxtipo_solicitudxuser].[deleted_at] is null 
+			and [usuariosxasignacion].[estado_usuario_asignado] = 1 
+			and ([solicitud].[idestado_solicitud] = 3 or [solicitud].[idestado_solicitud] = 4)
+			group by [herramientaxtipo_solicitudxuser].[iduser] ) B
+			ON (A.id_usuario = B.id_usuario)
+			order by cantidad_solicitudes');
+	}
+
+	//Query para buscar usuarios con su respectiva cantidad de tickets asignados por herramienta y accion
+	public function scopeBuscarUsuariosAsignacionPorHerramientaV2($query,$idherramienta,$idaccion,$idsector)
+	{
+		return DB::select('Select A.id_usuario, A.nombre_usuario, A.apellido_paterno, A.apellido_materno, ISNULL(B.cantidad_solicitudes,0) cantidad_solicitudes
+			FROM
+			(
+			select [users].[id] id_usuario, [users].[nombre] nombre_usuario, [users].[apellido_paterno] apellido_paterno, [users].[apellido_materno] apellido_materno
+			from [users] 
+			inner join [herramientaxtipo_solicitudxuser] on [herramientaxtipo_solicitudxuser].[iduser] = [users].[id] 
+			inner join [herramientaxtipo_solicitud] on [herramientaxtipo_solicitud].[idherramientaxtipo_solicitud] = [herramientaxtipo_solicitudxuser].[idherramientaxtipo_solicitud] 
+			inner join [tipo_solicitud] on [tipo_solicitud].[idtipo_solicitud] = [herramientaxtipo_solicitud].[idtipo_solicitud] 
+			inner join [herramienta] on [herramienta].[idherramienta] = [herramientaxtipo_solicitud].[idherramienta] 
+			inner join [usersxsector] on [usersxsector].[iduser] = [users].[id]
+			inner join [sector] on [sector].[idsector] = [usersxsector].[idsector]
+			where [users].[deleted_at] is null 
+			and [herramienta].[idherramienta] = '.$idherramienta.' 
+			and [tipo_solicitud].[idtipo_solicitud] = '.$idaccion.'  
+			and [herramientaxtipo_solicitudxuser].[deleted_at] is null and
+			[sector].[idsector] = '.$idsector.' and [usersxsector].[deleted_at] IS null) A 
 			LEFT JOIN
 			(
 			select [herramientaxtipo_solicitudxuser].[iduser] id_usuario, count(solicitud.idsolicitud) as cantidad_solicitudes 

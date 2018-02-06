@@ -295,7 +295,8 @@ function mostrar_datos_req(e,id)
 	            		cantidad_puntos_venta = arr_puntos_venta.length;
 	            		for(j=0;j<cantidad_puntos_venta;j++)
 	            		{
-	            			$('#slcPuntoVenta')[0].options.add(new Option(arr_puntos_venta[j].nombre,arr_puntos_venta[j].idpunto_venta));
+	            			//$('#slcPuntoVenta')[0].options.add(new Option(arr_puntos_venta[j].nombre,arr_puntos_venta[j].idpunto_venta));
+	            			$('#slcPuntoVenta')[0].options.add(new Option(arr_puntos_venta[j].nombre,arr_puntos_venta[j].nombre));
 	            		}
 	            	}
 	            	
@@ -700,7 +701,8 @@ function mostrar_datos_req_ready(id)
 	            		cantidad_puntos_venta = arr_puntos_venta.length;
 	            		for(j=0;j<cantidad_puntos_venta;j++)
 	            		{
-	            			$('#slcPuntoVenta')[0].options.add(new Option(arr_puntos_venta[j].nombre,arr_puntos_venta[j].idpunto_venta));
+	            			//$('#slcPuntoVenta')[0].options.add(new Option(arr_puntos_venta[j].nombre,arr_puntos_venta[j].idpunto_venta));
+	            			$('#slcPuntoVenta')[0].options.add(new Option(arr_puntos_venta[j].nombre,arr_puntos_venta[j].nombre));
 	            		}
 	            	}
 

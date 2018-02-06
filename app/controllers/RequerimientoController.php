@@ -30,7 +30,7 @@ class RequerimientoController extends BaseController {
 			 	$cantidad_transacciones = count($resultado);
 			    $herramientas = Herramienta::listarHerramientas()->get();
 			    $array_log = array();
-
+			    
 			    //cantidad provisoria
 			    $cantidad = 10;
 			    if(count($resultado[0]) < $cantidad || count($resultado[0]) > $cantidad )
@@ -124,7 +124,7 @@ class RequerimientoController extends BaseController {
 			    		$rechazar_registro = true;
 			    	}
 
-			    	//4. Nombre (validar si el dato no es vacio)
+			    	//5. Nombre (validar si el dato no es vacio)
 			    	$nombre = $resultado[$i][4];
 			    	if($nombre == null || strcmp($nombre,'') == 0)
 			    	{
@@ -134,7 +134,7 @@ class RequerimientoController extends BaseController {
 			    		$rechazar_registro = true;
 			    	}
 
-			    	//5. Cargo (validar si el dato no es vacio)
+			    	//6. Cargo (validar si el dato no es vacio)
 			    	$cargo = $resultado[$i][5];
 					if($cargo == null || strcmp($cargo,'') == 0)
 			    	{
@@ -144,7 +144,8 @@ class RequerimientoController extends BaseController {
 			    		$rechazar_registro = true;
 			    	}
 
-			    	//6. Entidad (validar si el dato no es vacio)
+			    	
+			    	//7. Entidad (validar si el dato no es vacio)
 			    	$entidad = $resultado[$i][6];
 					if($entidad == null || strcmp($entidad,'') == 0)
 			    	{
@@ -163,8 +164,9 @@ class RequerimientoController extends BaseController {
 			    		}
 			    	}
 
-			    	//7. Punto Venta (validar si el dato no es vacio)
+			    	//8. Punto Venta (validar si el dato no es vacio)
 			    	$punto_venta = $resultado[$i][7];
+			    	
 			    	if($punto_venta == null || strcmp($punto_venta,'') == 0)
 			    	{
 			    		$mensaje_error_punto_venta = 'Campo Punto Venta vacío.';
@@ -172,7 +174,7 @@ class RequerimientoController extends BaseController {
 			    		$mensaje_final = $mensaje_final.$mensaje_error_punto_venta.'<br>';
 			    		$rechazar_registro = true;
 			    	}else{
-			    		$idpunto_venta = RequerimientoController::buscarPuntoVenta($punto_venta);
+			    		/*$idpunto_venta = RequerimientoController::buscarPuntoVenta($punto_venta);
 			    		if($idpunto_venta == 0)
 			    		{
 			    			$mensaje_error_punto_venta = 'Campo Punto Venta no registrada en el sistema.';
@@ -189,7 +191,8 @@ class RequerimientoController extends BaseController {
 				    			$mensaje_final = $mensaje_final.$mensaje_error_punto_venta.'<br>';
 				    			$rechazar_registro = true;	
 			    			}
-			    		}
+			    		}*/
+
 			    	}
 
 			    	//8. Aplicativo (validar si el dato no es vacio)
@@ -303,7 +306,7 @@ class RequerimientoController extends BaseController {
 		    			$transaccion->idherramienta = $idherramienta;
 			    	
 
-		    		$idpunto_venta = RequerimientoController::buscarPuntoVenta($punto_venta);
+		    		/*$idpunto_venta = RequerimientoController::buscarPuntoVenta($punto_venta);
 		    		if($idpunto_venta == 0)
 		    		{
 		    			$observacion_requerimiento = $observacion_requerimiento."Punto de Venta no existente (Requerimiento no creado)|";
@@ -313,7 +316,9 @@ class RequerimientoController extends BaseController {
 		    			continue;
 		    		}else{
 		    			$transaccion->idpunto_venta =$idpunto_venta;
-		    		}
+		    		}*/
+		    		//CAMBIO PARA PONER EL PUNTO DE VENTA COMO NOMBRE
+		    		$transaccion->nombre_punto_venta = $punto_venta;
 
 			    	//si el flag es true, entonces se termina de completar el requerimiento con las observaciones pendientes
 			    	if($crear_requerimiento == false)
@@ -1039,7 +1044,7 @@ class RequerimientoController extends BaseController {
 				return Response::json(array( 'success' => true,'transaccion' => null),200);
 			
 			$transaccion->idestado_transaccion = 3;
-			$transaccion->observaciones = 'Transacción reactivada.';
+			//$transaccion->observaciones = 'Transacción reactivada.';
 			$transaccion->fecha_cierre = null;
 			$transaccion->save();
 
@@ -1151,19 +1156,21 @@ class RequerimientoController extends BaseController {
 					$documento = Input::get('numero_documento');
 					$cargo = Input::get('cargo');
 					$idherramienta = Input::get('aplicativo');
-					$idpunto_venta = Input::get('punto_venta');
+					//$idpunto_venta = Input::get('punto_venta');
+					$punto_venta = Input::get('punto_venta');
 					$fecha_registro = date('Y-m-d H:i:s');
 					$idsolicitud = $solicitud_id;
 					$idestado_transaccion = 3;
 
 					$transaccion = new Transaccion;
-					$transaccion->codigo_requerimiento = null;
+					$transaccion->codigo_requerimiento = 'SIN_REQ';
 					$transaccion->fecha_registro = $fecha_registro;
 					$transaccion->cargo_canal = $cargo;
 					$transaccion->numero_documento = $documento;
 					$transaccion->nombre_usuario = $nombre;
 					$transaccion->idherramienta = $idherramienta;
-					$transaccion->idpunto_venta = $idpunto_venta;
+					//$transaccion->idpunto_venta = $idpunto_venta;
+					$transaccion->nombre_punto_venta = $punto_venta;
 					$transaccion->idsolicitud = $idsolicitud;
 					$transaccion->accion_requerimiento = $accion;
 					$transaccion->idestado_transaccion = $idestado_transaccion;
@@ -1185,7 +1192,8 @@ class RequerimientoController extends BaseController {
 						$usuario_bloqueado = UsuarioVena::buscarUsuarioPorDocumento($documento)->get();
 						if($usuario_bloqueado == null || $usuario_bloqueado->isEmpty())
 						{
-							//LIBRE
+							$transaccion->usuario_bloqueado = 0;
+							$transaccion->save();
 						}else
 						{
 							//CANCELAR

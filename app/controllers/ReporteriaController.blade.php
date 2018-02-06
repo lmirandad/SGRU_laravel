@@ -564,9 +564,9 @@ class ReporteriaController extends BaseController {
 
 
 
-							$idpunto_venta = $transacciones[$i]->idpunto_venta;
-							$punto_venta_o = PuntoVenta::find($idpunto_venta);
-							$entidad_o = Entidad::find($punto_venta_o->identidad);
+							//$idpunto_venta = $transacciones[$i]->idpunto_venta;
+							//$punto_venta_o = PuntoVenta::find($idpunto_venta);
+							$entidad_o = Entidad::find($solicitud->identidad);
 							$canal_o = Canal::find($entidad_o->idcanal);
 							$canal_agrupado_o = CanalAgrupado::find($canal_o->idcanal_agrupado);
 							$sector_o = Sector::find($canal_o->idsector);

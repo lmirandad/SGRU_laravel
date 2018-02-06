@@ -431,8 +431,8 @@
 
 					{{ Form::open(array('url'=>'/requerimientos/submit_actualizar_codigos' ,'role'=>'form','id'=>'submit-actualizar','enctype'=>'multipart/form-data')) }}
 					 {{ Form::hidden('solicitud_id_mostrar', null,array('id'=>'solicitud_id_mostrar')) }}	
-	         		<div class="row">	         			
-						<div class="table-responsive" >
+	         		<div class="row">	
+	         			<div class="table-responsive" >
 							<table class="table table-hover" id="table_requerimientos" >
 								<thead>
 									<tr>
@@ -450,7 +450,7 @@
 										<th class="text-nowrap text-center">Cargo</th>
 										<th class="text-nowrap text-center">DNI<br>Usuario</th>
 										<th class="text-nowrap text-center">Estado</th>
-										<th class="text-nowrap text-center">Observaciones</th>
+										<th class="text-nowrap text-center">Observaciones/<br>Trazabilidad</th>
 										<th class="text-nowrap text-center">Trabajar<br>Req. <input type="checkbox" id="checkboxAllTrabajar" class="form-check-input"> </th>
 										<th class="text-nowrap text-center">Finalizar<br>Req. <input type="checkbox" id="checkboxAllFinalizar" class="form-check-input"> </th>
 										<th class="text-nowrap text-center">Rechazar<br>Req.</th>

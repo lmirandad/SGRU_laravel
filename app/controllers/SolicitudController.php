@@ -285,11 +285,23 @@ class SolicitudController extends BaseController {
 					if(strcmp($codigo_entidad,'') != 0)
 					{
 						//validar si existe el codigo
-						$codigo_entidad = explode(' ',$codigo_entidad)[0];
-						$codigo_entidad_numero = (int) $codigo_entidad;
-						$entidad = Entidad::buscarPorCodigoEntidad($codigo_entidad_numero)->get();
+						
+						$codigo_como_entero = (int) $codigo_entidad;
+
+						if($codigo_como_entero == 0)
+						{
+							$obj_log["descripcion"] = "La entidad con código ".$codigo_entidad." del registro no tiene formato correcto";
+							array_push($logs_errores,$obj_log);
+							continue; //(LOGS)	
+						}
+
+							
+
+						$entidad = Entidad::buscarPorCodigoEntidad($codigo_como_entero)->get();
+
 						if($entidad == null || $entidad->isEmpty()){
 							//NO PROCEDE
+
 							$obj_log["descripcion"] = "La entidad ".$nombre_entidad." del registro no existe";
 							array_push($logs_errores,$obj_log);
 							continue; //(LOGS)	

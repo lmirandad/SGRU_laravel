@@ -71,7 +71,7 @@ class Solicitud extends Eloquent implements UserInterface, RemindableInterface {
 		$query->where('usuariosxasignacion.estado_usuario_asignado','=',1)
 			  ->where('solicitud.idsolicitud','=',$idsolicitud);
 
-		$query->select('solicitud.idsolicitud','solicitud.idestado_solicitud','solicitud.fecha_solicitud','tipo_solicitudxsla.sla_pendiente','tipo_solicitudxsla.sla_procesando','asignacion.fecha_asignacion','solicitud.fecha_inicio_procesando','solicitud.fecha_cierre','carga_archivo.*');
+		$query->select('solicitud.idsolicitud','solicitud.idestado_solicitud','solicitud.fecha_solicitud','tipo_solicitudxsla.sla_pendiente','tipo_solicitudxsla.sla_procesando','asignacion.fecha_asignacion','solicitud.fecha_inicio_procesando','solicitud.fecha_cierre','carga_archivo.*','solicitud.identidad');
 
 	}
 

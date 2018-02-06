@@ -26,6 +26,7 @@ class CreateTransaccionTable extends Migration {
 			
 			$table->integer('idherramienta')->nullable()->index('fk_transaccion_herramienta_idx');
 			$table->integer('idpunto_venta')->nullable()->index('fk_transaccion_punto_venta_idx');
+			$table->string('nombre_punto_venta',400)->nullable();
 
 
 			$table->integer('idsolicitud')->nullable()->index('fk_transaccion_solicitud_idx');

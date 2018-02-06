@@ -50,5 +50,11 @@ class UsuarioObservado extends Eloquent implements UserInterface, RemindableInte
 		return $query->count();
 	}
 
+	public function scopeListarUsuariosObservadosUltimo($query)
+	{
+		$query->select('usuario_observado.*');
+		return $query;	
+	}
+
 	
 }

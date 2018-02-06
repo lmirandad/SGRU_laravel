@@ -7,7 +7,7 @@ class LoginController extends BaseController {
 		
 		// Implemento la reglas para la validacion de los datos
 		$rules = array(
-					'usuario' => 'required|min:6',
+					'usuario' => 'required',
 					'password' => 'required|min:6'
 				);
 		// Corro la validacion
@@ -36,6 +36,7 @@ class LoginController extends BaseController {
 					return Redirect::to('/principal_admin');
 				else
 					return Redirect::to('/principal_gestor');
+				
 				
 				
 			}else{

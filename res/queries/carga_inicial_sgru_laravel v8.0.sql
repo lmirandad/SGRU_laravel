@@ -10243,3 +10243,12 @@ INSERT INTO TIPO_SOLICITUDXSLA (sla_pendiente,sla_procesando,idherramientaxsecto
 -- 05/02: Actualizar todos los sla_pendiente a un dia
 UPDATE TIPO_SOLICITUDXSLA
 SET SLA_PENDIENTE = 1
+
+-- 05/02: Pruebas basicas con el equipo de GU (4 gestores)
+
+delete from usersxsector
+where iduser not in (7,11,18,20)
+
+delete from users 
+where id not in (1,7,11,18,20)
+

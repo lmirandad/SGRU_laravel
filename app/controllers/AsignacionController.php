@@ -134,7 +134,7 @@ class AsignacionController extends BaseController {
 
 					//En caso solo se tenga varias herramientas, se debe buscar a los usuarios del sector, que tengan menos solicitudes pendientes y en proceso.
 					$usuario_apto = null;
-					
+
 					if($idherramienta == $herramienta_varios[0]->idherramienta || $idherramienta == 0){
 						//herramienta representada para "VARIOS" o "NO DETECTADO"
 
@@ -144,11 +144,14 @@ class AsignacionController extends BaseController {
 
 						//como solo tiene una sola herramienta, buscamos a los usuarios especializados y que tengan menos solicitudes pendientes y en proceso.
 
-						$usuario_apto = AsignacionController::buscarUsuarioAptoPorHerramienta($idherramienta,$idaccion);
+						$usuario_apto = AsignacionController::buscarUsuarioAptoPorHerramientaV2($idherramienta,$idaccion,$sector->idsector);
 
 						if($usuario_apto == null)
 						{
 							$usuario_apto = AsignacionController::buscarUsuarioAptoPorSector($sector->idsector);
+							echo '<pre>';
+							var_dump($usuario_apto);
+							echo '</pre>';
 						}
 
 					}
@@ -290,6 +293,21 @@ class AsignacionController extends BaseController {
 	public function buscarUsuarioAptoPorHerramienta($idherramienta,$idaccion)
 	{
 		$usuarios = User::buscarUsuariosAsignacionPorHerramienta($idherramienta,$idaccion);	
+
+		if(is_array($usuarios) == true) //hay usuarios
+		{
+			$usuario_apto = User::find($usuarios[0]->id_usuario);
+		}else
+		{
+			$usuario_apto = null;
+		}
+
+		return $usuario_apto;	
+	}
+
+	public function buscarUsuarioAptoPorHerramientaV2($idherramienta,$idaccion,$idsector)
+	{
+		$usuarios = User::buscarUsuariosAsignacionPorHerramientaV2($idherramienta,$idaccion,$idsector);	
 
 		if(is_array($usuarios) == true) //hay usuarios
 		{

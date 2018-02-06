@@ -291,7 +291,8 @@ class MenuPrincipalController extends BaseController {
 				$mensaje_n = '';
 				$mensaje_p = '';
 				$fecha_actual = date ('Y-m-d');
-				$usuarios_observados = UsuarioObservado::buscarUsuarioCargadoHoy($fecha_actual)->get();
+				//$usuarios_observados = UsuarioObservado::buscarUsuarioCargadoHoy($fecha_actual)->get();
+				$usuarios_observados = UsuarioObservado::listarUsuariosObservadosUltimo()->get();
 
 				if($usuarios_observados == null || $usuarios_observados->isEmpty())
 					$mensaje_n = $mensaje_n.'Lista de Usuarios Observados no ha sido cargada hoy.<br>';
@@ -302,7 +303,7 @@ class MenuPrincipalController extends BaseController {
 						$mensaje_p = $mensaje_p.'Última Lista de Usuarios Observados subido el '.date('d-m-Y',strtotime($usuarios_observados[0]->fecha_registro)).' a las '.date('H:i:s',strtotime($usuarios_observados[0]->fecha_registro)).'<br>';
 				}
 
-				$usuarios_vena = UsuarioVena::buscarUsuarioCargadoHoy($fecha_actual)->get();
+				$usuarios_vena = UsuarioVena::listarUsuariosVenaUltimo()->get();
 
 				if($usuarios_vena == null || $usuarios_vena->isEmpty())
 					$mensaje_n = $mensaje_n.'Lista de Usuarios Vena no ha sido cargada hoy.<br>';
@@ -317,7 +318,7 @@ class MenuPrincipalController extends BaseController {
 				if(strcmp($mensaje_n,'')!=0)
 					Session::flash('error','<strong>AVISO</strong><br>'.$mensaje_n);
 				if(strcmp($mensaje_p,'')!=0)
-					Session::flash('message','<strong>AVISO</strong><br>'.$mensaje_p);
+					Session::flash('info','<strong>AVISO</strong><br>'.$mensaje_p);
 				
 				return View::make('MenuPrincipal/menuPrincipal',$data);
 			}else
