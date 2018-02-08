@@ -213,7 +213,7 @@ Route::group(array('prefix'=>'solicitudes', 'before'=>'auth'),function(){
 	Route::get('/crear_solicitud','SolicitudController@crear_solicitud');
 	Route::post('/submit_crear_solicitud','SolicitudController@submit_crear_solicitud');	
 	Route::post('/submit_anular_solicitud','SolicitudController@submit_anular_solicitud');	
-	
+	Route::post('/submit_rechazar_solicitud','SolicitudController@submit_rechazar_solicitud');	
 });
 
 /*REQUERIMIENTOS*/

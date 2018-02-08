@@ -286,8 +286,8 @@ class SolicitudController extends BaseController {
 					{
 						//validar si existe el codigo
 						
-						$codigo_como_entero = (int) $codigo_entidad;
 
+						$codigo_como_entero = (int) $codigo_entidad;
 						if($codigo_como_entero == 0)
 						{
 							$obj_log["descripcion"] = "La entidad con código ".$codigo_entidad." del registro no tiene formato correcto";
@@ -295,19 +295,21 @@ class SolicitudController extends BaseController {
 							continue; //(LOGS)	
 						}
 
+
 							
 
 						$entidad = Entidad::buscarPorCodigoEntidad($codigo_como_entero)->get();
 
+
 						if($entidad == null || $entidad->isEmpty()){
 							//NO PROCEDE
-
 							$obj_log["descripcion"] = "La entidad ".$nombre_entidad." del registro no existe";
 							array_push($logs_errores,$obj_log);
 							continue; //(LOGS)	
 						} 
 						else{
 							$nombre_entidad_encontrada = $entidad[0]->nombre;
+							
 							if( strcmp($nombre_entidad_encontrada, $nombre_entidad) != 0 ){
 								//NO PROCEDE
 								$obj_log["descripcion"] = "La entidad ".$nombre_entidad." no coincide con el código registrado en el sistema.";
@@ -1295,5 +1297,55 @@ class SolicitudController extends BaseController {
 		}
 
 		return $usuario_apto;	
+	}
+
+	public function submit_rechazar_solicitud()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 2){
+				// Validate the info, create rules for the inputs
+				$solicitud_id = Input::get('solicitud_id_rechazar');
+				$solicitud = Solicitud::find($solicitud_id);
+				$attributes = array(
+					'observacion' => 'Descripción de Observación'
+				);
+
+				$messages = array();
+
+				$rules = array(
+					'observacion' => 'required|alpha_num_spaces_slash_dash_enter|max:1000'
+				);
+				// Run the validation rules on the inputs from the form
+				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);
+				// If the validator fails, redirect back to the form
+				if($validator->fails()){
+					return Redirect::to('/principal_gestor_procesando/'.$solicitud->idsolicitud)->withErrors($validator)->withInput(Input::all());
+				}else{
+					
+					$observacion = Input::get('observacion');
+					$solicitud_id = Input::get('solicitud_id_rechazar');
+					
+					$solicitud = Solicitud::find($solicitud_id);
+
+					$solicitud->idestado_solicitud = 5;
+					$solicitud->fecha_cierre = date('Y-m-d H:i:s');
+					$solicitud->motivo_anulacion = $observacion;
+					$solicitud->save();
+
+
+					Session::flash('message', 'Se rechazó correctamente la solicitud '.$solicitud->codigo_solicitud);
+					
+					return Redirect::to('/principal_gestor_procesando/'.$solicitud->idsolicitud);
+				}
+			}else{
+				return View::make('error/error',$data);
+			}
+
+		}else{
+			return View::make('error/error',$data);
+		}
 	}
 }

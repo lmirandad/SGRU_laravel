@@ -76,7 +76,7 @@ class Entidad extends Eloquent implements UserInterface, RemindableInterface {
 	//Query para buscar una entidad por codigo de entidad (cod_enve)
 	public function scopeBuscarPorCodigoEntidad($query,$codigo)
 	{
-		$query->where('entidad.codigo_enve','LIKE',"%$codigo%");
+		$query->where('entidad.codigo_enve','LIKE',"$codigo");
 		$query->select('entidad.*');
 		return $query;
 	}

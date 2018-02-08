@@ -25,23 +25,26 @@ class RequerimientoController extends BaseController {
 
 			    $solicitud = Solicitud::find($solicitud_id);
 
-			    $resultado = Excel::load($file_name)->get();
+			    $resultado = Excel::load($file_name)->get()[0];
 
 			 	$cantidad_transacciones = count($resultado);
 			    $herramientas = Herramienta::listarHerramientas()->get();
 			    $array_log = array();
 			    
 			    //cantidad provisoria
-			    $cantidad = 10;
+			    $cantidad = 9;
 			    if(count($resultado[0]) < $cantidad || count($resultado[0]) > $cantidad )
 			    	return Redirect::to('/principal_gestor')->with('error','La cantidad de columnas del archivo adjuntado no coincide con el estandar.');
 
 			    $mensaje_error = '';
 			    $mensaje_error_solicitud = '';
+			    $mensaje_error_solicitud = '';
 			   	$mensaje_error_canal = '';
 			   	$mensaje_error_accion = '';
 			   	$mensaje_error_dni = '';
 			   	$mensaje_error_nombre = '';
+			   	$mensaje_error_apellido_materno = '';
+			   	$mensaje_error_apellido_paterno = '';
 			   	$mensaje_error_cargo = '';
 			   	$mensaje_error_entidad = '';
 			   	$mensaje_error_punto_venta = '';
@@ -51,15 +54,44 @@ class RequerimientoController extends BaseController {
 			   	$rechazar_archivo = false;
 			   	$rechazar_registro = false;
 			   	$mensaje_final = '<strong>EL ARCHIVO SUBIDO PARA EL TICKET N°'.$solicitud->codigo_solicitud.' NO SE CARGADO POR LOS SIGUIENTES MOTIVOS:<br></strong><br>';
+
+			   	$contador_registros_datos_llenos = 0;
+
 			    //primera validacion total de todos los codigos
+			    
 			    for($i = 0; $i < $cantidad_transacciones; $i++)
 			    {
 			    	$codigo_solicitud_fur = $resultado[$i][0];
+			    	$accion = $resultado[$i][1];
+			    	$documento = $resultado[$i][2];
+			    	$nombre = $resultado[$i][3];
+			    	$apellido_paterno = $resultado[$i][4];
+			    	$apellido_materno = $resultado[$i][5];
+			    	$cargo = $resultado[$i][6];
+			    	$punto_venta = $resultado[$i][7];
+			    	$aplicativo = $resultado[$i][8];
+
+			    	//VALIDAR SI ES UN REGISTRO VACIO
+
+			    	if( ($codigo_solicitud_fur == null || strcmp($codigo_solicitud_fur,'') == 0) && 
+				    	($accion == null || strcmp($accion,'') == 0) && 
+				    	($documento == null || strcmp($documento,'') == 0) && 
+						($nombre == null || strcmp($nombre,'') == 0) && 
+						($apellido_paterno == null || strcmp($apellido_paterno,'') == 0) && 
+						($apellido_materno == null || strcmp($apellido_materno,'') == 0) && 
+						($cargo == null || strcmp($cargo,'') == 0) && 
+						($punto_venta == null || strcmp($punto_venta,'') == 0) &&
+						($aplicativo == null || strcmp($aplicativo,'') == 0)){
+
+			    		continue;
+			    	}
+
+			    	$contador_registros_datos_llenos++;
 			    	$mensaje_final = $mensaje_final.'<strong>REGISTRO N°'.($i+1).':<br></strong>';
 			    	$rechazar_registro = false;
 
-
-
+			    	//SI NO ES UN REGISTRO VACIO COMENZAMOS A VALIDAR EL REGISTRO PROPIAMENTE DICHO
+	
 			    	if($codigo_solicitud_fur == null || strcmp($codigo_solicitud_fur,'') == 0 )
 			    	{
 			    		//si son vacios, se rechaza de inmediato todo el archivo
@@ -93,19 +125,8 @@ class RequerimientoController extends BaseController {
 							//return Redirect::to('/principal_gestor')->with('error','El registro N° '.($i+1).' del archivo adjuntado tiene un código de ticket no asociado a la solicitud actual.');	
 					}
 
-					//2. Canal (validar si el dato no es vacio)
-
-					$canal = $resultado[$i][1];
-					if($canal == null || strcmp($canal,'') == 0 )
-					{
-						$mensaje_error_canal = 'Campo canal vacío.';
-						$rechazar_archivo = true;
-						$mensaje_final = $mensaje_final.$mensaje_error_canal.'<br>';
-						$rechazar_registro = true;
-					}
-
-					//3. Accion (validar si el dato no es vacio)
-					$accion = $resultado[$i][2];
+					//2. Accion (validar si el dato no es vacio)
+					
 					if($accion == null || strcmp($accion,'') == 0)
 					{
 						$mensaje_error_accion = 'Campo acción vacío.';
@@ -114,9 +135,9 @@ class RequerimientoController extends BaseController {
 						$rechazar_registro = true;
 					}
 
-					//4. Documento (validar si el dato no es vacio o no tiene el formato correcto)
-					$documento = strval($resultado[$i][3]);
-					if($documento == null || !ctype_digit($documento) || strlen($documento) < 8)
+					//3. Documento (validar si el dato no es vacio o no tiene el formato correcto)
+					$documento_como_entero = (int)$documento;
+					if($documento == null || $documento_como_entero == 0 || strlen($documento) < 8)
 			    	{
 			    		$mensaje_error_dni = 'DNI no válido';
 			    		$rechazar_archivo = true;
@@ -124,8 +145,8 @@ class RequerimientoController extends BaseController {
 			    		$rechazar_registro = true;
 			    	}
 
-			    	//5. Nombre (validar si el dato no es vacio)
-			    	$nombre = $resultado[$i][4];
+			    	//4. Nombre (validar si el dato no es vacio)
+			    	
 			    	if($nombre == null || strcmp($nombre,'') == 0)
 			    	{
 			    		$mensaje_error_nombre = 'Campo Nombre vacío.';
@@ -134,8 +155,28 @@ class RequerimientoController extends BaseController {
 			    		$rechazar_registro = true;
 			    	}
 
-			    	//6. Cargo (validar si el dato no es vacio)
-			    	$cargo = $resultado[$i][5];
+			    	//5. Apellido Paterno (validar si el dato no es vacio)
+			    	
+			    	if($apellido_paterno == null || strcmp($apellido_paterno,'') == 0)
+			    	{
+			    		$mensaje_error_apellido_paterno = 'Campo Apellido Paterno vacío.';
+			    		$rechazar_archivo = true;
+			    		$mensaje_final = $mensaje_final.$mensaje_error_apellido_paterno.'<br>';
+			    		$rechazar_registro = true;
+			    	}
+
+			    	//6. Apellido Materno (validar si el dato no es vacio)
+			    	
+			    	if($apellido_materno == null || strcmp($apellido_materno,'') == 0)
+			    	{
+			    		$mensaje_error_apellido_materno = 'Campo Apellido Materno vacío.';
+			    		$rechazar_archivo = true;
+			    		$mensaje_final = $mensaje_final.$mensaje_error_apellido_materno.'<br>';
+			    		$rechazar_registro = true;
+			    	}
+
+			    	//7. Cargo (validar si el dato no es vacio)
+			    	
 					if($cargo == null || strcmp($cargo,'') == 0)
 			    	{
 			    		$mensaje_error_cargo = 'Campo Cargo vacío.';
@@ -145,58 +186,13 @@ class RequerimientoController extends BaseController {
 			    	}
 
 			    	
-			    	//7. Entidad (validar si el dato no es vacio)
-			    	$entidad = $resultado[$i][6];
-					if($entidad == null || strcmp($entidad,'') == 0)
-			    	{
-			    		$mensaje_error_entidad = 'Campo Entidad vacío.';
-			    		$rechazar_archivo = true;
-			    		$mensaje_final = $mensaje_final.$mensaje_error_entidad.'<br>';
-			    		$rechazar_registro = true;
-			    	}else{
-			    		$identidad = RequerimientoController::buscarEntidad($entidad);
-			    		if($identidad == 0)
-			    		{
-			    			$mensaje_error_entidad = 'Entidad no registrada en el sistema.';
-			    			$rechazar_archivo = true;
-			    			$mensaje_final = $mensaje_final.$mensaje_error_entidad.'<br>';
-			    			$rechazar_registro = true;
-			    		}
-			    	}
-
 			    	//8. Punto Venta (validar si el dato no es vacio)
-			    	$punto_venta = $resultado[$i][7];
+			    	//$punto_venta = $resultado[$i][8];
 			    	
-			    	if($punto_venta == null || strcmp($punto_venta,'') == 0)
-			    	{
-			    		$mensaje_error_punto_venta = 'Campo Punto Venta vacío.';
-			    		$rechazar_archivo = true;
-			    		$mensaje_final = $mensaje_final.$mensaje_error_punto_venta.'<br>';
-			    		$rechazar_registro = true;
-			    	}else{
-			    		/*$idpunto_venta = RequerimientoController::buscarPuntoVenta($punto_venta);
-			    		if($idpunto_venta == 0)
-			    		{
-			    			$mensaje_error_punto_venta = 'Campo Punto Venta no registrada en el sistema.';
-			    			$rechazar_archivo = true;
-			    			$mensaje_final = $mensaje_final.$mensaje_error_punto_venta.'<br>';
-			    			$rechazar_registro = true;
-			    		}else
-			    		{
-			    			$punto_venta_obj = PuntoVenta::find($idpunto_venta);
-			    			if($punto_venta_obj->identidad != $identidad)
-			    			{
-			    				$mensaje_error_punto_venta = 'Punto Venta no asociada a la entidad (socio).';
-				    			$rechazar_archivo = true;
-				    			$mensaje_final = $mensaje_final.$mensaje_error_punto_venta.'<br>';
-				    			$rechazar_registro = true;	
-			    			}
-			    		}*/
+			    	//SIN VALIDACION
 
-			    	}
-
-			    	//8. Aplicativo (validar si el dato no es vacio)
-			    	$aplicativo = $resultado[$i][8];
+			    	//9. Aplicativo (validar si el dato no es vacio)
+			    	
 			    	if($aplicativo == null || strcmp($aplicativo,'')==0 )
 			    	{
 			    		$mensaje_error_aplicativo = 'Campo Aplicativo vacío.<br>';
@@ -222,35 +218,39 @@ class RequerimientoController extends BaseController {
 			    		$mensaje_final = $mensaje_final.'<br>';
 			    }
 
+			    if($contador_registros_datos_llenos == 0 )
+			    {
+			    	return Redirect::to('/principal_gestor')->with('error','ARCHIVO FUR SIN REGISTROS');		
+			    }
+
 			    if($rechazar_archivo == true)
 			    {
 			    	return Redirect::to('/principal_gestor')->with('error',$mensaje_final);	
 			    }
+
 			    
-			    for($i = 0; $i < $cantidad_transacciones; $i++)
+			    		    
+			    for($i = 0; $i < $contador_registros_datos_llenos; $i++)
 			    {
+			    	
+
 			    	//revisar dato por dato
 			    	$codigo_solicitud_fur = $resultado[$i][0];
-			    	$canal = $resultado[$i][1];
-			    	$accion = $resultado[$i][2];
-			    	$documento =strval($resultado[$i][3]);
-			    	$nombre = $resultado[$i][4];
-			    	$cargo = $resultado[$i][5];
-			    	$entidad = $resultado[$i][6];
+			    	$accion = $resultado[$i][1];
+			    	$documento = $resultado[$i][2];
+			    	$nombre = $resultado[$i][3];
+			    	$apellido_paterno = $resultado[$i][4];
+			    	$apellido_materno = $resultado[$i][5];
+			    	$cargo = $resultado[$i][6];
 			    	$punto_venta = $resultado[$i][7];
 			    	$aplicativo = $resultado[$i][8];
-			    	$codigo_requerimiento = $resultado[$i][9];
 
 			    	$obj_log = [
 			    		"numero_fila" => ($i+1),
 			    		"descripcion" => null,
 			    	];
 
-			    	//Validar si el codigo de requerimiento está vacio, sin ello no se puede crear o revisar la información
-			    	if($codigo_requerimiento == null || strcmp($codigo_requerimiento,'') == 0)
-			    	{
-			    		$codigo_requerimiento = 'SIN_REQ';
-			    	}
+			    	$codigo_requerimiento = 'SIN_REQ';			    	
 
 			    	//Validar si el usuario tiene dni correcto, sin ello no se puede crear la transaccion ni menos el requerimiento
 			    	$usuario_valido = true;
@@ -289,7 +289,6 @@ class RequerimientoController extends BaseController {
 			    	//es un nuevo transaccion
 		    		$transaccion = new Transaccion;
 		    		$transaccion->fecha_registro = date('Y-m-d H:i:s');
-			    	$transaccion->codigo_requerimiento = $codigo_requerimiento;
 			    	$transaccion->accion_requerimiento = $accion;
 
 			    	//2. Aplicativo
@@ -305,7 +304,7 @@ class RequerimientoController extends BaseController {
 		    		}else
 		    			$transaccion->idherramienta = $idherramienta;
 			    	
-
+			    	
 		    		/*$idpunto_venta = RequerimientoController::buscarPuntoVenta($punto_venta);
 		    		if($idpunto_venta == 0)
 		    		{
@@ -352,7 +351,7 @@ class RequerimientoController extends BaseController {
 
 				    	$transaccion->cargo_canal = $cargo;
 				    	$transaccion->numero_documento = $documento;
-				    	$transaccion->nombre_usuario = $nombre;
+				    	$transaccion->nombre_usuario = $nombre.' '.$apellido_paterno.' '.$apellido_materno;
 				    	if($usuario_bloqueado == true)
 				    	{
 				    		$transaccion->usuario_bloqueado = 1;
@@ -384,7 +383,7 @@ class RequerimientoController extends BaseController {
 			    		$transaccion->fecha_cierre = date('Y-m-d H:i:s');
 				    	$transaccion->cargo_canal = $cargo;
 				    	$transaccion->numero_documento = null;
-				    	$transaccion->nombre_usuario = $nombre;
+				    	$transaccion->nombre_usuario = $nombre.' '.$apellido_paterno.' '.$apellido_materno;
 				    	$transaccion->usuario_bloqueado = 0;
 			    		$transaccion->idestado_transaccion = 2;
 			    		$transaccion->observaciones = null;
@@ -448,6 +447,7 @@ class RequerimientoController extends BaseController {
 			return View::make('error/error',$data);
 		}
 	}
+
 
 	public function buscarHerramienta($nombre,$herramientas)
 	{
@@ -714,10 +714,10 @@ class RequerimientoController extends BaseController {
 						{
 							//ES UN REMEDY, ENTONCES VALIDAMOS SI EL CODIGO INICIA EN REQ
 							//entonces se valida el codigo
-							if(strlen($codigos[$i]) <= 3 || strcmp(substr($codigos[$i],0,3),'REQ') != 0 )
+							/*if(strlen($codigos[$i]) <= 3 || strcmp(substr($codigos[$i],0,3),'REQ') != 0 )
 							{
 								$mensaje = $mensaje.'Código de la transacción N° '.$idtransacciones[$i].' no corresponde a un REMEDY';
-							}else{
+							}else¨*/
 								$codigo_anterior = $transaccion->codigo_requerimiento;
 								$transaccion->codigo_requerimiento = $codigos[$i];
 								$transaccion->save();
@@ -730,7 +730,7 @@ class RequerimientoController extends BaseController {
 							    	$trazabilidad->save();	
 								}
 								
-							} 
+							//} 
 						}else
 						{
 							$codigo_anterior = $transaccion->codigo_requerimiento;
@@ -968,12 +968,12 @@ class RequerimientoController extends BaseController {
 							{
 								//ES UN REMEDY, ENTONCES VALIDAMOS SI EL CODIGO INICIA EN REQ
 								//entonces se valida el codigo
-								if(strlen($transacciones[$i]->codigo_requerimiento) <= 3 || strcmp(substr($transacciones[$i]->codigo_requerimiento,0,3),'REQ') != 0 )
+								/*if(strlen($transacciones[$i]->codigo_requerimiento) <= 3 || strcmp(substr($transacciones[$i]->codigo_requerimiento,0,3),'REQ') != 0 )
 								{
 									$mensaje = $mensaje.'Código de la transacción N° '.$transacciones[$i]->idtransaccion.' no corresponde a un REMEDY <strong>Actualizar código</strong><br>';
 
 									$cantidad_errores++;
-								}else{
+								}else{*/
 									$transacciones[$i]->idestado_transaccion = 4;
 									$transacciones[$i]->fecha_inicio_procesando = date('Y-m-d H:i:s');
 									$transacciones[$i]->save();
@@ -984,7 +984,7 @@ class RequerimientoController extends BaseController {
 							    	$trazabilidad->fecha_registro = date('Y-m-d H:i:s');
 							    	$trazabilidad->idtransaccion = $transacciones[$i]->idtransaccion;
 							    	$trazabilidad->save();
-								} 
+								//} 
 							}else
 							{
 								$transacciones[$i]->idestado_transaccion = 4;
@@ -1021,6 +1021,7 @@ class RequerimientoController extends BaseController {
 			return View::make('error/error',$data);
 		}
 	}
+
 
 	public function reactivar_transaccion()
 	{

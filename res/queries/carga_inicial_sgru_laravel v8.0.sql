@@ -10247,8 +10247,16 @@ SET SLA_PENDIENTE = 1
 -- 05/02: Pruebas basicas con el equipo de GU (4 gestores)
 
 delete from usersxsector
-where iduser not in (7,11,18,20)
+where iduser not in (7,11,10,20)
 
 delete from users 
-where id not in (1,7,11,18,20)
+where id not in (1,7,11,10,20)
+
+/* CONSIDERACIONES
+ INTERCONNECT ES POR CORREO
+ GENIO NO ES POR REMEDY (SOLO PARA ALGUNOS CASOS)
+ GENIO (EQUIVALENCIAS: USUARIOS GENIO, USUARIO GENIO)
+ STC6I (EQUIVALENCIAS: PORTABILIDAD, WEB PORTABILIDAD)
+ WEB TGESTIONA (EQUIVALENCIAS: TGESTIONA)
+*/
 

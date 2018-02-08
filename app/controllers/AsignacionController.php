@@ -149,9 +149,7 @@ class AsignacionController extends BaseController {
 						if($usuario_apto == null)
 						{
 							$usuario_apto = AsignacionController::buscarUsuarioAptoPorSector($sector->idsector);
-							echo '<pre>';
-							var_dump($usuario_apto);
-							echo '</pre>';
+							
 						}
 
 					}
