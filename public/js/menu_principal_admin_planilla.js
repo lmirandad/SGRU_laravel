@@ -14,7 +14,24 @@ $( document ).ready(function(){
 		locale:'es',
 	});
 
-
+	
 });
 
 
+function eliminar_base(e,id)
+{
+	e.preventDefault();
+	$('#carga_archivo_id_eliminar').val(id);
+	BootstrapDialog.confirm({
+		title: 'Mensaje de Confirmación',
+		message: '¿Está seguro que desea realizar esta acción?', 
+		type: BootstrapDialog.TYPE_INFO,
+		btnCancelLabel: 'Cancelar', 
+    	btnOKLabel: 'Aceptar', 
+		callback: function(result){
+	        if(result) {
+				document.getElementById("submit-eliminar-base-carga").submit();
+			}
+		}
+	});
+}

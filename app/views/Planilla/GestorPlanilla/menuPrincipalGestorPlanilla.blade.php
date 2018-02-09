@@ -36,25 +36,36 @@
 						</div>
 						<div class="panel-body">
 							<div class="row">
-								@if($archivo_subido == false)
-									<div class="col-md-4">
-										<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
-										<input id="input-file-planilla" type="file" name="file">
-									</div>
+								@if($base_cargada == false)
+									@if($archivo_subido == false)
+										<div class="col-md-4">
+											<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
+											<input id="input-file-planilla" type="file" name="file">
+										</div>
+									@else
+										<div class="col-md-4">
+											<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
+											<input id="input-file-planilla" type="file" name="file" disabled="disabled">
+										</div>
+									@endif
+
+
+									@if($archivo_subido == false)
+										<div class="col-md-2" style="padding-top:26px">				
+											<a class="btn btn-info btn-block" id="btnProbarCarga" type="submit"> <i class="fa fa-upload"></i> Probar</a>
+										</div>
+									@else
+										<div class="col-md-2" style="padding-top:26px">				
+											<a class="btn btn-info btn-block" id="btnCargar" type="submit"> <i class="fa fa-upload"></i> Cargar</a>
+										</div>
+									@endif
 								@else
 									<div class="col-md-4">
 										<label class="control-label">Seleccione Archivo .XLS/.XLSX</label>
 										<input id="input-file-planilla" type="file" name="file" disabled="disabled">
 									</div>
-								@endif
-
-								@if($archivo_subido == false)
 									<div class="col-md-2" style="padding-top:26px">				
-										<a class="btn btn-info btn-block" id="btnProbarCarga" type="submit"> <i class="fa fa-upload"></i> Probar</a>
-									</div>
-								@else
-									<div class="col-md-2" style="padding-top:26px">				
-										<a class="btn btn-info btn-block" id="btnCargar" type="submit"> <i class="fa fa-upload"></i> Cargar</a>
+										<a class="btn btn-info btn-block" id="#" type="submit" disabled="disabled"> <i class="fa fa-upload"></i> Probar</a>
 									</div>
 								@endif
 								

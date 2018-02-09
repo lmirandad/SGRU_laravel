@@ -32,7 +32,47 @@ class CargaArchivoPlanilla extends Eloquent implements UserInterface, Remindable
 			  ->whereYear('carga_archivo_planilla.fecha_carga_archivo','=',$anho);
 
 		$query->select('carga_archivo_planilla.*','users.*');
+		$query->orderBy('carga_archivo_planilla.fecha_carga_archivo','DESC');
 		return $query;
+	}
+
+	public function scopeListarCargasArchivoPlanillaMesUsuario($query,$mes,$anho,$idusuario)
+	{
+		$query->join('users','carga_archivo_planilla.iduser_registrador','=','users.id');
+		$query->whereMonth('carga_archivo_planilla.fecha_carga_archivo','=',$mes)
+			  ->whereYear('carga_archivo_planilla.fecha_carga_archivo','=',$anho)
+			  ->where('carga_archivo_planilla.iduser_registrador','=',$idusuario);
+
+
+		$query->select('carga_archivo_planilla.*','users.*');
+		$query->orderBy('carga_archivo_planilla.fecha_carga_archivo','DESC');
+		return $query;
+	}
+
+	public function scopeBuscarCargasArchivoPlanilla($query,$mes,$anho,$idusuario)
+	{
+		$query->join('users','carga_archivo_planilla.iduser_registrador','=','users.id');
+		
+		if($mes != null)
+		{
+			$query->whereMonth('carga_archivo_planilla.fecha_carga_archivo','=',$mes);			
+		}
+
+		if($anho != null)
+		{
+			$query->whereYear('carga_archivo_planilla.fecha_carga_archivo','=',$anho);			
+		}
+
+		if($idusuario != null)
+		{
+			$query->where('carga_archivo_planilla.iduser_registrador','=',$idusuario);			
+		}
+
+		
+		$query->select('carga_archivo_planilla.*','users.*');
+		$query->orderBy('carga_archivo_planilla.fecha_carga_archivo','DESC');
+		return $query;
+
 	}
 
 

@@ -70,6 +70,9 @@ Route::group(array('before'=>'auth'),function(){
 
 Route::group(array('prefix'=>'principal_admin_planilla','before'=>'auth'),function(){
 	Route::get('/descargar_planilla','MenuPrincipalAdminPlanillaController@descargar_planilla');
+	Route::post('/eliminar_base_carga','MenuPrincipalAdminPlanillaController@eliminar_base_carga');
+	Route::get('/descargar_planilla_usuario/{id}','MenuPrincipalAdminPlanillaController@descargar_planilla_usuario');
+	Route::get('/buscar_cargas_usuario','MenuPrincipalAdminPlanillaController@buscar_cargas_usuario');
 });
 
 

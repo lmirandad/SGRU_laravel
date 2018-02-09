@@ -15,7 +15,30 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 				$data["logs"] = null;
 				$data["registros"] = null;
 				$data["archivo_subido"] = false;
-								
+				
+				//validar si el gestor ya hizo una carga:
+				$mes = date('m');
+				$anho = date('Y');
+
+
+				$meses = array("ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE");
+
+				$nombre_mes = $anho.' - '.$meses[$mes-1];
+
+				$carga_mes = CargaArchivoPlanilla::listarCargasArchivoPlanillaMesUsuario($mes,$anho,$data["user"]->id)->get();
+
+				if($carga_mes == null || $carga_mes->isEmpty())
+				{
+					Session::flash('info','Base de Planilla '.$nombre_mes.' pendiente de cargar');
+					$data["base_cargada"] = false;
+					
+				}else
+				{
+					$data["base_cargada"] = true;
+					$fecha_carga_archivo = date('d-m-Y H:i:s',strtotime($carga_mes[0]->fecha_carga_archivo));
+					Session::flash('info','Base de Planilla '.$nombre_mes.' cargada el '.$fecha_carga_archivo);
+				}
+
 				return View::make('Planilla/GestorPlanilla/menuPrincipalGestorPlanilla',$data);
 			}else
 				return View::make('error/error',$data);
@@ -113,7 +136,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 						$obj_log["descripcion"] = 'Campo NUMERO DOCUMENTO vacío';
 						array_push($logs_errores, $obj_log);
 						continue;
-					}else if($numero_documento_como_numero == 0 )
+					}else if(preg_match('/[^0-9]/', $numero_documento) )
 					{
 						$obj_log["descripcion"] = 'Campo NUMERO DOCUMENTO con formato incorrecto';
 						array_push($logs_errores, $obj_log);
@@ -191,7 +214,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 					if($canal == null || strcmp($canal, "") == 0)
 					{
 						//rechazar
-						$obj_log["descripcion"] = 'Campo AREA / CANAL no seleccionado';
+						$obj_log["descripcion"] = 'Campo AREA - CANAL no seleccionado';
 						array_push($logs_errores, $obj_log);
 						continue;
 					}
@@ -201,7 +224,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 					if($detalle_canal == null || strcmp($detalle_canal, "") == 0)
 					{
 						//rechazar
-						$obj_log["descripcion"] = 'Campo DETALLE AREA / CANAL no seleccionado';
+						$obj_log["descripcion"] = 'Campo DETALLE AREA - CANAL no seleccionado';
 						array_push($logs_errores, $obj_log);
 						continue;
 					}
@@ -211,7 +234,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 					if($subdetalle_canal == null || strcmp($subdetalle_canal, "") == 0)
 					{
 						//rechazar
-						$obj_log["descripcion"] = 'Campo SUBDETALLE AREA / CANAL no seleccionado';
+						$obj_log["descripcion"] = 'Campo SUBDETALLE AREA - CANAL no seleccionado';
 						array_push($logs_errores, $obj_log);
 						continue;
 					}
@@ -235,7 +258,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 						$obj_log["descripcion"] = 'Campo NUMERO RUC no seleccionado';
 						array_push($logs_errores, $obj_log);
 						continue;
-					}else if($ruc_como_entero == 0)
+					}else if(preg_match('/[^0-9]/', $ruc))
 					{
 						//rechazar
 						$obj_log["descripcion"] = 'Campo NUMERO RUC no tiene el formato correcto';
@@ -306,6 +329,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 			    }
 				
 			    $data["archivo_subido"] = true;
+			    $data["base_cargada"] = false;
 			    $data["cantidad_registros"] = $registros_reales;
 			    $data["cantidad_registros_procesados"] = $cantidad_registros_procesados;
 

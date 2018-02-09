@@ -4,12 +4,15 @@
 ---****************************************************
 USE SGRU_database
 -- ROL
+
 INSERT INTO rol (nombre,created_at,updated_at) VALUES ('ADMINISTRADOR',convert(datetime,'2017-11-17'),convert(datetime,'2017-11-17'));
 INSERT INTO rol (nombre,created_at,updated_at) VALUES ('GESTOR','2017-11-17','2017-11-17');
 INSERT INTO rol (nombre,created_at,updated_at) VALUES ('BUSINESS PARTNER','2017-11-17','2017-11-17');
 INSERT INTO rol (nombre,created_at,updated_at) VALUES ('RESPONSABLE CANAL','2017-11-17','2017-11-17');
-INSERT INTO rol (nombre,created_at,updated_at) VALUES ('ADMINISTRADOR PLANILLA','2017-11-17','2017-11-17');
-INSERT INTO rol (nombre,created_at,updated_at) VALUES ('GESTOR PLANILLA','2017-11-17','2017-11-17');
+
+
+INSERT INTO rol (idrol,nombre,created_at,updated_at) VALUES (5,'ADMINISTRADOR PLANILLA','2017-11-17','2017-11-17');
+INSERT INTO rol (idrol,nombre,created_at,updated_at) VALUES (6,'GESTOR PLANILLA','2017-11-17','2017-11-17');
 
 -- RANGO DIAS REPORTERIA
 INSERT INTO rango_dias_reporteria (nombre,dia_minimo,dia_maximo,created_at,updated_at) VALUES ('[0-1]',0,1,'2017-11-17','2017-11-17')

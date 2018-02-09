@@ -31,4 +31,11 @@ class UsuarioPlanilla extends Eloquent implements UserInterface, RemindableInter
 		return $query;
 	}
 
+	public function scopeBuscarUsuariosPlanilla($query,$idcarga)
+	{
+		$query->where('usuario_planilla.idcarga_archivo_planilla','=',$idcarga);
+		$query->select('usuario_planilla.*');
+		return $query;
+	}
+
 }

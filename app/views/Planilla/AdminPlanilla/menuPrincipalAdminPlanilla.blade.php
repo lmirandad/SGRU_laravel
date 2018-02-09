@@ -88,8 +88,10 @@
 										<tr>
 											<th class="text-nowrap text-center">N°</th>
 											<th class="text-nowrap text-center">Fecha de<br>Carga</th>
+											<th class="text-nowrap text-center">Mes Planilla</th>
 											<th class="text-nowrap text-center">Usuario</th>
 											<th class="text-nowrap text-center">Descargar Planilla Cargada</th>
+											<th class="text-nowrap text-center">Eliminar Planilla Cargada</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -101,13 +103,20 @@
 											<td class="text-nowrap text-center">
 												{{date('d-m-Y H:i:s',strtotime($carga_data->fecha_carga_archivo))}}
 											</td>
-											
+											<td class="text-nowrap text-center">
+												{{$meses[date('m',strtotime($carga_data->fecha_carga_archivo))-1]}}- {{date('Y',strtotime($carga_data->fecha_carga_archivo))}}
+											</td>											
 											<td class="text-nowrap text-center">
 												{{$carga_data->nombre}} {{$carga_data->apellido_paterno}} {{$carga_data->apellido_materno}}
 											</td>
 											<td class="text-nowrap text-center">
 												<div style="text-align:center">
-													<a class="btn btn-success btn-sm" href="{{URL::to('/principal_admin_planilla/descargar_base')}}/{{$carga_data->idcarga_archivo_planilla}}"><span class="lfa fa-download"></span></a>
+													<a class="btn btn-success btn-sm" href="{{URL::to('/principal_admin_planilla/descargar_planilla_usuario')}}/{{$carga_data->idcarga_archivo_planilla}}"><span class="fa fa-download"></span> Descargar</a>
+												</div>									
+											</td>
+											<td class="text-nowrap text-center">
+												<div style="text-align:center">
+													<button class="btn btn-danger btn-sm" onclick="eliminar_base(event,{{$carga_data->idcarga_archivo_planilla}})" type="button"><i class="fa fa-times"></i> Eliminar</button>
 												</div>									
 											</td>
 										</tr>	
@@ -124,5 +133,11 @@
 		
 	</div>
 	<!-- END MAIN CONTENT -->
+	{{ Form::open(array('url'=>'/principal_admin_planilla/eliminar_base_carga','role'=>'form','id'=>'submit-eliminar-base-carga','enctype'=>'multipart/form-data'))}}
+		   
+	   {{ Form::hidden('carga_archivo_id_eliminar', null,array('id'=>'carga_archivo_id_eliminar')) }}	
+
+	{{ Form::close() }}
+
 </div>
 @stop

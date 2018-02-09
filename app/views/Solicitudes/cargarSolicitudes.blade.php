@@ -47,14 +47,13 @@
 					</div>
 					<div class="panel-body">
 						<div class="row">
-								<div class="col-md-9">
-									<label class="control-label">Seleccione Archivo .XSLX/.XLS</label>
-									<input id="input-file" type="file" name="file">
-								</div>
-								<div class="col-md-3" style="padding-top:26px">				
-									<a class="btn btn-info btn-block" id="btnCargar" type="submit"> <i class="fa fa-upload"></i> Cargar</a>
-								</div>
-							
+							<div class="col-md-9">
+								<label class="control-label">Seleccione Archivo .XSLX/.XLS</label>
+								<input id="input-file" type="file" name="file">
+							</div>
+							<div class="col-md-3" style="padding-top:26px">				
+								<a class="btn btn-info btn-block" id="btnCargar" type="submit"> <i class="fa fa-upload"></i> Cargar</a>
+							</div>
 						</div>	
 					</div>
 				</div>
