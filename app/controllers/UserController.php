@@ -135,6 +135,7 @@ class UserController extends BaseController {
 					$user->telefono = Input::get('telefono');
 					$user->fecha_nacimiento = date('Y-m-d H:i:s',strtotime(Input::get('fecha_nacimiento')));
 					$user->iduser_created_by = $data["user"]->id;
+					$user->flag_cambiar_contrasena = 1;
 					$user->save();					
 					return Redirect::to('usuarios/listar_usuarios')->with('message', 'Se creó correctamente el usuario');
 				}

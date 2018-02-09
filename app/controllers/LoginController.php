@@ -34,8 +34,12 @@ class LoginController extends BaseController {
 				Session::put('user',Auth::user());
 				if($data["user"]->idrol == 1)
 					return Redirect::to('/principal_admin');
-				else
+				else if($data["user"]->idrol == 2)
 					return Redirect::to('/principal_gestor');
+				else if($data["user"]->idrol == 5)
+					return Redirect::to('/principal_admin_planilla');
+				else if($data["user"]->idrol == 6)
+					return Redirect::to('/principal_gestor_planilla');
 				
 				
 				

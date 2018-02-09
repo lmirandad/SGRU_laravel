@@ -156,22 +156,6 @@ $( document ).ready(function(){
     	$('#modal_requerimientos_mostrar').modal('show');
     });
 	
-    $('#btnRechazarSolicitud').click(function()
-    {
-    	BootstrapDialog.confirm({
-			title: 'Mensaje de Confirmación',
-			message: '¿Está seguro que desea realizar esta acción?', 
-			type: BootstrapDialog.TYPE_INFO,
-			btnCancelLabel: 'Cancelar', 
-	    	btnOKLabel: 'Aceptar', 
-			callback: function(result){
-		        if(result) {
-		        	document.getElementById("submit-rechazar-solicitud").submit();
-				}
-			}
-		});
-    });
-
 });
 
 
@@ -190,7 +174,6 @@ function cargar_base(e,id)
 	$('#modal_header_requerimientos_carga').addClass("modal-header ");
 	$('#modal_header_requerimientos_carga').addClass("bg-primary");
 }
-
 
 function mostrar_datos_req(e,id)
 {
@@ -238,8 +221,8 @@ function mostrar_datos_req(e,id)
 					for (i=0;i<cantidad_requerimientos;i++){
 						
 						nombre_herramienta = (arr_requerimientos[i].nombre_herramienta == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_herramienta ;  
+						nombre_denominacion = (arr_requerimientos[i].nombre_denominacion == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_denominacion ;  
 						nombre_tipo_requerimiento = (arr_requerimientos[i].nombre_tipo_requerimiento == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_tipo_requerimiento ;  
-						nombre_usuario = (arr_requerimientos[i].nombre_usuario == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_usuario ;  
 						//nombre_canal = (arr_requerimientos[i].nombre_canal == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_canal ;  
 						//nombre_entidad = (arr_requerimientos[i].nombre_entidad == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_entidad ;  
 						//nombre_punto_venta = (arr_requerimientos[i].nombre_punto_venta == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_punto_venta ;  
@@ -273,12 +256,12 @@ function mostrar_datos_req(e,id)
 				                
 				         data = data +"<td class=\"text-nowrap text-center\">"+arr_requerimientos[i].accion_requerimiento+"</td>"
 				                +"<td class=\"text-nowrap text-center\">"+nombre_herramienta+"</td>"
+				                +"<td class=\"text-nowrap text-center\">"+nombre_denominacion+"</td>"
 				                +"<td class=\"text-nowrap text-center\">"+nombre_tipo_requerimiento+"</td>"
 				                /*+"<td class=\"text-nowrap text-center\">"+nombre_canal+"</td>"
 				                +"<td class=\"text-nowrap text-center\">"+nombre_entidad+"</td>"
 				                +"<td class=\"text-nowrap text-center\">"+nombre_punto_venta+"</td>"*/
 				                +"<td class=\"text-nowrap text-center\">"+arr_requerimientos[i].cargo_canal+"</td>"
-				                +"<td class=\"text-nowrap text-center\">"+nombre_usuario+"</td>"
 				                +"<td class=\"text-nowrap text-center\">"+numero_documento+"</td>"
 				                +"<td class=\"text-nowrap text-center\"><strong>"+arr_requerimientos[i].nombre_estado_transaccion+"</strong></td>"
 				                +"<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-info btn-sm\" onclick=\"mostrar_observaciones(event,"+arr_requerimientos[i].idtransaccion+")\" type=\"button\"><span class=\"fa fa-search\"></span></button></div></td>";
@@ -348,6 +331,7 @@ function mostrar_datos_req(e,id)
 
 	}
 }
+
 
 
 function rechazar_requerimiento(e,idtransaccion)
@@ -643,8 +627,7 @@ function mostrar_datos_req_ready(id)
 					for (i=0;i<cantidad_requerimientos;i++){
 						
 						nombre_herramienta = (arr_requerimientos[i].nombre_herramienta == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_herramienta ;  
-						//nombre_denominacion = (arr_requerimientos[i].nombre_denominacion == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_denominacion ;  
-						nombre_usuario = (arr_requerimientos[i].nombre_usuario == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_usuario ;  
+						nombre_denominacion = (arr_requerimientos[i].nombre_denominacion == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_denominacion ;  
 						nombre_tipo_requerimiento = (arr_requerimientos[i].nombre_tipo_requerimiento == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_tipo_requerimiento ;  
 						//nombre_canal = (arr_requerimientos[i].nombre_canal == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_canal ;  
 						//nombre_entidad = (arr_requerimientos[i].nombre_entidad == null) ? 'NO ENCONTRADO' : arr_requerimientos[i].nombre_entidad ;  
@@ -679,12 +662,12 @@ function mostrar_datos_req_ready(id)
 				                
 				         data = data +"<td class=\"text-nowrap text-center\">"+arr_requerimientos[i].accion_requerimiento+"</td>"
 				                +"<td class=\"text-nowrap text-center\">"+nombre_herramienta+"</td>"
+				                +"<td class=\"text-nowrap text-center\">"+nombre_denominacion+"</td>"
 				                +"<td class=\"text-nowrap text-center\">"+nombre_tipo_requerimiento+"</td>"
 				                /*+"<td class=\"text-nowrap text-center\">"+nombre_canal+"</td>"
 				                +"<td class=\"text-nowrap text-center\">"+nombre_entidad+"</td>"
 				                +"<td class=\"text-nowrap text-center\">"+nombre_punto_venta+"</td>"*/
 				                +"<td class=\"text-nowrap text-center\">"+arr_requerimientos[i].cargo_canal+"</td>"
-				                +"<td class=\"text-nowrap text-center\">"+nombre_usuario+"</td>"
 				                +"<td class=\"text-nowrap text-center\">"+numero_documento+"</td>"
 				                +"<td class=\"text-nowrap text-center\"><strong>"+arr_requerimientos[i].nombre_estado_transaccion+"</strong></td>"
 				                +"<td class=\"text-nowrap\"><div style=\"text-align:center\"><button class=\"btn btn-info btn-sm\" onclick=\"mostrar_observaciones(event,"+arr_requerimientos[i].idtransaccion+")\" type=\"button\"><span class=\"fa fa-search\"></span></button></div></td>";
@@ -743,7 +726,6 @@ function mostrar_datos_req_ready(id)
 	
 
 }
-
 
 function eliminar_transaccion(e,idtransaccion)
 {
@@ -898,20 +880,4 @@ function eliminar_observacion(e,id)
 			}
 		}
 	});
-}
-
-function rechazar_solicitud(e,id)
-{
-	e.preventDefault();
-	$('#solicitud_id_rechazar').val(id);
-
-	$('#modal_solicitud_rechazar').modal({
-		backdrop: 'static',
-		keyboard: false
-	});
-    $('#modal_solicitud_rechazar').modal('show');
-	$('#modal_header_solicitud_rechazar').removeClass();
-	$('#modal_header_solicitud_rechazar').addClass("modal-header ");
-	$('#modal_header_solicitud_rechazar').addClass("bg-primary");
-	$('#modal_header_solicitud_rechazar').addClass('modal-open');
 }

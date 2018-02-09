@@ -60,10 +60,25 @@ Route::group(array('before'=>'auth'),function(){
 	Route::get('/reportes','ReporteriaController@mostrar_reporteria');
 	Route::get('/generar_reporte_solicitudes','ReporteriaController@generar_reporte_solicitudes');
 	Route::get('/generar_reporte_requerimientos','ReporteriaController@generar_reporte_requerimientos');
+
+	/*ADMIN PLANILLA*/
+	Route::get('/principal_admin_planilla','MenuPrincipalAdminPlanillaController@home_admin_planilla');
+	Route::get('/principal_gestor_planilla','MenuPrincipalGestorPlanillaController@home_gestor_planilla');
+	
+
+});
+
+Route::group(array('prefix'=>'principal_admin_planilla','before'=>'auth'),function(){
+	Route::get('/descargar_planilla','MenuPrincipalAdminPlanillaController@descargar_planilla');
 });
 
 
-
+Route::group(array('prefix'=>'principal_gestor_planilla','before'=>'auth'),function(){
+	Route::get('/descargar_plantilla_gestor','MenuPrincipalGestorPlanillaController@descargar_plantilla');
+	Route::post('/probar_carga','MenuPrincipalGestorPlanillaController@probar_carga');
+	Route::post('/submit_carga','MenuPrincipalGestorPlanillaController@submit_carga');
+	Route::post('/descargar_logs','MenuPrincipalGestorPlanillaController@descargar_logs');
+});
 
 Route::group(array('prefix'=>'principal','before'=>'auth'),function(){
 	Route::get('/mostrar_solicitudes_estado/{id}','MenuPrincipalController@mostrar_solicitudes_estado');
@@ -213,7 +228,7 @@ Route::group(array('prefix'=>'solicitudes', 'before'=>'auth'),function(){
 	Route::get('/crear_solicitud','SolicitudController@crear_solicitud');
 	Route::post('/submit_crear_solicitud','SolicitudController@submit_crear_solicitud');	
 	Route::post('/submit_anular_solicitud','SolicitudController@submit_anular_solicitud');	
-	Route::post('/submit_rechazar_solicitud','SolicitudController@submit_rechazar_solicitud');	
+	
 });
 
 /*REQUERIMIENTOS*/

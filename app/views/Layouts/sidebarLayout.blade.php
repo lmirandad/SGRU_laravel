@@ -3,6 +3,7 @@
 	<div class="sidebar-scroll">
 		<nav>
 			<ul class="nav">
+				@if($user->idrol == 1 || $user->idrol == 2)
 				<li style="border-bottom:solid 2px #015C63">
 					<a href="#subPagesSolicitudes" data-toggle="collapse" class="collapsed" style="background-color:#F7F9F1"> <span><font style="color:#00272E"><strong><i class="lnr lnr-file-add"></i>Solicitudes</font></strong></span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
 					<div id="subPagesSolicitudes" class="collapse"  >
@@ -15,6 +16,7 @@
 						</ul>
 					</div>
 				</li>
+				@endif
 				@if($user->idrol == 1)
 				<li style="border-bottom:solid 3px #015C63"> <!-- SUBMENÚ MANTENIMIENTOS -->
 					<a href="#subPagesMantenimientos" data-toggle="collapse" class="collapsed" style="background-color:#F7F9F1"><span><font style="color:#00272E"><i class="lnr lnr-construction"></i><strong>Mantenimientos</strong></font></span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>

@@ -1514,7 +1514,7 @@ class MenuPrincipalController extends BaseController {
 				$id_usuario = $data["user"]->id;
 				$fecha_actual = date('Y-m-d H:i:s');
 
-				/*$value = Excel::create('FUR', function($excel){
+				$value = Excel::create('FUR', function($excel){
 					$excel->sheet('FUR', function($sheet){
 						
 						$sheet->row(1, array(
@@ -1538,12 +1538,7 @@ class MenuPrincipalController extends BaseController {
 					});
 
 					
-				})->download('xlsx');*/
-				$ruta = '../res/formato_fur/Nueva FUR estandarizado.xlsx';
-				$headers = array(
-		              'Content-Type',mime_content_type($ruta),
-		            );
-		        return Response::download($ruta,basename(Input::get('nombre_archivo')),$headers);
+				})->download('xlsx');
 
 			}else
 				return View::make('error/error',$data);

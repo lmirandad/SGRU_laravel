@@ -234,4 +234,13 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $query;
 	}
 
+	/*******************PLANILLA*************************************************/
+	public function scopeBuscarGestoresPlanilla($query)
+	{
+		$query->where('users.idrol','=',6);
+		$query->select(DB::Raw('CONCAT(users.nombre,\' \',users.apellido_paterno,\' \',users.apellido_materno) as nombre,users.id as id'));
+		return $query;	
+	}
+
+
 }
