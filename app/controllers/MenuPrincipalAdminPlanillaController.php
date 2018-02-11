@@ -96,7 +96,7 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 					$excel->sheet('BASE', function($sheet) use ($usuarios,$meses)  {
 						
 						$sheet->row(1, array(
-							     'N°','TIPO DOCUMENTO','NUMERO DOCUMENTO','NOMBRES','APELLIDO PATERNO','APELLIDO MATERNO','CANAL','DETALLE CANAL','SUBDETALLE_CANAL','SOCIO','RUC','ENTIDAD','PUNTO DE VENTA','ROL','FECHA REGISTRO','MES','MES_NUMERO','ANHO'
+							     'N°','TIPO DOCUMENTO','NUMERO DOCUMENTO','NOMBRES','APELLIDO PATERNO','APELLIDO MATERNO','CANAL','DETALLE CANAL','SUBDETALLE_CANAL','SOCIO','RUC','ENTIDAD','PUNTO DE VENTA','ROL','FECHA REGISTRO','MES','MES_NUMERO','ANHO','RESPONSABLE'
 							));
 						
 						$cantidad_registros = count($usuarios);
@@ -118,6 +118,12 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 							$punto_venta = $usuarios[$i]->punto_venta;
 							$rol = $usuarios[$i]->rol;
 
+							$carga_archivo = CargaArchivoPlanilla::find($usuarios[$i]->idcarga_archivo_planilla);
+
+							$responsable = User::find($carga_archivo->iduser_registrador);
+
+							$nombre_responsable = $responsable->nombre.' '.$responsable->apellido_paterno.' '.$responsable->apellido_materno;
+
 							$fecha_registro = date('d-m-Y',strtotime($usuarios[$i]->created_at));
 
 							$anho = date('Y',strtotime($usuarios[$i]->created_at));
@@ -129,7 +135,7 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 
 
 							$sheet->row($i+2, array(
-							     $i+1,$tipo_documento,$numero_documento,$nombre,$apellido_paterno,$apellido_materno,$canal,$detalle_canal,$subdetalle_canal,$socio,$ruc,$entidad,$punto_venta,$rol,$fecha_registro,$nombre_mes,$valor_mes,$anho
+							     $i+1,$tipo_documento,$numero_documento,$nombre,$apellido_paterno,$apellido_materno,$canal,$detalle_canal,$subdetalle_canal,$socio,$ruc,$entidad,$punto_venta,$rol,$fecha_registro,$nombre_mes,$valor_mes,$anho,$nombre_responsable
 							));
 
 						}
