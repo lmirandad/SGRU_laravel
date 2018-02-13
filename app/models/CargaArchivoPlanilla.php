@@ -25,6 +25,15 @@ class CargaArchivoPlanilla extends Eloquent implements UserInterface, Remindable
 	 * @var array
 	 */
 	
+	public function scopeListarCargasArchivoPlanilla($query)
+	{
+		$query->join('users','carga_archivo_planilla.iduser_registrador','=','users.id');
+		
+		$query->select('carga_archivo_planilla.*','users.*');
+		$query->orderBy('carga_archivo_planilla.fecha_carga_archivo','DESC');
+		return $query;
+	}
+
 	public function scopeListarCargasArchivoPlanillaMes($query,$mes,$anho)
 	{
 		$query->join('users','carga_archivo_planilla.iduser_registrador','=','users.id');

@@ -42,7 +42,7 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 				$data["search_fecha"] = Input::get('search_fecha');
 
 				if(Input::get('search_usuario') == null && $data["search_fecha"] == null){
-					$data["cargas"] = CargaArchivoPlanilla::listarCargasArchivoPlanillaMes($mes_actual,$anho_actual)->get();
+					$data["cargas"] = CargaArchivoPlanilla::listarCargasArchivoPlanilla()->get();
 				}else
 				{	
 
@@ -96,7 +96,7 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 					$excel->sheet('BASE', function($sheet) use ($usuarios,$meses)  {
 						
 						$sheet->row(1, array(
-							     'N°','TIPO DOCUMENTO','NUMERO DOCUMENTO','NOMBRES','APELLIDO PATERNO','APELLIDO MATERNO','CANAL','DETALLE CANAL','SUBDETALLE_CANAL','SOCIO','RUC','ENTIDAD','PUNTO DE VENTA','ROL','FECHA REGISTRO','MES','MES_NUMERO','ANHO','RESPONSABLE'
+							     'N°','TIPO DOCUMENTO','NUMERO DOCUMENTO','NOMBRES','APELLIDO PATERNO','APELLIDO MATERNO','CANAL','DETALLE CANAL','SOCIO','RUC','PUNTO DE VENTA','ROL','FECHA REGISTRO','MES','MES_NUMERO','ANHO','RESPONSABLE'
 							));
 						
 						$cantidad_registros = count($usuarios);
@@ -111,10 +111,10 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 							$apellido_materno = $usuarios[$i]->apellido_materno;
 							$canal = $usuarios[$i]->canal;
 							$detalle_canal = $usuarios[$i]->detalle_canal;
-							$subdetalle_canal = $usuarios[$i]->subdetalle_canal;
+							//$subdetalle_canal = $usuarios[$i]->subdetalle_canal;
 							$socio = $usuarios[$i]->socio;
 							$ruc = $usuarios[$i]->ruc_socio;
-							$entidad = $usuarios[$i]->entidad;
+							//$entidad = $usuarios[$i]->entidad;
 							$punto_venta = $usuarios[$i]->punto_venta;
 							$rol = $usuarios[$i]->rol;
 
@@ -135,7 +135,7 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 
 
 							$sheet->row($i+2, array(
-							     $i+1,$tipo_documento,$numero_documento,$nombre,$apellido_paterno,$apellido_materno,$canal,$detalle_canal,$subdetalle_canal,$socio,$ruc,$entidad,$punto_venta,$rol,$fecha_registro,$nombre_mes,$valor_mes,$anho,$nombre_responsable
+							     $i+1,$tipo_documento,$numero_documento,$nombre,$apellido_paterno,$apellido_materno,$canal,$detalle_canal,$socio,$ruc,$punto_venta,$rol,$fecha_registro,$nombre_mes,$valor_mes,$anho,$nombre_responsable
 							));
 
 						}
@@ -183,7 +183,7 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 					$excel->sheet('BASE', function($sheet) use ($usuarios,$meses)  {
 						
 						$sheet->row(1, array(
-							     'N°','TIPO DOCUMENTO','NUMERO DOCUMENTO','NOMBRES','APELLIDO PATERNO','APELLIDO MATERNO','CANAL','DETALLE CANAL','SUBDETALLE_CANAL','SOCIO','RUC','ENTIDAD','PUNTO DE VENTA','ROL','FECHA REGISTRO','MES','MES_NUMERO','ANHO'
+							     'N°','TIPO DOCUMENTO','NUMERO DOCUMENTO','NOMBRES','APELLIDO PATERNO','APELLIDO MATERNO','CANAL','DETALLE CANAL','SOCIO','RUC','PUNTO DE VENTA','ROL','FECHA REGISTRO','MES','MES_NUMERO','ANHO'
 							));
 						
 						$cantidad_registros = count($usuarios);
@@ -198,10 +198,10 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 							$apellido_materno = $usuarios[$i]->apellido_materno;
 							$canal = $usuarios[$i]->canal;
 							$detalle_canal = $usuarios[$i]->detalle_canal;
-							$subdetalle_canal = $usuarios[$i]->subdetalle_canal;
+							//$subdetalle_canal = $usuarios[$i]->subdetalle_canal;
 							$socio = $usuarios[$i]->socio;
 							$ruc = $usuarios[$i]->ruc_socio;
-							$entidad = $usuarios[$i]->entidad;
+							//$entidad = $usuarios[$i]->entidad;
 							$punto_venta = $usuarios[$i]->punto_venta;
 							$rol = $usuarios[$i]->rol;
 
@@ -216,7 +216,7 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 
 
 							$sheet->row($i+2, array(
-							     $i+1,$tipo_documento,$numero_documento,$nombre,$apellido_paterno,$apellido_materno,$canal,$detalle_canal,$subdetalle_canal,$socio,$ruc,$entidad,$punto_venta,$rol,$fecha_registro,$nombre_mes,$valor_mes,$anho
+							     $i+1,$tipo_documento,$numero_documento,$nombre,$apellido_paterno,$apellido_materno,$canal,$detalle_canal,$socio,$ruc,$punto_venta,$rol,$fecha_registro,$nombre_mes,$valor_mes,$anho
 							));
 
 						}

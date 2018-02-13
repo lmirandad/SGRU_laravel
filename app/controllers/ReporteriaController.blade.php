@@ -212,24 +212,28 @@ class ReporteriaController extends BaseController {
 							{
 								$fecha_solicitud_f=Carbon\Carbon::parse($solicitudes[$i]->fecha_solicitud);				
 								$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud_f,'Y-m-d'));
+								$fecha_solicitud_c = date('Y-m-d',strtotime($solicitudes[$i]->fecha_solicitud));
 							}
 
 							if($solicitudes[$i]->fecha_asignacion != null)
 							{
 								$fecha_asignacion_f=Carbon\Carbon::parse($solicitudes[$i]->fecha_asignacion);				
 								$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion_f,'Y-m-d'));
+								$fecha_asignacion_c = date('Y-m-d',strtotime($solicitudes[$i]->fecha_asignacion));
 							}
 
 							if($solicitudes[$i]->fecha_inicio_procesando != null)
 							{
 								$fecha_inicio_procesando_f=Carbon\Carbon::parse($solicitudes[$i]->fecha_inicio_procesando);				
 								$fecha_inicio_procesando_formateada = Carbon\Carbon::parse(date_format($fecha_inicio_procesando_f,'Y-m-d'));
+								$fecha_inicio_procesando_c = date('Y-m-d',strtotime($solicitudes[$i]->fecha_inicio_procesando));
 							}
 
 							if($solicitudes[$i]->fecha_cierre != null)
 							{
 								$fecha_cierre_f=Carbon\Carbon::parse($solicitudes[$i]->fecha_cierre);				
 								$fecha_cierre_formateada = Carbon\Carbon::parse(date_format($fecha_cierre_f,'Y-m-d'));
+								$fecha_cierre_c = date('Y-m-d',strtotime($solicitudes[$i]->fecha_cierre));
 							}
 
 							//Calculando los SLA REALES
@@ -239,10 +243,11 @@ class ReporteriaController extends BaseController {
 
 							if($solicitudes[$i]->idestado_solicitud != 5)
 							{
-								$sla_real_asignacion = $fecha_solicitud_formateada->diffInWeekdays($fecha_asignacion_formateada) + 1;
+								//$sla_real_asignacion = $fecha_solicitud_formateada->diffInWeekdays($fecha_asignacion_formateada) + 1;
+								$sla_real_asignacion = ReporteriaController::getWorkingDays($fecha_solicitud_c,$fecha_asignacion_c);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
-								$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion_formateada)->get();
+								$feriados = Feriado::buscarDiasFeriados($fecha_solicitud_c,$fecha_asignacion_c)->get();
 								$cantidad_dias = 0;
 								if($feriados != null )
 								{
@@ -271,10 +276,12 @@ class ReporteriaController extends BaseController {
 							//SON SOLICITUDES QUE YA HAN SIDO ASIGNADAS, TRABAJADAS O YA ESTÁN SIENDO PROCESADAS.
 							if($solicitudes[$i]->idestado_solicitud == 4 || $solicitudes[$i]->idestado_solicitud == 1 || $solicitudes[$i]->idestado_solicitud == 2)
 							{
-								$sla_real_respuesta_gestor = $fecha_asignacion_formateada->diffInWeekdays($fecha_inicio_procesando_formateada) +1 ;
+								//$sla_real_respuesta_gestor = $fecha_asignacion_formateada->diffInWeekdays($fecha_inicio_procesando_formateada) +1 ;
+
+								$sla_real_respuesta_gestor = ReporteriaController::getWorkingDays($fecha_asignacion_c,$fecha_inicio_procesando_c);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
-								$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_inicio_procesando_formateada)->get();
+								$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_c,$fecha_inicio_procesando_c)->get();
 								$cantidad_dias = 0;
 								if($feriados != null )
 								{
@@ -302,10 +309,12 @@ class ReporteriaController extends BaseController {
 
 							if($solicitudes[$i]->idestado_solicitud == 1 || $solicitudes[$i]->idestado_solicitud == 2 ){
 
-								$sla_procesamiento = $fecha_inicio_procesando_formateada->diffInWeekdays($fecha_cierre_formateada)+1;
+								//$sla_procesamiento = $fecha_inicio_procesando_formateada->diffInWeekdays($fecha_cierre_formateada)+1;
+
+								$sla_procesamiento = ReporteriaController::getWorkingDays($fecha_inicio_procesando_c,$fecha_cierre_c);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
-								$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando_formateada,$fecha_cierre_formateada)->get();
+								$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando_c,$fecha_cierre_c)->get();
 								$cantidad_dias = 0;
 								if($feriados != null )
 								{
@@ -337,10 +346,12 @@ class ReporteriaController extends BaseController {
 							if($solicitudes[$i]->idestado_solicitud == 1 || $solicitudes[$i]->idestado_solicitud == 2 || $solicitudes[$i]->idestado_solicitud == 5 || $solicitudes[$i]->idestado_solicitud == 6)
 							{
 								
-								$sla_gestion = $fecha_asignacion_formateada->diffInWeekdays($fecha_cierre_formateada)+1;
+								//$sla_gestion = $fecha_asignacion_formateada->diffInWeekdays($fecha_cierre_formateada)+1;
+
+								$sla_gestion = ReporteriaController::getWorkingDays($fecha_asignacion_c,$fecha_cierre_c);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
-								$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_cierre_formateada)->get();
+								$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_c,$fecha_cierre_c)->get();
 								$cantidad_dias = 0;
 								if($feriados != null )
 								{
@@ -375,10 +386,12 @@ class ReporteriaController extends BaseController {
 							if($solicitudes[$i]->idestado_solicitud == 1 || $solicitudes[$i]->idestado_solicitud == 2 || $solicitudes[$i]->idestado_solicitud == 5 || $solicitudes[$i]->idestado_solicitud == 6)
 							{
 								
-								$sla_gestion_total_ticket = $fecha_solicitud_formateada->diffInWeekdays($fecha_cierre_formateada)+1;
+								//$sla_gestion_total_ticket = $fecha_solicitud_formateada->diffInWeekdays($fecha_cierre_formateada)+1;
+
+								$sla_gestion_total_ticket = ReporteriaController::getWorkingDays($fecha_solicitud_c,$fecha_cierre_c);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
-								$feriados = Feriado::buscarDiasFeriados($fecha_solicitud_formateada,$fecha_cierre_formateada)->get();
+								$feriados = Feriado::buscarDiasFeriados($fecha_solicitud_c,$fecha_cierre_c)->get();
 								$cantidad_dias = 0;
 								if($feriados != null )
 								{
@@ -601,30 +614,42 @@ class ReporteriaController extends BaseController {
 							$fecha_inicio_procesando_formateada = null;
 							$fecha_cierre_formateada = null;
 
+							$fecha_solicitud_c = null;
+							$fecha_inicio_procesando_c = null;
+							$fecha_asignacion_c = null;
+							$fecha_cierre_c = null;
+							$fecha_registro_ct = null;
+							$fecha_inicio_procesando_ct = null;
+							$fecha_cierre_ct = null;
+
 
 							/**********DATOS SOLICITUDES *****************/
 							if($solicitud->fecha_solicitud != null)
 							{
 								$fecha_solicitud_f=Carbon\Carbon::parse($solicitud->fecha_solicitud);				
-								$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud_f,'Y-m-d'));	
+								$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud_f,'Y-m-d'));
+								$fecha_solicitud_c = date('Y-m-d',strtotime($solicitud->fecha_solicitud));
 							}
 
 							if($asignacion->fecha_asignacion != null)
 							{
 								$fecha_asignacion_f=Carbon\Carbon::parse($asignacion->fecha_asignacion);				
-								$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion_f,'Y-m-d'));	
+								$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion_f,'Y-m-d'));
+								$fecha_asignacion_c = date('Y-m-d',strtotime($solicitud->fecha_asignacion));	
 							}
 
 							if($solicitud->fecha_inicio_procesando_solicitud_formateada != null)
 							{
 								$fecha_inicio_procesando_solicitud_f=Carbon\Carbon::parse($solicitud->fecha_inicio_procesando);				
 								$fecha_inicio_procesando_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_inicio_procesando_solicitud_f,'Y-m-d'));
+								$fecha_inicio_procesando_c = date('Y-m-d',strtotime($solicitud->fecha_inicio_procesando));	
 							}
 
 							if($solicitud->fecha_cierre != null)
 							{
 								$fecha_cierre_f=Carbon\Carbon::parse($solicitud->fecha_cierre);				
 								$fecha_cierre_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_cierre_f,'Y-m-d'));
+								$fecha_cierre_c = date('Y-m-d',strtotime($solicitud->fecha_cierre));	
 							}
 
 							/***********DATOS TRANSACCIONES ***********************/
@@ -633,18 +658,21 @@ class ReporteriaController extends BaseController {
 							{
 								$fecha_registro_f=Carbon\Carbon::parse($transacciones[$i]->fecha_registro);				
 								$fecha_registro_formateada = Carbon\Carbon::parse(date_format($fecha_registro_f,'Y-m-d'));
+								$fecha_registro_ct = date('Y-m-d',strtotime($transacciones[$i]->fecha_registro));		
 							}
 
 							if($transacciones[$i]->fecha_inicio_procesando != null)
 							{
 								$fecha_inicio_procesando_f=Carbon\Carbon::parse($transacciones[$i]->fecha_inicio_procesando);				
 								$fecha_inicio_procesando_formateada = Carbon\Carbon::parse(date_format($fecha_inicio_procesando_f,'Y-m-d'));
+								$fecha_inicio_procesando_ct = date('Y-m-d',strtotime($transacciones[$i]->fecha_inicio_procesando));		
 							}
 
 							if($transacciones[$i]->fecha_cierre != null)
 							{
 								$fecha_cierre_f=Carbon\Carbon::parse($transacciones[$i]->fecha_cierre);				
 								$fecha_cierre_formateada = Carbon\Carbon::parse(date_format($fecha_cierre_f,'Y-m-d'));
+								$fecha_cierre_ct = date('Y-m-d',strtotime($transacciones[$i]->fecha_cierre));	
 							}
 
 							//1. SLA_ASIGNACION
@@ -652,10 +680,11 @@ class ReporteriaController extends BaseController {
 
 							if($solicitud->idestado_solicitud != 5)
 							{
-								$sla_real_asignacion = $fecha_solicitud_formateada->diffInWeekdays($fecha_asignacion_formateada) + 1;
+								//$sla_real_asignacion = $fecha_solicitud_formateada->diffInWeekdays($fecha_asignacion_formateada) + 1;
+								$sla_real_asignacion = ReporteriaController::getWorkingDays($fecha_solicitud_c,$fecha_asignacion_c);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
-								$feriados = Feriado::buscarDiasFeriados($fecha_solicitud_formateada,$fecha_asignacion_formateada)->get();
+								$feriados = Feriado::buscarDiasFeriados($fecha_solicitud_c,$fecha_asignacion_c)->get();
 								$cantidad_dias = 0;
 								if($feriados != null )
 								{
@@ -684,10 +713,11 @@ class ReporteriaController extends BaseController {
 							//SON SOLICITUDES QUE YA HAN SIDO ASIGNADAS, TRABAJADAS O YA ESTÁN SIENDO PROCESADAS.
 							if($solicitud->idestado_solicitud == 4 || $solicitud->idestado_solicitud == 1 || $solicitud->idestado_solicitud == 2)
 							{
-								$sla_real_respuesta_gestor = $fecha_asignacion_formateada->diffInWeekdays($fecha_inicio_procesando_solicitud_formateada)+1;
+								//$sla_real_respuesta_gestor = $fecha_asignacion_formateada->diffInWeekdays($fecha_inicio_procesando_solicitud_formateada)+1;
+								$sla_real_respuesta_gestor = ReporteriaController::getWorkingDays($fecha_asignacion_c,$fecha_inicio_procesando_c);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
-								$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_inicio_procesando_solicitud_formateada)->get();
+								$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_c,$fecha_inicio_procesando_c)->get();
 								$cantidad_dias = 0;
 								if($feriados != null )
 								{
@@ -717,10 +747,12 @@ class ReporteriaController extends BaseController {
 
 							if($transacciones[$i]->idestado_transaccion == 1){
 
-								$sla_procesamiento_total_transaccion = $fecha_registro_formateada->diffInWeekdays($fecha_cierre_formateada)+1;
+								//$sla_procesamiento_total_transaccion = $fecha_registro_formateada->diffInWeekdays($fecha_cierre_formateada)+1;
+
+								$sla_procesamiento_total_transaccion = ReporteriaController::getWorkingDays($fecha_registro_ct,$fecha_cierre_ct);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
-								$feriados = Feriado::buscarDiasFeriados($fecha_registro_formateada,$fecha_cierre_formateada)->get();
+								$feriados = Feriado::buscarDiasFeriados($fecha_registro_ct,$fecha_cierre_ct)->get();
 								$cantidad_dias = 0;
 								if($feriados != null )
 								{
@@ -753,10 +785,12 @@ class ReporteriaController extends BaseController {
 							if($transacciones[$i]->idestado_transaccion == 1 || $transacciones[$i]->idestado_transaccion == 2)
 							{
 								
-								$sla_gestion_transaccion = $fecha_asignacion_formateada->diffInWeekdays($fecha_cierre_formateada)+1;
+								//$sla_gestion_transaccion = $fecha_asignacion_formateada->diffInWeekdays($fecha_cierre_formateada)+1;
+
+								$sla_gestion_transaccion = ReporteriaController::getWorkingDays($fecha_asignacion_c,$fecha_cierre_ct);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
-								$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_cierre_formateada)->get();
+								$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_c,$fecha_cierre_ct)->get();
 								$cantidad_dias = 0;
 								if($feriados != null )
 								{
@@ -786,10 +820,12 @@ class ReporteriaController extends BaseController {
 							if($transacciones[$i]->idestado_transaccion == 1  || $transacciones[$i]->idestado_transaccion == 4 )
 							{
 								
-								$sla_gestor = $fecha_asignacion_formateada->diffInWeekdays($fecha_inicio_procesando_formateada)+1;
+								//$sla_gestor = $fecha_asignacion_formateada->diffInWeekdays($fecha_inicio_procesando_formateada)+1;
+
+								$sla_gestor = ReporteriaController::getWorkingDays($fecha_asignacion_c,$fecha_inicio_procesando_ct);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
-								$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_inicio_procesando_formateada)->get();
+								$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_c,$fecha_inicio_procesando_ct)->get();
 								$cantidad_dias = 0;
 								if($feriados != null )
 								{
@@ -822,10 +858,12 @@ class ReporteriaController extends BaseController {
 							if($transacciones[$i]->idestado_transaccion == 1  || $transacciones[$i]->idestado_transaccion == 4 )
 							{
 								
-								$sla_gestion_interna = $fecha_solicitud_formateada->diffInWeekdays($fecha_inicio_procesando_formateada)+1;
+								//$sla_gestion_interna = $fecha_solicitud_formateada->diffInWeekdays($fecha_inicio_procesando_formateada)+1;
+
+								$sla_gestion_interna = ReporteriaController::getWorkingDays($fecha_solicitud_c,$fecha_inicio_procesando_ct);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
-								$feriados = Feriado::buscarDiasFeriados($fecha_solicitud_formateada,$fecha_inicio_procesando_formateada)->get();
+								$feriados = Feriado::buscarDiasFeriados($fecha_solicitud_c,$fecha_inicio_procesando_ct)->get();
 								$cantidad_dias = 0;
 								if($feriados != null )
 								{
@@ -858,10 +896,11 @@ class ReporteriaController extends BaseController {
 							if($transacciones[$i]->idestado_transaccion == 1)
 							{
 								
-								$sla_gestion_externa = $fecha_solicitud_formateada->diffInWeekdays($fecha_inicio_procesando_formateada)+1;
+								//$sla_gestion_externa = $fecha_solicitud_formateada->diffInWeekdays($fecha_inicio_procesando_formateada)+1;
+								$sla_gestion_externa = ReporteriaController::getWorkingDays($fecha_solicitud_c,$fecha_inicio_procesando_ct);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
-								$feriados = Feriado::buscarDiasFeriados($fecha_solicitud_formateada,$fecha_inicio_procesando_formateada)->get();
+								$feriados = Feriado::buscarDiasFeriados($fecha_solicitud_c,$fecha_inicio_procesando_ct)->get();
 								$cantidad_dias = 0;
 								if($feriados != null )
 								{
@@ -897,10 +936,12 @@ class ReporteriaController extends BaseController {
 							if($transacciones[$i]->idestado_transaccion == 1  || $transacciones[$i]->idestado_transaccion == 4 )
 							{
 								
-								$sla_procesamiento_interno = $fecha_registro_formateada->diffInWeekdays($fecha_inicio_procesando_formateada)+1;
+								//$sla_procesamiento_interno = $fecha_registro_formateada->diffInWeekdays($fecha_inicio_procesando_formateada)+1;
+
+								$sla_procesamiento_interno = ReporteriaController::getWorkingDays($fecha_registro_ct,$fecha_inicio_procesando_ct);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
-								$feriados = Feriado::buscarDiasFeriados($fecha_registro_formateada,$fecha_inicio_procesando_formateada)->get();
+								$feriados = Feriado::buscarDiasFeriados($fecha_registro_ct,$fecha_inicio_procesando_ct)->get();
 								$cantidad_dias = 0;
 								if($feriados != null )
 								{
@@ -933,7 +974,9 @@ class ReporteriaController extends BaseController {
 							if($transacciones[$i]->idestado_transaccion == 1 || $transacciones[$i]->idestado_transaccion == 2)
 							{
 								
-								$sla_gestion_total_transaccion = $fecha_solicitud_formateada->diffInWeekdays($fecha_cierre_formateada)+1;
+								//$sla_gestion_total_transaccion = $fecha_solicitud_formateada->diffInWeekdays($fecha_cierre_formateada)+1;
+
+								$sla_gestion_total_transaccion = ReporteriaController::getWorkingDays($fecha_solicitud_c,$fecha_cierre_ct);
 
 								//Obtener los dias feriados entre la fecha de hoy y la asignacion
 								$feriados = Feriado::buscarDiasFeriados($fecha_solicitud_formateada,$fecha_cierre_formateada)->get();
@@ -980,6 +1023,31 @@ class ReporteriaController extends BaseController {
 		}
 	}
 
+	public function getWorkingDays($startDate, $endDate)
+	{
+	    $begin = strtotime($startDate);
+	    $end   = strtotime($endDate);
+
+	    if ($begin > $end) {
+	        //echo "startdate is in the future! <br />";
+
+	        return 0;
+	    } else {
+	        $no_days  = 0;
+	        $weekends = 0;
+	        while ($begin < $end) {
+	            $no_days++; // no of days in the given interval
+	            $what_day = date("N", $begin);
+	            if ($what_day > 5) { // 6 and 7 are weekend days
+	                $weekends++;
+	            };
+	            $begin += 86400; // +1 day
+	        };
+	        $working_days = $no_days - $weekends;
+
+	        return $working_days;
+	    }
+	}
 
 
 }

@@ -57,7 +57,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 			// Verifico si el usuario es un Admin Planilla
 			if($data["user"]->idrol == 6){
 				
-				$ruta = '../res/formato_planilla/FORMATO PLANILLA.xlsx';
+				$ruta = '../res/formato_planilla/FORMATO PLANILLA.xlsm';
 				$headers = array(
 		              'Content-Type',mime_content_type($ruta),
 		            );
@@ -90,14 +90,13 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 			    	return Redirect::to('/principal_gestor_planilla');
 			    }
 
-			    $resultado = Excel::load($file_name)->get()[0];
+			    $resultado = Excel::load($file_name)->get();
 
 			 	$cantidad_registros = count($resultado);
 			 	$logs_errores = array();
 			 	$array_registros = array();
 			    
-			    //cantidad provisoria
-			    $cantidad = 13;
+			    $cantidad = 11;
 			    if(count($resultado[0]) < $cantidad || count($resultado[0]) > $cantidad )
 			    	return Redirect::to('/principal_gestor_planilla')->with('error','La cantidad de columnas del archivo adjuntado no coincide con el estandar.');
 
@@ -174,7 +173,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 						$obj_log["descripcion"] = 'Campo NOMBRE vacío';
 						array_push($logs_errores, $obj_log);
 						continue;
-					}else if(preg_match('/[^A-Za-z]/', $nombre))
+					}else if(preg_match('/\\d/', $nombre))
 					{
 						$obj_log["descripcion"] = 'Campo NOMBRE contiene números';
 						array_push($logs_errores, $obj_log);
@@ -188,7 +187,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 						$obj_log["descripcion"] = 'Campo APELLIDO PATERNO vacío';
 						array_push($logs_errores, $obj_log);
 						continue;
-					}else if(preg_match('/[^A-Za-z]/', $apellido_paterno))
+					}else if(preg_match('/\\d/', $apellido_paterno))
 					{
 						$obj_log["descripcion"] = 'Campo APELLIDO PATERNO contiene números';
 						array_push($logs_errores, $obj_log);
@@ -202,7 +201,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 						$obj_log["descripcion"] = 'Campo APELLIDO MATERNO vacío';
 						array_push($logs_errores, $obj_log);
 						continue;
-					}else if(preg_match('/[^A-Za-z]/', $apellido_materno))
+					}else if(preg_match('/\\d/', $apellido_materno))
 					{
 						$obj_log["descripcion"] = 'Campo APELLIDO MATERNO contiene números';
 						array_push($logs_errores, $obj_log);
@@ -229,7 +228,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 						continue;
 					}
 
-					//8. SUBDETALLE CANAL (validar si el dato no es vacio)
+					/*//8. SUBDETALLE CANAL (validar si el dato no es vacio)
 					$subdetalle_canal = $resultado[$i][7];
 					if($subdetalle_canal == null || strcmp($subdetalle_canal, "") == 0)
 					{
@@ -237,10 +236,10 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 						$obj_log["descripcion"] = 'Campo SUBDETALLE AREA - CANAL no seleccionado';
 						array_push($logs_errores, $obj_log);
 						continue;
-					}
+					}*/
 
 					//9. SOCIO (validar si el dato no es vacio)
-					$socio = $resultado[$i][8];
+					$socio = $resultado[$i][7];
 					if($socio == null || strcmp($socio, "") == 0)
 					{
 						//rechazar
@@ -250,15 +249,16 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 					}
 
 					//10. NUMERO RUC (validar si el dato no es vacio)
-					$ruc = $resultado[$i][9];
+					$ruc = $resultado[$i][8];
 					$ruc_como_entero = (int)$ruc;
+					
 					if($ruc == null || strcmp($ruc, "") == 0)
 					{
 						//rechazar
 						$obj_log["descripcion"] = 'Campo NUMERO RUC no seleccionado';
 						array_push($logs_errores, $obj_log);
 						continue;
-					}else if(preg_match('/[^0-9]/', $ruc))
+					}else if(preg_match('/[a-zA-Z]/i', $ruc))
 					{
 						//rechazar
 						$obj_log["descripcion"] = 'Campo NUMERO RUC no tiene el formato correcto';
@@ -272,18 +272,18 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 						continue;
 					}
 
-					//11. ENTIDAD (validar si el dato no es vacio)
-					$entidad = $resultado[$i][10];
+					/*//11. ENTIDAD (validar si el dato no es vacio)
+					$entidad = $resultado[$i][9];
 					if($entidad == null || strcmp($entidad, "") == 0)
 					{
 						//rechazar
 						$obj_log["descripcion"] = 'Campo ENTIDAD no seleccionado';
 						array_push($logs_errores, $obj_log);
 						continue;
-					}
+					}*/
 
 					//12. PUNTO DE VENTA (validar si el dato no es vacio)
-					$punto_venta = $resultado[$i][11];
+					$punto_venta = $resultado[$i][9];
 					if($punto_venta == null || strcmp($punto_venta, "") == 0)
 					{
 						//rechazar
@@ -293,7 +293,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 					}
 
 					//13. ROL (validar si el dato no es vacio)
-					$rol = $resultado[$i][12];
+					$rol = $resultado[$i][10];
 					if($rol == null || strcmp($rol, "") == 0)
 					{
 						//rechazar
@@ -316,10 +316,10 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 						"apellido_materno" => $apellido_materno,
 						"canal" => $canal,
 						"detalle_canal" => $detalle_canal,
-						"subdetalle_canal" => $subdetalle_canal,
+						//"subdetalle_canal" => $subdetalle_canal,
 						"socio" => $socio,
 						"ruc" => $ruc,
-						"entidad" => $entidad,
+						//"entidad" => $entidad,
 						"punto_venta" => $punto_venta,
 						"rol" => $rol,
 					];
@@ -418,10 +418,10 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 				$apellidos_materno = Input::get('apellidos_materno');
 				$canales = Input::get('canales');
 				$detalle_canales = Input::get('detalle_canales');
-				$subdetalle_canales = Input::get('subdetalle_canales');
+				//$subdetalle_canales = Input::get('subdetalle_canales');
 				$socios = Input::get('socios');
 				$rucs = Input::get('rucs');
-				$entidades = Input::get('entidades');
+				//$entidades = Input::get('entidades');
 				$puntos_venta = Input::get('puntos_venta');
 				$roles = Input::get('roles');
 				
@@ -447,10 +447,10 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 					$usuario_planilla->numero_documento = $numeros_documento[$i];
 					$usuario_planilla->canal = $canales[$i];
 					$usuario_planilla->detalle_canal = $detalle_canales[$i];
-					$usuario_planilla->subdetalle_canal = $subdetalle_canales[$i];
+					//$usuario_planilla->subdetalle_canal = $subdetalle_canales[$i];
 					$usuario_planilla->socio = $socios[$i];
 					$usuario_planilla->ruc_socio = $rucs[$i];
-					$usuario_planilla->entidad = $entidades[$i];
+					//$usuario_planilla->entidad = $entidades[$i];
 					$usuario_planilla->punto_venta = $puntos_venta[$i];
 					$usuario_planilla->rol = $roles[$i];
 					$usuario_planilla->idcarga_archivo_planilla = $carga_archivo->idcarga_archivo_planilla;

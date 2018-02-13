@@ -29,14 +29,20 @@ class MenuPrincipalController extends BaseController {
 					$cantidad_solicitudes = count($data["solicitudes_atendidos"]);					
 					for($i=0;$i<$cantidad_solicitudes;$i++)
 					{
-						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_atendidos"][$i]->fecha_asignacion);				
+						/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_atendidos"][$i]->fecha_asignacion);				
 						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_atendidos"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
+
+						$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_atendidos"][$i]->fecha_asignacion));
+
+						$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_atendidos"][$i]->fecha_solicitud));
+
+						$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
 						
 						//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+						$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -63,13 +69,20 @@ class MenuPrincipalController extends BaseController {
 					$cantidad_solicitudes = count($data["solicitudes_cerrados"]);					
 					for($i=0;$i<$cantidad_solicitudes;$i++)
 					{
-						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_cerrados"][$i]->fecha_asignacion);				
+						/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_cerrados"][$i]->fecha_asignacion);				
 						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_cerrados"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
+
+						$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_cerrados"][$i]->fecha_asignacion));
+
+						$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_cerrados"][$i]->fecha_solicitud));
+
+						$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
 						//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+						$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -102,14 +115,23 @@ class MenuPrincipalController extends BaseController {
 					{
 						$sla = Sla::buscarSlaSolicitud($data["solicitudes_pendientes"][$i]->idsolicitud,$data["solicitudes_pendientes"][$i]->idtipo_solicitud)->get()[0];
 						array_push($data["slas_data_pendiente"], $sla);
-						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_pendientes"][$i]->fecha_asignacion);				
-						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+						/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_pendientes"][$i]->fecha_asignacion);				
+						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));				
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_pendientes"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
 						
+						//PARA DIAS DE ASIGNACION
+
+						$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_pendientes"][$i]->fecha_asignacion));
+
+						$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_pendientes"][$i]->fecha_solicitud));
+
+						$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+						
+
 						//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+						$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -124,11 +146,18 @@ class MenuPrincipalController extends BaseController {
 						}
 						$diferencia_dias -= $cantidad_dias;
 						array_push($data["diferencia_fechas_pendiente"],$diferencia_dias);
-						//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
-						$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
-						$diferencia_dias_fecha_trabajo= $fecha_asignacion_formateada->diffInWeekdays($fecha_actual);
 
-						if($diferencia_dias_fecha_trabajo == 1)
+						//PARA DIAS LABORALES
+
+						//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
+						/*$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+						$diferencia_dias_fecha_trabajo= $fecha_asignacion_formateada->diffInWeekdays($fecha_actual);*/
+
+						$fecha_actual = date('Y-m-d');
+
+						$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_asignacion,$fecha_actual);
+
+						/*if($diferencia_dias_fecha_trabajo == 1)
 						{
 							//si la diferencia es de un dia validar la cantidad de horas
 							$fecha_actual_diferencia = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d 23:59:59'));
@@ -136,10 +165,10 @@ class MenuPrincipalController extends BaseController {
 						
 							if($hora_dif <= 24)
 								$diferencia_dias_fecha_trabajo = 0;
-						}
+						}*/						
 
 						//Obtener los dias feriados entre la fecha de hoy y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_actual)->get();
+						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion,$fecha_actual)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -152,8 +181,6 @@ class MenuPrincipalController extends BaseController {
 									$cantidad_dias++;							
 							}
 						}
-
-
 
 						$diferencia_dias_fecha_trabajo -= $cantidad_dias;
 						array_push($data["diferencia_fechas_trabajo_pendiente"],$diferencia_dias_fecha_trabajo);
@@ -175,7 +202,7 @@ class MenuPrincipalController extends BaseController {
 						$sla = Sla::buscarSlaSolicitud($data["solicitudes_procesando"][$i]->idsolicitud,$data["solicitudes_procesando"][$i]->idtipo_solicitud)->get()[0];
 						array_push($data["slas_data_procesando"], $sla);
 						
-						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_procesando"][$i]->fecha_asignacion);				
+						/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_procesando"][$i]->fecha_asignacion);				
 						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));
 
 						$fecha_inicio_procesando=Carbon\Carbon::parse($data["solicitudes_procesando"][$i]->fecha_inicio_procesando);				
@@ -183,10 +210,20 @@ class MenuPrincipalController extends BaseController {
 						
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_procesando"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+
+						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
+
+						$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_procesando"][$i]->fecha_asignacion));
+
+						$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_procesando"][$i]->fecha_solicitud));
+
+						$fecha_inicio_procesando = date('Y-m-d',strtotime($data["solicitudes_procesando"][$i]->fecha_inicio_procesando));
 						
-						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+
+						$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+						
 						//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+						$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -201,21 +238,27 @@ class MenuPrincipalController extends BaseController {
 						}
 						$diferencia_dias -= $cantidad_dias;
 						array_push($data["diferencia_fechas_procesando"],$diferencia_dias);
-						//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
-						$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
-						$diferencia_dias_fecha_trabajo= $fecha_inicio_procesando_formateada->diffInWeekdays($fecha_actual);
 
-						if($diferencia_dias_fecha_trabajo == 1)
+
+						//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
+						/*$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+						$diferencia_dias_fecha_trabajo= $fecha_inicio_procesando_formateada->diffInWeekdays($fecha_actual);*/
+
+						/*if($diferencia_dias_fecha_trabajo == 1)
 						{
 							//si la diferencia es de un dia validar la cantidad de horas
 							$fecha_actual_diferencia = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d 23:59:59'));
 							$hora_dif = $fecha_inicio_procesando_formateada->diffInHours($fecha_actual_diferencia);
 							if($hora_dif <= 24)
 								$diferencia_dias_fecha_trabajo = 0;
-						}
+						}*/
+
+						$fecha_actual = date('Y-m-d');
+
+						$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_inicio_procesando,$fecha_actual);
 
 						//Obtener los dias feriados entre la fecha de hoy y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando_formateada,$fecha_actual)->get();
+						$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando,$fecha_actual)->get();
 						
 						$cantidad_dias = 0;
 						if($feriados != null )
@@ -247,8 +290,8 @@ class MenuPrincipalController extends BaseController {
 					{
 						//$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_rechazadas"][$i]->fecha_asignacion);				
 						//$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
-						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_rechazadas"][$i]->fecha_solicitud);				
-						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+						//$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_rechazadas"][$i]->fecha_solicitud);				
+						//$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
 						//$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
 						
 					}
@@ -263,13 +306,20 @@ class MenuPrincipalController extends BaseController {
 					$cantidad_solicitudes = count($data["solicitudes_anuladas"]);
 					for($i=0;$i<$cantidad_solicitudes;$i++)
 					{
-						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_anuladas"][$i]->fecha_asignacion);				
+						/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_anuladas"][$i]->fecha_asignacion);				
 						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_anuladas"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
+
+						$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_anuladas"][$i]->fecha_asignacion));
+
+						$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_anuladas"][$i]->fecha_solicitud));
+
+						$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
 						//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+						$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -329,161 +379,7 @@ class MenuPrincipalController extends BaseController {
 		
 	}
 
-	public function home_gestor(){
-		if(Auth::check()){
-			$data["inside_url"] = Config::get('app.inside_url');
-			$data["user"] = Session::get('user');
-			// Verifico si el usuario es un Webmaster
-			if($data["user"]->idrol == 2)
-			{
-				$data["solicitud_id_precargar"] = null;
-				$mes_actual = null;
-				$anho_actual = null;
-				$data["solicitudes_pendiente_data"] = Solicitud::buscarPorIdEstadoPorUsuario(3,$data["user"]->id,$mes_actual,$anho_actual)->get();
-				
-				$data["solicitudes_procesando_data"] = Solicitud::buscarPorIdEstadoPorUsuario(4,$data["user"]->id,$mes_actual,$anho_actual)->get();
-				
-				$data["idusuario"] = $data["user"]->id;
-				$data["solicitudes_pendientes"] = count($data["solicitudes_pendiente_data"]);
-				$data["solicitudes_procesando"] = count($data["solicitudes_procesando_data"]);
-				
-				$data["slas_data_pendiente"] = array();
-				$data["diferencia_fechas_pendiente"] = array();
-				$data["diferencia_fechas_trabajo_pendiente"] = array();
-				$cantidad_solicitudes = count($data["solicitudes_pendiente_data"]);
-				for($i=0;$i<$cantidad_solicitudes;$i++)
-				{
-					$sla = Sla::buscarSlaSolicitud($data["solicitudes_pendiente_data"][$i]->idsolicitud,$data["solicitudes_pendiente_data"][$i]->idtipo_solicitud)->get()[0];
-					array_push($data["slas_data_pendiente"], $sla);
-					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_pendiente_data"][$i]->fecha_asignacion);				
-					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
-					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_pendiente_data"][$i]->fecha_solicitud);				
-					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-					$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
-					//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
-					$cantidad_dias = 0;
-					if($feriados != null )
-					{
-						$tamano = count($feriados);											
-						for($j=0;$j<$tamano;$j++)
-						{
-							$dia = date('N',strtotime($feriados[$j]->valor_fecha));
-							//Validar si el feriado coincide con un fin de semana para no contar dos veces
-							if($dia != 6 && $dia != 7)
-								$cantidad_dias++;							
-						}
-					}
-					$diferencia_dias -= $cantidad_dias;
-					array_push($data["diferencia_fechas_pendiente"],$diferencia_dias);
-					//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
-					$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
-
-					$diferencia_dias_fecha_trabajo= $fecha_asignacion_formateada->diffInWeekdays($fecha_actual);
-					if($diferencia_dias_fecha_trabajo == 1)
-					{
-						//si la diferencia es de un dia validar la cantidad de horas
-						$fecha_actual_diferencia = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d 23:59:59'));
-						$hora_dif = $fecha_asignacion_formateada->diffInHours($fecha_actual_diferencia);
-						
-						if($hora_dif <= 24)
-							$diferencia_dias_fecha_trabajo = 0;
-						
-					}
-
-					//Obtener los dias feriados entre la fecha de hoy y la asignacion
-					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_actual)->get();
-					$cantidad_dias = 0;
-					if($feriados != null )
-					{
-						$tamano = count($feriados);											
-						for($j=0;$j<$tamano;$j++)
-						{
-							$dia = date('N',strtotime($feriados[$j]->valor_fecha));
-							//Validar si el feriado coincide con un fin de semana para no contar dos veces
-							if($dia != 6 && $dia != 7)
-								$cantidad_dias++;							
-						}
-					}
-					$diferencia_dias_fecha_trabajo -= $cantidad_dias;
-					array_push($data["diferencia_fechas_trabajo_pendiente"],$diferencia_dias_fecha_trabajo);
-				}
-				$data["slas_data_procesando"] = array();
-				$data["diferencia_fechas_procesando"] = array();
-				$data["diferencia_fechas_trabajo_procesando"] = array();
-				$cantidad_solicitudes = count($data["solicitudes_procesando_data"]);
-				for($i=0;$i<$cantidad_solicitudes;$i++)
-				{
-					$sla = Sla::buscarSlaSolicitud($data["solicitudes_procesando_data"][$i]->idsolicitud,$data["solicitudes_procesando_data"][$i]->idtipo_solicitud)->get()[0];
-					array_push($data["slas_data_procesando"], $sla);
-					
-					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_procesando_data"][$i]->fecha_asignacion);				
-					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
-
-					$fecha_inicio_procesando=Carbon\Carbon::parse($data["solicitudes_procesando_data"][$i]->fecha_inicio_procesando);				
-					$fecha_inicio_procesando_formateada = Carbon\Carbon::parse(date_format($fecha_inicio_procesando,'Y-m-d'));					
-
-					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_procesando_data"][$i]->fecha_solicitud);				
-					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-
-					$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
-					//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
-					$cantidad_dias = 0;
-					if($feriados != null )
-					{
-						$tamano = count($feriados);											
-						for($j=0;$j<$tamano;$j++)
-						{
-							$dia = date('N',strtotime($feriados[$j]->valor_fecha));
-							//Validar si el feriado coincide con un fin de semana para no contar dos veces
-							if($dia != 6 && $dia != 7)
-								$cantidad_dias++;							
-						}
-					}
-					$diferencia_dias -= $cantidad_dias;
-					array_push($data["diferencia_fechas_procesando"],$diferencia_dias);
-					//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
-					$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
-					$diferencia_dias_fecha_trabajo= $fecha_inicio_procesando_formateada->diffInWeekdays($fecha_actual);
-					
-					if($diferencia_dias_fecha_trabajo == 1)
-					{
-						//si la diferencia es de un dia validar la cantidad de horas
-						$fecha_actual_diferencia = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d 23:59:59'));
-						$hora_dif = $fecha_inicio_procesando_formateada->diffInHours($fecha_actual_diferencia);						
-						if($hora_dif <= 24)
-							$diferencia_dias_fecha_trabajo = 0;
-						
-					}
-
-					//Obtener los dias feriados entre la fecha de hoy y la asignacion
-					$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando_formateada,$fecha_actual)->get();
-					$cantidad_dias = 0;
-					if($feriados != null )
-					{
-						$tamano = count($feriados);											
-						for($j=0;$j<$tamano;$j++)
-						{
-							$dia = date('N',strtotime($feriados[$j]->valor_fecha));
-							//Validar si el feriado coincide con un fin de semana para no contar dos veces
-							if($dia != 6 && $dia != 7)
-								$cantidad_dias++;							
-						}
-					}
-					$diferencia_dias_fecha_trabajo -= $cantidad_dias;
-					array_push($data["diferencia_fechas_trabajo_procesando"],$diferencia_dias_fecha_trabajo);
-				}
-				$data["search_codigo_solicitud"] = null;
-				//ADICIONALES
-				$data["aplicativos"] = Herramienta::listarHerramientas()->lists('nombre','idherramienta'); 
-				return View::make('MenuPrincipal/menuPrincipalGestor',$data);
-			}else
-				return View::make('error/error',$data);
-		}else{
-			return View::make('error/error',$data);
-		}
-	}
+	
 
 	public function buscar_solicitudes_usuario()
 	{
@@ -550,13 +446,20 @@ class MenuPrincipalController extends BaseController {
 					$cantidad_solicitudes = count($data["solicitudes_atendidos"]);					
 					for($i=0;$i<$cantidad_solicitudes;$i++)
 					{
-						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_atendidos"][$i]->fecha_asignacion);				
+						/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_atendidos"][$i]->fecha_asignacion);				
 						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_atendidos"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
+						
 						//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+						$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_atendidos"][$i]->fecha_asignacion));
+
+						$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_atendidos"][$i]->fecha_solicitud));
+
+						$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
+						$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -583,13 +486,20 @@ class MenuPrincipalController extends BaseController {
 					$cantidad_solicitudes = count($data["solicitudes_cerrados"]);					
 					for($i=0;$i<$cantidad_solicitudes;$i++)
 					{
-						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_cerrados"][$i]->fecha_asignacion);				
+						/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_cerrados"][$i]->fecha_asignacion);				
 						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_cerrados"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
 						//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+
+						$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_cerrados"][$i]->fecha_asignacion));
+
+						$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_cerrados"][$i]->fecha_solicitud));
+
+						$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
+						$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -622,15 +532,24 @@ class MenuPrincipalController extends BaseController {
 						$sla = Sla::buscarSlaSolicitud($data["solicitudes_pendientes"][$i]->idsolicitud,$data["solicitudes_pendientes"][$i]->idtipo_solicitud)->get()[0];
 						array_push($data["slas_data_pendiente"], $sla);
 						
-						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_pendientes"][$i]->fecha_asignacion);				
+						/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_pendientes"][$i]->fecha_asignacion);				
 						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_pendientes"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
 
-						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
 						//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+
+						//PARA DIAS DE ASIGNACION
+
+						$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_pendientes"][$i]->fecha_asignacion));
+
+						$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_pendientes"][$i]->fecha_solicitud));
+
+						$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
+						$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -646,11 +565,9 @@ class MenuPrincipalController extends BaseController {
 						$diferencia_dias -= $cantidad_dias;
 						array_push($data["diferencia_fechas_pendiente"],$diferencia_dias);
 						//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
-						$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+						/*$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
 						$diferencia_dias_fecha_trabajo= $fecha_asignacion_formateada->diffInWeekdays($fecha_actual);
-						
-
-					
+											
 						if($diferencia_dias_fecha_trabajo == 1)
 						{
 							//si la diferencia es de un dia validar la cantidad de horas
@@ -659,10 +576,14 @@ class MenuPrincipalController extends BaseController {
 							if($hora_dif <= 24)
 								$diferencia_dias_fecha_trabajo = 0;
 							
-						}
+						}*/
+
+						$fecha_actual = date('Y-m-d');
+
+						$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_asignacion,$fecha_actual);
 
 						//Obtener los dias feriados entre la fecha de hoy y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_actual)->get();
+						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion,$fecha_actual)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -695,7 +616,7 @@ class MenuPrincipalController extends BaseController {
 						$sla = Sla::buscarSlaSolicitud($data["solicitudes_procesando"][$i]->idsolicitud,$data["solicitudes_procesando"][$i]->idtipo_solicitud)->get()[0];
 						array_push($data["slas_data_procesando"], $sla);
 						
-						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_procesando"][$i]->fecha_asignacion);				
+						/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_procesando"][$i]->fecha_asignacion);				
 						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 						
 						$fecha_inicio_procesando=Carbon\Carbon::parse($data["solicitudes_procesando"][$i]->fecha_inicio_procesando);
@@ -704,9 +625,19 @@ class MenuPrincipalController extends BaseController {
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_procesando"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
 						
-						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
 						//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+
+						$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_procesando"][$i]->fecha_asignacion));
+
+						$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_procesando"][$i]->fecha_solicitud));
+
+						$fecha_inicio_procesando = date('Y-m-d',strtotime($data["solicitudes_procesando"][$i]->fecha_inicio_procesando));
+						
+
+						$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
+						$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -722,7 +653,7 @@ class MenuPrincipalController extends BaseController {
 						$diferencia_dias -= $cantidad_dias;
 						array_push($data["diferencia_fechas_procesando"],$diferencia_dias);
 						//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
-						$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+						/*$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
 						$diferencia_dias_fecha_trabajo= $fecha_inicio_procesando_formateada->diffInWeekdays($fecha_actual);
 						
 						if($diferencia_dias_fecha_trabajo == 1)
@@ -733,10 +664,14 @@ class MenuPrincipalController extends BaseController {
 							if($hora_dif <= 24)
 								$diferencia_dias_fecha_trabajo = 0;
 							
-						}
+						}*/
+
+						$fecha_actual = date('Y-m-d');
+
+						$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_inicio_procesando,$fecha_actual);
 
 						//Obtener los dias feriados entre la fecha de hoy y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando_formateada,$fecha_actual)->get();
+						$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando,$fecha_actual)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -764,13 +699,21 @@ class MenuPrincipalController extends BaseController {
 					$cantidad_solicitudes = count($data["solicitudes_rechazadas"]);
 					for($i=0;$i<$cantidad_solicitudes;$i++)
 					{
-						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_rechazadas"][$i]->fecha_asignacion);				
+						/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_rechazadas"][$i]->fecha_asignacion);				
 						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_rechazadas"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
 						//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+
+						$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_rechazadas"][$i]->fecha_asignacion));
+
+						$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_rechazadas"][$i]->fecha_solicitud));
+
+						$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
+
+						$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -797,13 +740,20 @@ class MenuPrincipalController extends BaseController {
 					$cantidad_solicitudes = count($data["solicitudes_anuladas"]);
 					for($i=0;$i<$cantidad_solicitudes;$i++)
 					{
-						$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_anuladas"][$i]->fecha_asignacion);				
+						/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_anuladas"][$i]->fecha_asignacion);				
 						$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 						$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_anuladas"][$i]->fecha_solicitud);				
 						$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+						$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
 						//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-						$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+
+						$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_anuladas"][$i]->fecha_asignacion));
+
+						$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_anuladas"][$i]->fecha_solicitud));
+
+						$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
+						$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 						$cantidad_dias = 0;
 						if($feriados != null )
 						{
@@ -881,13 +831,22 @@ class MenuPrincipalController extends BaseController {
 					$data["diferencia_fechas_trabajo_procesando"] = array();
 					$sla = Sla::buscarSlaSolicitud($data["solicitudes_pendiente_data"][0]->idsolicitud,$data["solicitudes_pendiente_data"][0]->idtipo_solicitud)->get()[0];
 					array_push($data["slas_data_pendiente"], $sla);
-					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_pendiente_data"][0]->fecha_asignacion);				
+					
+
+					/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_pendiente_data"][0]->fecha_asignacion);				
 					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_pendiente_data"][0]->fecha_solicitud);				
 					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-					$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+					$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
+
+					$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_pendiente_data"][0]->fecha_asignacion));
+
+					$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_pendiente_data"][0]->fecha_solicitud));
+
+					$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
 					//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+					$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 					$cantidad_dias = 0;
 					if($feriados != null )
 					{
@@ -903,7 +862,7 @@ class MenuPrincipalController extends BaseController {
 					$diferencia_dias -= $cantidad_dias;
 					array_push($data["diferencia_fechas_pendiente"],$diferencia_dias);
 					//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
-					$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+					/*$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
 					$diferencia_dias_fecha_trabajo= $fecha_asignacion_formateada->diffInWeekdays($fecha_actual);
 					
 					if($diferencia_dias_fecha_trabajo == 1)
@@ -914,10 +873,14 @@ class MenuPrincipalController extends BaseController {
 						if($hora_dif <= 24)
 							$diferencia_dias_fecha_trabajo = 0;
 						
-					}
+					}*/
+
+					$fecha_actual = date('Y-m-d');
+
+					$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_asignacion,$fecha_actual);
 
 					//Obtener los dias feriados entre la fecha de hoy y la asignacion
-					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_actual)->get();
+					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion,$fecha_actual)->get();
 					$cantidad_dias = 0;
 					if($feriados != null )
 					{
@@ -948,7 +911,7 @@ class MenuPrincipalController extends BaseController {
 					$data["diferencia_fechas_trabajo_procesando"] = array();
 					$sla = Sla::buscarSlaSolicitud($data["solicitudes_procesando_data"][0]->idsolicitud,$data["solicitudes_procesando_data"][0]->idtipo_solicitud)->get()[0];
 					array_push($data["slas_data_procesando"], $sla);
-					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_procesando_data"][0]->fecha_asignacion);				
+					/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_procesando_data"][0]->fecha_asignacion);				
 					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));
 					
 					$fecha_inicio_procesando=Carbon\Carbon::parse($data["solicitudes_procesando_data"][0]->fecha_inicio_procesando);
@@ -957,9 +920,18 @@ class MenuPrincipalController extends BaseController {
 					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_procesando_data"][0]->fecha_solicitud);				
 					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
 					
-					$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+					$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
 					//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+
+					$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_procesando_data"][0]->fecha_asignacion));
+
+					$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_procesando_data"][0]->fecha_solicitud));
+
+					$fecha_inicio_procesando = date('Y-m-d',strtotime($data["solicitudes_procesando_data"][0]->fecha_inicio_procesando));
+
+					$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
+					$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 					$cantidad_dias = 0;
 					if($feriados != null )
 					{
@@ -975,7 +947,7 @@ class MenuPrincipalController extends BaseController {
 					$diferencia_dias -= $cantidad_dias;
 					array_push($data["diferencia_fechas_procesando"],$diferencia_dias);
 					//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
-					$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+					/*$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
 					$diferencia_dias_fecha_trabajo= $fecha_inicio_procesando_formateada->diffInWeekdays($fecha_actual);
 					
 					if($diferencia_dias_fecha_trabajo == 1)
@@ -986,10 +958,14 @@ class MenuPrincipalController extends BaseController {
 						if($hora_dif <= 24)
 							$diferencia_dias_fecha_trabajo = 0;
 						
-					}
+					}*/
+
+					$fecha_actual = date('Y-m-d');
+
+					$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_inicio_procesando,$fecha_actual);
 
 					//Obtener los dias feriados entre la fecha de hoy y la asignacion
-					$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando_formateada,$fecha_actual)->get();
+					$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando,$fecha_actual)->get();
 					$cantidad_dias = 0;
 					if($feriados != null )
 					{
@@ -1107,13 +1083,20 @@ class MenuPrincipalController extends BaseController {
 						{
 							$sla = Sla::buscarSlaSolicitud($solicitudes_pendientes[$i]->idsolicitud,$solicitudes_pendientes[$i]->idtipo_solicitud)->get()[0];
 							
-							$fecha_asignacion=Carbon\Carbon::parse($solicitudes_pendientes[$i]->fecha_asignacion);				
+							/*$fecha_asignacion=Carbon\Carbon::parse($solicitudes_pendientes[$i]->fecha_asignacion);				
 							$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 							$fecha_solicitud=Carbon\Carbon::parse($solicitudes_pendientes[$i]->fecha_solicitud);				
 							$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-							$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+							$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
+
+							$fecha_asignacion = date('Y-m-d',strtotime($solicitudes_pendientes[$i]->fecha_asignacion));
+
+							$fecha_solicitud = date('Y-m-d',strtotime($solicitudes_pendientes[$i]->fecha_solicitud));
+
+							$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
 							//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-							$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+							$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 							$cantidad_dias = 0;
 							if($feriados != null )
 							{
@@ -1129,7 +1112,7 @@ class MenuPrincipalController extends BaseController {
 							$diferencia_dias -= $cantidad_dias;
 							
 							//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
-							$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+							/*$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
 							$diferencia_dias_fecha_trabajo= $fecha_asignacion_formateada->diffInWeekdays($fecha_actual);
 
 							if($diferencia_dias_fecha_trabajo == 1)
@@ -1140,10 +1123,14 @@ class MenuPrincipalController extends BaseController {
 								if($hora_dif <= 24)
 									$diferencia_dias_fecha_trabajo = 0;
 								
-							}
+							}*/
+
+							$fecha_actual = date('Y-m-d');
+
+							$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_asignacion,$fecha_actual);
 							
 							//Obtener los dias feriados entre la fecha de hoy y la asignacion
-							$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_actual)->get();
+							$feriados = Feriado::buscarDiasFeriados($fecha_asignacion,$fecha_actual)->get();
 							$cantidad_dias = 0;
 							if($feriados != null )
 							{
@@ -1219,13 +1206,22 @@ class MenuPrincipalController extends BaseController {
 						{
 							$sla = Sla::buscarSlaSolicitud($solicitudes_procesando[$i]->idsolicitud,$solicitudes_procesando[$i]->idtipo_solicitud)->get()[0];
 							
-							$fecha_asignacion=Carbon\Carbon::parse($solicitudes_procesando[$i]->fecha_asignacion);				
+							/*$fecha_asignacion=Carbon\Carbon::parse($solicitudes_procesando[$i]->fecha_asignacion);				
 							$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 							$fecha_solicitud=Carbon\Carbon::parse($solicitudes_procesando[$i]->fecha_solicitud);				
 							$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-							$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+							$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
 							//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-							$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+
+							$fecha_asignacion = date('Y-m-d',strtotime($solicitudes_procesando[$i]->fecha_asignacion));
+
+							$fecha_solicitud = date('Y-m-d',strtotime($solicitudes_procesando[$i]->fecha_solicitud));
+
+							$fecha_inicio_procesando = date('Y-m-d',strtotime($solicitudes_procesando[$i]->fecha_inicio_procesando));
+
+							$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
+							$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 							$cantidad_dias = 0;
 							if($feriados != null )
 							{
@@ -1240,7 +1236,7 @@ class MenuPrincipalController extends BaseController {
 							}
 							$diferencia_dias -= $cantidad_dias;
 							
-							$fecha_inicio_procesando=Carbon\Carbon::parse($solicitudes_procesando[$i]->fecha_inicio_procesando);
+							/*$fecha_inicio_procesando=Carbon\Carbon::parse($solicitudes_procesando[$i]->fecha_inicio_procesando);
 							$fecha_inicio_procesando_formateada = Carbon\Carbon::parse(date_format($fecha_inicio_procesando,'Y-m-d'));
 
 							//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
@@ -1256,10 +1252,14 @@ class MenuPrincipalController extends BaseController {
 								if($hora_dif <= 24)
 									$diferencia_dias_fecha_trabajo = 0;
 								
-							}
+							}*/
+
+							$fecha_actual = date('Y-m-d');
+
+							$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_inicio_procesando,$fecha_actual);
 
 							//Obtener los dias feriados entre la fecha de hoy y la asignacion
-							$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando_formateada,$fecha_actual)->get();
+							$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando,$fecha_actual)->get();
 							$cantidad_dias = 0;
 							if($feriados != null )
 							{
@@ -1359,11 +1359,18 @@ class MenuPrincipalController extends BaseController {
 				{
 					$sla = Sla::buscarSlaSolicitud($data["solicitudes_pendiente_data"][$i]->idsolicitud,$data["solicitudes_pendiente_data"][$i]->idtipo_solicitud)->get()[0];
 					array_push($data["slas_data_pendiente"], $sla);
-					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_pendiente_data"][$i]->fecha_asignacion);				
+					
+					/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_pendiente_data"][$i]->fecha_asignacion);				
 					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_pendiente_data"][$i]->fecha_solicitud);				
 					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
-					$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+					$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
+
+					$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_pendiente_data"][$i]->fecha_solicitud));
+
+					$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_pendiente_data"][$i]->fecha_asignacion));
+
+					$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
 					//Obtener los dias feriados entre la fecha de solicitud y la asignacion
 					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
 					$cantidad_dias = 0;
@@ -1381,7 +1388,7 @@ class MenuPrincipalController extends BaseController {
 					$diferencia_dias -= $cantidad_dias;
 					array_push($data["diferencia_fechas_pendiente"],$diferencia_dias);
 					//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
-					$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+					/*$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
 					$diferencia_dias_fecha_trabajo= $fecha_asignacion_formateada->diffInWeekdays($fecha_actual);
 					
 					if($diferencia_dias_fecha_trabajo == 1)
@@ -1392,8 +1399,10 @@ class MenuPrincipalController extends BaseController {
 						if($hora_dif <= 24)
 							$diferencia_dias_fecha_trabajo = 0;
 						
-					}
+					}*/
+					$fecha_actual = date('Y-m-d');
 
+					$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_asignacion,$fecha_actual);
 					//Obtener los dias feriados entre la fecha de hoy y la asignacion
 					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_actual)->get();
 					$cantidad_dias = 0;
@@ -1420,7 +1429,7 @@ class MenuPrincipalController extends BaseController {
 					$sla = Sla::buscarSlaSolicitud($data["solicitudes_procesando_data"][$i]->idsolicitud,$data["solicitudes_procesando_data"][$i]->idtipo_solicitud)->get()[0];
 					array_push($data["slas_data_procesando"], $sla);
 					
-					$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_procesando_data"][$i]->fecha_asignacion);				
+					/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_procesando_data"][$i]->fecha_asignacion);				
 					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
 
 					$fecha_inicio_procesando=Carbon\Carbon::parse($data["solicitudes_procesando_data"][$i]->fecha_inicio_procesando);				
@@ -1429,7 +1438,16 @@ class MenuPrincipalController extends BaseController {
 					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_procesando_data"][$i]->fecha_solicitud);				
 					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
 
-					$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);
+					$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
+
+					$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_procesando_data"][$i]->fecha_solicitud));
+
+					$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_procesando_data"][$i]->fecha_asignacion));
+
+					$fecha_inicio_procesando = date('Y-m-d',strtotime($data["solicitudes_procesando_data"][$i]->fecha_inicio_procesando));
+
+					$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
 					//Obtener los dias feriados entre la fecha de solicitud y la asignacion
 					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
 					$cantidad_dias = 0;
@@ -1447,7 +1465,7 @@ class MenuPrincipalController extends BaseController {
 					$diferencia_dias -= $cantidad_dias;
 					array_push($data["diferencia_fechas_procesando"],$diferencia_dias);
 					//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
-					$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+					/*$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
 					$diferencia_dias_fecha_trabajo= $fecha_inicio_procesando_formateada->diffInWeekdays($fecha_actual);
 					
 					if($diferencia_dias_fecha_trabajo == 1)
@@ -1458,7 +1476,11 @@ class MenuPrincipalController extends BaseController {
 						if($hora_dif <= 24)
 							$diferencia_dias_fecha_trabajo = 0;
 						
-					}
+					}*/
+
+					$fecha_actual = date('Y-m-d');
+
+					$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_asignacion,$fecha_actual);
 
 					//Obtener los dias feriados entre la fecha de hoy y la asignacion
 					$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando_formateada,$fecha_actual)->get();
@@ -1493,6 +1515,187 @@ class MenuPrincipalController extends BaseController {
 				//ADICIONALES
 				$data["aplicativos"] = Herramienta::listarHerramientas()->lists('nombre','idherramienta');
 
+				return View::make('MenuPrincipal/menuPrincipalGestor',$data);
+			}else
+				return View::make('error/error',$data);
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function home_gestor(){
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 2)
+			{
+				$data["solicitud_id_precargar"] = null;
+				$mes_actual = null;
+				$anho_actual = null;
+				$data["solicitudes_pendiente_data"] = Solicitud::buscarPorIdEstadoPorUsuario(3,$data["user"]->id,$mes_actual,$anho_actual)->get();
+				
+				$data["solicitudes_procesando_data"] = Solicitud::buscarPorIdEstadoPorUsuario(4,$data["user"]->id,$mes_actual,$anho_actual)->get();
+				
+				$data["idusuario"] = $data["user"]->id;
+				$data["solicitudes_pendientes"] = count($data["solicitudes_pendiente_data"]);
+				$data["solicitudes_procesando"] = count($data["solicitudes_procesando_data"]);
+				
+				$data["slas_data_pendiente"] = array();
+				$data["diferencia_fechas_pendiente"] = array();
+				$data["diferencia_fechas_trabajo_pendiente"] = array();
+				$cantidad_solicitudes = count($data["solicitudes_pendiente_data"]);
+				for($i=0;$i<$cantidad_solicitudes;$i++)
+				{
+					$sla = Sla::buscarSlaSolicitud($data["solicitudes_pendiente_data"][$i]->idsolicitud,$data["solicitudes_pendiente_data"][$i]->idtipo_solicitud)->get()[0];
+					array_push($data["slas_data_pendiente"], $sla);
+
+					/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_pendiente_data"][$i]->fecha_asignacion);				
+					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_pendiente_data"][$i]->fecha_solicitud);				
+					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+					$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
+
+					$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_pendiente_data"][$i]->fecha_solicitud));
+
+					$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_pendiente_data"][$i]->fecha_asignacion));
+
+					$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
+					//Obtener los dias feriados entre la fecha de solicitud y la asignacion
+					$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
+					$cantidad_dias = 0;
+					if($feriados != null )
+					{
+						$tamano = count($feriados);											
+						for($j=0;$j<$tamano;$j++)
+						{
+							$dia = date('N',strtotime($feriados[$j]->valor_fecha));
+							//Validar si el feriado coincide con un fin de semana para no contar dos veces
+							if($dia != 6 && $dia != 7)
+								$cantidad_dias++;							
+						}
+					}
+					$diferencia_dias -= $cantidad_dias;
+					array_push($data["diferencia_fechas_pendiente"],$diferencia_dias);
+					//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
+					/*$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+					$diferencia_dias_fecha_trabajo= $fecha_asignacion_formateada->diffInWeekdays($fecha_actual);
+					
+					if($diferencia_dias_fecha_trabajo == 1)
+					{
+						//si la diferencia es de un dia validar la cantidad de horas
+						$fecha_actual_diferencia = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d 23:59:59'));
+						$hora_dif = $fecha_asignacion_formateada->diffInHours($fecha_actual_diferencia);
+						
+						if($hora_dif <= 24)
+							$diferencia_dias_fecha_trabajo = 0;
+						
+					}*/
+
+					$fecha_actual = date('Y-m-d');
+
+					$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_asignacion,$fecha_actual);
+
+					//Obtener los dias feriados entre la fecha de hoy y la asignacion
+					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion,$fecha_actual)->get();
+					$cantidad_dias = 0;
+					if($feriados != null )
+					{
+						$tamano = count($feriados);											
+						for($j=0;$j<$tamano;$j++)
+						{
+							$dia = date('N',strtotime($feriados[$j]->valor_fecha));
+							//Validar si el feriado coincide con un fin de semana para no contar dos veces
+							if($dia != 6 && $dia != 7)
+								$cantidad_dias++;							
+						}
+					}
+					$diferencia_dias_fecha_trabajo -= $cantidad_dias;
+					array_push($data["diferencia_fechas_trabajo_pendiente"],$diferencia_dias_fecha_trabajo);
+				}
+				$data["slas_data_procesando"] = array();
+				$data["diferencia_fechas_procesando"] = array();
+				$data["diferencia_fechas_trabajo_procesando"] = array();
+				$cantidad_solicitudes = count($data["solicitudes_procesando_data"]);
+				for($i=0;$i<$cantidad_solicitudes;$i++)
+				{
+					$sla = Sla::buscarSlaSolicitud($data["solicitudes_procesando_data"][$i]->idsolicitud,$data["solicitudes_procesando_data"][$i]->idtipo_solicitud)->get()[0];
+					array_push($data["slas_data_procesando"], $sla);
+					
+					/*$fecha_asignacion=Carbon\Carbon::parse($data["solicitudes_procesando_data"][$i]->fecha_asignacion);				
+					$fecha_asignacion_formateada = Carbon\Carbon::parse(date_format($fecha_asignacion,'Y-m-d'));								
+
+					$fecha_inicio_procesando=Carbon\Carbon::parse($data["solicitudes_procesando_data"][$i]->fecha_inicio_procesando);				
+					$fecha_inicio_procesando_formateada = Carbon\Carbon::parse(date_format($fecha_inicio_procesando,'Y-m-d'));					
+
+					$fecha_solicitud=Carbon\Carbon::parse($data["solicitudes_procesando_data"][$i]->fecha_solicitud);				
+					$fecha_solicitud_formateada = Carbon\Carbon::parse(date_format($fecha_solicitud,'Y-m-d'));
+
+					$diferencia_dias = $fecha_solicitud_formateada->diffInWeekDays($fecha_asignacion_formateada);*/
+
+					$fecha_solicitud = date('Y-m-d',strtotime($data["solicitudes_procesando_data"][$i]->fecha_solicitud));
+
+					$fecha_asignacion = date('Y-m-d',strtotime($data["solicitudes_procesando_data"][$i]->fecha_asignacion));
+
+					$fecha_inicio_procesando = date('Y-m-d',strtotime($data["solicitudes_procesando_data"][$i]->fecha_inicio_procesando));
+
+					$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
+
+					//Obtener los dias feriados entre la fecha de solicitud y la asignacion
+					$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
+					$cantidad_dias = 0;
+					if($feriados != null )
+					{
+						$tamano = count($feriados);											
+						for($j=0;$j<$tamano;$j++)
+						{
+							$dia = date('N',strtotime($feriados[$j]->valor_fecha));
+							//Validar si el feriado coincide con un fin de semana para no contar dos veces
+							if($dia != 6 && $dia != 7)
+								$cantidad_dias++;							
+						}
+					}
+					$diferencia_dias -= $cantidad_dias;
+					array_push($data["diferencia_fechas_procesando"],$diferencia_dias);
+					//Para determinar el valor del semaforo se debe realizar en funcion a la fecha de asignacion
+					/*$fecha_actual = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d'));
+					$diferencia_dias_fecha_trabajo= $fecha_inicio_procesando_formateada->diffInWeekdays($fecha_actual);
+					
+					if($diferencia_dias_fecha_trabajo == 1)
+					{
+						//si la diferencia es de un dia validar la cantidad de horas
+						$fecha_actual_diferencia = Carbon\Carbon::parse(date_format(Carbon\Carbon::now(),'Y-m-d 23:59:59'));
+						$hora_dif = $fecha_inicio_procesando_formateada->diffInHours($fecha_actual_diferencia);						
+						if($hora_dif <= 24)
+							$diferencia_dias_fecha_trabajo = 0;
+						
+					}*/
+
+					$fecha_actual = date('Y-m-d');
+
+					$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_asignacion,$fecha_actual);
+
+					//Obtener los dias feriados entre la fecha de hoy y la asignacion
+					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion,$fecha_actual)->get();
+					$cantidad_dias = 0;
+					if($feriados != null )
+					{
+						$tamano = count($feriados);											
+						for($j=0;$j<$tamano;$j++)
+						{
+							$dia = date('N',strtotime($feriados[$j]->valor_fecha));
+							//Validar si el feriado coincide con un fin de semana para no contar dos veces
+							if($dia != 6 && $dia != 7)
+								$cantidad_dias++;							
+						}
+					}
+					$diferencia_dias_fecha_trabajo -= $cantidad_dias;
+					array_push($data["diferencia_fechas_trabajo_procesando"],$diferencia_dias_fecha_trabajo);
+				}
+				$data["search_codigo_solicitud"] = null;
+				//ADICIONALES
+				$data["aplicativos"] = Herramienta::listarHerramientas()->lists('nombre','idherramienta'); 
 				return View::make('MenuPrincipal/menuPrincipalGestor',$data);
 			}else
 				return View::make('error/error',$data);
@@ -1545,6 +1748,32 @@ class MenuPrincipalController extends BaseController {
 		}else{
 			return View::make('error/error',$data);
 		}
+	}
+
+	public function getWorkingDays($startDate, $endDate)
+	{
+	    $begin = strtotime($startDate);
+	    $end   = strtotime($endDate);
+
+	    if ($begin > $end) {
+	        echo "startdate is in the future! <br />";
+
+	        return 0;
+	    } else {
+	        $no_days  = 0;
+	        $weekends = 0;
+	        while ($begin < $end) {
+	            $no_days++; // no of days in the given interval
+	            $what_day = date("N", $begin);
+	            if ($what_day > 5) { // 6 and 7 are weekend days
+	                $weekends++;
+	            };
+	            $begin += 86400; // +1 day
+	        };
+	        $working_days = $no_days - $weekends;
+
+	        return $working_days;
+	    }
 	}
 
 }

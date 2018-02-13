@@ -99,10 +99,10 @@
 					<input style="display:none" name='apellidos_materno[]' value='{{$resultado["apellido_materno"]}}' readonly/>
 					<input style="display:none" name='canales[]' value='{{ $resultado["canal"]}}' readonly/>
 					<input style="display:none" name='detalle_canales[]' value='{{ $resultado["detalle_canal"]}}' readonly/>
-					<input style="display:none" name='subdetalle_canales[]' value='{{ $resultado["subdetalle_canal"]}}' readonly/>					
+									
 					<input style="display:none" name='socios[]' value='{{$resultado["socio"]}}' readonly/>
 					<input style="display:none" name='rucs[]' value='{{$resultado["ruc"]}}' readonly/>
-					<input style="display:none" name='entidades[]' value='{{$resultado["entidad"]}}' readonly/>
+					
 					<input style="display:none" name='puntos_venta[]' value='{{$resultado["punto_venta"]}}' readonly/>
 					<input style="display:none" name='roles[]' value='{{$resultado["rol"]}}' readonly/>
 				@endforeach
