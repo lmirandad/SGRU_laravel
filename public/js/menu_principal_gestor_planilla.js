@@ -4,7 +4,7 @@ $( document ).ready(function(){
 	if($('#input-file-planilla').length){
 		$("#input-file-planilla").fileinput({
 		    language: "es",
-		    allowedFileExtensions: ["xls","xlsx","xlsm"],
+		    allowedFileExtensions: ["xls","xlsx"],
 		    showPreview: false,
 		    showUpload: false,
 		});

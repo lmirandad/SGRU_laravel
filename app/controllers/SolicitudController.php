@@ -1130,17 +1130,7 @@ class SolicitudController extends BaseController {
 					$usuario_apto = null;
 					$herramienta_varios = Herramienta::buscarPorNombre('VARIOS')->get();
 					if($idherramienta == $herramienta_varios[0]->idherramienta){
-						//herramienta representada para "VARIOS"
-						
-						/*$usuarios = User::buscarUsuariosAsignacionPorSector($idsector);	
 					
-						if(is_array($usuarios) == true) //hay usuarios
-						{
-							$usuario_apto = User::find($usuarios[0]->id_usuario);
-						}else
-						{
-							$usuario_apto = null;
-						}*/
 
 						$usuario_apto = SolicitudController::buscarUsuarioAptoPorSector($idsector);
 						
@@ -1148,17 +1138,7 @@ class SolicitudController extends BaseController {
 
 						//como solo tiene una sola herramienta, buscamos a los usuarios especializados y que tengan menos solicitudes pendientes y en proceso.
 
-						/*$usuarios = User::buscarUsuariosAsignacionPorHerramienta($idherramienta,$idaccion);	
-
-						if(is_array($usuarios) == true) //hay usuarios
-						{
-							$usuario_apto = User::find($usuarios[0]->id_usuario);
-						}else
-						{
-							$usuario_apto = null;
-						}*/
-
-						$usuario_apto = SolicitudController::buscarUsuarioAptoPorHerramienta($idherramienta,$idaccion);
+						$usuario_apto = SolicitudController::buscarUsuarioAptoPorHerramientaV2($idherramienta,$idaccion,$idsector);
 
 						if($usuario_apto == null)
 						{
@@ -1298,4 +1278,70 @@ class SolicitudController extends BaseController {
 
 		return $usuario_apto;	
 	}
+
+	public function submit_rechazar_solicitud()
+	{
+		if(Auth::check()){
+			$data["inside_url"] = Config::get('app.inside_url');
+			$data["user"] = Session::get('user');
+			// Verifico si el usuario es un Webmaster
+			if($data["user"]->idrol == 2){
+				// Validate the info, create rules for the inputs
+				$solicitud_id = Input::get('solicitud_id_rechazar');
+				$solicitud = Solicitud::find($solicitud_id);
+				$attributes = array(
+					'observacion' => 'Descripción de Observación'
+				);
+
+				$messages = array();
+
+				$rules = array(
+					'observacion' => 'required|alpha_num_spaces_slash_dash_enter|max:1000'
+				);
+				// Run the validation rules on the inputs from the form
+				$validator = Validator::make(Input::all(), $rules,$messages,$attributes);
+				// If the validator fails, redirect back to the form
+				if($validator->fails()){
+					return Redirect::to('/principal_gestor_procesando/'.$solicitud->idsolicitud)->withErrors($validator)->withInput(Input::all());
+				}else{
+					
+					$observacion = Input::get('observacion');
+					$solicitud_id = Input::get('solicitud_id_rechazar');
+					
+					$solicitud = Solicitud::find($solicitud_id);
+
+					$solicitud->idestado_solicitud = 5;
+					$solicitud->fecha_cierre = date('Y-m-d H:i:s');
+					$solicitud->motivo_anulacion = $observacion;
+					$solicitud->save();
+
+
+					Session::flash('message', 'Se rechazó correctamente la solicitud '.$solicitud->codigo_solicitud);
+					
+					return Redirect::to('/principal_gestor_procesando/'.$solicitud->idsolicitud);
+				}
+			}else{
+				return View::make('error/error',$data);
+			}
+
+		}else{
+			return View::make('error/error',$data);
+		}
+	}
+
+	public function buscarUsuarioAptoPorHerramientaV2($idherramienta,$idaccion,$idsector)
+	{
+		$usuarios = User::buscarUsuariosAsignacionPorHerramientaV2($idherramienta,$idaccion,$idsector);	
+
+		if(is_array($usuarios) == true) //hay usuarios
+		{
+			$usuario_apto = User::find($usuarios[0]->id_usuario);
+		}else
+		{
+			$usuario_apto = null;
+		}
+
+		return $usuario_apto;	
+	}
+
 }

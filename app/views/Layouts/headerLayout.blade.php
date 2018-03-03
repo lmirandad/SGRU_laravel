@@ -3,8 +3,12 @@
 	<div class="brand" style="background-color:#015C63 ;width:25%" >
 		@if($user->idrol == 1)
 		<a href="{{URL::to('/principal_admin')}}"><img src="{{asset('assets/img/nuevo_logo.png')}}" alt="SGRU" class="img-responsive logo" style="margin-bottom: -30px;margin-top:-20px;padding-left:-20px"></a>
-		@else		
+		@elseif($user->idrol == 2)		
 		<a href="{{URL::to('/principal_gestor')}}"><img src="{{asset('assets/img/nuevo_logo.png')}}" alt="SGRU" class="img-responsive logo" style="margin-bottom: -30px;margin-top:-20px;padding-left:-20px"></a>
+		@elseif($user->idrol == 5)		
+		<a href="{{URL::to('/principal_admin_planilla')}}"><img src="{{asset('assets/img/nuevo_logo.png')}}" alt="SGRU" class="img-responsive logo" style="margin-bottom: -30px;margin-top:-20px;padding-left:-20px"></a>
+		@elseif($user->idrol == 6)		
+		<a href="{{URL::to('/principal_gestor_planilla')}}"><img src="{{asset('assets/img/nuevo_logo.png')}}" alt="SGRU" class="img-responsive logo" style="margin-bottom: -30px;margin-top:-20px;padding-left:-20px"></a>
 		@endif
 	</div>
 	<div class="container-fluid">

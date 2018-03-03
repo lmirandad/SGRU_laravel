@@ -332,7 +332,7 @@
       <div class="modal-content" >
 	        <div class="modal-header bg-primary">
 	          <button type="button" class="close" id="btnCerrarModal" data-dismiss="modal">&times;</button>
-	          <h4 class="modal-title">Tipo de Acción Solicitud - Equivalencias</h4>
+	          <h4 class="modal-title">Reasignación de Solicitud</h4>
 	        </div>
 	        <div class="modal-body" id="modal_text_equivalencias">
 	         	<div class="container-fluid">	        

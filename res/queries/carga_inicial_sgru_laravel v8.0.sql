@@ -6,13 +6,13 @@ USE SGRU_database
 -- ROL
 
 INSERT INTO rol (nombre,created_at,updated_at) VALUES ('ADMINISTRADOR',convert(datetime,'2017-11-17'),convert(datetime,'2017-11-17'));
-INSERT INTO rol (nombre,created_at,updated_at) VALUES ('GESTOR','2017-11-17','2017-11-17');
+INSERT INTO rol (nombre,created_at,updated_at) VALUES ('GESTOR USUARIOS','2017-11-17','2017-11-17');
 INSERT INTO rol (nombre,created_at,updated_at) VALUES ('BUSINESS PARTNER','2017-11-17','2017-11-17');
 INSERT INTO rol (nombre,created_at,updated_at) VALUES ('RESPONSABLE CANAL','2017-11-17','2017-11-17');
 
 
-INSERT INTO rol (idrol,nombre,created_at,updated_at) VALUES (5,'ADMINISTRADOR PLANILLA','2017-11-17','2017-11-17');
-INSERT INTO rol (idrol,nombre,created_at,updated_at) VALUES (6,'GESTOR PLANILLA','2017-11-17','2017-11-17');
+INSERT INTO rol (idrol,nombre,created_at,updated_at) VALUES (5,'ADMINISTRADOR PERSONAL','2017-11-17','2017-11-17');
+INSERT INTO rol (idrol,nombre,created_at,updated_at) VALUES (6,'GESTOR PERSONAL','2017-11-17','2017-11-17');
 
 -- RANGO DIAS REPORTERIA
 INSERT INTO rango_dias_reporteria (nombre,dia_minimo,dia_maximo,created_at,updated_at) VALUES ('[0-1]',0,1,'2017-11-17','2017-11-17')
@@ -136,26 +136,46 @@ INSERT INTO USERS (username,password,email,remember_token,nombre,apellido_patern
 ('sgru_webmaster','$2y$10$YSwHz1VNwKl3z7iKVB8k4uxbYGIwNudoETrnZMo0pPG0F16d5SpC.','luismiguel0103@hotmail.com','','Luis Miguel',
 'Miranda','Dulanto','1993-03-01','M','72299021','461682','2017-11-17','2017-11-17',1,1);
 
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('cmalca','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Cristina','Malca','','1990-01-01','F',12345678,'2106498',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('jlurita','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Juan José','Lurita','','1990-01-01','M',12345679,'2106493',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('jarbulu','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Jose','Arbulu','Arbulu','1990-01-01','M',12345680,'2106448',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('lhidalgo','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Liz','Hidalgo','Vasquez','1990-01-01','F',12345681,'2102020',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('mllontop','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Maria','Llontop','','1990-01-01','F',12345682,'2102004',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('rrios','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Ronald','Rios','','1990-01-01','M',12345683,'2106419',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('njauregui','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Nora','Jauregui','Portilla','1990-01-01','F',12345684,'2102088',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('lcruz','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Lilian','Cruz','Zuta','1990-01-01','F',12345685,'2106471',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('tortiz','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Tatiana','Ortiz','de Foronda','1990-01-01','F',12345686,'2102099',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('fcastro','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Francis','Castro','','1990-01-01','M',12345687,'2102067',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('fanampa','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Fernando','Anampa','','1990-01-01','M',12345688,'2102014',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('gpoquioma','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Gris','Poquioma','Wu','1990-01-01','F',12345689,'2102599',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('gvillanueva','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Gladys','Villanueva','','1990-01-01','F',12345690,'2102098',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('hpachas','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Hilda','Pachas','Crisostomo','1990-01-01','F',12345691,'2102042',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('marenas','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','María','Arenas','','1990-01-01','F',12345692,'2104097',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('jmontes','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Javier','Montes','Montenegro','1990-01-01','M',12345693,'2102000',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('amendez','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Ana','Mendez','','1990-01-01','F',12345694,'2102090',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('jvilchez','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Jannet','Vilchez','','1990-01-01','F',12345695,'2102097',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('fmacchiavelo','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Fiorella','Macchiavelo','','1990-01-01','F',12345696,'2102070',0,2,1,'2018-01-30','2018-01-30')
-INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('llarranaga','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Luis','Larrañaga','','1990-01-01','M',12345697,'2106468',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('cmalca','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Cristina','Malca','','1990-01-01','F',12345678,'2106498',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('jlurita','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Juan José','Lurita','','1990-01-01','M',12345679,'2106493',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('jarbulu','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Jose','Arbulu','Arbulu','1990-01-01','M',12345680,'2106448',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('lhidalgo','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Liz','Hidalgo','Vasquez','1990-01-01','F',12345681,'2102020',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('mllontop','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Maria','Llontop','','1990-01-01','F',12345682,'2102004',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('rrios','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Ronald','Rios','','1990-01-01','M',12345683,'2106419',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('njauregui','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Nora','Jauregui','Portilla','1990-01-01','F',12345684,'2102088',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('lcruz','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Lilian','Cruz','Zuta','1990-01-01','F',12345685,'2106471',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('tortiz','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Tatiana','Ortiz','de Foronda','1990-01-01','F',12345686,'2102099',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('fcastro','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Francis','Castro','','1990-01-01','M',12345687,'2102067',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('fanampa','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Fernando','Anampa','','1990-01-01','M',12345688,'2102014',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('gpoquioma','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Gris','Poquioma','Wu','1990-01-01','F',12345689,'2102599',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('gvillanueva','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Gladys','Villanueva','','1990-01-01','F',12345690,'2102098',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('hpachas','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Hilda','Pachas','Crisostomo','1990-01-01','F',12345691,'2102042',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('marenas','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','María','Arenas','','1990-01-01','F',12345692,'2104097',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('jmontes','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Javier','Montes','Montenegro','1990-01-01','M',12345693,'2102000',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('amendez','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Ana','Mendez','','1990-01-01','F',12345694,'2102090',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('jvilchez','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Jannet','Vilchez','','1990-01-01','F',12345695,'2102097',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('fmacchiavelo','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Fiorella','Macchiavelo','','1990-01-01','F',12345696,'2102070',0,2,1,'2018-01-30','2018-01-30')
+INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,
+flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('llarranaga','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Luis','Larrañaga','','1990-01-01','M',12345697,'2106468',0,2,1,'2018-01-30','2018-01-30')
 INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('ririgoyen','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Rosa','Irigoyen','','1990-01-01','F',12345698,'2106484',0,2,1,'2018-01-30','2018-01-30')
 INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('mflores','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Mercedes','Flores','','1990-01-01','F',12345699,'2106460',0,2,1,'2018-01-30','2018-01-30')
 INSERT INTO users (username,password,email,nombre,apellido_paterno,apellido_materno,fecha_nacimiento,genero,numero_doc_identidad,telefono,flag_cambiar_contrasena,idrol,idtipo_doc_identidad,created_at,updated_at) VALUES ('pgarcia','$2y$10$Qwj9k1f3C4tqs8IjnGO7Wu18/ivKegx0QUNvjasov07s.og9uTECW','correo@telefonica.com','Patricia','Garcia','','1990-01-01','F',12345700,'2102069',0,2,1,'2018-01-30','2018-01-30')
@@ -10248,13 +10268,11 @@ INSERT INTO TIPO_SOLICITUDXSLA (sla_pendiente,sla_procesando,idherramientaxsecto
 UPDATE TIPO_SOLICITUDXSLA
 SET SLA_PENDIENTE = 1
 
--- 05/02: Pruebas basicas con el equipo de GU (4 gestores)
+-- 15/02: Actualizar los username que son Gestores para que inicien con "gu_"
 
-delete from usersxsector
-where iduser not in (7,11,10,20)
-
-delete from users 
-where id not in (1,7,11,10,20)
+UPDATE USERS
+SET USERNAME = CONCAT('gu_',USERNAME)
+WHERE ID > 1
 
 /* CONSIDERACIONES
  INTERCONNECT ES POR CORREO

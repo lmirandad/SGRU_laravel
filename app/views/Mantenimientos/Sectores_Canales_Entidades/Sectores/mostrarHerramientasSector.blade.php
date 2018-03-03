@@ -44,9 +44,9 @@
 										@if(count($herramientas_disponibles)>0)
 										<thead>
 											<tr>
-												<th class="text-nowrap text-center">N°</th>
-												<th class="text-nowrap text-center">Nombre Aplicativo</th>
-												<th class="text-nowrap text-center">Tipo Aplicativo</th>
+												
+												<th class="text-nowrap text-center">Nombre<br> Aplicativo</th>
+												<th class="text-nowrap text-center">Tipo<br> Aplicativo</th>
 												<th class="text-nowrap text-center">Agregar <input type="checkbox" id="checkboxAll" class="form-check-input"></th>
 											</tr>
 										</thead>
@@ -55,10 +55,8 @@
 												@foreach($herramientas_disponibles as $index  => $herramienta)
 													@if($herramienta->idherramienta != 99 && $herramienta->idherramienta != 100 &&$herramienta->idherramienta != 101)	
 														<tr>
-															<td class="text-nowrap text-center">
-																<input style="display:none" name='ids_herramientas[]' value='{{ $herramienta->idherramienta }}' readonly/>
-																{{$index+1}}
-															</td>
+															<input style="display:none" name='ids_herramientas[]' value='{{ $herramienta->idherramienta }}' readonly/>						
+															
 															<td class="text-nowrap text-center">
 																{{$herramienta->nombre}}
 															</td>
@@ -112,9 +110,8 @@
 									<table class="table table-hover">
 										<thead>
 											<tr>
-												<th class="text-nowrap text-center">N°</th>
-												<th class="text-nowrap text-center">Nombre Aplicativo</th>
-												<th class="text-nowrap text-center">Tipo Aplicativo</th>
+												<th class="text-nowrap text-center">Nombre<br> Aplicativo</th>
+												<th class="text-nowrap text-center">Tipo<br> Aplicativo</th>
 												<th class="text-nowrap text-center">Retirar</th>
 												<th class="text-nowrap text-center">Ver SLA</th>
 											</tr>
@@ -122,9 +119,6 @@
 										<tbody>	
 											@foreach($herramientas as $index  => $herramienta)
 											<tr class="">
-												<td class="text-nowrap text-center">
-													{{$index+1}}
-												</td>
 												<td class="text-nowrap text-center">
 													{{$herramienta->nombre}}
 												</td>

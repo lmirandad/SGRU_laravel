@@ -68,7 +68,7 @@
 										<th class="text-nowrap text-center">Editar <br> Datos</th>
 										<th class="text-nowrap text-center">Aplicativos Especializados<br> (GESTOR)</th>
 										<th class="text-nowrap text-center">Sectores Asignados <br>(GESTOR)</th>
-										<th class="text-nowrap text-center">Canales Responsable <br>(RESPONSABLE CANAL)</th>
+										<!--<th class="text-nowrap text-center">Canales Responsable <br>(RESPONSABLE CANAL)</th>-->
 										<th class="text-nowrap text-center">Estado</th>
 									</tr>
 								</thead>
@@ -125,9 +125,11 @@
 												-
 											@endif
 										</td>
+										<!--
 										<td class="text-nowrap text-center">
 											@if($user_data->idrol == 4)
 												<!-- PARA ROL RESPONSABLE CANAL -->
+												<!--
 												@if($user_data->deleted_at)
 													-
 												@else
@@ -140,6 +142,7 @@
 												-
 											@endif
 										</td>
+										-->
 										<td class="text-nowrap text-center">
 										
 											@if($user_data->deleted_at)

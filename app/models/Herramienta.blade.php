@@ -61,6 +61,28 @@ class Herramienta extends Eloquent implements UserInterface, RemindableInterface
 		return $query;
 	}
 
+	public function scopeListarHerramientasDisponiblesSectorPermitidos($query,$search_criteria)
+	{
+		$query->join('denominacion_herramienta','herramienta.iddenominacion_herramienta','=','denominacion_herramienta.iddenominacion_herramienta');
+		$query->join('tipo_requerimiento','tipo_requerimiento.idtipo_requerimiento','=','herramienta.idtipo_requerimiento');
+		$query->whereNotIn('herramienta.idherramienta',function($subquery) use ($search_criteria){
+					$subquery->leftJoin('herramientaxsector','herramienta.idherramienta','=','herramientaxsector.idherramienta');
+					$subquery->from(with(new Herramienta)->getTable());
+					$subquery->where('herramientaxsector.idsector','=',$search_criteria);
+					$subquery->where('herramientaxsector.deleted_at','=',NULL);
+					$subquery->select('herramienta.idherramienta')->distinct();
+		});
+
+		$query->where('herramienta.idherramienta','!=',99);
+		$query->where('herramienta.idherramienta','!=',100);
+		$query->where('herramienta.idherramienta','!=',101);
+
+
+		$query->select('herramienta.*','denominacion_herramienta.nombre as nombre_denominacion','tipo_requerimiento.nombre as nombre_tipo');
+
+		return $query;
+	}
+
 	//Query para listar todas las herramientas registradas en el sistema
 	public function scopeListarHerramientas($query)
 	{

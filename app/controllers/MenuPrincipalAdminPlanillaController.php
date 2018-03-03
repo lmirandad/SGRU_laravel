@@ -92,7 +92,7 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 				$fecha_reporte = date('Y-m-d H:i:s');
 				$meses = array("ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE");
 
-				$value = Excel::create('REPORTE PLANILLA', function($excel) use  ($usuarios,$meses){
+				$value = Excel::create('REPORTE PERSONAL AUTORIZADO CONSOLIDADO', function($excel) use  ($usuarios,$meses){
 					$excel->sheet('BASE', function($sheet) use ($usuarios,$meses)  {
 						
 						$sheet->row(1, array(
@@ -140,7 +140,26 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 
 						}
 
-						
+						$sheet->setBorder('A1:Q'.($cantidad_registros+1), 'thin');
+
+
+						//ENCABEZADOS
+						$sheet->cells('A1:Q1', function($cells) {
+
+						    // manipulate the range of cells
+							$cells->setFontFamily('Calibri');
+							$cells->setFontSize(11);
+							$cells->setBackground('#93CDDD');
+
+						});
+
+						$sheet->cells('A1:Q'.($cantidad_registros+1), function($cells) {
+
+						    // manipulate the range of cells
+							$cells->setFontFamily('Calibri');
+							$cells->setFontSize(11);							
+
+						});
 
 					});
 				})->download('xlsx');
@@ -179,7 +198,7 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 				$fecha_reporte = date('Y-m-d H:i:s');
 				$meses = array("ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE");
 
-				$value = Excel::create('REPORTE PLANILLA USUARIO'.$username_gestor, function($excel) use  ($usuarios,$meses){
+				$value = Excel::create('REPORTE PERSONAL AUTORIZADO USUARIO'.$username_gestor, function($excel) use  ($usuarios,$meses){
 					$excel->sheet('BASE', function($sheet) use ($usuarios,$meses)  {
 						
 						$sheet->row(1, array(
@@ -221,6 +240,26 @@ class MenuPrincipalAdminPlanillaController extends BaseController {
 
 						}
 
+						$sheet->setBorder('A1:P'.($cantidad_registros+1), 'thin');
+
+
+						//ENCABEZADOS
+						$sheet->cells('A1:P1', function($cells) {
+
+						    // manipulate the range of cells
+							$cells->setFontFamily('Calibri');
+							$cells->setFontSize(11);
+							$cells->setBackground('#93CDDD');
+
+						});
+
+						$sheet->cells('A1:P'.($cantidad_registros+1), function($cells) {
+
+						    // manipulate the range of cells
+							$cells->setFontFamily('Calibri');
+							$cells->setFontSize(11);							
+
+						});
 						
 
 					});

@@ -1372,7 +1372,7 @@ class MenuPrincipalController extends BaseController {
 
 					$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
 					//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+					$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 					$cantidad_dias = 0;
 					if($feriados != null )
 					{
@@ -1404,7 +1404,7 @@ class MenuPrincipalController extends BaseController {
 
 					$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_asignacion,$fecha_actual);
 					//Obtener los dias feriados entre la fecha de hoy y la asignacion
-					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_actual)->get();
+					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion,$fecha_actual)->get();
 					$cantidad_dias = 0;
 					if($feriados != null )
 					{
@@ -1449,7 +1449,7 @@ class MenuPrincipalController extends BaseController {
 					$diferencia_dias = MenuPrincipalController::getWorkingDays($fecha_solicitud,$fecha_asignacion);
 
 					//Obtener los dias feriados entre la fecha de solicitud y la asignacion
-					$feriados = Feriado::buscarDiasFeriados($fecha_asignacion_formateada,$fecha_solicitud_formateada)->get();
+					$feriados = Feriado::buscarDiasFeriados($fecha_solicitud,$fecha_asignacion)->get();
 					$cantidad_dias = 0;
 					if($feriados != null )
 					{
@@ -1483,7 +1483,7 @@ class MenuPrincipalController extends BaseController {
 					$diferencia_dias_fecha_trabajo = MenuPrincipalController::getWorkingDays($fecha_asignacion,$fecha_actual);
 
 					//Obtener los dias feriados entre la fecha de hoy y la asignacion
-					$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando_formateada,$fecha_actual)->get();
+					$feriados = Feriado::buscarDiasFeriados($fecha_inicio_procesando,$fecha_actual)->get();
 					$cantidad_dias = 0;
 					if($feriados != null )
 					{
@@ -1712,36 +1712,11 @@ class MenuPrincipalController extends BaseController {
 			// Verifico si el usuario es un Webmaster
 			if($data["user"]->idrol == 2)
 			{
-				$mes_actual = null;
-				$anho_actual = null;
-				$id_usuario = $data["user"]->id;
-				$fecha_actual = date('Y-m-d H:i:s');
-
-				$value = Excel::create('FUR', function($excel){
-					$excel->sheet('FUR', function($sheet){
-						
-						$sheet->row(1, array(
-							     'Codigo Solicitud','Canal','Accion','DNI','Nombre Completo','Cargo','Entidad','Punto de Venta','Aplicativo','Codigo Requerimiento'
-							));
-
-						$sheet->setBorder('A1:J1', 'thin');
-
-						$sheet->cells('A1:J1', function($cells) {
-
-						    // manipulate the range of cells
-						    $cells->setFontColor('#ffffff');
-							$cells->setFontFamily('Calibri');
-							$cells->setFontSize(11);
-							$cells->setBackground('#8497B0');
-
-						});
-						
-						
-
-					});
-
-					
-				})->download('xlsx');
+				$ruta = '../res/formato_planilla/Nueva Version FUR.xlsx';
+				$headers = array(
+		              'Content-Type',mime_content_type($ruta),
+		            );
+		        return Response::download($ruta,basename(Input::get('nombre_archivo')),$headers);
 
 			}else
 				return View::make('error/error',$data);

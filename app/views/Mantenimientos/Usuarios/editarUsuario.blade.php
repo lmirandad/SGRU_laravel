@@ -144,7 +144,7 @@
 
 		<div class="row">
 			<div class="form-group col-md-3 ">
-				<a class="btn btn-success btn-block" id="btnReestablecer"><i class="fa fa-eraser"></i> Reestablecer Contraseña </a>
+				<a class="btn btn-success btn-block" id="btnReestablecer"><i class="fa fa-eraser"></i> Restablecer Contraseña </a>
 			</div>			
 			
 			<div class="form-group col-md-2  col-md-offset-7">

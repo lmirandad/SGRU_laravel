@@ -99,7 +99,7 @@
 											<th class="text-nowrap text-center">SLA</th>
 											<th class="text-nowrap text-center">Días<br>Laborales</th>
 											<th class="text-nowrap text-center">SEMÁFORO</th>
-											
+											<th class="text-nowrap text-center">Rechazar<br>Solicitud</th>
 										</tr>
 									</thead>
 									@foreach($solicitudes_pendiente_data as $index => $solicitud_data)
@@ -165,7 +165,11 @@
 													<span style=" padding: 2px 11px; border-radius: 100%;background-color: #ff4444;"></span>
 												@endif
 											</td>
-											
+											<td class="text-nowrap text-center">
+													<div style="text-align:center">
+													<button class="btn btn-danger btn-sm" onclick="rechazar_solicitud(event,{{$solicitud_data->idsolicitud}})" type="button"><i class="fa fa-close"></i></button>
+												</div>
+											</td>
 										</tr>
 									</tbody>
 									@endforeach
@@ -440,7 +444,6 @@
 										<th class="text-nowrap text-center">Código<br>Requerimiento</th>
 										<th class="text-nowrap text-center">Acción</th>
 										<th class="text-nowrap text-center">Aplicativo</th>
-										<th class="text-nowrap text-center">Aplicativo<br>Agrupado</th>
 										<th class="text-nowrap text-center">Tipo<br>Gestión</th>
 										<!--
 										<th class="text-nowrap text-center">Canal</th>
@@ -448,6 +451,7 @@
 										<th class="text-nowrap text-center">Punto de Venta</th>
 										-->
 										<th class="text-nowrap text-center">Cargo</th>
+										<th class="text-nowrap text-center">Nombre<br>Completo</th>
 										<th class="text-nowrap text-center">DNI<br>Usuario</th>
 										<th class="text-nowrap text-center">Estado</th>
 										<th class="text-nowrap text-center">Observaciones/<br>Trazabilidad</th>
@@ -622,6 +626,42 @@
     </div>
   </div>
  </div> 
+
+ {{ Form::open(array('url'=>'/solicitudes/submit_rechazar_solicitud' ,'role'=>'form','id'=>'submit-rechazar-solicitud','enctype'=>'multipart/form-data')) }}
+ <div class="container" >
+  <!-- Modal -->
+  <div class="modal fade" id="modal_solicitud_rechazar"  data-backdrop="static"  role="dialog">
+    <div class="modal-dialog modal-md" >    
+      <!-- Modal content-->
+      <div class="modal-content" >
+	        <div class="modal-header modal-open" id="modal_header_solicitud_rechazar">
+	          
+	          <h4 class="modal-title">Rechazar Solicitud: </h4> 
+	          {{ Form::hidden('solicitud_id_rechazar', null,array('id'=>'solicitud_id_rechazar')) }}	
+	        </div>
+	        <div class="modal-body" id="modal_text_acciones">
+	         	<div class="container-fluid">
+	         		<div class="row">
+						<div class="form-group col-md-9 col-md-offset-1 @if($errors->first('observacion')) has-error has-feedback @endif"">
+							{{ Form::label('observacion','Observaciones:')}}
+							{{ Form::textarea('observacion',null,array('class'=>'form-control','placeholder'=>'Ingrese las observaciones','rows'=>5,'style'=>'resize:none','id'=>'observacion_rechazo_solicitud')) }}
+						</div>
+					</div>
+				</div>
+			</div>
+	        <div class="modal-footer">
+	        	<div class="form-group col-md-5 col-md-offset-3">
+					<a class="btn btn-primary btn-block" id="btnRechazarSolicitud"><i class="lnr lnr-cross"></i>&nbsp Rechazar Solicitud</a>				
+				</div>
+				<div class="form-group col-md-3">
+					<a class="btn btn-default btn-block" id="btnCancelarRechazarSolicitud">&nbsp Cancelar</a>				
+				</div>
+	        </div>
+      </div>      
+    </div>
+  </div>
+ </div> 
+ {{ Form::close() }} 
 
 
   {{ Form::open(array('url'=>'/requerimientos/submit_finalizar_requerimiento' ,'role'=>'form','id'=>'submit-finalizar','enctype'=>'multipart/form-data')) }}

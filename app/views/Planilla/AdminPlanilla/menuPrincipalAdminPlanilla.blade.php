@@ -4,7 +4,7 @@
 	<!-- MAIN CONTENT -->
 	<div class="main-content">
 		<div class="container-fluid">
-			<h3 class="page-title"><strong>CONTROL PLANILLA</strong> </h3>
+			<h3 class="page-title"><strong>CONTROL PERSONAL AUTORIZADO</strong> </h3>
 			@if (Session::has('message'))
 				<div class="alert alert-success">
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -77,7 +77,7 @@
 			
 			<div class="panel panel-headline">
 				<div class="panel-heading">
-					<h3 class="panel-title">Listado de Cargas de Planilla</h3>
+					<h3 class="panel-title">Listado de Cargas de Personal Autorizado</h3>
 				</div>
 				<div class="panel-body">	
 					<div class="row">
@@ -88,10 +88,10 @@
 										<tr>
 											<th class="text-nowrap text-center">N°</th>
 											<th class="text-nowrap text-center">Fecha de<br>Carga</th>
-											<th class="text-nowrap text-center">Mes Planilla</th>
+											<th class="text-nowrap text-center">Mes Lista</th>
 											<th class="text-nowrap text-center">Usuario</th>
-											<th class="text-nowrap text-center">Descargar Planilla Cargada</th>
-											<th class="text-nowrap text-center">Eliminar Planilla Cargada</th>
+											<th class="text-nowrap text-center">Descargar Lista Cargada</th>
+											<th class="text-nowrap text-center">Eliminar Lista Cargada</th>
 										</tr>
 									</thead>
 									<tbody>

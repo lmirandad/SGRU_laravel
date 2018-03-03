@@ -317,7 +317,8 @@ class SectorController extends BaseController {
 					return Redirect::to('sectores/listar_sectores')->with('error','Sector no encontrado.');
 				}
 				$data["herramientas"] = HerramientaXSector::buscarHerramientasPorIdSector($data["sector"]->idsector)->get();
-				$data["herramientas_disponibles"] = Herramienta::listarHerramientasDisponiblesSector($data["sector"]->idsector)->get();
+				//$data["herramientas_disponibles"] = Herramienta::listarHerramientasDisponiblesSector($data["sector"]->idsector)->get();
+				$data["herramientas_disponibles"] = Herramienta::listarHerramientasDisponiblesSectorPermitidos($data["sector"]->idsector)->get();
 				
 				return View::make('Mantenimientos/Sectores_Canales_Entidades/Sectores/mostrarHerramientasSector',$data);			
 				
@@ -343,6 +344,8 @@ class SectorController extends BaseController {
 			    var_dump(count($arr_idherramienta));
 			    echo '</pre>';*/
 			    $size_ids = count($arr_idherramienta);
+
+			    
 			    $flag_seleccion = false;
 			    //por cada uno validar si el checkbox asociado fue tecleado
 			    for($i=0;$i<$size_ids;$i++){

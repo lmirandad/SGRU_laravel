@@ -92,7 +92,7 @@
 						<h4 class="page-title"><strong>EQUIVALENCIAS DE LA ACCIÓN: </strong></h4>
 					</div>	
 					<div class="panel-body">
-						<div class="row"   style="height:428px;overflow-y:auto;" >
+						<div class="row"   style="height:380px;overflow-y:auto;" >
 							<div class="col-md-12">
 								<div class="table-responsive">
 									<table class="table table-hover" id="table_equivalencias">

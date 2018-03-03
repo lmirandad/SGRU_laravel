@@ -122,7 +122,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			inner join [usersxsector] on [usersxsector].[iduser] = [users].[id]
 			inner join [sector] on [sector].[idsector] = [usersxsector].[idsector]
 			where 
-			[sector].[idsector] = ? and [usersxsector].[deleted_at] IS null) A
+			[sector].[idsector] = ? and [usersxsector].[deleted_at] IS null and [users].[deleted_at] IS null) A
 			LEFT JOIN 
 			(select [users].[id] id_usuario, count([solicitud].[idsolicitud]) cantidad_solicitudes
 			from [users] 

@@ -20,7 +20,6 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 				$mes = date('m');
 				$anho = date('Y');
 
-
 				$meses = array("ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE");
 
 				$nombre_mes = $anho.' - '.$meses[$mes-1];
@@ -29,14 +28,14 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 
 				if($carga_mes == null || $carga_mes->isEmpty())
 				{
-					Session::flash('info','Base de Planilla '.$nombre_mes.' pendiente de cargar');
+					Session::flash('info','Base de Personal Autorizado '.$nombre_mes.' pendiente de cargar');
 					$data["base_cargada"] = false;
 					
 				}else
 				{
-					$data["base_cargada"] = true;
+					$data["base_cargada"] = false;
 					$fecha_carga_archivo = date('d-m-Y H:i:s',strtotime($carga_mes[0]->fecha_carga_archivo));
-					Session::flash('info','Base de Planilla '.$nombre_mes.' cargada el '.$fecha_carga_archivo);
+					Session::flash('info','Base de Personal Autorizado '.$nombre_mes.' cargada el '.$fecha_carga_archivo);
 				}
 
 				return View::make('Planilla/GestorPlanilla/menuPrincipalGestorPlanilla',$data);
@@ -57,7 +56,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 			// Verifico si el usuario es un Admin Planilla
 			if($data["user"]->idrol == 6){
 				
-				$ruta = '../res/formato_planilla/FORMATO PLANILLA.xlsm';
+				$ruta = '../res/formato_planilla/Lista de personal autorizado v1.1.xlsm';
 				$headers = array(
 		              'Content-Type',mime_content_type($ruta),
 		            );
@@ -90,13 +89,13 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 			    	return Redirect::to('/principal_gestor_planilla');
 			    }
 
-			    $resultado = Excel::load($file_name)->get();
+			    $resultado = Excel::load($file_name)->get()[0];
 
 			 	$cantidad_registros = count($resultado);
 			 	$logs_errores = array();
 			 	$array_registros = array();
-			    
-			    $cantidad = 11;
+
+			 	$cantidad = 11;
 			    if(count($resultado[0]) < $cantidad || count($resultado[0]) > $cantidad )
 			    	return Redirect::to('/principal_gestor_planilla')->with('error','La cantidad de columnas del archivo adjuntado no coincide con el estandar.');
 
@@ -338,8 +337,6 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 
 			    $data["registros"] = $array_registros;
 
-
-
 				return View::make('Planilla/GestorPlanilla/menuPrincipalGestorPlanilla',$data);
 			}else{
 				return View::make('error/error',$data);
@@ -459,7 +456,7 @@ class MenuPrincipalGestorPlanillaController extends BaseController {
 					
 				}
 	
-				return Redirect::to('/principal_gestor_planilla')->with('message','Se realizó la carga de la planilla con éxito');
+				return Redirect::to('/principal_gestor_planilla')->with('message','Se realizó la carga de la lista del personal autorizado con éxito');
 				
 			}else{
 				return View::make('error/error',$data);

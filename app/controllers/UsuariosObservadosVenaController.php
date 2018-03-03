@@ -24,7 +24,7 @@ class UsuariosObservadosVenaController extends BaseController {
 
 		//validar si existen usuarios cargados en el día de hoy:
 		$fecha_actual = date('Y-m-d');
-		$buscar_usuario_observado = UsuarioObservado::buscarUsuarioCargadoHoy($fecha_actual)->first();
+		$buscar_usuario_observado = UsuarioObservado::listarUsuariosObservadosUltimo()->first();
 
 		$data["fecha_registro_usuarios_observados"] = null;
 		$data["fecha_registro_usuarios_vena"] = null;
@@ -35,7 +35,7 @@ class UsuariosObservadosVenaController extends BaseController {
 		}
 
 
-		$buscar_usuario_vena = UsuarioVena::buscarUsuarioCargadoHoy($fecha_actual)->first();
+		$buscar_usuario_vena = UsuarioVena::listarUsuariosVenaUltimo($fecha_actual)->first();
 
 		if($buscar_usuario_vena != null){
 			$data["usuarios_vena_ya_cargados"] = 1;
@@ -190,7 +190,7 @@ class UsuariosObservadosVenaController extends BaseController {
 
 				//validar si existen usuarios cargados en el día de hoy:
 				$fecha_actual = date('Y-m-d');
-				$buscar_usuario_observado = UsuarioObservado::buscarUsuarioCargadoHoy($fecha_actual)->first();
+				$buscar_usuario_observado = UsuarioObservado::listarUsuariosObservadosUltimo($fecha_actual)->first();
 
 				$data["fecha_registro_usuarios_observados"] = null;
 				$data["fecha_registro_usuarios_vena"] = null;
@@ -201,7 +201,7 @@ class UsuariosObservadosVenaController extends BaseController {
 				}
 
 
-				$buscar_usuario_vena = UsuarioVena::buscarUsuarioCargadoHoy($fecha_actual)->first();
+				$buscar_usuario_vena = UsuarioVena::listarUsuariosVenaUltimo($fecha_actual)->first();
 
 				if($buscar_usuario_vena != null){
 					$data["usuarios_vena_ya_cargados"] = 1;

@@ -4,7 +4,7 @@
 	<!-- MAIN CONTENT -->
 	<div class="main-content">
 		<div class="container-fluid">
-			<h3 class="page-title"><strong>CONTROL PLANILLA</strong> &nbsp&nbsp&nbsp&nbsp<a class="btn btn-success btn-sm" href="{{URL::to('/principal_gestor_planilla/descargar_plantilla_gestor')}}"><span class="fa fa-download"></span>Descargar Plantilla Base Planilla</a> </h3>
+			<h3 class="page-title"><strong>CONTROL PERSONAL AUTORIZADO</strong> &nbsp&nbsp&nbsp&nbsp<a class="btn btn-success btn-sm" href="{{URL::to('/principal_gestor_planilla/descargar_plantilla_gestor')}}"><span class="fa fa-download"></span>&nbspDescargar Plantilla Base Personal Autorizado</a> </h3>
 			@if (Session::has('message'))
 				<div class="alert alert-success">
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -32,7 +32,7 @@
 				<div class="col-md-12">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h3 class="panel-title"><strong>CARGAR PLANILLA</strong></h3>
+							<h3 class="panel-title"><strong>CARGAR LISTA DE PERSONAL AUTORIZADO</strong></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
